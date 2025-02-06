@@ -37,111 +37,113 @@
     />
   </head>
   <body>
+    <div id="page-container">
+      <!-- Navigation Bar -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation">
+        <div class="container">
+          <!-- Logo on the left -->
+          <a class="navbar-brand" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='images/vhp.png') }}" class="img-fluid" alt="VHP4Safety Logo" />
+          </a>
+          
+          <!-- Toggler for small screens -->
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          
+          <!-- Navbar links and dropdowns aligned to the right -->
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item active">
+                <a class="nav-link" href="/">Home</a>
+              </li>
 
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation">
-      <div class="container">
-        <!-- Logo on the left -->
-        <a class="navbar-brand" href="{{ url_for('home') }}">
-          <img src="{{ url_for('static', filename='images/vhp.png') }}" class="img-fluid" alt="VHP4Safety Logo" />
-        </a>
-        
-        <!-- Toggler for small screens -->
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <!-- Navbar links and dropdowns aligned to the right -->
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="/">Home</a>
+            <!-- Project Information Dropdown -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Project Information
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="{{ url_for('home') }}#mission-and-vision">Mission and Vision</a>
+                <a class="dropdown-item" href="{{ url_for('home') }}#research-lines">Research Lines</a>
+                <a class="dropdown-item" href="{{ url_for('home') }}#case-studies-and-regulatory-questions">Case Studies and Regulatory Questions</a>
+                <a class="dropdown-item" href="{{ url_for('home') }}#partners-and-consortium">Partners and Consortium</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ url_for('home') }}#contact-us">Contact Us</a>
+              </div>
             </li>
 
-          <!-- Project Information Dropdown -->
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              id="navbarDropdown"
-              role="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Project Information
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="{{ url_for('home') }}#mission-and-vision">Mission and Vision</a>
-              <a class="dropdown-item" href="{{ url_for('home') }}#research-lines">Research Lines</a>
-              <a class="dropdown-item" href="{{ url_for('home') }}#case-studies-and-regulatory-questions">Case Studies and Regulatory Questions</a>
-              <a class="dropdown-item" href="{{ url_for('home') }}#partners-and-consortium">Partners and Consortium</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="{{ url_for('home') }}#contact-us">Contact Us</a>
-            </div>
-          </li>
-
-          <!-- Services Dropdown -->
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              id="servicesDropdown"
-              role="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Services
-            </a>
-            <div class="dropdown-menu" aria-labelledby="servicesDropdown">
-              <a class="dropdown-item" href="{{ url_for('service_list') }}">List of all services</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="{{ url_for('qsprpred') }}">QSPRPred</a>
-            </div>
-          </li>
-
-          <!-- Case Studies Dropdown -->
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              id="caseStudiesDropdown"
-              role="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Case Studies
-            </a>
-            <div class="dropdown-menu" aria-labelledby="caseStudiesDropdown">
-              <a class="dropdown-item" href="{{ url_for('kidney_main') }}">Kidney</a>
-              <a class="dropdown-item" href="{{ url_for('parkinson_main') }}">Parkinson</a>
-
-              <!-- Thyroid Dropdown with Nested Menu -->
-              <div class="dropdown-submenu">
-                <a class="dropdown-item dropdown-toggle" href="{{ url_for('thyroid_main') }}">Thyroid</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{{ url_for('thyroid_workflow_1') }}">Workflow 1</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('ngra_silymarin') }}">NGRA of Silymarin</a></li>
-                </ul>
+            <!-- Services Dropdown -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="servicesDropdown"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Services
+              </a>
+              <div class="dropdown-menu" aria-labelledby="servicesDropdown">
+                <a class="dropdown-item" href="{{ url_for('service_list') }}">List of all services</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ url_for('qsprpred') }}">QSPRPred</a>
               </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </nav>
+            </li>
 
-    <!-- Main Content Section -->
-    <main class="container mt-4">
-      {% block content %} {% endblock %}
-    </main>
+            <!-- Case Studies Dropdown -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="caseStudiesDropdown"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Case Studies
+              </a>
+              <div class="dropdown-menu" aria-labelledby="caseStudiesDropdown">
+                <a class="dropdown-item" href="{{ url_for('kidney_main') }}">Kidney</a>
+                <a class="dropdown-item" href="{{ url_for('parkinson_main') }}">Parkinson</a>
 
-    <!-- Footer Section -->
-    <footer>
-      <p>&copy; 2024 VHP4Safety. All Rights Reserved.</p>
-    </footer>
+                <!-- Thyroid Dropdown with Nested Menu -->
+                <div class="dropdown-submenu">
+                  <a class="dropdown-item dropdown-toggle" href="{{ url_for('thyroid_main') }}">Thyroid</a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{{ url_for('thyroid_workflow_1') }}">Workflow 1</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('ngra_silymarin') }}">NGRA of Silymarin</a></li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
 
+      <!-- Main Content Section -->
+      <main class="container mt-4">
+        <div id="content-wrap">
+          {% block content %} {% endblock %}
+        </div>
+      </main>
+
+      <!-- Footer Section -->
+      <footer>
+        <p>&copy; 2024 VHP4Safety. All Rights Reserved.</p>
+      </footer>
+    </div>
     <!-- JavaScript for Accordions (If Used) -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {

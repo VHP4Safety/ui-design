@@ -24,7 +24,8 @@ html {
 
 /* General Styling */
 body {
-  background: var(--blue);
+  /* background: #307bbf#var(--blue) 50; */
+  background: #307bbf70;
   font-family: "Open Sans", sans-serif;
   font-weight: 400;
   font-style: normal;
@@ -93,13 +94,24 @@ img {
   height: auto;
 }
 
+#page-container {
+  position: relative;
+  min-height: 100vh;
+}
+
+#content-wrap {
+  padding-bottom: 2.5rem; /* Footer height */
+}
+
 /* Footer */
 footer {
   background: var(--blue);
   color: var(--white);
   text-align: center;
-  padding: 15px 0;
-  margin-top: 20px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 2.5rem; /* Footer height */
 }
 
 /* Navigation Bar */
@@ -255,10 +267,11 @@ tbody tr:hover {
   text-align: center;
   background-color: #f8f8f8;
   cursor: pointer;
-  transition: background-color 0.3s, border-color 0.3s;
-  color: #333;  /* Darker text color */
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+  color: #333; /* Darker text color */
 }
-
 
 /* Hide the native checkbox */
 .service-tile input[type="checkbox"] {
@@ -280,12 +293,12 @@ tbody tr:hover {
 }
 
 .service-tile strong {
-  color: #333;  /* Darker text for the title */
+  color: #333; /* Darker text for the title */
 }
 
 .service-desc {
   font-size: 0.9em;
-  color: #333;  /* Darker text for the description */
+  color: #333; /* Darker text for the description */
 }
 
 /* -------------------------------
