@@ -24,8 +24,7 @@ html {
 
 /* General Styling */
 body {
-  /* background: #307bbf#var(--blue) 50; */
-  background: #307bbf70;
+  background: var(--blue);
   font-family: "Open Sans", sans-serif;
   font-weight: 400;
   font-style: normal;
