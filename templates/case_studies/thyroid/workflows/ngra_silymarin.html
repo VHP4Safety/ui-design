@@ -2,7 +2,7 @@
 
 {% block content %}
   <header>
-    <h1>Next Generation Risk Assessment of Silymarin</h1>
+    <h1>Developmental Neurotoxicity Risk Assessment of <a href="https://compoundcloud.wikibase.cloud/wiki/Item:Q2061">Silymarin</a></h1>
   </header>
 
   <p><b>Question:</b> Is there a risk of thyroid-mediated development neurotoxicity through MCT8 inhibition by silychristin when a pregnant woman takes silymarin supplements at a given dose, frequecy and duration (referring to the regulatory question 3a)?</p>
@@ -15,11 +15,16 @@
   <li> External Exposure Assessment: The tools that assess the magnitude, frequency, duration and exposure routes of a given exposure </li>
     <ul>
       <li>Inputs: Magnitude, frequency, duration of silychristin exposure (numeric variables) and exposure route (categorical variable, e.g. oral) </li>
-      <li>Outputs: </li>
+      <li>No outputs for this specific question.</li>
     </ul>
-  <li> Internal Exposure </li>
+  <li> Internal Exposure: PBPK Modeling </li>
   <ul>
-      <li>Inputs: </li>
+      <li>Inputs: 
+        <ol>
+          <li> Chemical properties: fup; Blood Plasma Ratio (BPR); Tissue-Blood partition coefficients for fat, liver, fetus, slowly perfused tissue and richly perfused tissue; CLint Liver S9; the concentration of S9 protein in the incubation; Unbound fraction in the S9 incubation; Scaling factor from S9 to liver; Unbound fraction in the liver; the absorption rate constant across the small intestine; the fraction absorbed across small intestine. These inputs are currently set in the model; however, they can be made user-defined in the final, generalized status of the workflow. </li>
+          <li> Biological properties </li>
+        </ol>
+      </li>
       <li>Outputs: </li>
     </ul>
     <li> Hazard </li>
