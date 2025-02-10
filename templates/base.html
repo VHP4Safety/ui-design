@@ -10,6 +10,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+    <!-- Cytoscape.js -->
+    <script src="/static/js/cytoscape.min.js"></script>
+
+    <!-- Jmol -->
+    <script src="/static/js/JSmol.min.js"></script>
+
     <!-- Favicon -->
     <link
       rel="icon"
@@ -101,22 +107,22 @@
               </div>
             </li>
 
-            <!-- Case Studies Dropdown -->
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="caseStudiesDropdown"
-                role="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                Case Studies
-              </a>
-              <div class="dropdown-menu" aria-labelledby="caseStudiesDropdown">
-                <a class="dropdown-item" href="{{ url_for('kidney_main') }}">Kidney</a>
-                <a class="dropdown-item" href="{{ url_for('parkinson_main') }}">Parkinson</a>
+          <!-- Case Studies Dropdown -->
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="caseStudiesDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Case Studies
+            </a>
+            <div class="dropdown-menu" aria-labelledby="caseStudiesDropdown">
+              <a class="dropdown-item" href="{{ url_for('kidney_main') }}">Kidney</a>
+              <a class="dropdown-item" href="{{ url_for('parkinson_main') }}">Parkinson</a>
 
                 <!-- Thyroid Dropdown with Nested Menu -->
                 <div class="dropdown-submenu">

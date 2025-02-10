@@ -1,11 +1,28 @@
-
 ################################################################################
 ### Loading the required modules
-from flask import Flask, request, jsonify, render_template, send_file
+from flask import Flask, request, jsonify, render_template, send_file, Blueprint, render_template, abort
 import requests
 from wikidataintegrator import wdi_core
+import json
+import re
+from werkzeug.routing import BaseConverter
+from jinja2 import TemplateNotFound
 ################################################################################
 
+class RegexConverter(BaseConverter):
+    """Converter for regular expression routes.
+
+    References
+    ----------
+    Scholia views.py
+    https://stackoverflow.com/questions/5870188
+
+    """
+
+    def __init__(self, url_map, *items):
+        """Set up regular expression matcher."""
+        super(RegexConverter, self).__init__(url_map)
+        self.regex = items[0]
 
 app = Flask(__name__)
 
@@ -146,6 +163,24 @@ def kidney_main():
 def parkinson_main():
     return render_template('case_studies/parkinson/parkinson.html')
 
+@app.route('/templates/case_studies/parkinson/workflows/parkinson_hackathon_workflow')
+def parkinson_hackathon_workflow():
+    return render_template('case_studies/parkinson/workflows/parkinson_hackathon_workflow.html')
+
+@app.route('/workflow/<workflow>')
+def show(workflow):
+    try:
+        return render_template(f'case_studies/parkinson/workflows/{workflow}_workflow.html')
+    except TemplateNotFound:
+        abort(404)
+
+@app.route('/compound/<cwid>')
+def show_compound(cwid):
+    try:
+        return render_template(f'compound.html', cwid=cwid)
+    except TemplateNotFound:
+        abort(404)
+
 @app.route('/templates/case_studies/thyroid/thyroid')
 def thyroid_main():
     return render_template('case_studies/thyroid/thyroid.html')
@@ -159,59 +194,11 @@ def ngra_silymarin():
 
 ################################################################################
 
+# Import the new blueprint
+from routes.aop_app import aop_app
 
-################################################################################
-### Tests for API calls and interactive pages.
-@app.route('/get_dummy_data', methods=['GET'])
-def get_dummy_data():
-    results = [
-    {
-        "Compound": "Compound1" ,
-        "SMILES": "Smile 1" 
-    },
-    {
-        "Compound": "Compound1" ,
-        "SMILES": "Smile 1" 
-    },
-    {
-        "Compound": "Compound1" ,
-        "SMILES": "Smile 1" 
-    }
-    ]
-    return results, 200
-
-@app.route('/get_compounds', methods=['GET'])
-def get_compounds():
-    # Setting up the url for sparql endpoint.
-    compoundwikiEP = "https://compoundcloud.wikibase.cloud/query/sparql"
-
-    # Setting up the sparql query for the full list of compounds.
-    sparqlquery_full = '''
-    PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>
-    PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>
-
-    SELECT DISTINCT (substr(str(?cmp), 45) as ?ID) (?cmpLabel AS ?Term)
-        ?SMILES (?cmp AS ?ref)
-    WHERE{
-        { ?parent wdt:P21 wd:Q2059 ; wdt:P29 ?cmp . } UNION { ?cmp wdt:P21 wd:Q2059 . }
-    ?cmp wdt:P1 ?type ; rdfs:label ?cmpLabel . FILTER(lang(?cmpLabel) = 'en')
-    ?type rdfs:label ?typeLabel . FILTER(lang(?typeLabel) = 'en')
-    OPTIONAL { ?cmp wdt:P7 ?chiralSMILES }
-    OPTIONAL { ?cmp wdt:P12 ?nonchiralSMILES }
-    BIND (COALESCE(IF(BOUND(?chiralSMILES), ?chiralSMILES, 1/0), IF(BOUND(?nonchiralSMILES), ?nonchiralSMILES, 1/0),"") AS ?SMILES)
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
-    }
-    '''
-
-     # Making the SPARQL query
-    compound_dat = wdi_core.WDFunctionsEngine.execute_sparql_query(sparqlquery_full, endpoint=compoundwikiEP, as_dataframe=True)
-
-    # Organizing the output into a list of dictionaries
-    compound_list = []
-    for _, row in compound_dat.iterrows():
-        compound_list.append({"Term": row[2], "SMILES": row[0]})
-
-    return jsonify(compound_list), 200
+# Register the blueprint
+app.register_blueprint(aop_app)
 
 ################################################################################
 
