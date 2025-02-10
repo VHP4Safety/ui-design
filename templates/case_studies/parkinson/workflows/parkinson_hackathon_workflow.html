@@ -121,14 +121,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         cytoscape.use(cytoscapePopper);
 
-        $("#reset_layout").on("click", function () {
-            cy.animate({ fit: { padding: 30 }, duration: 500 });
-            cy.layout({ name: "cose", animate: true }).run();
-        });
     }
 
     fetchAOPData().then(data => renderAOPNetwork(data));
 });
+
+// Reset layout
+$("#reset_layout").on("click", function () {
+    cy.animate({ fit: { padding: 30 }, duration: 500 });
+    cy.layout({ name: "cose", animate: true }).run();
+});
+
 </script>
 
 <style>
