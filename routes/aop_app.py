@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_file
 import requests
 from wikidataintegrator import wdi_core
 import json
@@ -333,3 +333,15 @@ def get_aop_network():
     """API route to return the AOP network."""
     data = fetch_sparql_data()
     return jsonify(data)
+
+@aop_app.route('/js/aop_app/populate_compound_container.js')
+def serve_populate_compound_container_js():
+    return send_file('js/aop_app/populate_compound_container.js')
+
+@aop_app.route('/js/aop_app/populate_aop_network.js')
+def serve_populate_aop_network_js():
+    return send_file('js/aop_app/populate_aop_network.js')
+
+@aop_app.route('/js/aop_app/predict_qspr.js')
+def serve_predict_qspr_js():
+    return send_file('js/aop_app/predict_qspr.js')
