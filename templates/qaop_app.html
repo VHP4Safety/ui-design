@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    /* Style for Cytoscape Container */
+    #cy {
+        background-color: #FFFFFF; /* White background */
+        border-radius: 20px; /* Rounded edges */
+        border: 2px solid #ccc; /* Light gray border */
+        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2); /* Soft shadow */
+        padding: 10px; /* Internal padding */
+        height: 80vh;
+    }
+    .container {
+        display: flex;
+        width: 100vw; /* Full viewport width */
+        margin: 0; /* Remove default margin */
+        padding: 0; /* Remove default padding */
+    }
+    .left, .right, .center {
+        padding: 10px;
+        flex-shrink: 0; /* Do not prevent shrinking */
+    }
+    .left, .right {
+        width: 20vw;
+    }
+    .center {
+        width: 60vw;
+    }
+    .table-container {
+        max-height: 80vh; /* Limit height */
+        overflow-y: auto; /* Make scrollable */
+    }
+    table {
+        table-layout: fixed; /* Fixed layout */
+        width: 100%; /* Full width */
+    }
+    th, td {
+        word-wrap: break-word; /* Wrap text */
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<h1>{{ title }}</h1>
+<br />
+
+<div class="container">
+    <div class="left">
+        <section>
+            <h2>Chemicals</h2>
+            <div class="table-container">
+                <table class="table table-bordered table-striped" id="compound_table"> 
+                    <thead>
+                        <tr>
+                            <th>Compound</th>
+                            <th>SMILES</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    
+    <div class="center">
+        <section>
+            <h2>Adverse Outcome Pathways <button id="reset_layout" class="btn btn-secondary">Reset Layout</button></h2>
+            <div id="cy"></div>
+            <p id="loading" style="text-align: center;">Loading AOP network...</p>
+        </section>
+    </div>
+    
+    <div class="right">
+        <section>
+            <h2><button id="fetch_predictions" class="btn btn-primary">Get QSPRpred target-specific activities for MIEs</button></h2>
+            <div class="table-container">
+                <table class="table table-bordered table-striped mt-3" id="predictions_table">
+                    <thead>
+                        <tr>
+                            <th>SMILES</th>
+                            <th>Model</th>
+                            <th>Prediction Value</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
+<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+<script src="https://unpkg.com/cytoscape-popper/cytoscape-popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.css">
+<script src="https://cdn.jsdelivr.net/npm/cytoscape-qtip@2.7.0/cytoscape-qtip.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+
+<script src="/static/js/aop_app/populate_compound_container.js"></script>
+<script src="/static/js/aop_app/populate_aop_network.js"></script>
+<script src="/static/js/aop_app/predict_qspr.js"></script>
+
+<script>
+    // Fetch modelToMIE data from JSON file
+    fetch("{{ url_for('static', filename='data/model_to_mie.json') }}")
+        .then(response => response.json())
+        .then(data => {
+            window.modelToMIE = data;
+        })
+        .catch(error => console.error('Error loading modelToMIE data:', error));
+</script>
+
+<style>
+.tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    display: none;
+    z-index: 10;
+    max-width: 200px;
+    text-align: center;
+    font-weight: bold;
+}
+</style>
+
+{% endblock %}

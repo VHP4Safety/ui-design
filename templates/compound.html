@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ 
+<h1 id="title">{{ cwid }}</h1>
+
+<h2>Basic info</h2>
+
+<p>As given in the VHP4Safety Compound Wiki.</p>
+
+        <table class="table table-bordered table-striped" id="info_table"> 
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+
+<h2>3D structure</h2>
+
+<p>Based on the SMILES in the VHP4Safety Compound Wiki.</p>
+
+<span id="mydiv"></span>
+
+<script>
+  var jmolApplet0; // set up in HTML table, below
+  jmol_isReady = function(applet) {
+    Jmol._getElement(applet, "appletdiv").style.border="1px solid blue"
+  }
+
+   var Info = {
+    j2sPath: "/static/js/j2s",
+	width: 450,
+	height: 450,
+	debug: false,
+	readyFunction: jmol_isReady,
+  }
+  jmolApplet0 = Jmol.getApplet("jmolApplet0", Info)
+
+  $(document).ready(function () {
+      // Fetch and populate the compound table
+      $.getJSON("/get_compound_properties/{{ cwid }}", function (data) {
+        console.log(data[0])
+        // replace the Compound Wiki ID with the label
+        document.getElementById("title").innerHTML = data[0].label
+
+        // add a JmolJS applet
+        $("#mydiv").html(Jmol.getAppletHtml("jmolApplet0"))
+        Jmol.script(jmolApplet0, 'load smiles \"' + data[0].SMILES + "\"")
+      });
+      
+      $.getJSON("/get_compound_identifiers/{{ cwid }}", function (data) {
+        console.log(data)
+        const tableBody = $("#info_table tbody");
+        tableBody.empty();
+        data.forEach((option) => {
+            tableBody.append(`
+                <tr>
+                    <td>${option.propertyLabel}</td>
+                    <td>${option.value}</td>
+                </tr>
+            `);
+        });
+    });
+
+    $.getJSON("/get_compound_expdata/{{ cwid }}", function (data) {
+        console.log(data)
+        const tableBody = $("#expdata_table tbody");
+        tableBody.empty();
+        data.forEach((option) => {
+            tableBody.append(`
+                <tr>
+                    <td>${option.propEntityLabel}</td>
+                    <td>${option.value}</td>
+                    <td>${option.unitsLabel}</td>
+                    <td>${option.source}</td>
+                    <td>${option.doi}</td>
+                </tr>
+            `);
+        });
+    });
+      
+  })
+  
+</script>
+
+<h2>Experimental data</h2>
+
+<p>Based on data in Wikidata.</p>
+
+        <table class="table table-bordered table-striped" id="expdata_table"> 
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+
+{% endblock %}
