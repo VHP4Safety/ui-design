@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-    function fetchAOPData() {
-        return fetch("/get_aop_network")
+    function fetchAOPData(mies) {
+        return fetch(`/get_aop_network?mies=${encodeURIComponent(mies)}`)
             .then(response => response.json())
             .catch(error => {
                 console.error("Error fetching AOP data:", error);
@@ -36,7 +36,8 @@ document.addEventListener("DOMContentLoaded", function () {
         cytoscape.use(cytoscapePopper);
     }
 
-    fetchAOPData().then(data => renderAOPNetwork(data));
+    const mies = document.getElementById("compound-container").dataset.mies;
+    fetchAOPData(mies).then(data => renderAOPNetwork(data));
 
     $("#reset_layout").on("click", function () {
         cy.animate({ fit: { padding: 30 }, duration: 500 });

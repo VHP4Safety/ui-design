@@ -45,7 +45,7 @@
 <h1>{{ title }}</h1>
 <br />
 
-<div class="container">
+<div class="container" data-mies="{{ mies }}">
     <div class="left">
         <section>
             <h2>Chemicals</h2>
@@ -103,16 +103,6 @@
 <script src="/static/js/aop_app/populate_compound_container.js"></script>
 <script src="/static/js/aop_app/populate_aop_network.js"></script>
 <script src="/static/js/aop_app/predict_qspr.js"></script>
-
-<script>
-    // Fetch modelToMIE data from JSON file
-    fetch("{{ url_for('static', filename='data/model_to_mie.json') }}")
-        .then(response => response.json())
-        .then(data => {
-            window.modelToMIE = data;
-        })
-        .catch(error => console.error('Error loading modelToMIE data:', error));
-</script>
 
 <style>
 .tooltip {

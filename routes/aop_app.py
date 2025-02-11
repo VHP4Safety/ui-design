@@ -3,6 +3,7 @@ import requests
 from wikidataintegrator import wdi_core
 import json
 import re
+from urllib.parse import quote
 
 aop_app = Blueprint('aop_app', __name__)
 
@@ -233,39 +234,13 @@ def get_predictions():
 
 AOPWIKISPARQL_ENDPOINT = "https://aopwiki.rdf.bigcat-bioinformatics.org/sparql/"
 
-AOPWIKIPARKINSONSPARQL_QUERY = """
-SELECT DISTINCT ?aop ?aop_title ?MIEtitle ?MIE ?KE_downstream ?KE_downstream_title  
-       ?KER ?ao ?AOtitle ?KE_upstream ?KE_upstream_title
-WHERE {
-  VALUES ?MIE { aop.events:388 aop.events:2039 aop.events:2036  }
-    ?aop a aopo:AdverseOutcomePathway ;
-         dc:title ?aop_title ;
-         aopo:has_adverse_outcome ?ao ;
-         aopo:has_molecular_initiating_event ?MIE .
-    
-    ?MIE dc:title ?MIEtitle .
-
-      ?aop aopo:has_key_event_relationship ?KER .
-      ?KER a aopo:KeyEventRelationship ;
-           aopo:has_upstream_key_event ?KE_upstream ;
-           aopo:has_downstream_key_event ?KE_downstream .
-      
-      ?KE_upstream dc:title ?KE_upstream_title .
-      ?KE_downstream dc:title ?KE_downstream_title .
-    
-    OPTIONAL {
-      ?ao rdfs:label ?AOtitle .
-    }
-}
-"""
-
 def extract_ker_id(ker_uri):
     """Extract only the numeric ID from the KER URI (after the last '/')"""
     return ker_uri.split("/")[-1] if ker_uri else "Unknown"
 
-def fetch_sparql_data():
+def fetch_sparql_data(query):
     """Fetch data from the SPARQL endpoint and format it for Cytoscape.js."""
-    response = requests.get(AOPWIKISPARQL_ENDPOINT, params={"query": AOPWIKIPARKINSONSPARQL_QUERY, "format": "json"})
+    response = requests.get(AOPWIKISPARQL_ENDPOINT, params={"query": query, "format": "json"})
     if response.status_code != 200:
         return {"error": "Failed to fetch SPARQL data"}
 
@@ -330,8 +305,39 @@ def fetch_sparql_data():
 
 @aop_app.route("/get_aop_network")
 def get_aop_network():
-    """API route to return the AOP network."""
-    data = fetch_sparql_data()
+    mies = request.args.get("mies", "")
+    if not mies:
+        return jsonify({"error": "MIEs parameter is required"}), 400
+
+    # Ensure MIEs are properly formatted for the SPARQL query
+    print(mies)
+    AOPWIKIPARKINSONSPARQL_QUERY = f"""
+    SELECT DISTINCT ?aop ?aop_title ?MIEtitle ?MIE ?KE_downstream ?KE_downstream_title  
+           ?KER ?ao ?AOtitle ?KE_upstream ?KE_upstream_title
+    WHERE {{
+      VALUES ?MIE {{ {mies} }}
+        ?aop a aopo:AdverseOutcomePathway ;
+             dc:title ?aop_title ;
+             aopo:has_adverse_outcome ?ao ;
+             aopo:has_molecular_initiating_event ?MIE .
+        
+        ?MIE dc:title ?MIEtitle .
+
+          ?aop aopo:has_key_event_relationship ?KER .
+          ?KER a aopo:KeyEventRelationship ;
+               aopo:has_upstream_key_event ?KE_upstream ;
+               aopo:has_downstream_key_event ?KE_downstream .
+          
+          ?KE_upstream dc:title ?KE_upstream_title .
+          ?KE_downstream dc:title ?KE_downstream_title .
+        
+        OPTIONAL {{
+          ?ao rdfs:label ?AOtitle .
+        }}
+    }}
+    """
+    print(AOPWIKIPARKINSONSPARQL_QUERY)
+    data = fetch_sparql_data(AOPWIKIPARKINSONSPARQL_QUERY)
     return jsonify(data)
 
 @aop_app.route('/js/aop_app/populate_compound_container.js')

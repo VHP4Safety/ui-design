@@ -1,0 +1,4302 @@
+{
+    "ENSG00000096433": [
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Adipose tissue",
+            "Cell type": "adipocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Adrenal gland",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Appendix",
+            "Cell type": "glandular cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Appendix",
+            "Cell type": "lymphoid tissue",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Bone marrow",
+            "Cell type": "hematopoietic cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Breast",
+            "Cell type": "adipocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Breast",
+            "Cell type": "glandular cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Breast",
+            "Cell type": "myoepithelial cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Bronchus",
+            "Cell type": "respiratory epithelial cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Caudate",
+            "Cell type": "glial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Caudate",
+            "Cell type": "neuronal cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Cerebellum",
+            "Cell type": "cells in granular layer",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Cerebellum",
+            "Cell type": "cells in molecular layer",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Cerebellum",
+            "Cell type": "Purkinje cells",
+            "Level": "High",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "endothelial cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "glial cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "neuronal cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "neuropil",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Cervix",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Cervix",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Colon",
+            "Cell type": "endothelial cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Colon",
+            "Cell type": "glandular cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Duodenum",
+            "Cell type": "glandular cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Endometrium",
+            "Cell type": "cells in endometrial stroma",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Endometrium",
+            "Cell type": "glandular cells",
+            "Level": "High",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Endometrium",
+            "Cell type": "cells in endometrial stroma",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Endometrium",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Epididymis",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Esophagus",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Fallopian tube",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Heart muscle",
+            "Cell type": "cardiomyocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Hippocampus",
+            "Cell type": "glial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Hippocampus",
+            "Cell type": "neuronal cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Kidney",
+            "Cell type": "cells in glomeruli",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Kidney",
+            "Cell type": "cells in tubules",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Liver",
+            "Cell type": "cholangiocytes",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Liver",
+            "Cell type": "hepatocytes",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Lung",
+            "Cell type": "alveolar cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Lung",
+            "Cell type": "macrophages",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Lymph node",
+            "Cell type": "germinal center cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Lymph node",
+            "Cell type": "non-germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Nasopharynx",
+            "Cell type": "respiratory epithelial cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Oral mucosa",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Ovary",
+            "Cell type": "follicle cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Ovary",
+            "Cell type": "ovarian stroma cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Pancreas",
+            "Cell type": "exocrine glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Pancreas",
+            "Uberon": "uberon:0001264"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Pancreas",
+            "Cell type": "pancreatic endocrine cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Pancreas",
+            "Uberon": "uberon:0001264"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Parathyroid gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Placenta",
+            "Cell type": "decidual cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Placenta",
+            "Cell type": "trophoblastic cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Prostate",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Rectum",
+            "Cell type": "glandular cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Salivary gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Seminal vesicle",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Skeletal muscle",
+            "Cell type": "myocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Skin",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Skin",
+            "Cell type": "keratinocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Skin",
+            "Cell type": "Langerhans",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Skin",
+            "Cell type": "melanocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Skin",
+            "Cell type": "epidermal cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Small intestine",
+            "Cell type": "glandular cells",
+            "Level": "High",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Smooth muscle",
+            "Cell type": "smooth muscle cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Soft tissue",
+            "Cell type": "chondrocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Soft tissue",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Spleen",
+            "Cell type": "cells in red pulp",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Spleen",
+            "Cell type": "cells in white pulp",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Stomach",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Stomach",
+            "Cell type": "glandular cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Testis",
+            "Cell type": "cells in seminiferous ducts",
+            "Level": "High",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Testis",
+            "Cell type": "Leydig cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Thyroid gland",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Tonsil",
+            "Cell type": "germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Tonsil",
+            "Cell type": "non-germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Tonsil",
+            "Cell type": "squamous epithelial cells",
+            "Level": "High",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Urinary bladder",
+            "Cell type": "urothelial cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000096433",
+            "Gene name": "ITPR3",
+            "Tissue": "Vagina",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        }
+    ],
+    "ENSG00000107611": [
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Adipose tissue",
+            "Cell type": "adipocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Adrenal gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Appendix",
+            "Cell type": "endocrine cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Appendix",
+            "Cell type": "enterocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Appendix",
+            "Cell type": "enterocytes - Microvilli",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Appendix",
+            "Cell type": "germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Appendix",
+            "Cell type": "goblet cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Appendix",
+            "Cell type": "non-germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Bone marrow",
+            "Cell type": "hematopoietic cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Breast",
+            "Cell type": "adipocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Breast",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Breast",
+            "Cell type": "myoepithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Bronchus",
+            "Cell type": "respiratory epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Caudate",
+            "Cell type": "glial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Caudate",
+            "Cell type": "neuronal cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Cerebellum",
+            "Cell type": "cells in granular layer",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Cerebellum",
+            "Cell type": "cells in molecular layer",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Cerebellum",
+            "Cell type": "Purkinje cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "endothelial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "glial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "neuronal cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "neuropil",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Cervix",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Cervix",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Colon",
+            "Cell type": "endocrine cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Colon",
+            "Cell type": "endothelial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Colon",
+            "Cell type": "enterocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Colon",
+            "Cell type": "enterocytes - Microvilli",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Colon",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Colon",
+            "Cell type": "goblet cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Colon",
+            "Cell type": "mucosal lymphoid cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Duodenum",
+            "Cell type": "endocrine cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Duodenum",
+            "Cell type": "enterocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Duodenum",
+            "Cell type": "enterocytes - Microvilli",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Duodenum",
+            "Cell type": "glands of Brunner",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Duodenum",
+            "Cell type": "goblet cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Duodenum",
+            "Cell type": "paneth cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Endometrium",
+            "Cell type": "cells in endometrial stroma",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Endometrium",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Endometrium",
+            "Cell type": "cells in endometrial stroma",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Endometrium",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Epididymis",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Esophagus",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Fallopian tube",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Gallbladder",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Heart muscle",
+            "Cell type": "cardiomyocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Hippocampus",
+            "Cell type": "glial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Hippocampus",
+            "Cell type": "neuronal cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Kidney",
+            "Cell type": "cells in glomeruli",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Kidney",
+            "Cell type": "cells in tubules",
+            "Level": "High",
+            "Reliability": "Enhanced",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Liver",
+            "Cell type": "cholangiocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Liver",
+            "Cell type": "hepatocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Lung",
+            "Cell type": "alveolar cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Lung",
+            "Cell type": "macrophages",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Lymph node",
+            "Cell type": "germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Lymph node",
+            "Cell type": "non-germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Nasopharynx",
+            "Cell type": "respiratory epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Oral mucosa",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Ovary",
+            "Cell type": "follicle cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Ovary",
+            "Cell type": "ovarian stroma cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Pancreas",
+            "Cell type": "exocrine glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Pancreas",
+            "Uberon": "uberon:0001264"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Pancreas",
+            "Cell type": "pancreatic endocrine cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Pancreas",
+            "Uberon": "uberon:0001264"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Parathyroid gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Placenta",
+            "Cell type": "decidual cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Placenta",
+            "Cell type": "trophoblastic cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Prostate",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Rectum",
+            "Cell type": "endocrine cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Rectum",
+            "Cell type": "endothelial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Rectum",
+            "Cell type": "enterocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Rectum",
+            "Cell type": "enterocytes - Microvilli",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Rectum",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Rectum",
+            "Cell type": "goblet cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Rectum",
+            "Cell type": "mucosal lymphoid cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Rectum",
+            "Cell type": "peripheral nerve/ganglion",
+            "Level": "Low",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Salivary gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Seminal vesicle",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Skeletal muscle",
+            "Cell type": "myocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Skin",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Skin",
+            "Cell type": "keratinocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Skin",
+            "Cell type": "Langerhans",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Skin",
+            "Cell type": "melanocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Skin",
+            "Cell type": "epidermal cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Small intestine",
+            "Cell type": "endocrine cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Small intestine",
+            "Cell type": "enterocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Small intestine",
+            "Cell type": "enterocytes - Microvilli",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Small intestine",
+            "Cell type": "goblet cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Small intestine",
+            "Cell type": "paneth cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Smooth muscle",
+            "Cell type": "smooth muscle cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Soft tissue",
+            "Cell type": "chondrocytes",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Soft tissue",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Soft tissue",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Spleen",
+            "Cell type": "cells in red pulp",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Spleen",
+            "Cell type": "cells in white pulp",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Stomach",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Stomach",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Testis",
+            "Cell type": "cells in seminiferous ducts",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Testis",
+            "Cell type": "Leydig cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Thyroid gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Tonsil",
+            "Cell type": "germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Tonsil",
+            "Cell type": "non-germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Tonsil",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Urinary bladder",
+            "Cell type": "urothelial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000107611",
+            "Gene name": "CUBN",
+            "Tissue": "Vagina",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Enhanced",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        }
+    ],
+    "ENSG00000151090": [
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Adipose tissue",
+            "Cell type": "adipocytes",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Adrenal gland",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Appendix",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Appendix",
+            "Cell type": "lymphoid tissue",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Bone marrow",
+            "Cell type": "hematopoietic cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Breast",
+            "Cell type": "adipocytes",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Bronchus",
+            "Cell type": "respiratory epithelial cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Caudate",
+            "Cell type": "glial cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Caudate",
+            "Cell type": "neuronal cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Cerebellum",
+            "Cell type": "cells in granular layer",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Cerebellum",
+            "Cell type": "cells in molecular layer",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Cerebellum",
+            "Cell type": "Purkinje cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "endothelial cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "glial cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "neuronal cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "neuropil",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Cervix",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Cervix",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Colon",
+            "Cell type": "endothelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Colon",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Colon",
+            "Cell type": "peripheral nerve/ganglion",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Duodenum",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Endometrium",
+            "Cell type": "cells in endometrial stroma",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Endometrium",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Endometrium",
+            "Cell type": "cells in endometrial stroma",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Endometrium",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Epididymis",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Esophagus",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Fallopian tube",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Gallbladder",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Heart muscle",
+            "Cell type": "cardiomyocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Hippocampus",
+            "Cell type": "glial cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Hippocampus",
+            "Cell type": "neuronal cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Kidney",
+            "Cell type": "cells in glomeruli",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Kidney",
+            "Cell type": "cells in tubules",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Liver",
+            "Cell type": "cholangiocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Liver",
+            "Cell type": "hepatocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Lung",
+            "Cell type": "alveolar cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Lung",
+            "Cell type": "macrophages",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Lymph node",
+            "Cell type": "germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Lymph node",
+            "Cell type": "non-germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Nasopharynx",
+            "Cell type": "respiratory epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Oral mucosa",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Ovary",
+            "Cell type": "follicle cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Ovary",
+            "Cell type": "ovarian stroma cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Pancreas",
+            "Cell type": "exocrine glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Pancreas",
+            "Uberon": "uberon:0001264"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Pancreas",
+            "Cell type": "pancreatic endocrine cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Pancreas",
+            "Uberon": "uberon:0001264"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Parathyroid gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Placenta",
+            "Cell type": "decidual cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Placenta",
+            "Cell type": "trophoblastic cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Prostate",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Rectum",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Salivary gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Seminal vesicle",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Skeletal muscle",
+            "Cell type": "myocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Skin",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Skin",
+            "Cell type": "keratinocytes",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Skin",
+            "Cell type": "Langerhans",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Skin",
+            "Cell type": "melanocytes",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Skin",
+            "Cell type": "epidermal cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Small intestine",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Smooth muscle",
+            "Cell type": "smooth muscle cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Soft tissue",
+            "Cell type": "chondrocytes",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Soft tissue",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Soft tissue",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Spleen",
+            "Cell type": "cells in red pulp",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Spleen",
+            "Cell type": "cells in white pulp",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Stomach",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Stomach",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Testis",
+            "Cell type": "elongated or late spermatids",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Testis",
+            "Cell type": "Leydig cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Testis",
+            "Cell type": "pachytene spermatocytes",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Testis",
+            "Cell type": "peritubular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Testis",
+            "Cell type": "preleptotene spermatocytes",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Testis",
+            "Cell type": "round or early spermatids",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Testis",
+            "Cell type": "sertoli cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Testis",
+            "Cell type": "spermatogonia cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Thyroid gland",
+            "Cell type": "glandular cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Tonsil",
+            "Cell type": "germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Tonsil",
+            "Cell type": "non-germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Tonsil",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Urinary bladder",
+            "Cell type": "urothelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000151090",
+            "Gene name": "THRB",
+            "Tissue": "Vagina",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        }
+    ],
+    "ENSG00000152822": [
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Adipose tissue",
+            "Cell type": "adipocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Adrenal gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Appendix",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Appendix",
+            "Cell type": "lymphoid tissue",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Bone marrow",
+            "Cell type": "hematopoietic cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Breast",
+            "Cell type": "adipocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Breast",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Breast",
+            "Cell type": "myoepithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Bronchus",
+            "Cell type": "respiratory epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Caudate",
+            "Cell type": "glial cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Caudate",
+            "Cell type": "neuronal cells",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Cerebellum",
+            "Cell type": "cells in granular layer",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Cerebellum",
+            "Cell type": "cells in molecular layer",
+            "Level": "High",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Cerebellum",
+            "Cell type": "Purkinje cells",
+            "Level": "High",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "endothelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "glial cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "neuronal cells",
+            "Level": "High",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "neuropil",
+            "Level": "Medium",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Cervix",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Cervix",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Colon",
+            "Cell type": "endothelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Colon",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Colon",
+            "Cell type": "peripheral nerve/ganglion",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Duodenum",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Endometrium",
+            "Cell type": "cells in endometrial stroma",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Endometrium",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Endometrium",
+            "Cell type": "cells in endometrial stroma",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Endometrium",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Epididymis",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Esophagus",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Fallopian tube",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Gallbladder",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Heart muscle",
+            "Cell type": "cardiomyocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Hippocampus",
+            "Cell type": "glial cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Hippocampus",
+            "Cell type": "neuronal cells",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Kidney",
+            "Cell type": "cells in glomeruli",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Kidney",
+            "Cell type": "cells in tubules",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Liver",
+            "Cell type": "cholangiocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Liver",
+            "Cell type": "hepatocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Lung",
+            "Cell type": "alveolar cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Lung",
+            "Cell type": "macrophages",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Lymph node",
+            "Cell type": "germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Lymph node",
+            "Cell type": "non-germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Nasopharynx",
+            "Cell type": "respiratory epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Oral mucosa",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Ovary",
+            "Cell type": "follicle cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Ovary",
+            "Cell type": "ovarian stroma cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Pancreas",
+            "Cell type": "exocrine glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Pancreas",
+            "Uberon": "uberon:0001264"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Pancreas",
+            "Cell type": "pancreatic endocrine cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Pancreas",
+            "Uberon": "uberon:0001264"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Parathyroid gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Placenta",
+            "Cell type": "decidual cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Placenta",
+            "Cell type": "trophoblastic cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Prostate",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Rectum",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Salivary gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Seminal vesicle",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Skeletal muscle",
+            "Cell type": "myocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Skin",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Skin",
+            "Cell type": "keratinocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Skin",
+            "Cell type": "Langerhans",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Skin",
+            "Cell type": "melanocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Skin",
+            "Cell type": "epidermal cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Small intestine",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Smooth muscle",
+            "Cell type": "smooth muscle cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Soft tissue",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Soft tissue",
+            "Cell type": "peripheral nerve",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Soft tissue",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Soft tissue",
+            "Cell type": "peripheral nerve",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Spleen",
+            "Cell type": "cells in red pulp",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Spleen",
+            "Cell type": "cells in white pulp",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Stomach",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Stomach",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Testis",
+            "Cell type": "elongated or late spermatids",
+            "Level": "Low",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Testis",
+            "Cell type": "Leydig cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Testis",
+            "Cell type": "pachytene spermatocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Testis",
+            "Cell type": "peritubular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Testis",
+            "Cell type": "preleptotene spermatocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Testis",
+            "Cell type": "round or early spermatids",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Testis",
+            "Cell type": "sertoli cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Testis",
+            "Cell type": "spermatogonia cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Thyroid gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Tonsil",
+            "Cell type": "germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Tonsil",
+            "Cell type": "non-germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Tonsil",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Urinary bladder",
+            "Cell type": "urothelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000152822",
+            "Gene name": "GRM1",
+            "Tissue": "Vagina",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        }
+    ],
+    "ENSG00000273079": [
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Adipose tissue",
+            "Cell type": "adipocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Adrenal gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Appendix",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Appendix",
+            "Cell type": "lymphoid tissue",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Bone marrow",
+            "Cell type": "hematopoietic cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Breast",
+            "Cell type": "adipocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Breast",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Breast",
+            "Cell type": "myoepithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Bronchus",
+            "Cell type": "respiratory epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Caudate",
+            "Cell type": "glial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Caudate",
+            "Cell type": "neuronal cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Cerebellum",
+            "Cell type": "cells in granular layer",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Cerebellum",
+            "Cell type": "cells in molecular layer",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Cerebellum",
+            "Cell type": "Purkinje cells",
+            "Level": "High",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "endothelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "glial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "neuronal cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Cerebral cortex",
+            "Cell type": "neuropil",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Cervix",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Cervix",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Colon",
+            "Cell type": "endothelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Colon",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Colon",
+            "Cell type": "peripheral nerve/ganglion",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Duodenum",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Endometrium",
+            "Cell type": "cells in endometrial stroma",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Endometrium",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Endometrium",
+            "Cell type": "cells in endometrial stroma",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Endometrium",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Epididymis",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Esophagus",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Fallopian tube",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Gallbladder",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Heart muscle",
+            "Cell type": "cardiomyocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Hippocampus",
+            "Cell type": "glial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Hippocampus",
+            "Cell type": "neuronal cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Brain",
+            "Uberon": "uberon:0000955"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Kidney",
+            "Cell type": "cells in glomeruli",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Kidney",
+            "Cell type": "cells in tubules",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Liver",
+            "Cell type": "cholangiocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Liver",
+            "Cell type": "hepatocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Liver & Gallbladder",
+            "Uberon": "uberon:0002107"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Lung",
+            "Cell type": "alveolar cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Lung",
+            "Cell type": "macrophages",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Lymph node",
+            "Cell type": "germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Lymph node",
+            "Cell type": "non-germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Nasopharynx",
+            "Cell type": "respiratory epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Respiratory system",
+            "Uberon": "uberon:0001004"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Oral mucosa",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Ovary",
+            "Cell type": "follicle cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Ovary",
+            "Cell type": "ovarian stroma cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Pancreas",
+            "Cell type": "exocrine glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Pancreas",
+            "Uberon": "uberon:0001264"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Pancreas",
+            "Cell type": "pancreatic endocrine cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Pancreas",
+            "Uberon": "uberon:0001264"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Parathyroid gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Placenta",
+            "Cell type": "decidual cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Placenta",
+            "Cell type": "trophoblastic cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Prostate",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Rectum",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Salivary gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Proximal digestive tract",
+            "Uberon": "uberon:0004922"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Seminal vesicle",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Skeletal muscle",
+            "Cell type": "myocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Skin",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Skin",
+            "Cell type": "keratinocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Skin",
+            "Cell type": "Langerhans",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Skin",
+            "Cell type": "melanocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Skin",
+            "Cell type": "epidermal cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Skin",
+            "Uberon": "uberon:0002097"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Small intestine",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Smooth muscle",
+            "Cell type": "smooth muscle cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Muscle tissues",
+            "Uberon": "uberon:0001630"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Soft tissue",
+            "Cell type": "chondrocytes",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Soft tissue",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Soft tissue",
+            "Cell type": "peripheral nerve",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Soft tissue",
+            "Cell type": "fibroblasts",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Soft tissue",
+            "Cell type": "peripheral nerve",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Connective & Soft tissue",
+            "Uberon": "uberon:0002384"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Spleen",
+            "Cell type": "cells in red pulp",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Spleen",
+            "Cell type": "cells in white pulp",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Stomach",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Stomach",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Gastrointestinal tract",
+            "Uberon": "uberon:0001555"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Testis",
+            "Cell type": "cells in seminiferous ducts",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Testis",
+            "Cell type": "Leydig cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Male reproductive system",
+            "Uberon": "uberon:0000079"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Thyroid gland",
+            "Cell type": "glandular cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Endocrine tissues",
+            "Uberon": "uberon:0002367"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Tonsil",
+            "Cell type": "germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Tonsil",
+            "Cell type": "non-germinal center cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Tonsil",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Bone marrow & Lymphoid tissues",
+            "Uberon": "uberon:0002371"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Urinary bladder",
+            "Cell type": "urothelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Kidney & Urinary bladder",
+            "Uberon": "uberon:0002113"
+        },
+        {
+            "Gene": "ENSG00000273079",
+            "Gene name": "GRIN2B",
+            "Tissue": "Vagina",
+            "Cell type": "squamous epithelial cells",
+            "Level": "Not detected",
+            "Reliability": "Approved",
+            "Organ_x": "Breast and female reproductive system",
+            "Uberon": "uberon:0000310"
+        }
+    ]
+}

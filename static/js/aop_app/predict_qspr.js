@@ -1,6 +1,15 @@
 $(document).ready(function () {
     $("#fetch_predictions").on("click", function () {
         const smilesList = [];
+        const modelToMIE = {
+            "Q13224_RF_Model": "https://identifiers.org/aop.events/388",
+            "P31644_RF_Model": "https://identifiers.org/aop.events/2039",
+            "P41594_Allosteric_RF_Model": "https://identifiers.org/aop.events/2036",
+            "P41594_Orthosteric_RF_Model": "https://identifiers.org/aop.events/2036",
+            "Q13255_Allosteric_RF_Model": "https://identifiers.org/aop.events/2036",
+            "P10827_RF_Model": "https://identifiers.org/aop.events/1656",
+            "P10828_RF_Model": "https://identifiers.org/aop.events/1656"
+        };
 
         $("#compound_table tbody tr").each(function () {
             const imgElement = $(this).find("td:eq(1) img");
