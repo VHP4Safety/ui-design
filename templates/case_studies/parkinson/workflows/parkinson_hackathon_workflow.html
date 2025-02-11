@@ -3,7 +3,7 @@
     {% set mie_query = "aop.events:388 aop.events:2039 aop.events:2036" %}
     {% set compound_query = "Parkinson's disease case compounds" %}
     {% set qid = "Q5050" %}
-    <div id="compound-container" data-qid="{{ qid }}" data-mies="{{ mie_query }}">
+    <div id="compound-container" data-qid="{{ qid }}" data-mies="{{ mie_query }}" data-mie-query="{{ mie_query }}">
         {{ super() }}
     </div>
 {% endblock %}

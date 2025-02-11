@@ -4,6 +4,7 @@ from wikidataintegrator import wdi_core
 import json
 import re
 from urllib.parse import quote
+import pandas as pd
 
 aop_app = Blueprint('aop_app', __name__)
 
@@ -201,6 +202,7 @@ def fetch_predictions(smiles, models, metadata, threshold=6.5):
         "models": models,
         "format": "json"
     }
+    print(body)
     response = requests.post(url, headers=headers, data=json.dumps(body))
     if response.status_code == 200:
         predictions = response.json()
@@ -219,7 +221,7 @@ def fetch_predictions(smiles, models, metadata, threshold=6.5):
         return filtered_predictions
     else:
         return {"error": response.text}
-    
+
 @aop_app.route("/get_predictions", methods=["POST"])
 def get_predictions():
     data = request.json
@@ -266,7 +268,9 @@ def fetch_sparql_data(query):
                     "id": ke_upstream,
                     "label": ke_upstream_title,
                     "KEupTitle": ke_upstream_title,
-                    "is_mie": ke_upstream == mie  # Only set True if it matches MIE,
+                    "is_mie": ke_upstream == mie,  # Only set True if it matches MIE,
+                    "uniprot_id": result.get("uniprot_id", {}).get("value", ""),
+                    "protein_name": result.get("protein_name", {}).get("value", "")
                 }
             }
             if ke_upstream == mie:
@@ -301,7 +305,6 @@ def fetch_sparql_data(query):
 
     # Convert node_dict values to a list and merge with edges
     return list(node_dict.values()) + cytoscape_elements
-
 
 @aop_app.route("/get_aop_network")
 def get_aop_network():
@@ -355,3 +358,28 @@ def serve_predict_qspr_js():
 @aop_app.route('/get_compounds/<qid>', methods=['GET'])
 def get_compounds_by_qid(qid):
     return get_compounds_q(qid)
+
+def load_case_mie_model(mie_query):
+    df = pd.read_csv('/home/javi/ui-design-marvin/static/data/caseMieModel.csv', dtype=str)
+    mie_ids = [str(mie.split("aop.events:")[1]) for mie in mie_query.split() if "aop.events:" in mie]
+    df["MIE/KE identifier in AOP wiki"] = df["MIE/KE identifier in AOP wiki"].astype(str)
+    mie_ids = [str(mie_id) for mie_id in mie_ids]
+    print(set(df["MIE/KE identifier in AOP wiki"]))
+    filtered_df = df[df["MIE/KE identifier in AOP wiki"].isin(mie_ids)]
+    print("Filtered DataFrame:")
+    print(filtered_df)
+    return filtered_df
+
+@aop_app.route('/get_case_mie_model', methods=['GET'])
+def get_case_mie_model():
+    mie_query = request.args.get('mie_query', '')
+    if not mie_query:
+        return jsonify({"error": "mie_query parameter is required"}), 400
+
+    filtered_df = load_case_mie_model(mie_query)
+    print("filtered")
+    print(filtered_df)
+    model_to_mie = filtered_df.set_index('qsprpred_model')['MIE/KE identifier in AOP wiki'].to_dict()
+    print("Model to MIE Mapping:")
+    print(model_to_mie)
+    return jsonify(model_to_mie), 200
