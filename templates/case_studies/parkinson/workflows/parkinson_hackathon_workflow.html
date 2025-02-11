@@ -2,5 +2,8 @@
 {% block content %}
     {% set mie_query = "Parkinson Disease MIEs" %}
     {% set compound_query = "Parkinson's disease case compounds" %}
-    {{ super() }}
+    {% set qid = "Q5050" %}
+    <div id="compound-container" data-qid="{{ qid }}">
+        {{ super() }}
+    </div>
 {% endblock %}

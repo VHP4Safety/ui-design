@@ -29,21 +29,21 @@ def get_compounds_q(q):
     compoundwikiEP = "https://compoundcloud.wikibase.cloud/query/sparql"
 
     # Setting up the sparql query for the full list of compounds.
-    sparqlquery_full = """
+    sparqlquery_full = f"""
     PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>
     PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>
 
     SELECT DISTINCT (substr(str(?cmp), 45) as ?ID) (?cmpLabel AS ?Term)
         ?SMILES (?cmp AS ?ref)
-    WHERE{
-        { ?parent wdt:P21 wd:""" + q +""" ; wdt:P29 ?cmp . } UNION { ?cmp wdt:P21 wd:""" + q +""" . }
+    WHERE {{
+        {{ ?parent wdt:P21 wd:{q} ; wdt:P29 ?cmp . }} UNION {{ ?cmp wdt:P21 wd:{q} . }}
     ?cmp wdt:P1 ?type ; rdfs:label ?cmpLabel . FILTER(lang(?cmpLabel) = 'en')
     ?type rdfs:label ?typeLabel . FILTER(lang(?typeLabel) = 'en')
-    OPTIONAL { ?cmp wdt:P7 ?chiralSMILES }
-    OPTIONAL { ?cmp wdt:P12 ?nonchiralSMILES }
+    OPTIONAL {{ ?cmp wdt:P7 ?chiralSMILES }}
+    OPTIONAL {{ ?cmp wdt:P12 ?nonchiralSMILES }}
     BIND (COALESCE(IF(BOUND(?chiralSMILES), ?chiralSMILES, 1/0), IF(BOUND(?nonchiralSMILES), ?nonchiralSMILES, 1/0),"") AS ?SMILES)
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
-    }
+    SERVICE wikibase:label {{ bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }}
+    }}
     """
 
      # Making the SPARQL query
@@ -345,3 +345,7 @@ def serve_populate_aop_network_js():
 @aop_app.route('/js/aop_app/predict_qspr.js')
 def serve_predict_qspr_js():
     return send_file('js/aop_app/predict_qspr.js')
+
+@aop_app.route('/get_compounds/<qid>', methods=['GET'])
+def get_compounds_by_qid(qid):
+    return get_compounds_q(qid)

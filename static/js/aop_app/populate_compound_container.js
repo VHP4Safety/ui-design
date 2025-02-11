@@ -1,7 +1,8 @@
 let compoundMapping = {};
 
 document.addEventListener("DOMContentLoaded", function () {
-    $.getJSON("/get_compounds_parkinson", function (data) {
+    const qid = document.getElementById("compound-container").dataset.qid; // Get qid from data attribute
+    $.getJSON(`/get_compounds/${qid}`, function (data) {
         const tableBody = $("#compound_table tbody");
         tableBody.empty();
         data.forEach((option) => {
