@@ -260,7 +260,7 @@ def fetch_sparql_data(query):
         ao = result["ao"]["value"] if "ao" in result else None  # Adverse Outcome (AO)
         ker_uri = result["KER"]["value"]  # Extract KER URI
         ker_id = extract_ker_id(ker_uri)  # Extract only the numeric part
-        
+
         # Add or update the KE Upstream node
         if ke_upstream not in node_dict:
             node_dict[ke_upstream] = {
@@ -270,7 +270,8 @@ def fetch_sparql_data(query):
                     "KEupTitle": ke_upstream_title,
                     "is_mie": ke_upstream == mie,  # Only set True if it matches MIE,
                     "uniprot_id": result.get("uniprot_id", {}).get("value", ""),
-                    "protein_name": result.get("protein_name", {}).get("value", "")
+                    "protein_name": result.get("protein_name", {}).get("value", ""),
+                    "organ": result.get("KE_upstream_organ", {}).get("value", "nose"),
                 }
             }
             if ke_upstream == mie:
@@ -285,7 +286,10 @@ def fetch_sparql_data(query):
                 "data": {
                     "id": ke_downstream,
                     "label": ke_downstream_title,
-                    "is_ao": ke_downstream == ao  # Only set True if it matches AO
+                    "is_ao": ke_downstream == ao,  # Only set True if it matches AO
+                    "uniprot_id": result.get("uniprot_id", {}).get("value", ""),
+                    "protein_name": result.get("protein_name", {}).get("value", ""),
+                    "organ": result.get("KE_downstream_organ", {}).get("value", "nose"),
                 }
             }
         else:
@@ -299,7 +303,7 @@ def fetch_sparql_data(query):
                 "id": edge_id,
                 "source": ke_upstream,
                 "target": ke_downstream,
-                "ker_label": ker_id  # Store KER ID for Cytoscape.js labeling
+                "ker_label": ker_id,  # Store KER ID for Cytoscape.js labeling
             }
         })
 
@@ -316,7 +320,7 @@ def get_aop_network():
     print(mies)
     AOPWIKIPARKINSONSPARQL_QUERY = f"""
     SELECT DISTINCT ?aop ?aop_title ?MIEtitle ?MIE ?KE_downstream ?KE_downstream_title  
-           ?KER ?ao ?AOtitle ?KE_upstream ?KE_upstream_title
+           ?KER ?ao ?AOtitle ?KE_upstream ?KE_upstream_title ?KE_upstream_organ ?KE_downstream_organ
     WHERE {{
       VALUES ?MIE {{ {mies} }}
         ?aop a aopo:AdverseOutcomePathway ;
@@ -335,11 +339,13 @@ def get_aop_network():
           ?KE_downstream dc:title ?KE_downstream_title .
         
         OPTIONAL {{
-          ?ao rdfs:label ?AOtitle .
+          ?KE_upstream aopo:OrganContext ?KE_upstream_organ .
+          ?KE_downstream aopo:OrganContext ?KE_downstream_organ .
+
         }}
+
     }}
     """
-    print(AOPWIKIPARKINSONSPARQL_QUERY)
     data = fetch_sparql_data(AOPWIKIPARKINSONSPARQL_QUERY)
     return jsonify(data)
 

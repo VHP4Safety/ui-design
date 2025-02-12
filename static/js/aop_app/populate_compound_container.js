@@ -1,4 +1,31 @@
 let compoundMapping = {};
+let modelToProteinInfo = {};
+
+// Include PapaParse library
+$.getScript("https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js", function() {
+    console.log("PapaParse library loaded.");
+});
+
+// Load the model to protein name mapping
+$.ajax({
+    url: "/static/data/caseMieModel.csv",
+    dataType: "text",
+    success: data => {
+        Papa.parse(data, {
+            header: true,
+            skipEmptyLines: true,
+            complete: results => {
+                results.data.forEach(row => {
+                    const model = row["qsprpred_model"];
+                    const proteinName = row["protein name uniprot"];
+                    const uniprotId = row["uniprot ID inferred from qspred name"];
+                    modelToProteinInfo[model] = { proteinName, uniprotId };
+                });
+                console.log("Model to Protein Info Mapping:", modelToProteinInfo);
+            }
+        });
+    }
+});
 
 $(document).ready(() => {
     // Load the compound table with clickable links.
@@ -9,14 +36,15 @@ $(document).ready(() => {
             const encodedSMILES = encodeURIComponent(option.SMILES);
             compoundMapping[option.SMILES] = { term: option.Term, url: `/compound/${option.ID}` };
             tableBody.append(`
-        <tr>
-          <td><a href="/compound/${option.ID}">${option.Term}</a></td>
-          <td rowspan="1">
-            <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=1&annotate=cip&r=0&smi=${encodedSMILES}" 
-                 alt="${option.SMILES}" />
-          </td>
-        </tr>
-      `);
+                <tr>
+                    <td>
+                        <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=1&annotate=cip&r=0&smi=${encodedSMILES}" 
+                             alt="${option.SMILES}" />
+                        <br />
+                        <a href="/compound/${option.ID}" class="compound-link">${option.Term}</a>
+                    </td>
+                </tr>
+            `);
         });
     });
 
@@ -25,6 +53,13 @@ $(document).ready(() => {
         if ($(e.target).is("a")) return;
         $(this).toggleClass("selected");
         updateCytoscapeSubset();
+    });
+
+    // Handle compound link click to populate iframe
+    $("#compound_table").on("click", ".compound-link", function (e) {
+        e.preventDefault();
+        const url = $(this).attr("href");
+        $("#compound-frame").attr("src", url);
     });
 
     // Fetch predictions and update the table and Cytoscape.
@@ -39,7 +74,7 @@ $(document).ready(() => {
             success: modelToMIE => {
                 console.log("Model to MIE Mapping:", modelToMIE);
                 $("#compound_table tbody tr").each((_, tr) => {
-                    const img = $(tr).find("td:eq(1) img");
+                    const img = $(tr).find("td img");
                     const smiles = img.attr("alt") && img.attr("alt").trim();
                     if (smiles) smilesList.push(smiles);
                 });
@@ -63,13 +98,12 @@ $(document).ready(() => {
                         const tableBody = table.find("tbody").empty();
 
                         tableHead.append(`
-              <tr>
-                <th>Compound</th>
-                <th>SMILES</th>
-                <th>Model</th>
-                <th>Predicted pChEMBL</th>
-              </tr>
-            `);
+                            <tr>
+                                <th>Compound</th>
+                                <th>Target</th>
+                                <th>Predicted pChEMBL</th>
+                            </tr>
+                        `);
 
                         if (Array.isArray(response)) {
                             const grouped = response.reduce((acc, pred) => {
@@ -83,28 +117,30 @@ $(document).ready(() => {
                                 const compound = compoundMapping[smiles];
                                 const compoundCell = compound ? `<a href="${compound.url}">${compound.term}</a>` : smiles;
                                 tableBody.append(`
-                  <tr>
-                    <td>${compoundCell}</td>
-                    <td>
-                      <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=1&annotate=cip&r=0&smi=${encodeURIComponent(smiles)}" 
-                           alt="${smiles}" />
-                    </td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                `);
+                                    <tr>
+                                        <td>
+                                            <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=1&annotate=cip&r=0&smi=${encodeURIComponent(smiles)}" 
+                                                 alt="${smiles}" />
+                                            <br />
+                                            ${compoundCell}
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                `);
 
                                 predictions.forEach(prediction => {
                                     Object.entries(prediction).forEach(([model, value]) => {
                                         if (model !== "smiles" && parseFloat(value) >= 6.5) {
+                                            const proteinInfo = modelToProteinInfo[model] || { proteinName: "Unknown Protein", uniprotId: "" };
+                                            const proteinLink = proteinInfo.uniprotId ? `<a href="https://www.uniprot.org/uniprotkb/${proteinInfo.uniprotId}" target="_blank">${proteinInfo.proteinName}</a>` : proteinInfo.proteinName;
                                             tableBody.append(`
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td>${model}</td>
-                          <td>${value}</td>
-                        </tr>
-                      `);
+                                                <tr>
+                                                    <td></td>
+                                                    <td>${proteinLink} (${model})</td>
+                                                    <td>${value}</td>
+                                                </tr>
+                                            `);
                                             if (typeof cy !== "undefined") {
                                                 const targetNodeId = `https://identifiers.org/aop.events/${modelToMIE[model]}`;
                                                 const compoundId = compound ? compound.term : smiles;
@@ -148,7 +184,9 @@ $(document).ready(() => {
                                         color: "#000"
                                     })
                                     .update();
-                                cy.layout({ name: "cose", animate: true }).run();
+                                cy.animate({ fit: { padding: 30 }, duration: 500 });
+                                cy.layout({ name: "preset" }).run();
+                                positionNodes(cy);
                             }
                         } else {
                             console.error("Unexpected API response format:", response);
@@ -200,5 +238,8 @@ $(document).ready(() => {
         subsetNodes.show();
         subsetEdges.show();
         cy.fit(subsetNodes, 50);
+        cy.animate({ fit: { padding: 30 }, duration: 500 });
+        cy.layout({ name: "preset" }).run();
+        positionNodes(cy);
     }
 });
