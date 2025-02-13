@@ -131,7 +131,7 @@ $(document).ready(() => {
 
                                 predictions.forEach(prediction => {
                                     Object.entries(prediction).forEach(([model, value]) => {
-                                        if (model !== "smiles" && parseFloat(value) >= 6.5) {
+                                        if (parseFloat(value) >= 6.5) {
                                             const proteinInfo = modelToProteinInfo[model] || { proteinName: "Unknown Protein", uniprotId: "" };
                                             const proteinLink = proteinInfo.uniprotId ? `<a href="https://www.uniprot.org/uniprotkb/${proteinInfo.uniprotId}" target="_blank">${proteinInfo.proteinName}</a>` : proteinInfo.proteinName;
                                             tableBody.append(`
@@ -185,7 +185,7 @@ $(document).ready(() => {
                                     })
                                     .update();
                                 cy.animate({ fit: { padding: 30 }, duration: 500 });
-                                cy.layout({ name: "preset" }).run();
+                                cy.layout({ name: "cose" }).run();
                                 positionNodes(cy);
                             }
                         } else {
@@ -239,7 +239,7 @@ $(document).ready(() => {
         subsetEdges.show();
         cy.fit(subsetNodes, 50);
         cy.animate({ fit: { padding: 30 }, duration: 500 });
-        cy.layout({ name: "preset" }).run();
+        cy.layout({ name: "cose" }).run();
         positionNodes(cy);
     }
 });

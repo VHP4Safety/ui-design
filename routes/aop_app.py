@@ -260,6 +260,8 @@ def fetch_sparql_data(query):
         ao = result["ao"]["value"] if "ao" in result else None  # Adverse Outcome (AO)
         ker_uri = result["KER"]["value"]  # Extract KER URI
         ker_id = extract_ker_id(ker_uri)  # Extract only the numeric part
+        aop = result["aop"]["value"] if "aop" in result else None  # Adverse Outcome Pathway(AOP)
+        aop_title = result["aop_title"]["value"] if "aop_title" in result else None  # Adverse Outcome Pathway(AOP)
 
         # Add or update the KE Upstream node
         if ke_upstream not in node_dict:
@@ -272,13 +274,15 @@ def fetch_sparql_data(query):
                     "uniprot_id": result.get("uniprot_id", {}).get("value", ""),
                     "protein_name": result.get("protein_name", {}).get("value", ""),
                     "organ": result.get("KE_upstream_organ", {}).get("value", "nose"),
+                    "aop": [result.get("aop", {}).get("value", "")]
                 }
             }
-            if ke_upstream == mie:
-                node_dict[ke_upstream]["data"]["in_brain"] = True
         else:
-            if ke_upstream == mie:
-                node_dict[ke_upstream]["data"]["is_mie"] = True
+            print(node_dict[ke_upstream])
+            if aop not in node_dict[ke_upstream]["data"]["aop"]:
+                node_dict[ke_upstream]["data"]["aop"].append(aop)
+        if ke_upstream == mie:
+            node_dict[ke_upstream]["data"]["is_mie"] = True
 
         # Add or update the KE Downstream node
         if ke_downstream not in node_dict:
@@ -290,6 +294,8 @@ def fetch_sparql_data(query):
                     "uniprot_id": result.get("uniprot_id", {}).get("value", ""),
                     "protein_name": result.get("protein_name", {}).get("value", ""),
                     "organ": result.get("KE_downstream_organ", {}).get("value", "nose"),
+                    "aop": [result.get("aop", {}).get("value", "")],
+                    "aop_title": [result.get("aop_title", {}).get("value", "")],
                 }
             }
         else:

@@ -1,54 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 
-<style>
-    /* Style for Cytoscape Container */
-    #cy {
-        background-color: #FFFFFF; /* White background */
-        border-radius: 20px; /* Rounded edges */
-        border: 2px solid #ccc; /* Light gray border */
-        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2); /* Soft shadow */
-        padding: 10px; /* Internal padding */
-        height: 60vh;
-    }
-    .container {
-        display: flex;
-        width: 90vw; /* Full viewport width */
-        margin: 0; /* Remove default margin */
-        padding: 0; /* Remove default padding */
-    }
-    .left, .center {
-        padding: 10px;
-        flex-shrink: 0; /* Do not prevent shrinking */
-    }
-    .left {
-        width: 35vw;
-        height: 60vh;
-        margin-left: 2.5vw;
-    }
-    .center {
-        width: 60vw;
-        margin-right: 2.5vw;
-    }
-    .table-container {
-        max-height: 60vh; /* Limit height */
-        overflow-y: auto; /* Make scrollable */
-        border-radius: 20px; /* Rounded edges */
-    }
-    th, td {
-        word-wrap: break-word; /* Wrap text */
-    }
-
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/qaop_app.css') }}">
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
 <br />
 <div class="container" data-mies="{{ mies }}">
     <div class="left">
         <section>
             <h2>Chemicals</h2>
-            <button id="fetch_predictions" class="btn btn-primary">QSPRpred activity predictions for MIEs</button>
             <div class="table-container">
                 <table class="table table-bordered table-striped" id="compound_table"> 
                     <thead>
@@ -67,9 +29,13 @@
             <h2>
                 Adverse Outcome Pathways
             </h2>
-            <button id="reset_layout" class="btn btn-secondary">Reset Layout</button>
-            <button id="see_genes" class="btn btn-secondary">See Genes</button>
-            <div id="cy"></div>
+                <button id="fetch_predictions" class="btn btn-primary">QSPRpred activity predictions for MIEs</button>
+                <button id="reset_layout" class="btn btn-secondary">Reset Layout</button>
+                <button id="see_genes" class="btn btn-secondary">See Genes</button>
+            <div id="cy">
+
+            </div>
+
             <p id="loading" style="text-align: center;">Loading AOP network...</p>
         </section>
     </div>
@@ -88,21 +54,5 @@
 <script src="/static/js/aop_app/position_nodes.js"></script>
 <script src="/static/js/aop_app/populate_compound_container.js"></script>
 <script src="/static/js/aop_app/populate_aop_network.js"></script>
-
-<style>
-.tooltip {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.8);
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 5px;
-    font-size: 14px;
-    display: none;
-    z-index: 10;
-    max-width: 200px;
-    text-align: center;
-    font-weight: bold;
-}
-</style>
 
 {% endblock %}

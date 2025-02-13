@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 ...ele.data
             }
             })),
-            layout: { name: "preset" }, // Use preset layout to manually position nodes
+            layout: { name: "cose" }, 
             style: [
             { selector: "node", style: {
                 "width": 150, "height": 150,
@@ -91,7 +91,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Add functionality to the "See Genes" button
         $("#see_genes").on("click", function () {
-            console.log("See Genes button clicked");
             $.ajax({
                 url: "/static/data/caseMieModel.csv",
                 dataType: "text",
@@ -159,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             cy.add(geneElements);
                             console.log(geneElements);
-                            positionNodes(cy);
+                        positionNodes(cy);
                             console.log("Gene elements added to Cytoscape");
                         }
                     });
@@ -175,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchAOPData(mies).then(data => renderAOPNetwork(data));
     
     $("#reset_layout").on("click", function () {
-        cy.layout({ name: "preset" }).run();
+        cy.layout({ name: "cose" }).run();
         positionNodes(cy);
     });
 });

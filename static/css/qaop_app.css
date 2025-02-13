@@ -1,0 +1,50 @@
+/* Style for Cytoscape Container */
+#cy {
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    border: 2px solid #ccc;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    height: 60vh;
+}
+.container {
+    display: flex;
+    width: 90vw;
+    margin: 0;
+    padding: 0;
+}
+.left, .center {
+    padding: 10px;
+    flex-shrink: 0;
+}
+.left {
+    width: 35vw;
+    height: 60vh;
+    margin-left: 2.5vw;
+}
+.center {
+    width: 60vw;
+    margin-right: 2.5vw;
+}
+.table-container {
+    max-height: 60vh;
+    overflow-y: auto;
+    border-radius: 20px;
+}
+th, td {
+    word-wrap: break-word;
+}
+
+.tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    display: none;
+    z-index: 10;
+    max-width: 200px;
+    text-align: center;
+    font-weight: bold;
+}
