@@ -130,17 +130,8 @@ def service_list():
                             'png': "../../static/images/logo.png"
                         })
 
-        mid=len(services) // 2
-        chunk1 = services[ :mid]
-        chunk2 = services[mid: ]
-        print("Chunk1:")
-        print(chunk1)
-
-        print("Chunk2:")
-        print(chunk2)
-
         # Passing the services data to the template after processing all JSON files.
-        return render_template('services/service_list.html', chunk1=chunk1, chunk2=chunk2)
+        return render_template('services/service_list.html', services=services)
     else:
         return f"Error fetching files: {response.status_code}"
 
