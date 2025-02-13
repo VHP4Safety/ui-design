@@ -44,14 +44,13 @@
   </head>
   <body>
     <div id="page-container">
-      <!-- Navigation Bar -->
+            <!-- Navigation Bar -->
       <nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation">
         <div class="container">
           <!-- Logo on the left -->
           <a class="navbar-brand" href="{{ url_for('home') }}">
-            <img src="{{ url_for('static', filename='images/vhp.png') }}" class="img-fluid" alt="VHP4Safety Logo" />
+            <img src="{{ url_for('static', filename='images/vhp_higher_res.png') }}" class="img-fluid" alt="VHP4Safety Logo" />
           </a>
-          
           <!-- Toggler for small screens -->
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -125,7 +124,7 @@
               <!-- Parkinson Dropdown with Nested Menu -->
               <div class="dropdown-submenu">
                 <a class="dropdown-item dropdown-toggle" href="{{ url_for('parkinson_main') }}">Parkinson</a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu dropdown-submenu dropdown-submenu-left">
                   <li><a class="dropdown-item" href="{{ url_for('parkinson_hackathon_workflow') }}">Parkinson hackathon workflow</a>
                   </li>
                 </ul>
@@ -134,7 +133,7 @@
                 <!-- Thyroid Dropdown with Nested Menu -->
                 <div class="dropdown-submenu">
                   <a class="dropdown-item dropdown-toggle" href="{{ url_for('thyroid_main') }}">Thyroid</a>
-                  <ul class="dropdown-menu">
+                  <ul class="dropdown-menu dropdown-submenu dropdown-submenu-left">
                     <li><a class="dropdown-item" href="{{ url_for('thyroid_workflow_1') }}">Workflow 1</a></li>
                     <li><a class="dropdown-item" href="{{ url_for('ngra_silymarin') }}">Developmental Neurotoxicity Risk Assessment of Silymarin</a></li>
                   </ul>
@@ -142,6 +141,12 @@
               </div>
             </li>
           </ul>
+
+          <!-- Right hexagon img -->
+          <a class="navbar-brand" id="navbar-img-right" href="{{ url_for('home') }}">
+            <img src= "{{ url_for('static', filename='images/NavbarSideRight.png') }}" alt="VHP4Safety Logo" />
+          </a>
+
         </div>
       </nav>
 
