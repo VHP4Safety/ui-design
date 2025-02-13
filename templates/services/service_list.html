@@ -28,41 +28,21 @@
     <h1>Services</h1>
     <div class="container">
       <div class="row align-items-start">
-        <div class="col">
-          <ul>
-            {% for item in chunk1 %}
-              <div class="card">
-                <img src="{{item.png}}" class="card-img-top" alt="Your logo here">
-                <div class="card-body">
-                  <h5 class="card-title">{{item.service}}</h5>
-                  <p id="desc" class="card-text">{{item.description}}</p>
-                  <a href="{{ item.meta_data}}" class="btn btn-outline-info">Meta data</a>
-                  <a href="{{ item.url }}" class="btn btn-outline-info">Find out more</a>
-                </div>
+        <ul>
+          {% for item in services %}
+            <div class="card">
+              <img src="{{ item.png }}" class="card-img-top" alt="Your logo here">
+              <div class="card-body">
+                <h5 class="card-title">{{ item.service }}</h5>
+                <p id="desc" class="card-text">{{ item.description }}</p>
+                <a href="{{ item.url }}" class="btn btn-outline-info">Service information</a>
+                <a href="{{ item.meta_data }}" class="btn btn-outline-info">Meta data</a>
               </div>
-            {% else %}
-                <li>No services found.</li>
-            {% endfor %}
-          </ul>
-        </div>
-        <div class="col">
-          <ul>
-            {% for item in chunk2 %}
-              <div class="card">
-                <img src="{{item.png}}" class="card-img-top" alt="Your logo here">
-                <div class="card-body">
-                  <h5 class="card-title">{{item.service}}</h5>
-                  <p id="desc" class="card-text">{{item.description}}</p>
-                  <a href="{{ item.meta_data}}" class="btn btn-outline-info">Meta data</a>
-                  <a href="{{ item.url }}" class="btn btn-outline-info">Find out more</a>
-                </div>
-              </div>
-            {% else %}
-                <li>No services found.</li>
-            {% endfor %}
-          </ul>
-        </div>
-
+            </div>
+          {% else %}
+              <li>No services found.</li>
+          {% endfor %}
+        </ul>
       </div>
     </div>
     <script>

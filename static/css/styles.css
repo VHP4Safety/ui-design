@@ -120,24 +120,29 @@ footer {
   top: 0;
   z-index: 1000;
   width: 100%;
-  box-shadow: 0 1px 3px var(--dark-blue);
+  box-shadow: 0 10px 30px var(--dark-blue);
+  height: 100px;
 }
 
 /* Navbar brand (logo) */
 .navbar-brand img {
-  max-height: 50px;
+  max-height: 100px;
   width: auto;
 }
 
 /* Navbar links */
 .nav-link {
   color: var(--dark-blue) !important;
+  font-size: 20px;
 }
 
 .nav-link:hover {
   color: var(--pink) !important;
 }
 
+#navbar-img-right {
+  right: 0px;
+}
 /* @Ozan for the merge conflict, the .btn-outline-info below has been moved to the bottom of the file, it was not removed so it can be removed here for the merge */
 /* Okay, they are commented out in this part and the options for .btn-outline-info are left to the bottom of this file. */
 
@@ -161,11 +166,11 @@ position: relative;
 
 .dropdown-menu .dropdown-item {
   color: var(--dark-blue);
+  font-size: 20px;
 }
 
 .dropdown-menu .dropdown-item:hover {
-  background: var(--pink);
-  color: var(--white);
+  color: var(--pink);
 }
 
 /* Make the nested dropdown menu appear on hover */
@@ -182,6 +187,14 @@ position: relative;
 }
 
 .dropdown-submenu:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu .dropdown-submenu-left {
+  right: 100%;
+  left: auto;
+}
+.dropdown-menu > li:hover > .dropdown-submenu {
   display: block;
 }
 
@@ -444,8 +457,8 @@ tbody tr:hover {
 }
 
 .card {
-  padding: 15px;
-  margin-bottom: 15px;
+  padding: 30px;
+  margin-bottom: 30px;
   border-radius: 8px; /* Rounded corners */
   box-shadow: 6px 10px 6px rgba(230, 0, 126, 0.5); /* Subtle shadow */
   background-color: rgba(255, 255, 255, 1) !important;
