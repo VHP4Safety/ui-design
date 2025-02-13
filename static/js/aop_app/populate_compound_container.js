@@ -1,11 +1,13 @@
 let compoundMapping = {};
 let modelToProteinInfo = {};
-
+var cy = cytoscape({
+    container: document.getElementById('cy')
+});
 // Include PapaParse library
 $.getScript("https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js", function() {
     console.log("PapaParse library loaded.");
 });
-
+console.log(cy);
 // Load the model to protein name mapping
 $.ajax({
     url: "/static/data/caseMieModel.csv",
@@ -141,7 +143,8 @@ $(document).ready(() => {
                                                     <td>${value}</td>
                                                 </tr>
                                             `);
-                                            if (typeof cy !== "undefined") {
+                                            if (typeof cy !== "undefined") { /* if exists */
+                                                console.log(cy);
                                                 const targetNodeId = `https://identifiers.org/aop.events/${modelToMIE[model]}`;
                                                 const compoundId = compound ? compound.term : smiles;
                                                 cyElements.push(
@@ -201,7 +204,6 @@ $(document).ready(() => {
     });
 
     function updateCytoscapeSubset() {
-        if (typeof cy === "undefined") return;
         const selectedRows = $("#compound_table tbody tr.selected");
         if (!selectedRows.length) {
             cy.elements().show();

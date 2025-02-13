@@ -273,14 +273,16 @@ def fetch_sparql_data(query):
                     "is_mie": ke_upstream == mie,  # Only set True if it matches MIE,
                     "uniprot_id": result.get("uniprot_id", {}).get("value", ""),
                     "protein_name": result.get("protein_name", {}).get("value", ""),
-                    "organ": result.get("KE_upstream_organ", {}).get("value", "nose"),
-                    "aop": [result.get("aop", {}).get("value", "")]
+                    "organ": result.get("KE_upstream_organ", {}).get("value", ""),
+                    "aop": [result.get("aop", {}).get("value", "")],
+                    "aop_title": [result.get("aop_title", {}).get("value", "")],
                 }
             }
         else:
-            print(node_dict[ke_upstream])
             if aop not in node_dict[ke_upstream]["data"]["aop"]:
                 node_dict[ke_upstream]["data"]["aop"].append(aop)
+            if aop_title not in node_dict[ke_upstream]["data"]["aop_title"]:
+                node_dict[ke_upstream]["data"]["aop_title"].append(aop_title)
         if ke_upstream == mie:
             node_dict[ke_upstream]["data"]["is_mie"] = True
 
@@ -299,8 +301,12 @@ def fetch_sparql_data(query):
                 }
             }
         else:
-            if ke_downstream == ao:
-                node_dict[ke_downstream]["data"]["is_ao"] = True
+            if aop not in node_dict[ke_downstream]["data"]["aop"]:
+                node_dict[ke_downstream]["data"]["aop"].append(aop)
+            if aop_title not in node_dict[ke_downstream]["data"]["aop_title"]:
+                node_dict[ke_downstream]["data"]["aop_title"].append(aop_title)
+        if ke_downstream == ao:
+            node_dict[ke_downstream]["data"]["is_ao"] = True
 
         # Add edge with extracted KER ID
         edge_id = f"{ke_upstream}_{ke_downstream}"
