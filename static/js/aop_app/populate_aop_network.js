@@ -1,13 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
     let boundingBoxesVisible = false;
-
-    // A stub for positionNodes – replace with your own logic as needed.
-    function positionNodes(cyInstance) {
-        console.debug("Positioning nodes...");
-        // For example, you might want to run a layout or update positions here.
-        // cyInstance.fit();
-    }
-
     // Fetch data for the AOP network.
     function fetchAOPData(mies) {
         console.debug(`Fetching AOP network data for: ${mies}`);
@@ -36,8 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
             layout: { name: "cose" },
             style: [
                 {
-                    // Apply fixed width/height only to non-compound nodes.
-                    selector: "node:not(.bounding-box)",
+                    // Apply fixed width/height only to non-AOP (parent) nodes.
+                    selector: "node",
                     style: {
                         "width": 150,
                         "height": 150,
@@ -60,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 {
                     selector: "edge[ker_label]",
                     style: {
-                        "curve-style": "bezier",
+                        "curve-style": "unbundled-bezier",
                         "width": 3,
                         "line-color": "#000",
                         "opacity": 0.8,
@@ -115,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 },
                 {
-                    // Bounding boxes (compound nodes) should auto-size based on their children.
+                    // Bounding boxes (aop nodes) should auto-size based on their children.
                     selector: ".bounding-box",
                     style: {
                         "shape": "roundrectangle",
@@ -125,9 +117,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         "label": "data(label)",
                         "text-valign": "top",
                         "text-halign": "center",
-                        "font-size": "14px",
-                        "padding": "10px",
-                        "compound-sizing-wrt-labels": "include"
+                        "font-size": "50px",
+                        "text-wrap": "none"
                     }
                 }
             ]
@@ -145,8 +136,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 window.open(`https://www.uniprot.org/uniprotkb/${url.replace("uniprot_", "")}`, "_blank");
             } else if (node.hasClass("ensembl-node")) {
                 window.open(`https://identifiers.org/ensembl/${url.replace("ensembl_", "")}`, "_blank");
-            } else if (url) {
-                window.open(url, "_blank");
+            } else if (node.hasClass('.bounding-box')) {
+                window.open(node.data("aop"), "_blank");
             }
         });
 
@@ -243,20 +234,26 @@ document.addEventListener("DOMContentLoaded", function () {
                             console.debug("Adding gene elements:", geneElements);
                             cy.add(geneElements);
                             console.debug("Gene elements added to Cytoscape");
-                            positionNodes(cy);
+                            
                         }
                     });
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
                     console.error("Error loading CSV data:", textStatus, errorThrown);
                 }
-            });
+            }); 
+            positionNodes(cy);
         });
 
         // "Toggle Bounding Boxes" button functionality.
         $("#toggle_bounding_boxes").on("click", function () {
             if (boundingBoxesVisible) {
                 console.debug("Removing bounding boxes");
+                cy.nodes().forEach(node => {
+                    if (node.isChild()) {
+                        node.move({ parent: null });
+                    }
+                });
                 cy.elements(".bounding-box").remove();
                 boundingBoxesVisible = false;
             } else {
@@ -266,10 +263,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     const aop = node.data("aop");
                     const aopTitle = node.data("aop_title");
                     if (aop) {
-                        if (!aopGroups[aop]) {
-                            aopGroups[aop] = { nodes: [], title: aopTitle };
-                        }
-                        aopGroups[aop].nodes.push(node);
+                        const aopList = Array.isArray(aop) ? aop : [aop];
+                        aopList.forEach(aopItem => {
+                            if (!aopGroups[aopItem]) {
+                                aopGroups[aopItem] = { nodes: [], title: aopTitle };
+                            }
+                            aopGroups[aopItem].nodes.push(node);
+                        });
                     } else {
                         console.warn(`Node ${node.id()} is missing aop data`);
                     }
@@ -289,23 +289,48 @@ document.addEventListener("DOMContentLoaded", function () {
                         data: { id: parentId, label: `${aopTitle}\n${aop}` },
                         classes: "bounding-box"
                     });
-                    cy.add(boundingBoxes);
-                    boundingBoxesVisible = true;
-                    // Assign nodes as children of the bounding box.
-                    nodes.forEach(node => {
-                        console.debug(`Assigning node ${node.id()} to AOP bounding box ${parentId}`);
-                        node.move({ parent: parentId });
-                        
-                    });
                 });
 
-                
+                cy.add(boundingBoxes);
+                boundingBoxesVisible = true;
+
+                // Assign nodes as children of the bounding boxes.
+                cy.nodes().forEach(node => {
+                    const aop = node.data("aop");
+                    console.log("TYPE OF AOP", typeof aop, aop);
+                    if (aop) {
+                        const aopList = Array.isArray(aop) ? aop : [aop];
+                        aopList.forEach(aopItem => {
+                            const parentId = `bounding-box-${aopItem}`;
+                            if (cy.getElementById(parentId).length > 0) {
+                                node.move({ parent: parentId });
+                            }
+                        });
+                    }
+                });
+
+                // Assign genes and UniProts connected to MIEs to the bounding boxes.
+                cy.nodes().forEach(node => {
+                    if (node.hasClass("uniprot-node") || node.hasClass("ensembl-node" || node.hasClass("chemical-node"))) {
+                        const connectedMIEs = node.connectedEdges().filter(edge => edge.target().data("is_mie"));
+                        connectedMIEs.forEach(edge => {
+                            const mieNode = edge.target();
+                            const aop = mieNode.data("aop");
+                            if (aop) {
+                                const aopList = Array.isArray(aop) ? aop : [aop];
+                                aopList.forEach(aopItem => {
+                                    const parentId = `bounding-box-${aopItem}`;
+                                    if (cy.getElementById(parentId).length > 0) {
+                                        node.move({ parent: parentId });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
 
                 // Re-run the layout so the compound nodes update.
-                cy.layout({
-                    name: "cose",
-                    animate: true
-                }).run();
+                positionNodes(cy);
             }
         });
 
@@ -323,9 +348,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .update();
 
         // Run final layout and fit view to container.
-        cy.layout({ name: "cose", animate: true }).run();
-        cy.fit();
-        console.debug("Final layout complete. Cytoscape view fitted to container.");
+        positionNodes(cy);
     }
 
     // Retrieve the "mies" data.
@@ -342,8 +365,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Reset layout button functionality.
     $("#reset_layout").on("click", function () {
-        console.debug("Resetting layout...");
-        cy.layout({ name: "cose", animate: true }).run();
+        //cy.layout({ name: "cose", animate: true }).run();
         positionNodes(cy);
     });
 });
