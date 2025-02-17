@@ -99,7 +99,22 @@ function positionNodes(cy, fontSizeMultiplier = 1) {
                 "text-margin-y": -15,
                 "font-size": `${40 * fontSizeMultiplier}px`,
                 "curve-style": "unbundled-bezier",
-
+                
+            }
+        },
+        {
+            selector: "edge[type='interaction']",
+            style: {
+                "width": `${40 * fontSizeMultiplier}px`,
+                "line-color": "#ceafc0",
+                "opacity": 0.5,
+                "target-arrow-shape": "triangle",
+                "target-arrow-color": "#ceafc0",
+                "text-margin-y": 1,
+                "text-rotation": "autorotate",
+                "font-size": `${40 * fontSizeMultiplier}px`,
+                "font-weight": "bold",
+                "color": "#000"
             }
         },
         {
