@@ -34,14 +34,14 @@ $(document).ready(() => {
         const tableBody = $("#compound_table tbody").empty();
         data.forEach(option => {
             const encodedSMILES = encodeURIComponent(option.SMILES);
-            compoundMapping[option.SMILES] = { term: option.Term, url: `/compound/${option.ID}` };
+            compoundMapping[option.SMILES] = { term: option.Term, url: `/compound/${option.ID}`, target: "_blank" };
             tableBody.append(`
                 <tr>
                     <td>
-                        <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=1&annotate=cip&r=0&smi=${encodedSMILES}" 
+                        <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=0.5&annotate=cip&r=0&smi=${encodedSMILES}" 
                              alt="${option.SMILES}" />
                         <br />
-                        <a href="${compoundMapping[option.SMILES].url}" class="compound-link">${option.Term}</a>
+                        <a href="${compoundMapping[option.SMILES].url}" class="compound-link" target="_blank">${option.Term}</a>
                     </td>
                 </tr>
             `);

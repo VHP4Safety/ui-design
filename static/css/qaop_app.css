@@ -59,3 +59,11 @@ th, td {
     width: 90px;
     font-size: 13px;
 }
+
+#font-size-slider {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 200px;
+    z-index: 1000;
+}
