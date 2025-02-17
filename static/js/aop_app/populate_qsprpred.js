@@ -83,7 +83,9 @@ $(document).ready(() => {
                 const models = Object.keys(modelToMIE);
                 if (!models.length) return alert("Error: No models available for prediction.");
 
-                const requestData = { smiles: smilesList, models, metadata: {}, threshold: 6.5 };
+                const thresholdElement = document.getElementById("threshold_pchembl");
+                const thresholdValue = parseFloat(thresholdElement ? thresholdElement.value : "6.5");
+                const requestData = { smiles: smilesList, models, metadata: {}, threshold: thresholdValue };
                 console.log("REQUEST DATA:", requestData);
 
                 $.ajax({

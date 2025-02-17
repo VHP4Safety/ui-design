@@ -19,7 +19,7 @@
 }
 .left {
     width: 35vw;
-    height: 60vh;
+    height: 20vh;
     margin-left: 2.5vw;
 }
 .center {
@@ -52,4 +52,10 @@ th, td {
 .loading {
     color:black;
 
+}
+
+.form-control {
+    max-width: 90px;
+    width: 90px;
+    font-size: 13px;
 }

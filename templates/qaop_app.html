@@ -9,7 +9,19 @@
 <div class="container" data-mies="{{ mies }}">
     <div class="left">
         <section>
-            <h2>Chemicals</h2>
+            <h2>Add data to the network</h2>
+            <div id="qsprpred">
+                <h3>pChEMBL</h3>
+                <div class="form-group">
+                    <p>Set the threshold for pChEMBL (<span id="activity_display">activity of 10<sup>-6.5</sup> M</span>) <input type="number" step="0.1" class="form-control" id="threshold_pchembl" value="6.5" oninput="updateActivity()" style="display: inline-block; width: auto;"></p>
+                    <script>
+                        function updateActivity() {
+                            var value = document.getElementById('threshold_pchembl').value;
+                            document.getElementById('activity_display').innerHTML = 'activity of 10<sup>-' + value + '</sup> M';
+                        }
+                    </script>
+                </div>
+            </div>
             <div class="table-container">
                 <table class="table table-bordered table-striped" id="compound_table"> 
                     <thead>
