@@ -6,7 +6,6 @@ function positionNodes(cy) {
         gravity: 0.1,
         nodeRepulsion: 400,
     }).run();
-    cy.fit();
     cy.style([
         {
             selector: "node",

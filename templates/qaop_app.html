@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-
 <link rel="stylesheet" href="{{ url_for('static', filename='css/qaop_app.css') }}">
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -22,6 +21,7 @@
                 </table>
             </div>
         </section>
+    <p id="loading" style="text-align: center;">Loading compound list...</p>
     </div>
     
     <div class="center">
@@ -34,10 +34,10 @@
                 <button id="see_genes" class="btn btn-secondary">See Genes</button>
                 <button id="toggle_bounding_boxes" class="btn btn-secondary">Show AOPs</button>
             <div id="cy">
-
+                <p id="loading" style="text-align: center;">Loading AOP network...</p>
             </div>
 
-            <p id="loading" style="text-align: center;">Loading AOP network...</p>
+            
         </section>
     </div>
 </div>

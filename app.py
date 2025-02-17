@@ -62,7 +62,7 @@ def youp():
 ################################################################################
 
 ################################################################################
-### Pages under 'Services' 
+### Pages under 'Services'
 
 # Page to list all the services based on the list of services on the cloud repo.
 @app.route('/templates/services/service_list')
@@ -140,11 +140,11 @@ def service_list():
 @app.route('/templates/services/qsprpred')
 def qsprpred():
     return render_template('services/qsprpred.html')
-    
+
 ################################################################################
 
 ################################################################################
-### Pages under 'Case Studies' 
+### Pages under 'Case Studies'
 
 @app.route('/templates/case_studies/kidney/kidney')
 def kidney_main():
@@ -154,9 +154,15 @@ def kidney_main():
 def parkinson_main():
     return render_template('case_studies/parkinson/parkinson.html')
 
-@app.route('/templates/case_studies/parkinson/workflows/parkinson_hackathon_workflow')
-def parkinson_hackathon_workflow():
-    return render_template('case_studies/parkinson/workflows/parkinson_hackathon_workflow.html')
+@app.route('/templates/case_studies/parkinson/workflows/parkinson_qAOP')
+def parkinson_qaop():
+    return render_template('case_studies/parkinson/workflows/parkinson_qAOP.html')
+
+
+@app.route("/templates/case_studies/thyroid/workflows/thyroid_qAOP")
+def thyroid_qaop():
+    return render_template("case_studies/thyroid/workflows/thyroid_qAOP.html")
+
 
 @app.route('/workflow/<workflow>')
 def show(workflow):
@@ -195,4 +201,3 @@ app.register_blueprint(aop_app)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
-
