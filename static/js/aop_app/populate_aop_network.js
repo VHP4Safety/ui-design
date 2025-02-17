@@ -44,6 +44,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 window.open(`https://identifiers.org/ensembl/${url.replace("ensembl_", "")}`, "_blank");
             } else if (node.hasClass("bounding-box")) {
                 window.open(node.data("aop"), "_blank");
+            } else {
+                window.open(`${url}`);
+            }
+        });
+        
+        cy.on("tap", "edge", function(evt) {
+            const edge = evt.target;
+            if (edge.data("ker_label")) {
+                window.open(`https://identifiers.org/aop.relationships/${edge.data("ker_label")}`);
             }
         });
 
@@ -52,76 +61,6 @@ document.addEventListener("DOMContentLoaded", function () {
             console.debug(`Node added: ${evt.target.id()}`);
             positionNodes(cy);
         });
-
-        function loadAndShowGenes() {
-            console.debug('Loading CSV data for "See Genes"');
-            $.ajax({
-                url: "/static/data/caseMieModel.csv",
-                dataType: "text",
-                success: data => {
-                    console.debug("CSV data loaded successfully");
-                    Papa.parse(data, {
-                        header: true,
-                        skipEmptyLines: true,
-                        complete: results => {
-                            console.debug("CSV data parsed successfully", results);
-                            const geneElements = [];
-                            results.data.forEach(row => {
-                                const mieId = "https://identifiers.org/aop.events/" + row["MIE/KE identifier in AOP wiki"];
-                                const uniprotId = row["uniprot ID inferred from qspred name"];
-                                const ensemblId = row["Ensembl"];
-                                console.debug(`Processing row - MIE ID: ${mieId}, UniProt ID: ${uniprotId}, Ensembl ID: ${ensemblId}`);
-
-                                if (mieId && uniprotId && ensemblId && cy.getElementById(mieId).length > 0) {
-                                    const uniprotNodeId = `uniprot_${uniprotId}`;
-                                    const ensemblNodeId = `ensembl_${ensemblId}`;
-
-                                    if (cy.getElementById(uniprotNodeId).empty()) {
-                                        geneElements.push({
-                                            data: { id: uniprotNodeId, label: uniprotId, type: "uniprot" },
-                                            classes: "uniprot-node"
-                                        });
-                                    }
-
-                                    if (cy.getElementById(ensemblNodeId).empty()) {
-                                        geneElements.push({
-                                            data: { id: ensemblNodeId, label: ensemblId, type: "ensembl" },
-                                            classes: "ensembl-node"
-                                        });
-                                    }
-
-                                    const edgeMieUniId = `edge_${mieId}_${uniprotNodeId}`;
-                                    if (cy.getElementById(edgeMieUniId).empty()) {
-                                        geneElements.push({
-                                            data: { id: edgeMieUniId, source: mieId, target: uniprotNodeId, label: "part of" }
-                                        });
-                                    }
-
-                                    const edgeUniEnsId = `edge_${uniprotNodeId}_${ensemblNodeId}`;
-                                    if (cy.getElementById(edgeUniEnsId).empty()) {
-                                        geneElements.push({
-                                            data: { id: edgeUniEnsId, source: uniprotNodeId, target: ensemblNodeId, label: "translates to" }
-                                        });
-                                    }
-                                } else {
-                                    console.warn(`Skipping row due to missing data or parent node: ${JSON.stringify(row)}`);
-                                }
-                            });
-
-                            console.debug("Adding gene elements:", geneElements);
-                            cy.add(geneElements);
-                            cy.elements(".uniprot-node, .ensembl-node").show();
-                            $("#see_genes").text("Hide Genes");
-                            genesVisible = true;
-                        }
-                    });
-                    positionNodes(cy);
-                },
-                error: (jqXHR, textStatus, errorThrown) => {
-                    console.error("Error loading CSV data:", textStatus, errorThrown);
-                }
-            });
-        }
 
         // Hide Genes button functionality.
         $("#see_genes").on("click", function () {
@@ -245,3 +184,73 @@ document.addEventListener("DOMContentLoaded", function () {
         positionNodes(cy);
     });
 });
+
+function loadAndShowGenes() {
+    console.debug('Loading CSV data for "See Genes"');
+    $.ajax({
+        url: "/static/data/caseMieModel.csv",
+        dataType: "text",
+        success: data => {
+            console.debug("CSV data loaded successfully");
+            Papa.parse(data, {
+                header: true,
+                skipEmptyLines: true,
+                complete: results => {
+                    console.debug("CSV data parsed successfully", results);
+                    const geneElements = [];
+                    results.data.forEach(row => {
+                        const mieId = "https://identifiers.org/aop.events/" + row["MIE/KE identifier in AOP wiki"];
+                        const uniprotId = row["uniprot ID inferred from qspred name"];
+                        const ensemblId = row["Ensembl"];
+                        console.debug(`Processing row - MIE ID: ${mieId}, UniProt ID: ${uniprotId}, Ensembl ID: ${ensemblId}`);
+
+                        if (mieId && uniprotId && ensemblId && cy.getElementById(mieId).length > 0) {
+                            const uniprotNodeId = `uniprot_${uniprotId}`;
+                            const ensemblNodeId = `ensembl_${ensemblId}`;
+
+                            if (cy.getElementById(uniprotNodeId).empty()) {
+                                geneElements.push({
+                                    data: { id: uniprotNodeId, label: uniprotId, type: "uniprot" },
+                                    classes: "uniprot-node"
+                                });
+                            }
+
+                            if (cy.getElementById(ensemblNodeId).empty()) {
+                                geneElements.push({
+                                    data: { id: ensemblNodeId, label: ensemblId, type: "ensembl" },
+                                    classes: "ensembl-node"
+                                });
+                            }
+
+                            const edgeMieUniId = `edge_${mieId}_${uniprotNodeId}`;
+                            if (cy.getElementById(edgeMieUniId).empty()) {
+                                geneElements.push({
+                                    data: { id: edgeMieUniId, source: mieId, target: uniprotNodeId, label: "part of" }
+                                });
+                            }
+
+                            const edgeUniEnsId = `edge_${uniprotNodeId}_${ensemblNodeId}`;
+                            if (cy.getElementById(edgeUniEnsId).empty()) {
+                                geneElements.push({
+                                    data: { id: edgeUniEnsId, source: uniprotNodeId, target: ensemblNodeId, label: "translates to" }
+                                });
+                            }
+                        } else {
+                            console.warn(`Skipping row due to missing data or parent node: ${JSON.stringify(row)}`);
+                        }
+                    });
+
+                    console.debug("Adding gene elements:", geneElements);
+                    cy.add(geneElements);
+                    cy.elements(".uniprot-node, .ensembl-node").show();
+                    $("#see_genes").text("Hide Genes");
+                    genesVisible = true;
+                }
+            });
+            positionNodes(cy);
+        },
+        error: (jqXHR, textStatus, errorThrown) => {
+            console.error("Error loading CSV data:", textStatus, errorThrown);
+        }
+    });
+}

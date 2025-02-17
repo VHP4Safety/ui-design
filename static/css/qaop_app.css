@@ -19,7 +19,7 @@
 }
 .left {
     width: 35vw;
-    height: 20vh;
+    max-height: 20vh;
     margin-left: 2.5vw;
 }
 .center {
@@ -27,8 +27,8 @@
     margin-right: 2.5vw;
 }
 .table-container {
-    max-height: 60vh;
-    overflow-y: auto;
+    max-height: 30vh;
+    overflow-y:scroll;
     border-radius: 20px;
 }
 th, td {

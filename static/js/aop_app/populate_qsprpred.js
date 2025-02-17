@@ -1,5 +1,6 @@
 let compoundMapping = {};
 let modelToProteinInfo = {};
+let fetched_preds = false;
 var cy = cytoscape({
     container: document.getElementById('cy')
 });
@@ -40,33 +41,36 @@ $(document).ready(() => {
                         <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=1&annotate=cip&r=0&smi=${encodedSMILES}" 
                              alt="${option.SMILES}" />
                         <br />
-                        <a href="/compound/${option.ID}" class="compound-link">${option.Term}</a>
+                        <a href="${compoundMapping[option.SMILES].url}" class="compound-link">${option.Term}</a>
                     </td>
                 </tr>
             `);
         });
     });
 
-    // Enable row selection to filter the Cytoscape network.
+    // Enable row selection to filter the Cytoscape network by compound.
     $("#compound_table").on("click", "tbody tr", function (e) {
         if ($(e.target).is("a")) return;
+        if (fetched_preds == false) return;
         $(this).toggleClass("selected");
         updateCytoscapeSubset();
+        positionNodes(cy);
     });
 
-    // Handle compound link click to populate iframe
+    // Handle compound link
     $("#compound_table").on("click", ".compound-link", function (e) {
-        e.preventDefault();
         const url = $(this).attr("href");
         $("#compound-frame").attr("src", url);
+        positionNodes(cy);
     });
 
     // Fetch predictions and update the table and Cytoscape.
     $("#fetch_predictions").on("click", () => {
+        genesVisible = false;
+        loadAndShowGenes();
         document.getElementById("loading_pred").style.display = "block";
         const smilesList = [];
         const mieQuery = $("#compound-container").data("mie-query");
-
         $.ajax({
             url: "/get_case_mie_model",
             type: "GET",
@@ -97,6 +101,7 @@ $(document).ready(() => {
                         document.getElementById("loading_pred").style.display = "none";
                         console.log("API Response:", response);
                         populateQsprPredMies(cy, compoundMapping, modelToProteinInfo, modelToMIE, response);
+                        if (fetched_preds === false) fetched_preds = true;
                     },
                     error: () => alert("Error fetching predictions.")
                 });
@@ -132,7 +137,7 @@ $(document).ready(() => {
                 tableBody.append(`
                     <tr>
                         <td>
-                            <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=1&annotate=cip&r=0&smi=${encodeURIComponent(smiles)}" 
+                            <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=.4&annotate=cip&r=0&smi=${encodeURIComponent(smiles)}" 
                                  alt="${smiles}" />
                             <br />
                             ${compoundCell}
@@ -158,7 +163,7 @@ $(document).ready(() => {
                             const compoundId = compound ? compound.term : smiles;
                             cyElements.push(
                                 { data: { id: compoundId, label: compoundId, type: "chemical" }, classes: "chemical-node" },
-                                { data: { id: `${compoundId}-${targetNodeId}`, source: compoundId, target: targetNodeId, type: "interaction", label: `pChEMBL: ${value} (${model})` } }
+                                { data: { id: `${compoundId}-${targetNodeId}-${model}`, source: compoundId, target: `uniprot_${proteinInfo.uniprotId}`, type: "interaction", label: `pChEMBL: ${value} (${model})` } }
                             );
                         }
                     });
@@ -197,8 +202,15 @@ $(document).ready(() => {
                     const current = queue.shift();
                     if (!visited.contains(current)) {
                         visited = visited.union(current);
-                        current.outgoers("node").forEach(n => {
-                            if (!visited.contains(n)) queue.push(n);
+                        current.connectedEdges().forEach(edge => {
+                            const source = edge.source();
+                            const target = edge.target();
+                            if (!visited.contains(source) && (!source.hasClass('chemical-node') || selectedCompoundIds.includes(source.id()))) {
+                                queue.push(source);
+                            }
+                            if (!visited.contains(target) && (!target.hasClass('chemical-node') || selectedCompoundIds.includes(target.id()))) {
+                                queue.push(target);
+                            }
                         });
                     }
                 }

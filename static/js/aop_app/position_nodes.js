@@ -48,13 +48,13 @@ function positionNodes(cy) {
             selector: "edge[ker_label]",
             style: {
                 "curve-style": "unbundled-bezier",
-                "width": 3,
-                "line-color": "#000",
+                "width": 40,
+                "line-color": "#93d5f6",
                 "opacity": 0.8,
                 "target-arrow-shape": "triangle",
-                "target-arrow-color": "#000",
+                "target-arrow-color": "#93d5f6",
                 "label": "data(ker_label)",
-                "text-margin-y": -15,
+                "text-margin-y": 1,
                 "text-rotation": "autorotate",
                 "font-size": "40px",
                 "font-weight": "bold",
@@ -98,7 +98,7 @@ function positionNodes(cy) {
                 "text-rotation": "autorotate",
                 "text-margin-y": -15,
                 "font-size": "40px",
-                "color": "#000",
+                "color": "#0001",
                 "curve-style": "unbundled-bezier",
 
             }
