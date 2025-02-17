@@ -150,16 +150,22 @@ def qsprpred():
 def kidney_main():
     return render_template('case_studies/kidney/kidney.html')
 
-@app.route('/templates/case_studies/parkinson/parkinson')
+@app.route('/case_studies/parkinson/parkinson')
 def parkinson_main():
     return render_template('case_studies/parkinson/parkinson.html')
 
-@app.route('/templates/case_studies/parkinson/workflows/parkinson_qAOP')
+
+@app.route("/services/qAOPapp")
+def qaop_app():
+    return render_template("services/qAOPapp.html")
+
+
+@app.route('/case_studies/parkinson/workflows/parkinson_qAOP')
 def parkinson_qaop():
     return render_template('case_studies/parkinson/workflows/parkinson_qAOP.html')
 
 
-@app.route("/templates/case_studies/thyroid/workflows/thyroid_qAOP")
+@app.route("/case_studies/thyroid/workflows/thyroid_qAOP")
 def thyroid_qaop():
     return render_template("case_studies/thyroid/workflows/thyroid_qAOP.html")
 
