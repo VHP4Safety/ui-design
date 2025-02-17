@@ -21,7 +21,8 @@
                 </table>
             </div>
         </section>
-    <p id="loading" style="text-align: center;">Loading compound list...</p>
+    <p class="loading" id="loading_compound" style="text-align: center;">Loading compound list...</p>
+    <p class="loading" id="loading_pred" style="text-align: center; display: none;">Requesting QSPRpred results...</p>
     </div>
     
     <div class="center">
@@ -34,10 +35,8 @@
                 <button id="see_genes" class="btn btn-secondary">See Genes</button>
                 <button id="toggle_bounding_boxes" class="btn btn-secondary">Show AOPs</button>
             <div id="cy">
-                <p id="loading" style="text-align: center;">Loading AOP network...</p>
+                <p class="loading" id="loading_aop" style="text-align: center;">Loading AOP network...</p>
             </div>
-
-            
         </section>
     </div>
 </div>

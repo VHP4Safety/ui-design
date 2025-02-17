@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderAOPNetwork(elements) {
         console.debug("Rendering AOP network with elements:", elements);
-        document.getElementById("loading").style.display = "none";
-        document.getElementById("cy").style.backgroundColor = "#FFFFFF";
+        document.getElementById("loading_aop").style.display = "none";
+        //document.getElementById("cy").style.backgroundColor = "#FFFFFF";
 
         // Create Cytoscape instance.
         cy = cytoscape({
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     ...ele.data
                 }
             })),
-            layout: { name: "cose" }
+            //layout: { name: "cose" }
         });
         
 

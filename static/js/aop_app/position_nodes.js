@@ -1,10 +1,10 @@
 function positionNodes(cy) {
     cy.layout({
-        animate: true,
-        name: 'cose',
-        idealEdgeLength: 200,
-        gravity: 0.1,
-        nodeRepulsion: 400,
+        //animate: true,
+        name: 'breadthfirst',
+        directed: true,
+        padding: 30,
+        //rankDir: "RL"
     }).run();
     cy.style([
         {

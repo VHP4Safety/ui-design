@@ -29,6 +29,7 @@ $(document).ready(() => {
     // Load the compound table with clickable links.
     const qid = $("#compound-container").data("qid");
     $.getJSON(`/get_compounds/${qid}`, data => {
+        document.getElementById("loading_compound").style.display = "none";
         const tableBody = $("#compound_table tbody").empty();
         data.forEach(option => {
             const encodedSMILES = encodeURIComponent(option.SMILES);
@@ -62,6 +63,7 @@ $(document).ready(() => {
 
     // Fetch predictions and update the table and Cytoscape.
     $("#fetch_predictions").on("click", () => {
+        document.getElementById("loading_pred").style.display = "block";
         const smilesList = [];
         const mieQuery = $("#compound-container").data("mie-query");
 
@@ -90,6 +92,7 @@ $(document).ready(() => {
                     contentType: "application/json",
                     data: JSON.stringify(requestData),
                     success: response => {
+                        document.getElementById("loading_pred").style.display = "none";
                         console.log("API Response:", response);
                         populateQsprPredMies(cy, compoundMapping, modelToProteinInfo, modelToMIE, response);
                     },
@@ -207,8 +210,8 @@ $(document).ready(() => {
         subsetNodes.show();
         subsetEdges.show();
         cy.fit(subsetNodes, 50);
-        cy.animate({ fit: { padding: 30 }, duration: 500 });
-        cy.layout({ name: "cose" }).run();
+        //cy.animate({ fit: { padding: 30 }, duration: 500 });
+        //cy.layout({ name: "cose" }).run();
         positionNodes(cy);
     }
 });
