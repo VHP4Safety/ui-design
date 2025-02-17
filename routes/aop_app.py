@@ -361,9 +361,9 @@ def get_aop_network():
     data = fetch_sparql_data(AOPWIKIPARKINSONSPARQL_QUERY)
     return jsonify(data)
 
-@aop_app.route('/js/aop_app/populate_compound_container.js')
-def serve_populate_compound_container_js():
-    return send_file('js/aop_app/populate_compound_container.js')
+@aop_app.route('/js/aop_app/populate_qsprpred.js')
+def serve_populate_qsprpred_js():
+    return send_file('js/aop_app/populate_qsprpred.js')
 
 @aop_app.route('/js/aop_app/populate_aop_network.js')
 def serve_populate_aop_network_js():
