@@ -1,6 +1,6 @@
+let boundingBoxesVisible = false;
+let genesVisible = false;
 document.addEventListener("DOMContentLoaded", function () {
-    let boundingBoxesVisible = false;
-    let genesVisible = false;
     // Fetch data for the AOP network.
     function fetchAOPData(mies) {
         console.debug(`Fetching AOP network data for: ${mies}`);
@@ -65,13 +65,16 @@ document.addEventListener("DOMContentLoaded", function () {
         // Hide Genes button functionality.
         $("#see_genes").on("click", function () {
             if (genesVisible) {
-                console.debug('Hiding genes');
-                cy.elements(".uniprot-node, .ensembl-node").hide();
+                console.log("Hiding ", cy.elements(".ensembl-node"));
+                cy.elements(".ensembl-node").hide();
                 $(this).text("See Genes");
                 genesVisible = false;
                 positionNodes(cy);
-            } else {
+                return
+            } if (!genesVisible) {
                 loadAndShowGenes();
+                genesVisible = true;
+                return
             }
         });
 
@@ -183,6 +186,21 @@ document.addEventListener("DOMContentLoaded", function () {
     $("#reset_layout").on("click", function () {
         positionNodes(cy);
     });
+
+    // Add "Download Cytoscape Network" button functionality.
+    $("#download_network").on("click", function () {
+        const cyJson = cy.json();
+        console.log(cyJson);
+        const blob = new Blob([JSON.stringify(cyJson)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "cytoscape_network.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
 });
 
 function loadAndShowGenes() {
@@ -196,13 +214,13 @@ function loadAndShowGenes() {
                 header: true,
                 skipEmptyLines: true,
                 complete: results => {
-                    console.debug("CSV data parsed successfully", results);
+                    //console.debug("CSV data parsed successfully", results);
                     const geneElements = [];
                     results.data.forEach(row => {
                         const mieId = "https://identifiers.org/aop.events/" + row["MIE/KE identifier in AOP wiki"];
                         const uniprotId = row["uniprot ID inferred from qspred name"];
                         const ensemblId = row["Ensembl"];
-                        console.debug(`Processing row - MIE ID: ${mieId}, UniProt ID: ${uniprotId}, Ensembl ID: ${ensemblId}`);
+                        //console.debug(`Processing row - MIE ID: ${mieId}, UniProt ID: ${uniprotId}, Ensembl ID: ${ensemblId}`);
 
                         if (mieId && uniprotId && ensemblId && cy.getElementById(mieId).length > 0) {
                             const uniprotNodeId = `uniprot_${uniprotId}`;
@@ -225,7 +243,7 @@ function loadAndShowGenes() {
                             const edgeMieUniId = `edge_${mieId}_${uniprotNodeId}`;
                             if (cy.getElementById(edgeMieUniId).empty()) {
                                 geneElements.push({
-                                    data: { id: edgeMieUniId, source: mieId, target: uniprotNodeId, label: "part of" }
+                                    data: { id: edgeMieUniId, source: uniprotNodeId, target: mieId, label: "part of" }
                                 });
                             }
 
@@ -236,15 +254,15 @@ function loadAndShowGenes() {
                                 });
                             }
                         } else {
-                            console.warn(`Skipping row due to missing data or parent node: ${JSON.stringify(row)}`);
+                            //console.warn(`Skipping row due to missing data or parent node: ${JSON.stringify(row)}`);
                         }
                     });
 
-                    console.debug("Adding gene elements:", geneElements);
+                    //console.debug("Adding gene elements:", geneElements);
                     cy.add(geneElements);
                     cy.elements(".uniprot-node, .ensembl-node").show();
                     $("#see_genes").text("Hide Genes");
-                    genesVisible = true;
+                    
                 }
             });
             positionNodes(cy);
@@ -253,4 +271,128 @@ function loadAndShowGenes() {
             console.error("Error loading CSV data:", textStatus, errorThrown);
         }
     });
+}
+
+function updateCytoscapeSubset() {
+    // Get the selected compound IDs from the table.
+    const selectedIds = $("#compound_table tbody tr.selected")
+        .map((_, row) => $(row).find("td:first").text().trim())
+        .get();
+
+    if (!selectedIds.length) {
+        cy.elements().show();
+        cy.fit(cy.elements(), 50);
+        return;
+    }
+
+    const visited = new Set();
+    let activated = cy.collection();
+
+    // Depth-first search function, recursively traverse outgoing edges.
+    function dfs(node) {
+        if (visited.has(node.id())) return;
+        visited.add(node.id());
+        activated = activated.union(node);
+
+        node.outgoers('edge').forEach(edge => {
+            const target = edge.target();
+            // If target is a chemical node not in the selection, add it but don't traverse further.
+            if (target.hasClass('chemical-node') && !selectedIds.includes(target.id())) {
+                activated = activated.union(target);
+            } else {
+                dfs(target);
+            }
+        });
+    }
+
+    // Start depth-first search only from selected chemical nodes.
+    selectedIds.forEach(id => {
+        const node = cy.getElementById(id);
+        if (!node.empty() && node.hasClass('chemical-node')) {
+            dfs(node);
+        }
+    });
+
+    // Keep only edges connecting activated nodes.
+    const activatedEdges = cy.edges().filter(edge =>
+        activated.contains(edge.source()) && activated.contains(edge.target())
+    );
+
+    cy.elements().hide();
+    activated.show();
+    activatedEdges.show();
+    cy.fit(activated, 50);
+    positionNodes(cy);
+}
+
+
+
+function populateQsprPredMies(cy, compoundMapping, modelToProteinInfo, modelToMIE, response) {
+    const table = $("#compound_table");
+    const tableHead = table.find("thead").empty();
+    const tableBody = table.find("tbody").empty();
+
+    tableHead.append(`
+            <tr>
+                <th>Compound</th>
+                <th>Target</th>
+                <th>Predicted pChEMBL</th>
+            </tr>
+        `);
+
+    if (Array.isArray(response)) {
+        const grouped = response.reduce((acc, pred) => {
+            const s = pred.smiles;
+            (acc[s] = acc[s] || []).push(pred);
+            return acc;
+        }, {});
+
+        const cyElements = [];
+        Object.entries(grouped).forEach(([smiles, predictions]) => {
+            const compound = compoundMapping[smiles];
+            const compoundCell = compound ? `<a href="${compound.url}">${compound.term}</a>` : smiles;
+            tableBody.append(`
+                    <tr>
+                        <td>
+                            <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=.4&annotate=cip&r=0&smi=${encodeURIComponent(smiles)}" 
+                                 alt="${smiles}" />
+                            <br />
+                            ${compoundCell}
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                `);
+
+            predictions.forEach(prediction => {
+                Object.entries(prediction).forEach(([model, value]) => {
+                    if (parseFloat(value) >= 6.5) {
+                        const proteinInfo = modelToProteinInfo[model] || { proteinName: "Unknown Protein", uniprotId: "" };
+                        const proteinLink = proteinInfo.uniprotId ? `<a href="https://www.uniprot.org/uniprotkb/${proteinInfo.uniprotId}" target="_blank">${proteinInfo.proteinName}</a>` : proteinInfo.proteinName;
+                        tableBody.append(`
+                                <tr>
+                                    <td></td>
+                                    <td>${proteinLink} (${model})</td>
+                                    <td>${value}</td>
+                                </tr>
+                            `);
+                        const targetNodeId = `https://identifiers.org/aop.events/${modelToMIE[model]}`;
+                        const compoundId = compound ? compound.term : smiles;
+                        cyElements.push(
+                            { data: { id: compoundId, label: compoundId, type: "chemical", smiles: smiles }, classes: "chemical-node" },
+                            { data: { id: `${compoundId}-${targetNodeId}-${model}`, source: compoundId, target: `uniprot_${proteinInfo.uniprotId}`, value: value, type: "interaction", label: `pChEMBL: ${value} (${model})` } }
+                        );
+                    }
+                });
+            });
+        });
+
+        if (cyElements.length) {
+            cy.add(cyElements);
+            positionNodes(cy);
+        }
+    } else {
+        console.error("Unexpected API response format:", response);
+        alert("Error: Unexpected response format from server.");
+    }
 }

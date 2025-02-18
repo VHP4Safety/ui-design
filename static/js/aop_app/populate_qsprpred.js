@@ -66,8 +66,10 @@ $(document).ready(() => {
 
     // Fetch predictions and update the table and Cytoscape.
     $("#fetch_predictions").on("click", () => {
-        genesVisible = false;
-        loadAndShowGenes();
+        if (!genesVisible) {
+            genesVisible = true;
+            loadAndShowGenes();
+        }
         document.getElementById("loading_pred").style.display = "block";
         const smilesList = [];
         const mieQuery = $("#compound-container").data("mie-query");
@@ -109,123 +111,4 @@ $(document).ready(() => {
             error: () => alert("Error fetching model to MIE mapping.")
         });
     });
-
-    function populateQsprPredMies(cy, compoundMapping, modelToProteinInfo, modelToMIE, response) {
-        const table = $("#compound_table");
-        const tableHead = table.find("thead").empty();
-        const tableBody = table.find("tbody").empty();
-
-        tableHead.append(`
-            <tr>
-                <th>Compound</th>
-                <th>Target</th>
-                <th>Predicted pChEMBL</th>
-            </tr>
-        `);
-
-        if (Array.isArray(response)) {
-            const grouped = response.reduce((acc, pred) => {
-                const s = pred.smiles;
-                (acc[s] = acc[s] || []).push(pred);
-                return acc;
-            }, {});
-
-            const cyElements = [];
-            Object.entries(grouped).forEach(([smiles, predictions]) => {
-                const compound = compoundMapping[smiles];
-                const compoundCell = compound ? `<a href="${compound.url}">${compound.term}</a>` : smiles;
-                tableBody.append(`
-                    <tr>
-                        <td>
-                            <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=.4&annotate=cip&r=0&smi=${encodeURIComponent(smiles)}" 
-                                 alt="${smiles}" />
-                            <br />
-                            ${compoundCell}
-                        </td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                `);
-
-                predictions.forEach(prediction => {
-                    Object.entries(prediction).forEach(([model, value]) => {
-                        if (parseFloat(value) >= 6.5) {
-                            const proteinInfo = modelToProteinInfo[model] || { proteinName: "Unknown Protein", uniprotId: "" };
-                            const proteinLink = proteinInfo.uniprotId ? `<a href="https://www.uniprot.org/uniprotkb/${proteinInfo.uniprotId}" target="_blank">${proteinInfo.proteinName}</a>` : proteinInfo.proteinName;
-                            tableBody.append(`
-                                <tr>
-                                    <td></td>
-                                    <td>${proteinLink} (${model})</td>
-                                    <td>${value}</td>
-                                </tr>
-                            `);
-                            const targetNodeId = `https://identifiers.org/aop.events/${modelToMIE[model]}`;
-                            const compoundId = compound ? compound.term : smiles;
-                            cyElements.push(
-                                { data: { id: compoundId, label: compoundId, type: "chemical" }, classes: "chemical-node" },
-                                { data: { id: `${compoundId}-${targetNodeId}-${model}`, source: compoundId, target: `uniprot_${proteinInfo.uniprotId}`, type: "interaction", label: `pChEMBL: ${value} (${model})` } }
-                            );
-                        }
-                    });
-                });
-            });
-
-            if (cyElements.length) {
-                cy.add(cyElements);
-                positionNodes(cy);
-            }
-        } else {
-            console.error("Unexpected API response format:", response);
-            alert("Error: Unexpected response format from server.");
-        }
-    }
-
-    function updateCytoscapeSubset() {
-        const selectedRows = $("#compound_table tbody tr.selected");
-        if (!selectedRows.length) {
-            cy.elements().show();
-            cy.fit(cy.elements(), 50);
-            return;
-        }
-        let selectedCompoundIds = [];
-        selectedRows.each(function () {
-            const compoundId = $(this).find("td:first").text().trim();
-            if (compoundId) selectedCompoundIds.push(compoundId);
-        });
-        let subsetNodes = cy.collection();
-        selectedCompoundIds.forEach(compoundId => {
-            const node = cy.getElementById(compoundId);
-            if (node.nonempty()) {
-                let visited = cy.collection();
-                const queue = [node];
-                while (queue.length) {
-                    const current = queue.shift();
-                    if (!visited.contains(current)) {
-                        visited = visited.union(current);
-                        current.connectedEdges().forEach(edge => {
-                            const source = edge.source();
-                            const target = edge.target();
-                            if (!visited.contains(source) && (!source.hasClass('chemical-node') || selectedCompoundIds.includes(source.id()))) {
-                                queue.push(source);
-                            }
-                            if (!visited.contains(target) && (!target.hasClass('chemical-node') || selectedCompoundIds.includes(target.id()))) {
-                                queue.push(target);
-                            }
-                        });
-                    }
-                }
-                subsetNodes = subsetNodes.union(visited);
-            }
-        });
-        const subsetEdges = cy.edges().filter(edge => {
-            return subsetNodes.contains(edge.source()) && subsetNodes.contains(edge.target());
-        });
-        cy.elements().hide();
-        subsetNodes.show();
-        subsetEdges.show();
-        cy.fit(subsetNodes, 50);
-        //cy.animate({ fit: { padding: 30 }, duration: 500 });
-        //cy.layout({ name: "cose" }).run();
-        positionNodes(cy);
-    }
 });
