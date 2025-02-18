@@ -325,8 +325,6 @@ function updateCytoscapeSubset() {
     positionNodes(cy);
 }
 
-
-
 function populateQsprPredMies(cy, compoundMapping, modelToProteinInfo, modelToMIE, response) {
     const table = $("#compound_table");
     const tableHead = table.find("thead").empty();
@@ -351,31 +349,17 @@ function populateQsprPredMies(cy, compoundMapping, modelToProteinInfo, modelToMI
         Object.entries(grouped).forEach(([smiles, predictions]) => {
             const compound = compoundMapping[smiles];
             const compoundCell = compound ? `<a href="${compound.url}">${compound.term}</a>` : smiles;
-            tableBody.append(`
-                    <tr>
-                        <td>
-                            <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=.4&annotate=cip&r=0&smi=${encodeURIComponent(smiles)}" 
-                                 alt="${smiles}" />
-                            <br />
-                            ${compoundCell}
-                        </td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                `);
+            const targetCells = [];
+            const pChEMBLCells = [];
 
             predictions.forEach(prediction => {
                 Object.entries(prediction).forEach(([model, value]) => {
                     if (parseFloat(value) >= 6.5) {
                         const proteinInfo = modelToProteinInfo[model] || { proteinName: "Unknown Protein", uniprotId: "" };
                         const proteinLink = proteinInfo.uniprotId ? `<a href="https://www.uniprot.org/uniprotkb/${proteinInfo.uniprotId}" target="_blank">${proteinInfo.proteinName}</a>` : proteinInfo.proteinName;
-                        tableBody.append(`
-                                <tr>
-                                    <td></td>
-                                    <td>${proteinLink} (${model})</td>
-                                    <td>${value}</td>
-                                </tr>
-                            `);
+                        targetCells.push(`${proteinLink} (${model})`);
+                        pChEMBLCells.push(value);
+
                         const targetNodeId = `https://identifiers.org/aop.events/${modelToMIE[model]}`;
                         const compoundId = compound ? compound.term : smiles;
                         cyElements.push(
@@ -385,6 +369,19 @@ function populateQsprPredMies(cy, compoundMapping, modelToProteinInfo, modelToMI
                     }
                 });
             });
+
+            tableBody.append(`
+                <tr>
+                    <td>
+                        <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=.4&annotate=cip&r=0&smi=${encodeURIComponent(smiles)}" 
+                             alt="${smiles}" />
+                        <br />
+                        ${compoundCell}
+                    </td>
+                    <td>${targetCells.join('<br>')}</td>
+                    <td>${pChEMBLCells.join('<br>')}</td>
+                </tr>
+            `);
         });
 
         if (cyElements.length) {
