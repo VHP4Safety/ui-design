@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const parentId = `bounding-box-${aop}`;
                     boundingBoxes.push({
                         group: "nodes",
-                        data: { id: parentId, label: `${aopTitle}\n${aop}` },
+                        data: { id: parentId, label: `${aopTitle} (aop:${aop.replace("https://identifiers.org/aop/", "")})` },
                         classes: "bounding-box"
                     });
                 });

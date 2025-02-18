@@ -5,7 +5,7 @@
     border: 2px solid #ccc;
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
     padding: 10px;
-    height: 60vh;
+    height: 72vh;
 }
 .container {
     display: flex;
@@ -27,7 +27,7 @@
     margin-right: 2.5vw;
 }
 .table-container {
-    max-height: 30vh;
+    max-height: 65vh;
     overflow-y:scroll;
     border-radius: 20px;
 }
@@ -35,22 +35,8 @@ th, td {
     word-wrap: break-word;
 }
 
-.tooltip {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.8);
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 5px;
-    font-size: 14px;
-    display: none;
-    z-index: 10;
-    max-width: 200px;
-    text-align: center;
-    font-weight: bold;
-}
-
 .loading {
-    color:black;
+    color:#ccffcc;
 
 }
 

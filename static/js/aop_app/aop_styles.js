@@ -36,6 +36,7 @@ function positionNodes(cy, fontSizeMultiplier = 1) {
                 //,
                 //"background-fit": "cover cover",
                 //"background-image-opacity": 0.5,
+                //todo: CORS issue
                 "width": `${270 * fontSizeMultiplier}px`,
                 "height": `${200 * fontSizeMultiplier}px`,
                 "shape": "triangle",
@@ -43,10 +44,10 @@ function positionNodes(cy, fontSizeMultiplier = 1) {
                 "label": "data(label)",
                 "text-wrap": "wrap",
                 "text-max-width": `${190 * fontSizeMultiplier}px`,
-                "text-valign": "bottom",
+                "text-valign": "top",
                 "text-halign": "center",
                 "color": "#000",
-                "font-size": `${40 * fontSizeMultiplier}px`,
+                "font-size": `${90 * fontSizeMultiplier}px`,
                 "border-width": 2,
                 "border-color": "#000",
                 "text-margin-y": 3,
@@ -152,7 +153,9 @@ function positionNodes(cy, fontSizeMultiplier = 1) {
                 "text-valign": "top",
                 "text-halign": "center",
                 "font-size": `${50 * fontSizeMultiplier}px`,
-                "text-wrap": "none"
+                "text-wrap": "wrap",
+                "font-weight": "bold",
+                "text-max-width": `${1400 * fontSizeMultiplier}px`
             }
         }
     ]).update();

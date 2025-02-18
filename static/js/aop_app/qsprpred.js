@@ -50,7 +50,7 @@ $(document).ready(() => {
 
     // Enable row selection to filter the Cytoscape network by compound.
     $("#compound_table").on("click", "tbody tr", function (e) {
-        if ($(e.target).is("a")) return;
+        if ($(e.target).is("a") || $(e.target).is("button")) return; // Prevent row click when clicking on a link or button
         if (fetched_preds == false) return;
         $(this).toggleClass("selected");
         updateCytoscapeSubset();
@@ -114,20 +114,17 @@ $(document).ready(() => {
 });
 
 function populateQsprPredMies(cy, compoundMapping, modelToProteinInfo, modelToMIE, response) {
-    // need to show genes to avoid issues
-    loadAndShowGenes();
-    genesVisible = true;
     const table = $("#compound_table");
     const tableHead = table.find("thead").empty();
     const tableBody = table.find("tbody").empty();
 
     tableHead.append(`
-            <tr>
-                <th>Compound</th>
-                <th>Target</th>
-                <th>Predicted pChEMBL</th>
-            </tr>
-        `);
+        <tr>
+            <th>Compound</th>
+            <th>Target</th>
+            <th>Predicted pChEMBL</th>
+        </tr>
+    `);
 
     if (Array.isArray(response)) {
         const grouped = response.reduce((acc, pred) => {
@@ -140,31 +137,17 @@ function populateQsprPredMies(cy, compoundMapping, modelToProteinInfo, modelToMI
         Object.entries(grouped).forEach(([smiles, predictions]) => {
             const compound = compoundMapping[smiles];
             const compoundCell = compound ? `<a href="${compound.url}">${compound.term}</a>` : smiles;
-            tableBody.append(`
-                    <tr>
-                        <td>
-                            <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=.4&annotate=cip&r=0&smi=${encodeURIComponent(smiles)}" 
-                                 alt="${smiles}" />
-                            <br />
-                            ${compoundCell}
-                        </td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                `);
+            const targetCells = [];
+            const pChEMBLCells = [];
 
             predictions.forEach(prediction => {
                 Object.entries(prediction).forEach(([model, value]) => {
                     if (parseFloat(value) >= 6.5) {
                         const proteinInfo = modelToProteinInfo[model] || { proteinName: "Unknown Protein", uniprotId: "" };
                         const proteinLink = proteinInfo.uniprotId ? `<a href="https://www.uniprot.org/uniprotkb/${proteinInfo.uniprotId}" target="_blank">${proteinInfo.proteinName}</a>` : proteinInfo.proteinName;
-                        tableBody.append(`
-                                <tr>
-                                    <td></td>
-                                    <td>${proteinLink} (${model})</td>
-                                    <td>${value}</td>
-                                </tr>
-                            `);
+                        targetCells.push(`${proteinLink} (${model})`);
+                        pChEMBLCells.push(value);
+
                         const targetNodeId = `https://identifiers.org/aop.events/${modelToMIE[model]}`;
                         const compoundId = compound ? compound.term : smiles;
                         cyElements.push(
@@ -174,6 +157,19 @@ function populateQsprPredMies(cy, compoundMapping, modelToProteinInfo, modelToMI
                     }
                 });
             });
+
+            tableBody.append(`
+                <tr>
+                    <td>
+                        <img src="https://cdkdepict.cloud.vhp4safety.nl/depict/bot/svg?w=-1&h=-1&abbr=off&hdisp=bridgehead&showtitle=false&zoom=.4&annotate=cip&r=0&smi=${encodeURIComponent(smiles)}" 
+                             alt="${smiles}" />
+                        <br />
+                        ${compoundCell}
+                    </td>
+                    <td>${targetCells.join('<br>')}</td>
+                    <td>${pChEMBLCells.join('<br>')}</td>
+                </tr>
+            `);
         });
 
         if (cyElements.length) {
