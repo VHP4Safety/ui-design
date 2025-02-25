@@ -166,4 +166,5 @@ document.getElementById('font-size-slider').addEventListener('input', function()
     const fontSizeMultiplier = parseFloat(this.value);
     console.log(fontSizeMultiplier);
     positionNodes(cy, fontSizeMultiplier);
+
 });

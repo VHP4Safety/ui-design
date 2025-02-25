@@ -315,6 +315,7 @@ def fetch_sparql_data(query):
                 "id": edge_id,
                 "source": ke_upstream,
                 "target": ke_downstream,
+                "curie": f"aop.relationships:{ker_id}",
                 "ker_label": ker_id,  # Store KER ID for Cytoscape.js labeling
             }
         })

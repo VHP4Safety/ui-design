@@ -13,7 +13,7 @@
         <section>
             <h2>Add data to the network <select id="data-type-dropdown" onchange="handleDataTypeChange()">
                 <option value="qsprpred_opt">QSPRPred</option>
-                <option value="mock_opt">Mock Data</option>
+                <option value="qaop_div">Custom qAOP data</option>
             </select></h2>
                 <!-- Add more options in the future -->
             
@@ -42,16 +42,20 @@
                         </div>
                         </section>            
             
-            <div id="mock" class="data-section" style="display: none;">
+            <div id="qaop_div" class="data-section" style="display: none;">
                 <div class="table-container">
-                    <table class="table table-bordered table-striped" id="mock_table"> 
+                    <table class="table table-bordered table-striped" id="qaop_table"> 
                         <thead>
                             <tr>
-                                <th>Mock Column</th>
+                                <th>source</th>
+                                <th>KER</th>
+                                <th>target</th>
                             </tr>
+                                                        
                         </thead>
-                        <tbody></tbody>
+                        <tbody><p class="loading" id="loading_qaop_table" style="text-align: center;">Loading AOP network...</p></tbody>
                     </table>
+                    
                 </div>
             </div>
     </div>
@@ -85,5 +89,6 @@
 <script src="/static/js/aop_app/aop_styles.js"></script>
 <script src="/static/js/aop_app/qsprpred.js"></script>
 <script src="/static/js/aop_app/select_data.js"></script>
+
 
 {% endblock %}

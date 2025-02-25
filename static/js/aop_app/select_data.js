@@ -13,8 +13,8 @@ function handleDataTypeChange() {
     if (selectedValue === 'qsprpred_opt') {
         document.getElementById('qsprpred').style.display = 'block';
         return;
-    } else if (selectedValue === 'mock_opt') {
-        document.getElementById('mock').style.display = 'block';
+    } else if (selectedValue === 'qaop_div') {
+        document.getElementById('qaop_div').style.display = 'block';
         return;
     }
     // Add more conditions here for other data types

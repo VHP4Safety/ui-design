@@ -393,3 +393,28 @@ function populateQsprPredMies(cy, compoundMapping, modelToProteinInfo, modelToMI
         alert("Error: Unexpected response format from server.");
     }
 }
+
+function populateQaopTable(cy) {
+    const table = $("#qaop_table");
+    document.getElementById("loading_qaop_table").style.display = "none";
+    const tableBody = table.find("tbody").empty();
+    cy.edges().forEach(edge => {
+        if (edge.data('ker_label')) {
+            tableBody.append(`
+                <tr>
+                    <td><a href="${edge.source().data('id')}" target="_blank">${edge.source().data('label')}</a></td>
+                    <td>${edge.data('curie')}</td>
+                    <td><a href="${edge.target().data('id')}" target="_blank">${edge.target().data('label')}</a></td>
+                </tr>
+            `);
+        }
+    });
+}
+
+// Event listener for data-type-dropdown option value "qaop_table".
+$("#data-type-dropdown").on("change", function () {
+    const selectedValue = $(this).val();
+    if (selectedValue === "qaop_div") {
+        populateQaopTable(cy);
+    }
+});
