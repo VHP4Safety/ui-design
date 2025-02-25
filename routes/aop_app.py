@@ -3,8 +3,10 @@ import requests
 from wikidataintegrator import wdi_core
 import json
 import re
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 import pandas as pd
+import csv
+import os
 
 aop_app = Blueprint('aop_app', __name__)
 
@@ -330,7 +332,6 @@ def get_aop_network():
         return jsonify({"error": "MIEs parameter is required"}), 400
 
     # Ensure MIEs are properly formatted for the SPARQL query
-    print(mies)
     AOPWIKIPARKINSONSPARQL_QUERY = f"""
     SELECT DISTINCT ?aop ?aop_title ?MIEtitle ?MIE ?KE_downstream ?KE_downstream_title  
            ?KER ?ao ?AOtitle ?KE_upstream ?KE_upstream_title ?KE_upstream_organ ?KE_downstream_organ
@@ -402,3 +403,43 @@ def get_case_mie_model():
     print("Model to MIE Mapping:")
     print(model_to_mie)
     return jsonify(model_to_mie), 200
+
+
+@aop_app.route("/load_and_show_genes", methods=["GET"])
+def load_and_show_genes():
+    mies = request.args.get('mies', '')
+    mies = [quote(mie, safe='') for mie in mies.split(',')]
+    mies = [unquote(mie) for mie in mies]
+    print(mies)
+    gene_elements = []
+    csv_path = os.path.join(os.path.dirname(__file__), '../static/data/caseMieModel.csv')
+    try:
+        with open(csv_path, 'r', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                mie_id = "https://identifiers.org/aop.events/" + row["MIE/KE identifier in AOP wiki"]
+                uniprot_id = row["uniprot ID inferred from qspred name"]
+                ensembl_id = row["Ensembl"]
+
+                if mie_id and uniprot_id and ensembl_id and mie_id in mies:
+                    uniprot_node_id = f'uniprot_{uniprot_id}'
+                    ensembl_node_id = f'ensembl_{ensembl_id}'
+
+                    gene_elements.append({
+                        'data': {'id': uniprot_node_id, 'label': uniprot_id, 'type': 'uniprot'},
+                        'classes': 'uniprot-node'
+                    })
+                    gene_elements.append({
+                        'data': {'id': ensembl_node_id, 'label': ensembl_id, 'type': 'ensembl'},
+                        'classes': 'ensembl-node'
+                    })
+                    gene_elements.append({
+                        'data': {'id': f'edge_{mie_id}_{uniprot_node_id}', 'source': uniprot_node_id, 'target': mie_id, 'label': 'part of'}
+                    })
+                    gene_elements.append({
+                        'data': {'id': f'edge_{uniprot_node_id}_{ensembl_node_id}', 'source': uniprot_node_id, 'target': ensembl_node_id, 'label': 'translates to'}
+                    })
+    except Exception as e:
+        print(f"Error loading genes. {e}")
+        return jsonify({"error": str(e)}), 500
+    return jsonify(gene_elements)

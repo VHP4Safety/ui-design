@@ -68,7 +68,8 @@ $(document).ready(() => {
     $("#fetch_predictions").on("click", () => {
         if (!genesVisible) {
             genesVisible = true;
-            loadAndShowGenes();
+            toggleGenesVisibility(cy);
+            positionNodes(cy);
         }
         document.getElementById("loading_pred").style.display = "block";
         const smilesList = [];

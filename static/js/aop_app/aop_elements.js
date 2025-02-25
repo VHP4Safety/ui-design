@@ -1,5 +1,6 @@
 let boundingBoxesVisible = false;
 let genesVisible = false;
+
 document.addEventListener("DOMContentLoaded", function () {
     // Fetch data for the AOP network.
     function fetchAOPData(mies) {
@@ -62,21 +63,6 @@ document.addEventListener("DOMContentLoaded", function () {
             positionNodes(cy);
         });
 
-        // Hide Genes button functionality.
-        $("#see_genes").on("click", function () {
-            if (genesVisible) {
-                console.log("Hiding ", cy.elements(".ensembl-node"));
-                cy.elements(".ensembl-node").hide();
-                $(this).text("See Genes");
-                genesVisible = false;
-                positionNodes(cy);
-                return
-            } if (!genesVisible) {
-                loadAndShowGenes();
-                genesVisible = true;
-                return
-            }
-        });
 
         // Toggle Bounding Boxes (AOP boxes) button functionality.
         $("#toggle_bounding_boxes").on("click", function () {
@@ -202,76 +188,6 @@ document.addEventListener("DOMContentLoaded", function () {
         URL.revokeObjectURL(url);
     });
 });
-
-function loadAndShowGenes() {
-    console.debug('Loading CSV data for "See Genes"');
-    $.ajax({
-        url: "/static/data/caseMieModel.csv",
-        dataType: "text",
-        success: data => {
-            console.debug("CSV data loaded successfully");
-            Papa.parse(data, {
-                header: true,
-                skipEmptyLines: true,
-                complete: results => {
-                    //console.debug("CSV data parsed successfully", results);
-                    const geneElements = [];
-                    results.data.forEach(row => {
-                        const mieId = "https://identifiers.org/aop.events/" + row["MIE/KE identifier in AOP wiki"];
-                        const uniprotId = row["uniprot ID inferred from qspred name"];
-                        const ensemblId = row["Ensembl"];
-                        //console.debug(`Processing row - MIE ID: ${mieId}, UniProt ID: ${uniprotId}, Ensembl ID: ${ensemblId}`);
-
-                        if (mieId && uniprotId && ensemblId && cy.getElementById(mieId).length > 0) {
-                            const uniprotNodeId = `uniprot_${uniprotId}`;
-                            const ensemblNodeId = `ensembl_${ensemblId}`;
-
-                            if (cy.getElementById(uniprotNodeId).empty()) {
-                                geneElements.push({
-                                    data: { id: uniprotNodeId, label: uniprotId, type: "uniprot" },
-                                    classes: "uniprot-node"
-                                });
-                            }
-
-                            if (cy.getElementById(ensemblNodeId).empty()) {
-                                geneElements.push({
-                                    data: { id: ensemblNodeId, label: ensemblId, type: "ensembl" },
-                                    classes: "ensembl-node"
-                                });
-                            }
-
-                            const edgeMieUniId = `edge_${mieId}_${uniprotNodeId}`;
-                            if (cy.getElementById(edgeMieUniId).empty()) {
-                                geneElements.push({
-                                    data: { id: edgeMieUniId, source: uniprotNodeId, target: mieId, label: "part of" }
-                                });
-                            }
-
-                            const edgeUniEnsId = `edge_${uniprotNodeId}_${ensemblNodeId}`;
-                            if (cy.getElementById(edgeUniEnsId).empty()) {
-                                geneElements.push({
-                                    data: { id: edgeUniEnsId, source: uniprotNodeId, target: ensemblNodeId, label: "translates to" }
-                                });
-                            }
-                        } else {
-                            //console.warn(`Skipping row due to missing data or parent node: ${JSON.stringify(row)}`);
-                        }
-                    });
-
-                    //console.debug("Adding gene elements:", geneElements);
-                    cy.add(geneElements);
-                    cy.elements(".uniprot-node, .ensembl-node").show();
-                    $("#see_genes").text("Hide Genes");
-                    
-                }
-            });
-            positionNodes(cy);
-        },
-        error: (jqXHR, textStatus, errorThrown) => {
-            console.error("Error loading CSV data:", textStatus, errorThrown);
-        }
-    });
-}
 
 function updateCytoscapeSubset() {
     // Get the selected compound IDs from the table.
@@ -418,3 +334,43 @@ $("#data-type-dropdown").on("change", function () {
         populateQaopTable(cy);
     }
 });
+
+$("#see_genes").on("click", function () {
+    if (genesVisible) {
+        console.log("Hiding ", cy.elements(".ensembl-node"));
+        cy.elements(".ensembl-node").hide();
+        $(this).text("See Genes");
+        genesVisible = false;
+    } else {
+        console.log("Showing genes");
+        toggleGeneView(cy);
+        positionNodes(cy);
+    }
+});
+
+
+function toggleGeneView(cy) {
+    const mieNodeIds = cy.nodes().filter(node => node.data("is_mie")).map(node => node.id()).join(",");
+    fetch(`/load_and_show_genes?mies=${encodeURIComponent(mieNodeIds)}`)
+        .then(response => response.json())
+        .then(data => {
+            try {
+                data.forEach(element => {
+                    try {
+                        cy.add(element);
+                    } catch (error) {
+                        console.warn("Skipping element");
+                    }
+                });
+                console.log(cy.elements(".uniprot-node, .ensembl-node"));
+                cy.elements(".uniprot-node, .ensembl-node").show();
+                $("#see_genes").text("Hide Genes");
+                genesVisible = true;
+            } catch (error) {
+                console.warn("Error processing elements:", error);
+            }
+        })
+        .catch(error => {
+            console.warn("Error fetching genes data:", error);
+        });
+}
