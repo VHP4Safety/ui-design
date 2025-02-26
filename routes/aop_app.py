@@ -567,3 +567,36 @@ def add_qsprpred_compounds():
                         except Exception:
                             continue
     return jsonify(cy_elements), 200
+
+
+@aop_app.route("/add_aop_bounding_box", methods=["POST"])
+def add_aop_bounding_box():
+    data = request.json
+    aop = request.args.get('aop', '')
+    cy_elements = data.get("cy_elements", [])
+    bounding_boxes = []
+    if not aop:
+        return jsonify({"error": "AOP parameter is required"}), 400
+
+    seen = set()
+    for node in cy_elements:
+        node_aop = node['data'].get('aop', [])
+        if not isinstance(node_aop, list):
+            node_aop = [node_aop]
+        for aop_item in node_aop:
+            if aop_item not in seen:
+                bounding_boxes.append({
+                    "group": "nodes",
+                    "data": {"id": f"bounding-box-{aop_item}", "label": f"{aop_item} (aop:{aop_item.replace('https://identifiers.org/aop/', '')})"},
+                    "classes": "bounding-box"
+                })
+                seen.add(aop_item)
+
+    for node in cy_elements:
+        node_aop = node['data'].get('aop', [])
+        if not isinstance(node_aop, list):
+            node_aop = [node_aop]
+        for aop_item in node_aop:
+            node['data']['parent'] = f"bounding-box-{aop_item}"
+    print(cy_elements)
+    return jsonify(cy_elements + bounding_boxes), 200

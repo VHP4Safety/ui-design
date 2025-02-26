@@ -77,76 +77,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 boundingBoxesVisible = false;
             } else {
                 console.debug("Adding bounding boxes");
-                const aopGroups = {};
-                cy.nodes().forEach(node => {
-                    const aop = node.data("aop");
-                    const aopTitle = node.data("aop_title");
-                    if (aop) {
-                        const aopList = Array.isArray(aop) ? aop : [aop];
-                        aopList.forEach(aopItem => {
-                            if (!aopGroups[aopItem]) {
-                                aopGroups[aopItem] = { nodes: [], title: aopTitle };
-                            }
-                            aopGroups[aopItem].nodes.push(node);
-                        });
-                    } else {
-                        console.warn(`Node ${node.id()} is missing aop data`);
-                    }
-                });
-                const boundingBoxes = [];
-                Object.keys(aopGroups).forEach(aop => {
-                    const group = aopGroups[aop];
-                    const nodes = group.nodes;
-                    const aopTitle = group.title;
-                    // Compute bounding box for the group.
-                    const boundingBox = cy.collection(nodes).boundingBox();
-                    console.debug(`Bounding box for AOP ${aop}:`, boundingBox);
-                    const parentId = `bounding-box-${aop}`;
-                    boundingBoxes.push({
-                        group: "nodes",
-                        data: { id: parentId, label: `${aopTitle} (aop:${aop.replace("https://identifiers.org/aop/", "")})` },
-                        classes: "bounding-box"
-                    });
-                });
+                const cyElements = cy.elements().jsons();
 
-                cy.add(boundingBoxes);
-                boundingBoxesVisible = true;
-
-                // Assign nodes as children of the bounding boxes.
-                cy.nodes().forEach(node => {
-                    const aop = node.data("aop");
-                    console.log("TYPE OF AOP", typeof aop, aop);
-                    if (aop) {
-                        const aopList = Array.isArray(aop) ? aop : [aop];
-                        aopList.forEach(aopItem => {
-                            const parentId = `bounding-box-${aopItem}`;
-                            if (cy.getElementById(parentId).length > 0) {
-                                node.move({ parent: parentId });
-                            }
-                        });
-                    }
-                });
-                // Assign genes and UniProts connected to MIEs to the bounding boxes.
-                cy.nodes().forEach(node => {
-                    if (
-                        node.hasClass("uniprot-node") ||
-                        node.hasClass("ensembl-node") ||
-                        node.hasClass("chemical-node")
-                    ) {
-                        const connectedMIEs = node.connectedEdges().filter(edge => edge.target().data("is_mie"));
-                        connectedMIEs.forEach(edge => {
-                            const mieNode = edge.target();
-                            const aop = mieNode.data("aop");
-                            if (aop) {
-                                const aopList = Array.isArray(aop) ? aop : [aop];
-                                aopList.forEach(aopItem => {
-                                    const parentId = `bounding-box-${aopItem}`;
-                                    if (cy.getElementById(parentId).length > 0) {
-                                        node.move({ parent: parentId });
-                                    }
-                                });
-                            }
-                        });
+                $.ajax({
+                    url: `/add_aop_bounding_box?aop=true`,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ cy_elements: cyElements }),
+                    success: updatedCyElements => {
+                        cy.elements().remove();
+                        cy.add(updatedCyElements);
+                        console.log("debug");
+                        boundingBoxesVisible = true;
+                        positionNodes(cy);
+                    },
+                    error: (jqXHR, textStatus, errorThrown) => {
+                        console.error("Error adding bounding boxes:", textStatus, errorThrown);
+                        alert(`Error adding bounding boxes: ${textStatus} - ${errorThrown}`);
                     }
                 });
             }
