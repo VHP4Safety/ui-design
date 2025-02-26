@@ -68,7 +68,7 @@ $(document).ready(() => {
     $("#fetch_predictions").on("click", () => {
         if (!genesVisible) {
             genesVisible = true;
-            toggleGenesVisibility(cy);
+            toggleGeneView(cy);
             positionNodes(cy);
         }
         document.getElementById("loading_pred").style.display = "block";
@@ -173,12 +173,26 @@ function populateQsprPredMies(cy, compoundMapping, modelToProteinInfo, modelToMI
             `);
         });
 
-        if (cyElements.length) {
-            cy.add(cyElements);
-            positionNodes(cy);
-        }
-    } else {
-        console.error("Unexpected API response format:", response);
-        alert("Error: Unexpected response format from server.");
+        const isMieNodes = cy.nodes().filter(node => node.data("is_mie")).toArray().map(node => node.id());
+
+        $.ajax({
+            url: `/add_qsprpred_compounds`,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ is_mie_nodes: isMieNodes, compound_mapping: compoundMapping, model_to_protein_info: modelToProteinInfo, model_to_mie: modelToMIE, response: response, cy_elements: cyElements }),
+            success: updatedCyElements => {
+                if (Array.isArray(updatedCyElements)) {
+                    cy.add(updatedCyElements);
+                    positionNodes(cy);
+                } else {
+                    console.error("Unexpected API response format:", updatedCyElements);
+                    alert("Error: Unexpected response format from server.");
+                }
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error("Error adding qsprpred compounds:", textStatus, errorThrown);
+                alert(`Error adding qsprpred compounds: ${textStatus} - ${errorThrown}`);
+            }
+        });
     }
 }

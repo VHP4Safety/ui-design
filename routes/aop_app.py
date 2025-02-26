@@ -443,3 +443,37 @@ def load_and_show_genes():
         print(f"Error loading genes. {e}")
         return jsonify({"error": str(e)}), 500
     return jsonify(gene_elements)
+
+@aop_app.route("/add_qsprpred_compounds", methods=["POST"])
+def add_qsprpred_compounds():
+    mies = request.args.getlist('mies')
+    data = request.json
+    is_mie_nodes = data.get("is_mie_nodes", [])
+    compound_mapping = data.get("compound_mapping", {})
+    model_to_protein_info = data.get("model_to_protein_info", {})
+    model_to_mie = data.get("model_to_mie", {})
+    response = data.get("response", [])
+    cy_elements = data.get("cy_elements", [])
+
+    if isinstance(response, list):
+        grouped = {}
+        for pred in response:
+            smiles = pred["smiles"]
+            if smiles not in grouped:
+                grouped[smiles] = []
+            grouped[smiles].append(pred)
+
+        for smiles, predictions in grouped.items():
+            compound = compound_mapping.get(smiles)
+            compound_id = compound["term"] if compound else smiles
+
+            for prediction in predictions:
+                for model, value in prediction.items():
+                    if model != "smiles" and float(value) >= 6.5:
+                        protein_info = model_to_protein_info.get(model, {"proteinName": "Unknown Protein", "uniprotId": ""})
+                        target_node_id = f"https://identifiers.org/aop.events/{model_to_mie.get(model)}"
+
+                        cy_elements.append({"data": {"id": compound_id, "label": compound_id, "type": "chemical", "smiles": smiles}, "classes": "chemical-node"})
+                        cy_elements.append({"data": {"id": f"{compound_id}-{target_node_id}-{model}", "source": compound_id, "target": f"uniprot_{protein_info['uniprotId']}", "value": value, "type": "interaction", "label": f"pChEMBL: {value} ({model})"}})
+
+    return jsonify(cy_elements), 200
