@@ -581,13 +581,16 @@ def add_aop_bounding_box():
     seen = set()
     for node in cy_elements:
         node_aop = node['data'].get('aop', [])
+        aop_titles = node['data'].get('aop_title', [])
         if not isinstance(node_aop, list):
             node_aop = [node_aop]
-        for aop_item in node_aop:
+        for aop_item, aop_title in zip(node_aop, aop_titles):
             if aop_item not in seen:
                 bounding_boxes.append({
                     "group": "nodes",
-                    "data": {"id": f"bounding-box-{aop_item}", "label": f"{aop_item} (aop:{aop_item.replace('https://identifiers.org/aop/', '')})"},
+                    "data": {
+                        "id": f"bounding-box-{aop_item}",
+                        "label": f"{aop_title} (aop:{aop_item.replace('https://identifiers.org/aop/', '')})"},
                     "classes": "bounding-box"
                 })
                 seen.add(aop_item)
@@ -598,5 +601,4 @@ def add_aop_bounding_box():
             node_aop = [node_aop]
         for aop_item in node_aop:
             node['data']['parent'] = f"bounding-box-{aop_item}"
-    print(cy_elements)
     return jsonify(cy_elements + bounding_boxes), 200

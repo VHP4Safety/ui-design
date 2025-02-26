@@ -20,7 +20,7 @@ $.ajax({
                     const uniprotId = row["uniprot ID inferred from qspred name"];
                     modelToProteinInfo[model] = { proteinName, uniprotId };
                 });
-                console.log("Model to Protein Info Mapping:", modelToProteinInfo);
+
             }
         });
     }
@@ -79,22 +79,17 @@ $(document).ready(() => {
             type: "GET",
             data: { mie_query: mieQuery },
             success: modelToMIE => {
-                console.log("Model to MIE Mapping:", modelToMIE);
                 $("#compound_table tbody tr").each((_, tr) => {
                     const img = $(tr).find("td img");
                     const smiles = img.attr("alt") && img.attr("alt").trim();
                     if (smiles) smilesList.push(smiles);
                 });
-                console.log("Extracted SMILES List:", smilesList);
-
                 const models = Object.keys(modelToMIE);
                 if (!models.length) return alert("Error: No models available for prediction.");
 
                 const thresholdElement = document.getElementById("threshold_pchembl");
                 const thresholdValue = parseFloat(thresholdElement ? thresholdElement.value : "6.5");
                 const requestData = { smiles: smilesList, models, metadata: {}, threshold: thresholdValue };
-                console.log("REQUEST DATA:", requestData);
-
                 $.ajax({
                     url: "/get_predictions",
                     type: "POST",
@@ -102,7 +97,7 @@ $(document).ready(() => {
                     data: JSON.stringify(requestData),
                     success: response => {
                         document.getElementById("loading_pred").style.display = "none";
-                        console.log("API Response:", response);
+
                         populateQsprPredMies(cy, compoundMapping, modelToProteinInfo, modelToMIE, response);
                         if (fetched_preds === false) fetched_preds = true;
                     },
