@@ -287,7 +287,7 @@ $("#see_genes").on("click", function () {
         console.log("Hiding ", cy.elements(".ensembl-node"));
         cy.elements(".ensembl-node").hide();
         $(this).text("See Genes");
-        genesVisible = false;
+        genesVisible = false; 
     } else {
         console.log("Showing genes");
         toggleGeneView(cy);

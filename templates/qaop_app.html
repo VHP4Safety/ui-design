@@ -13,7 +13,8 @@
         <section>
             <h2>Add data to the network <select id="data-type-dropdown" onchange="handleDataTypeChange()">
                 <option value="qsprpred_opt">QSPRPred</option>
-                <option value="qaop_div">Custom qAOP data</option>
+                <option value="qaop_opt">Custom qAOP data</option>
+                <option value="bdf_opt">BioDataFuse</option>
             </select></h2>
                 <!-- Add more options in the future -->
             
@@ -58,6 +59,9 @@
                     
                 </div>
             </div>
+            <div id="bdf_div" class="data-section" style="display: none;">
+                <button id="query_opentargets" class="btn btn-primary">Query compounds in OpenTargets</button>
+            </div>
     </div>
     <div class="center">
         <section>
@@ -84,6 +88,8 @@
 <script src="/static/js/aop_app/aop_styles.js"></script>
 <script src="/static/js/aop_app/qsprpred.js"></script>
 <script src="/static/js/aop_app/select_data.js"></script>
+<script src="/static/js/aop_app/compound.js"></script>
+<script src="/static/js/aop_app/bdf.js"></script>
 
 
 {% endblock %}

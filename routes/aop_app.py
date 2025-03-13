@@ -7,6 +7,10 @@ from urllib.parse import quote, unquote
 import pandas as pd
 import csv
 import os
+from pyBiodatafuse import id_mapper
+from pyBiodatafuse.annotators import molmedb, opentargets
+from pyBiodatafuse.constants import MOLMEDB_COMPOUND_PROTEIN_COL, OPENTARGETS_DISEASE_COL
+from pyBiodatafuse.utils import combine_sources
 
 aop_app = Blueprint("aop_app", __name__)
 
@@ -32,7 +36,7 @@ def get_compounds_q(q):
     sparqlquery_full = (
         "PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>\n"
         "PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>\n\n"
-        "SELECT DISTINCT (substr(str(?cmp), 45) as ?ID) (?cmpLabel AS ?Term) ?SMILES (?cmp AS ?ref)\n"
+        "SELECT DISTINCT (substr(str(?cmp), 45) as ?ID) (?cmpLabel AS ?Term) ?SMILES ?cid\n"
         "WHERE {\n"
         "  { ?parent wdt:P21 wd:"
         + q
@@ -43,6 +47,7 @@ def get_compounds_q(q):
         "  ?type rdfs:label ?typeLabel . FILTER(lang(?typeLabel) = 'en')\n"
         "  OPTIONAL { ?cmp wdt:P7 ?chiralSMILES }\n"
         "  OPTIONAL { ?cmp wdt:P12 ?nonchiralSMILES }\n"
+        "  OPTIONAL {?cmp wdt:P13 ?cid . }\n"
         '  BIND (COALESCE(IF(BOUND(?chiralSMILES), ?chiralSMILES, 1/0), IF(BOUND(?nonchiralSMILES), ?nonchiralSMILES, 1/0), "") AS ?SMILES)\n'
         '  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }\n'
         "}"
@@ -55,7 +60,13 @@ def get_compounds_q(q):
         return jsonify({"error": str(e)}), 500
     compound_list = []
     for _, row in compound_dat.iterrows():
-        compound_list.append({"ID": row[1], "Term": row[2], "SMILES": row[0]})
+        cid = row.iloc[0] if row.iloc[0] else ""
+        compound_list.append({
+            "ID": row.iloc[2],
+            "Term": row.iloc[3],
+            "SMILES": row.iloc[1],
+            "cid": str(cid)
+        })
     return jsonify(compound_list), 200
 
 
@@ -602,3 +613,23 @@ def add_aop_bounding_box():
         for aop_item in node_aop:
             node['data']['parent'] = f"bounding-box-{aop_item}"
     return jsonify(cy_elements + bounding_boxes), 200
+
+## BioData
+@aop_app.route("/add_bdf_opentargets", methods=["GET"])
+def add_bdf_opentargets():
+    cids = request.args.get('cids', None)    
+    if cids:
+
+        cids = [i for i in cids.split(',') if i!='nan']
+        data_input = pd.DataFrame(cids, columns=["identifier"],)
+        bridgedb_df, bridgedb_metadata = id_mapper.bridgedb_xref(
+            identifiers=data_input,
+            input_species="Human",
+            input_datasource="PubChem Compound",  # ChEMBL compound
+            output_datasource="All",
+            )
+        (opentargets_transporter_inhibited_df, 
+             opentargets_transporter_inhibited_metadata,) = opentargets.get_compound_disease_interactions(bridgedb_df=bridgedb_df) 
+        result = jsonify(opentargets_transporter_inhibited_df.fillna("NaN").to_dict(orient="records"))
+        
+        return result, 200

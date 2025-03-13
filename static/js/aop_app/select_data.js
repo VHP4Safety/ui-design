@@ -13,8 +13,11 @@ function handleDataTypeChange() {
     if (selectedValue === 'qsprpred_opt') {
         document.getElementById('qsprpred').style.display = 'block';
         return;
-    } else if (selectedValue === 'qaop_div') {
+    } else if (selectedValue === 'qaop_opt') {
         document.getElementById('qaop_div').style.display = 'block';
+        return;
+    } else if (selectedValue === 'bdf_opt') {
+        document.getElementById('bdf_div').style.display = 'block';
         return;
     }
     // Add more conditions here for other data types
