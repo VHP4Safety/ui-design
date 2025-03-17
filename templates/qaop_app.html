@@ -29,19 +29,7 @@
                         }
                     </script>
                 </div>
-                        <div class="table-container">
-                            <table class="table table-bordered table-striped" id="compound_table">
-                                <thead>
-                                    <tr>
-                                        <th>Compound <p class="loading" id="loading_pred" style="text-align: center; display: none;">Requesting QSPRpred results...</p></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <p class="loading" id="loading_compound" style="text-align: center;">Loading compound list...</p>
-                                </tbody>
-                            </table>
-                        </div>
-                        </section>            
+            </div>
             
             <div id="qaop_div" class="data-section" style="display: none;">
                 <div class="table-container">
@@ -52,16 +40,27 @@
                                 <th>KER</th>
                                 <th>target</th>
                             </tr>
-                                                        
                         </thead>
                         <tbody><p class="loading" id="loading_qaop_table" style="text-align: center;">Loading AOP network...</p></tbody>
                     </table>
-                    
                 </div>
             </div>
             <div id="bdf_div" class="data-section" style="display: none;">
                 <button id="query_opentargets" class="btn btn-primary">Query compounds in OpenTargets</button>
             </div>
+            <div class="table-container" style="overflow-x: auto;">
+                <table class="table table-bordered table-striped" id="compound_table">
+                    <thead>
+                        <tr>
+                            <th>Compound</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <p class="loading" id="loading_compound" style="text-align: center;">Loading compound list...</p>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </div>
     <div class="center">
         <section>
@@ -83,13 +82,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.css">
 <script src="https://cdn.jsdelivr.net/npm/cytoscape-qtip@2.7.0/cytoscape-qtip.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+<!-- <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" /> -->
 <script src="/static/js/aop_app/aop_elements.js"></script>
 <script src="/static/js/aop_app/aop_styles.js"></script>
 <script src="/static/js/aop_app/qsprpred.js"></script>
 <script src="/static/js/aop_app/select_data.js"></script>
 <script src="/static/js/aop_app/compound.js"></script>
 <script src="/static/js/aop_app/bdf.js"></script>
-
 
 {% endblock %}

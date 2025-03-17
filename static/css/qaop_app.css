@@ -18,12 +18,12 @@
     flex-shrink: 0;
 }
 .left {
-    width: 35vw;
+    width: 47vw;
     max-height: 20vh;
     margin-left: 2.5vw;
 }
 .center {
-    width: 60vw;
+    width: 47vw;
     margin-right: 2.5vw;
 }
 .table-container {

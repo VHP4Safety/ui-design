@@ -137,9 +137,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function updateCytoscapeSubset() {
-    // Get the selected compound IDs from the table.
     const selectedIds = $("#compound_table tbody tr.selected")
-        .map((_, row) => $(row).find("td:first").text().trim())
+        .map((_, row) => $(row).find(".compound-link").text().trim())
         .get();
 
     if (!selectedIds.length) {
