@@ -1,0 +1,25 @@
+mie_query,qsprpred_model,uniprot ID inferred from qspred name,protein name uniprot,Gene Symbol Uniprot,AOP,MIE name,MIE/KE identifier in AOP wiki,description MIE/KE from AOP wiki,mie_direction,direction_evidence,KE identifier,Ensembl,,,,,ensemble string from protein atlas
+Parkinson's disease,Q13224_RF_Model,Q13224,"Glutamate receptor ionotropic, NMDA 2B",GRIN2B,https://aopwiki.org/aops/464,NMDA,388,"Overactivation, NMDARs",overactivation,10.1016/j.neuro.2023.11.001,https://identifiers.org/aop.events/388,ENSG00000273079,,,,,
+Parkinson's disease,P31644_RF_Model,P31644,"
+Gamma-aminobutyric acid receptor subunit alpha-5",GABRA5,https://aopwiki.org/aops/464,GABA,2039,"Inhibition, GABAR",inhibition,10.1016/j.neuro.2023.11.001,https://identifiers.org/aop.events/2039,ENSG00000186297,,,,,
+Parkinson's disease,P41594_Allosteric_RF_Model,P41594,Metabotropic glutamate receptor 5,GRM5,https://aopwiki.org/aops/464,mGLU 5 Allosteric,2036,"Activation, mGluR",activation,10.1016/j.neuro.2023.11.001,https://identifiers.org/aop.events/2036,ENSG00000168959,,,,,
+Parkinson's disease,P41594_Orthosteric_RF_Model,P41594,Metabotropic glutamate receptor 5,GRM5,https://aopwiki.org/aops/464,mGLU 5 Orthosteric,2036,"Activation, mGluR",activation,10.1016/j.neuro.2023.11.001,https://identifiers.org/aop.events/2036,ENSG00000168959,,,,,
+Parkinson's disease,Q13255_Allosteric_RF_Model,Q13255,Metabotropic glutamate receptor 1,GRM1,https://aopwiki.org/aops/464,mGLU 1 Allosteric,2036,"Activation, mGluR",activation,10.1016/j.neuro.2023.11.001,https://identifiers.org/aop.events/2036,ENSG00000152822,,,,,
+Thyroid,P10827_RF_Model,P10827,Thyroid hormone receptor alpha,THRA,https://aopwiki.org/aops/485,Thyroid hormone receptor alpha,1656,"Antagonism, Thyroid Receptor
+",antagonism,,https://aopwiki.org/events/2104,ENSG00000126351,,,,,
+Thyroid,P10828_RF_Model,P10828,Thyroid hormone receptor beta,THRB,https://aopwiki.org/aops/485,Thyroid hormone receptor beta,1656,"Antagonism, Thyroid Receptor
+",antagonism,,https://aopwiki.org/events/2104,ENSG00000151090,,,,,
+Parkinson's disease,,,"Inositol 1,4,5-trisphosphate-gated calcium channel ITPR1",ITPR1,https://aopwiki.org/aops/464,Inositol triphosphate receptor 1,2037,"Activation, IP3R",activation,10.1016/j.neuro.2023.11.001,https://identifiers.org/aop.events/2037,ENSG00000150995,,,,,
+Parkinson's disease,,,"Inositol 1,4,5-trisphosphate-gated calcium channel ITPR2",ITPR2,https://aopwiki.org/aops/464,Inositol triphosphate receptor 2,2037,"Activation, IP3R",activation,10.1016/j.neuro.2023.11.001,https://identifiers.org/aop.events/2037,ENSG00000123104,,,,,
+Parkinson's disease,,,"Inositol 1,4,5-trisphosphate-gated calcium channel ITPR3",ITPR3,https://aopwiki.org/aops/464,Inositol triphosphate receptor 3,2037,"Activation, IP3R",activation,10.1016/j.neuro.2023.11.001,https://identifiers.org/aop.events/2037,ENSG00000096433,,,,,
+Parkinson's disease,,,Calcium voltage-gated channel subunit alpha1 D (Cav1.3),CACNA1D,https://aopwiki.org/aops/464,voltage-gated calcium channel Cav1.3,2187,"Opening, VGCC",opening,10.1016/j.neuro.2023.11.001,https://identifiers.org/aop.events/2187,ENSG00000157388,,,,,
+Parkinson's disease,,,,,https://aopwiki.org/aops/464,voltage-gated calcium channels,2187,"Opening, VGCC",opening,10.1016/j.neuro.2023.11.001,https://identifiers.org/aop.events/2187,,,,,,
+Thyroid,,P36021,Monocarboxylate transporter 8,SLC16A2,,Monocarboxylate transporter 8 (SLC16A2),,MCT8 inhibition,Inhibition,,,ENSG00000147100,,,,,
+Thyroid,,K7ELT4,Solute carrier family 16 member 2,SLC16A2,,SLC16A2 Solute carrier family 16 member 2,,MCT8 inhibition,Inhibition,,,ENSG00000147100,,,,,
+,,,,,,,,,,,,,,,,,
+Kidney,,,,,https://aopwiki.org/aops/472,Organic cation transporter 2,,,,,,ENSG00000112499,,,,,
+Kidney,,Q5VU43,,,https://aopwiki.org/aops/257,Megalin,1486,,,,https://identifiers.org/aop.events/1486,ENSG00000178104,,,,,
+Kidney,,Q9P2M1,,,https://aopwiki.org/aops/257,Megalin,1486,,,,https://identifiers.org/aop.events/1486,ENSG00000081479,,,,,
+,,,,,https://aopwiki.org/aops/257,Cubulin,1486,,,,https://identifiers.org/aop.events/1486,ENSG00000107611,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,

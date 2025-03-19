@@ -1,133 +1,110 @@
 {% extends "base.html" %}
 {% block content %}
-
-<style>
-    /* Style for Cytoscape Container */
-    #cy {
-        background-color: #FFFFFF; /* White background */
-        border-radius: 20px; /* Rounded edges */
-        border: 2px solid #ccc; /* Light gray border */
-        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2); /* Soft shadow */
-        padding: 10px; /* Internal padding */
-        height: 80vh;
-    }
-    .container {
-        display: flex;
-        width: 100vw; /* Full viewport width */
-        margin: 0; /* Remove default margin */
-        padding: 0; /* Remove default padding */
-    }
-    .left, .right, .center {
-        padding: 10px;
-        flex-shrink: 0; /* Do not prevent shrinking */
-    }
-    .left, .right {
-        width: 20vw;
-    }
-    .center {
-        width: 60vw;
-    }
-    .table-container {
-        max-height: 80vh; /* Limit height */
-        overflow-y: auto; /* Make scrollable */
-    }
-    table {
-        table-layout: fixed; /* Fixed layout */
-        width: 100%; /* Full width */
-    }
-    th, td {
-        word-wrap: break-word; /* Wrap text */
-    }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/qaop_app.css') }}">
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
-<h1>{{ title }}</h1>
-<br />
+<!-- Add the font size slider -->
+<input type="range" id="font-size-slider" min="0.1" max="1" step=".1" value="0.5" style="display: block; margin: 10px 0;">
 
-<div class="container">
+<div class="container" data-mies="{{ mies }}">
     <div class="left">
         <section>
-            <h2>Chemicals</h2>
-            <div class="table-container">
-                <table class="table table-bordered table-striped" id="compound_table"> 
-                    <thead>
-                        <tr>
-                            <th>Compound</th>
-                            <th>SMILES</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+            <h2>Add data to the network <select id="data-type-dropdown" onchange="handleDataTypeChange()">
+                <option value="qsprpred_opt">QSPRPred</option>
+                <option value="qaop_opt">Custom qAOP data</option>
+                <option value="bdf_opt">BioDataFuse</option>
+            </select></h2>
+                <!-- Add more options in the future -->
+            
+            <div id="qsprpred" class="data-section">
+                <button id="fetch_predictions" class="btn btn-primary">QSPRpred activity predictions for MIEs</button>
+                <div class="form-group">
+                    <p>Set the threshold for pChEMBL (<span id="activity_display">activity of 10<sup>-6.5</sup> M</span>) <input type="number" step="0.1" class="form-control" id="threshold_pchembl" value="6.5" oninput="updateActivity()" style="display: inline-block; width: auto;"></p>
+                    <script>
+                        function updateActivity() {
+                            var value = document.getElementById('threshold_pchembl').value;
+                            document.getElementById('activity_display').innerHTML = 'activity of 10<sup>-' + value + '</sup> M';
+                        }
+                    </script>
+                </div>
+            </div>
+            
+            <div id="qaop_div" class="data-section" style="display: none;">
+                <div class="table-container">
+                    <table class="table table-bordered table-striped" id="qaop_table"> 
+                        <thead>
+                            <tr>
+                                <th>source</th>
+                                <th>KER</th>
+                                <th>target</th>
+                            </tr>
+                        </thead>
+                        <tbody><p class="loading" id="loading_qaop_table" style="text-align: center;">Loading AOP network...</p></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="bdf_div" class="data-section" style="display: none;">
+                <button id="query_opentargets" class="btn btn-primary">Query as drugs in OpenTargets</button>
+                <button id="query_bgee" class="btn btn-primary">Query gene expression in Bgee</button>
+            </div>
+            <div class="table-container" style="display: flex; flex-direction: column; height: 100vh;">
+                <div class="scrollable-table" style="height: 50vh; overflow-y: auto;">
+                    <table class="table table-bordered table-striped" id="compound_table">
+                        <thead>
+                            <tr>
+                                <th>Compound</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Removed the <p> tag to avoid rendering issues -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="scrollable-table" style="height: 50vh; overflow-y: auto;">
+                    <table class="table table-bordered table-striped" id="gene_table">
+                        <thead>
+                            <tr>
+                                <th>Gene</th>
+                                <th>Gene Expression</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Removed the <p> tag to avoid rendering issues -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </div>
-    
     <div class="center">
         <section>
-            <h2>Adverse Outcome Pathways <button id="reset_layout" class="btn btn-secondary">Reset Layout</button></h2>
-            <div id="cy"></div>
-            <p id="loading" style="text-align: center;">Loading AOP network...</p>
-        </section>
-    </div>
-    
-    <div class="right">
-        <section>
-            <h2><button id="fetch_predictions" class="btn btn-primary">Get QSPRpred target-specific activities for MIEs</button></h2>
-            <div class="table-container">
-                <table class="table table-bordered table-striped mt-3" id="predictions_table">
-                    <thead>
-                        <tr>
-                            <th>SMILES</th>
-                            <th>Model</th>
-                            <th>Prediction Value</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+            <h2>
+                Adverse Outcome Pathway Network
+            </h2>
+                <button id="reset_layout" class="btn btn-secondary">Reset Layout</button>
+                <button id="see_genes" class="btn btn-secondary">See Genes</button>
+                <button id="toggle_bounding_boxes" class="btn btn-secondary">Group by AOP</button>
+                <button id="download_network" class="btn btn-secondary">Download Cytoscape Network</button>
+            <div id="cy">
+                <p class="loading" id="loading_aop" style="text-align: center;">Loading AOP network...</p>
             </div>
         </section>
     </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
-<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
-<script src="https://unpkg.com/cytoscape-popper/cytoscape-popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.css">
 <script src="https://cdn.jsdelivr.net/npm/cytoscape-qtip@2.7.0/cytoscape-qtip.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
-<script src="https://unpkg.com/@popperjs/core@2"></script>
-<script src="https://unpkg.com/tippy.js@6"></script>
-
-<script src="/static/js/aop_app/populate_compound_container.js"></script>
-<script src="/static/js/aop_app/populate_aop_network.js"></script>
-<script src="/static/js/aop_app/predict_qspr.js"></script>
-
-<script>
-    // Fetch modelToMIE data from JSON file
-    fetch("{{ url_for('static', filename='data/model_to_mie.json') }}")
-        .then(response => response.json())
-        .then(data => {
-            window.modelToMIE = data;
-        })
-        .catch(error => console.error('Error loading modelToMIE data:', error));
-</script>
-
-<style>
-.tooltip {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.8);
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 5px;
-    font-size: 14px;
-    display: none;
-    z-index: 10;
-    max-width: 200px;
-    text-align: center;
-    font-weight: bold;
-}
-</style>
+<!-- <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" /> -->
+<script src="/static/js/aop_app/aop_elements.js"></script>
+<script src="/static/js/aop_app/aop_styles.js"></script>
+<script src="/static/js/aop_app/qsprpred.js"></script>
+<script src="/static/js/aop_app/select_data.js"></script>
+<script src="/static/js/aop_app/compound.js"></script>
+<script src="/static/js/aop_app/gene.js"></script>
+<script src="/static/js/aop_app/bdf.js"></script>
 
 {% endblock %}
