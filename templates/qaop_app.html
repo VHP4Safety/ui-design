@@ -46,19 +46,35 @@
                 </div>
             </div>
             <div id="bdf_div" class="data-section" style="display: none;">
-                <button id="query_opentargets" class="btn btn-primary">Query compounds in OpenTargets</button>
+                <button id="query_opentargets" class="btn btn-primary">Query as drugs in OpenTargets</button>
+                <button id="query_bgee" class="btn btn-primary">Query gene expression in Bgee</button>
             </div>
-            <div class="table-container" style="overflow-x: auto;">
-                <table class="table table-bordered table-striped" id="compound_table">
-                    <thead>
-                        <tr>
-                            <th>Compound</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <p class="loading" id="loading_compound" style="text-align: center;">Loading compound list...</p>
-                    </tbody>
-                </table>
+            <div class="table-container" style="display: flex; flex-direction: column; height: 100vh;">
+                <div class="scrollable-table" style="height: 50vh; overflow-y: auto;">
+                    <table class="table table-bordered table-striped" id="compound_table">
+                        <thead>
+                            <tr>
+                                <th>Compound</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Removed the <p> tag to avoid rendering issues -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="scrollable-table" style="height: 50vh; overflow-y: auto;">
+                    <table class="table table-bordered table-striped" id="gene_table">
+                        <thead>
+                            <tr>
+                                <th>Gene</th>
+                                <th>Gene Expression</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Removed the <p> tag to avoid rendering issues -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </div>
@@ -88,6 +104,7 @@
 <script src="/static/js/aop_app/qsprpred.js"></script>
 <script src="/static/js/aop_app/select_data.js"></script>
 <script src="/static/js/aop_app/compound.js"></script>
+<script src="/static/js/aop_app/gene.js"></script>
 <script src="/static/js/aop_app/bdf.js"></script>
 
 {% endblock %}

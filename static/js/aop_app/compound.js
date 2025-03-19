@@ -1,10 +1,19 @@
 $(document).ready(() => {
     // Load the compound table with clickable links.
-    const qid = $("#compound-container").data("qid");
+    const qid = $("#compound-container").data("qid"); // Corrected selector for 'qid'
+    if (!qid) {
+        console.error("No 'qid' found in #compound-container.");
+        return;
+    }
+
     $.getJSON(`/get_compounds/${qid}`, data => {
         console.log(data);
-        document.getElementById("loading_compound").style.display = "none";
-        const tableBody = $("#compound_table tbody").empty();
+        const loadingElement = document.getElementById("loading_compound");
+        if (loadingElement) {
+            loadingElement.style.display = "none";
+        }
+
+        const tableBody = $("#compound_table tbody").empty(); // Ensure correct table is targeted
         data.forEach(option => {
             const encodedSMILES = encodeURIComponent(option.SMILES);
             compoundMapping[option.SMILES] = { term: option.Term, url: `/compound/${option.ID}`, target: "_blank" };
@@ -31,6 +40,8 @@ $(document).ready(() => {
                 </tr>
             `);
         });
+    }).fail(() => {
+        console.error("Failed to fetch compounds.");
     });
 
     // Enable row selection to filter the Cytoscape network by compound.

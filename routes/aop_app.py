@@ -8,9 +8,7 @@ import pandas as pd
 import csv
 import os
 from pyBiodatafuse import id_mapper
-from pyBiodatafuse.annotators import molmedb, opentargets
-from pyBiodatafuse.constants import MOLMEDB_COMPOUND_PROTEIN_COL, OPENTARGETS_DISEASE_COL
-from pyBiodatafuse.utils import combine_sources
+from pyBiodatafuse.annotators import opentargets, bgee
 
 aop_app = Blueprint("aop_app", __name__)
 
@@ -614,22 +612,69 @@ def add_aop_bounding_box():
             node['data']['parent'] = f"bounding-box-{aop_item}"
     return jsonify(cy_elements + bounding_boxes), 200
 
-## BioData
-@aop_app.route("/add_bdf_opentargets", methods=["GET"])
-def add_bdf_opentargets():
-    cids = request.args.get('cids', None)    
-    if cids:
+## BioDatafuse
+@aop_app.route("/get_bridgedb_xref", methods=["POST"])
+def get_bridgedb_xref():
+    data = request.get_json(silent=True)
+    if not data or "identifiers" not in data:
+        return jsonify({"error": "Invalid input"}), 400
 
-        cids = [i for i in cids.split(',') if i!='nan']
-        data_input = pd.DataFrame(cids, columns=["identifier"],)
+    data_input = pd.DataFrame(data["identifiers"], columns=["identifier"])
+    input_species = data.get("input_species", "Human")
+    input_datasource = data.get("input_datasource", "PubChem Compound")
+    output_datasource = data.get("output_datasource", "All")
+
+    try:
         bridgedb_df, bridgedb_metadata = id_mapper.bridgedb_xref(
             identifiers=data_input,
-            input_species="Human",
-            input_datasource="PubChem Compound",  # ChEMBL compound
-            output_datasource="All",
-            )
-        (opentargets_transporter_inhibited_df, 
-             opentargets_transporter_inhibited_metadata,) = opentargets.get_compound_disease_interactions(bridgedb_df=bridgedb_df) 
-        result = jsonify(opentargets_transporter_inhibited_df.fillna("NaN").to_dict(orient="records"))
-        
-        return result, 200
+            input_species=input_species,
+            input_datasource=input_datasource,
+            output_datasource=output_datasource,
+        )
+        return jsonify({
+            "bridgedb_df": bridgedb_df.fillna("NaN").to_dict(orient="records"),
+            "bridgedb_metadata": bridgedb_metadata
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@aop_app.route("/add_bdf_opentargets", methods=["GET"])
+def add_bdf_opentargets():
+    try:
+        bridgedb_data = request.args.get("bridgedb_data", "")
+        if not bridgedb_data:
+            return jsonify({"error": "BridgeDb data is required"}), 400
+
+        bridgedb_df = pd.DataFrame(json.loads(bridgedb_data))
+        ot_df, ot_metadata = opentargets.get_compound_disease_interactions(bridgedb_df=bridgedb_df)
+
+        # Replace NaN with None (null in JSON)
+        ot_df = ot_df.where(pd.notnull(ot_df), None)
+
+        return jsonify(ot_df.to_dict(orient="records")), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@aop_app.route("/add_bdf_bgee", methods=["POST"])
+def add_bdf_bgee():
+    data = request.get_json(silent=True)
+    if not data or "bridgedb_data" not in data:
+        return jsonify({"error": "BridgeDb data is required"}), 400
+
+    bridgedb_df = pd.DataFrame(data["bridgedb_data"])
+    try:
+        bgee_df, bgee_metadata = bgee.get_gene_expression(bridgedb_df=bridgedb_df)
+
+        # Replace NaN with None (null in JSON)
+        bgee_df = bgee_df.where(pd.notnull(bgee_df), None)
+
+        result = bgee_df.to_dict(orient="records")
+
+        # Log the result to the server log
+        print("Result of /add_bdf_bgee:", result)
+
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

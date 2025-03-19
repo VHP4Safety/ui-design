@@ -53,3 +53,23 @@ th, td {
     width: 200px;
     z-index: 1000;
 }
+
+#gene_table {
+    display: table; /* Ensure the table is displayed properly */
+    width: 100%;    /* Make it responsive */
+    margin-top: 10px;
+}
+
+.scrollable-table {
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #ccc; /* Add a border for better visibility */
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #fff; /* Ensure a white background for the tables */
+}
+
+#compound_table, #gene_table {
+    width: 100%; /* Ensure tables take full width of their container */
+    margin: 0; /* Remove default margins */
+    border-collapse: collapse; /* Ensure proper table styling */
+}
