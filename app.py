@@ -55,10 +55,6 @@ def partners_and_consortium():
 def contact():
     return render_template('information/contact.html')
 
-@app.route('/youp')
-def youp():
-    return render_template('case_studies/thyroid/youp.html')
-
 ################################################################################
 
 ################################################################################
