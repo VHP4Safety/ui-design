@@ -1,0 +1,75 @@
+/* Style for Cytoscape Container */
+#cy {
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    border: 2px solid #ccc;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    height: 72vh;
+}
+.container {
+    display: flex;
+    width: 90vw;
+    margin: 0;
+    padding: 0;
+}
+.left, .center {
+    padding: 10px;
+    flex-shrink: 0;
+}
+.left {
+    width: 47vw;
+    max-height: 20vh;
+    margin-left: 2.5vw;
+}
+.center {
+    width: 47vw;
+    margin-right: 2.5vw;
+}
+.table-container {
+    max-height: 65vh;
+    overflow-y:scroll;
+    border-radius: 20px;
+}
+th, td {
+    word-wrap: break-word;
+}
+
+.loading {
+    color:#000000;
+
+}
+
+.form-control {
+    max-width: 90px;
+    width: 90px;
+    font-size: 13px;
+}
+
+#font-size-slider {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 200px;
+    z-index: 1000;
+}
+
+#gene_table {
+    display: table; /* Ensure the table is displayed properly */
+    width: 100%;    /* Make it responsive */
+    margin-top: 10px;
+}
+
+.scrollable-table {
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #ccc; /* Add a border for better visibility */
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #fff; /* Ensure a white background for the tables */
+}
+
+#compound_table, #gene_table {
+    width: 100%; /* Ensure tables take full width of their container */
+    margin: 0; /* Remove default margins */
+    border-collapse: collapse; /* Ensure proper table styling */
+}

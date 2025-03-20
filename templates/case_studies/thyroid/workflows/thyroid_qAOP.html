@@ -1,0 +1,16 @@
+{% extends "qaop_app.html" %}
+{% block content %}
+    {% set mie_query = "aop.events:1656 aop.events:2258 " %}
+    {% set compound_query = "Parkinson's disease case compounds" %}
+    {% set qid = "Q2059" %}
+    {% set qid_wd = "Q11085" %}
+    {% set title = "Thyroid disruption case study" %}
+    <div id="compound-container" 
+        data-qid="{{ qid }}" 
+        data-mies="{{ mie_query }}" 
+        data-mie-query="{{ mie_query }}"
+        qid_wd="{{qid_wd}}"
+        title="{{title}}">
+        {{ super() }}
+    </div>
+{% endblock %}

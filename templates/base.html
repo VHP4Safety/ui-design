@@ -103,6 +103,7 @@
                 <a class="dropdown-item" href="{{ url_for('service_list') }}">List of all services</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{{ url_for('qsprpred') }}">QSPRPred</a>
+                <a class="dropdown-item" href="{{ url_for('qaop_app') }}">qAOP App</a>
               </div>
             </li>
 
@@ -125,7 +126,7 @@
               <div class="dropdown-submenu">
                 <a class="dropdown-item dropdown-toggle" href="{{ url_for('parkinson_main') }}">Parkinson</a>
                 <ul class="dropdown-menu dropdown-submenu dropdown-submenu-left">
-                  <li><a class="dropdown-item" href="{{ url_for('parkinson_hackathon_workflow') }}">Parkinson hackathon workflow</a>
+                  <li><a class="dropdown-item" href="{{ url_for('parkinson_qaop') }}">Parkinson's disease qAOP workflow</a>
                   </li>
                 </ul>
               </div>
@@ -136,6 +137,7 @@
                   <ul class="dropdown-menu dropdown-submenu dropdown-submenu-left">
                     <li><a class="dropdown-item" href="{{ url_for('thyroid_workflow_1') }}">Workflow 1</a></li>
                     <li><a class="dropdown-item" href="{{ url_for('ngra_silymarin') }}">Developmental Neurotoxicity Risk Assessment of Silymarin</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('thyroid_qaop') }}">Thyroid case qAOP workflow</a>
                   </ul>
                 </div>
               </div>
