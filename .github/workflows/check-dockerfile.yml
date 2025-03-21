@@ -16,5 +16,14 @@ jobs:
       - name: Build Docker image
         run: docker build -t vhp_platform:latest .
 
-      - name: Run Docker container to check
-        run: docker run --rm vhp_platform:latest
+      - name: Run Docker container in the background
+        run: docker run -d --name vhp_test_container vhp_platform:latest
+
+      - name: Check if Flask app is running
+        run: docker logs vhp_test_container
+
+      - name: Health check with curl
+        run: curl -f http://localhost:5000/ || (docker logs vhp_test_container && exit 1)
+
+      - name: Stop and remove the container
+        run: docker stop vhp_test_container && docker rm vhp_test_container
