@@ -23,7 +23,7 @@ jobs:
         run: docker logs vhp_test_container
 
       - name: Health check with curl
-        run: curl -f http://127.0.0.1:5000/ || (docker logs vhp_test_container && exit 1)
+        run: curl -f http://localhost:5001/ || (docker logs vhp_test_container && exit 1)
 
       - name: Stop and remove the container
         run: docker stop vhp_test_container && docker rm vhp_test_container
