@@ -1,0 +1,29 @@
+name: Check Dockerfile
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: docker build -t vhp_platform:latest .
+
+      - name: Run Docker container in the background
+        run: docker run -d --name vhp_test_container vhp_platform:latest
+
+      - name: Check if Flask app is running
+        run: docker logs vhp_test_container
+
+      #- name: Health check with curl
+      #  run: curl -f http://localhost:5001/ || (docker logs vhp_test_container && exit 1)
+
+      - name: Stop and remove the container
+        run: docker stop vhp_test_container && docker rm vhp_test_container
