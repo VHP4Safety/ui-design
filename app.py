@@ -35,6 +35,10 @@ def home():
 
 ################################################################################
 ### Pages under 'Project Information'
+@app.route('/landingpage')
+def landingpage():
+    return render_template('mirthe/landingpage.html')
+
 @app.route('/information/mission_and_vision')
 def mission_and_vision():
     return render_template('information/mission_and_vision.html')
