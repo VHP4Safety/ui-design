@@ -212,6 +212,18 @@ def ngra_silymarin():
 
 ################################################################################
 
+################################################################################
+
+### Pages under 'Legal'
+
+@app.route('/legal/terms_of_service')
+def terms_of_service():
+    return render_template('legal/terms_of_service.html')
+
+@app.route('/legal/privacypolicy')
+def privacy_policy():
+    return render_template('legal/privacypolicy.html')
+
 # Import the new blueprint
 from routes.aop_app import aop_app
 
