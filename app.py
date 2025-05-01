@@ -34,30 +34,46 @@ def home():
 ################################################################################
 
 ################################################################################
-### Pages under 'Project Information'
-@app.route('/landingpage')
-def landingpage():
-    return render_template('mirthe/landingpage.html')
+### Main tabs
+@app.route('/assessment')
+def assessments():
+    return render_template('tabs/assessments.html')
 
-@app.route('/information/mission_and_vision')
-def mission_and_vision():
-    return render_template('information/mission_and_vision.html')
+@app.route('/workflows')
+def workflows():
+    return render_template('tabs/workflows.html')
 
-@app.route('/information/research_lines')
-def research_lines():
-    return render_template('information/research_lines.html')
+@app.route('/data')
+def data():
+    return render_template('tabs/data.html')
 
-@app.route('/case_studies_and_regulatory_questions')
-def case_studies_and_regulatory_questions():
-    return render_template('information/case_studies_and_regulatory_questions.html')
+################################################################################
+### Pages under 'Project Information', these are now part of home.html
 
-@app.route('/information/partners_and_consortium')
-def partners_and_consortium():
-    return render_template('information/partners_and_consortium.html')
+# @app.route('/information/mission_and_vision')
+# def mission_and_vision():
+#     # This section is now part of the landing page or home.html.
+#     return render_template('information/mission_and_vision.html')
 
-@app.route('/information/contact')
-def contact():
-    return render_template('information/contact.html')
+# @app.route('/information/research_lines')
+# def research_lines():
+#     # This section is now part of the landing page or home.html.
+#     return render_template('information/research_lines.html')
+
+# @app.route('/case_studies_and_regulatory_questions')
+# def case_studies_and_regulatory_questions():
+#     # This section is now part of the landing page or home.html.
+#     return render_template('information/case_studies_and_regulatory_questions.html')
+
+# @app.route('/information/partners_and_consortium')
+# def partners_and_consortium():
+#     # This section is now part of the landing page or home.html.
+#     return render_template('information/partners_and_consortium.html')
+
+# @app.route('/information/contact')
+# def contact():
+#     # This section is now part of the landing page or home.html.
+#     return render_template('information/contact.html')
 
 ################################################################################
 
@@ -137,27 +153,26 @@ def service_list():
 
     # return render_template('services/service_list.html')
 
-@app.route('/templates/services/qsprpred')
+@app.route('/services/qsprpred')
 def qsprpred():
     return render_template('services/qsprpred.html')
+
+@app.route("/services/qaop_app")
+def qaop_app():
+    return render_template("qaop_app.html")
 
 ################################################################################
 
 ################################################################################
 ### Pages under 'Case Studies'
 
-@app.route('/templates/case_studies/kidney/kidney')
+@app.route('/case_studies/kidney/kidney')
 def kidney_main():
     return render_template('case_studies/kidney/kidney.html')
 
 @app.route('/case_studies/parkinson/parkinson')
 def parkinson_main():
     return render_template('case_studies/parkinson/parkinson.html')
-
-
-@app.route("/services/qAOPapp")
-def qaop_app():
-    return render_template("services/qAOPapp.html")
 
 
 @app.route('/case_studies/parkinson/workflows/parkinson_qAOP')
@@ -184,14 +199,14 @@ def show_compound(cwid):
     except TemplateNotFound:
         abort(404)
 
-@app.route('/templates/case_studies/thyroid/thyroid')
+@app.route('/case_studies/thyroid/thyroid')
 def thyroid_main():
     return render_template('case_studies/thyroid/thyroid.html')
 
-@app.route('/templates/case_studies/thyroid/workflows/thyroid_hackathon_demo_workflow')
+@app.route('/case_studies/thyroid/workflows/thyroid_hackathon_demo_workflow')
 def thyroid_workflow_1():
     return render_template('case_studies/thyroid/workflows/thyroid_hackathon_demo_workflow.html')
-@app.route('/templates/case_studies/thyroid/workflows/ngra_silymarin')
+@app.route('/case_studies/thyroid/workflows/ngra_silymarin')
 def ngra_silymarin():
     return render_template('case_studies/thyroid/workflows/ngra_silymarin.html')
 
