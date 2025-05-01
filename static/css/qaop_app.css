@@ -12,6 +12,7 @@
     width: 90vw;
     margin: 0;
     padding: 0;
+    margin-top: 90px; /* Adjust this value based on the navbar height */
 }
 .left, .center {
     padding: 10px;
@@ -33,6 +34,8 @@
 }
 th, td {
     word-wrap: break-word;
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
 }
 
 .loading {
@@ -46,14 +49,6 @@ th, td {
     font-size: 13px;
 }
 
-#font-size-slider {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    width: 200px;
-    z-index: 1000;
-}
-
 #gene_table {
     display: table; /* Ensure the table is displayed properly */
     width: 100%;    /* Make it responsive */
@@ -63,9 +58,9 @@ th, td {
 .scrollable-table {
     overflow-y: auto; /* Enable vertical scrolling */
     border: 1px solid #ccc; /* Add a border for better visibility */
-    border-radius: 5px;
+    border-radius: 10px;
     padding: 5px;
-    background-color: #fff; /* Ensure a white background for the tables */
+    background-color: #f9f9f9; /* Ensure a white background for the tables */
 }
 
 #compound_table, #gene_table {
@@ -73,3 +68,76 @@ th, td {
     margin: 0; /* Remove default margins */
     border-collapse: collapse; /* Ensure proper table styling */
 }
+
+.container button {
+    background-color: var(--blue);
+    font-size: 16px;
+    height: 40px;
+    margin: 2px;
+    display: inline-block; /* Ensure buttons are displayed inline */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 14px;
+    text-align: left;
+    background-color: var(--white);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th {
+    background-color: var(--purple);
+    color: var(--white);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+tr:hover {
+    background-color: var(--light-blue);
+    transition: background-color 0.3s ease;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+select {
+    background-color: var(--white);
+    border: 2px solid var(--light-blue);
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 14px;
+    height: 40px;
+    color: var(--black);
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+select:hover {
+    border-color: var(--purple);
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+input[type="number"] {
+    background-color: var(--white);
+    border: 2px solid var(--light-blue);
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 14px;
+    color: var(--black);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    width: auto;
+    display: inline-block;
+}
+
+input[type="number"]:hover {
+    border-color: var(--purple);
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
