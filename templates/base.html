@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VHP4Safety</title>
+    <link rel="stylesheet" href="/static/css/trial.css">
 
     <!-- jQuery, Popper.js, and Bootstrap JS -->
     <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -18,166 +19,144 @@
 
     <!-- Favicon -->
     <link
-      rel="icon"
-      href="{{ url_for('static', filename='images/vhp_favicon.ico') }}"
-      type="image/x-icon"
+        rel="icon"
+        href="{{ url_for('static', filename='images/vhp_favicon.ico') }}"
+        type="image/x-icon"
     />
 
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
-    <!-- Swiper Carousel for partners -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-    <!-- Custom Styles -->
-    <link
-      href="{{ url_for('static', filename='css/styles.css') }}"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="page-container">
-            <!-- Navigation Bar -->
-      <nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation">
-        <div class="container">
-          <!-- Logo on the left -->
-          <a class="navbar-brand" href="{{ url_for('home') }}">
-            <img src="{{ url_for('static', filename='images/vhp_higher_res.png') }}" class="img-fluid" alt="VHP4Safety Logo" />
-          </a>
-          <!-- Toggler for small screens -->
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          
-          <!-- Navbar links and dropdowns aligned to the right -->
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-              <li class="nav-item active">
-                <a class="nav-link" href="/">Home</a>
-              </li>
-
-            <!-- Project Information Dropdown -->
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navbarDropdown"
-                role="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                Project Information
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{{ url_for('home') }}#mission-and-vision">Mission and Vision</a>
-                <a class="dropdown-item" href="{{ url_for('home') }}#research-lines">Research Lines</a>
-                <a class="dropdown-item" href="{{ url_for('home') }}#case-studies-and-regulatory-questions">Case Studies and Regulatory Questions</a>
-                <a class="dropdown-item" href="{{ url_for('home') }}#partners-and-consortium">Partners and Consortium</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{{ url_for('home') }}#contact-us">Contact Us</a>
-              </div>
-            </li>
-
-            <!-- Services Dropdown -->
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="servicesDropdown"
-                role="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                Services
-              </a>
-              <div class="dropdown-menu" aria-labelledby="servicesDropdown">
-                <a class="dropdown-item" href="{{ url_for('service_list') }}">List of all services</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{{ url_for('qsprpred') }}">QSPRPred</a>
-                <a class="dropdown-item" href="{{ url_for('qaop_app') }}">qAOP App</a>
-              </div>
-            </li>
-
-          <!-- Case Studies Dropdown -->
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              id="caseStudiesDropdown"
-              role="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Case Studies
-            </a>
-            <div class="dropdown-menu" aria-labelledby="caseStudiesDropdown">
-              <a class="dropdown-item" href="{{ url_for('kidney_main') }}">Kidney</a>
-              <!-- Parkinson Dropdown with Nested Menu -->
-              <div class="dropdown-submenu">
-                <a class="dropdown-item dropdown-toggle" href="{{ url_for('parkinson_main') }}">Parkinson</a>
-                <ul class="dropdown-menu dropdown-submenu dropdown-submenu-left">
-                  <li><a class="dropdown-item" href="{{ url_for('parkinson_qaop') }}">Parkinson's disease qAOP workflow</a>
-                  </li>
-                </ul>
-              </div>
-
-                <!-- Thyroid Dropdown with Nested Menu -->
-                <div class="dropdown-submenu">
-                  <a class="dropdown-item dropdown-toggle" href="{{ url_for('thyroid_main') }}">Thyroid</a>
-                  <ul class="dropdown-menu dropdown-submenu dropdown-submenu-left">
-                    <li><a class="dropdown-item" href="{{ url_for('thyroid_workflow_1') }}">Workflow 1</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('ngra_silymarin') }}">Developmental Neurotoxicity Risk Assessment of Silymarin</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('thyroid_qaop') }}">Thyroid case qAOP workflow</a>
-                  </ul>
-                </div>
-              </div>
-            </li>
-          </ul>
-
-          <!-- Right hexagon img -->
-          <a class="navbar-brand" id="navbar-img-right" href="{{ url_for('home') }}">
-            <img src= "{{ url_for('static', filename='images/NavbarSideRight.png') }}" alt="VHP4Safety Logo" />
-          </a>
-
-        </div>
-      </nav>
-
-      <!-- Main Content Section -->
-      <main class="container mt-4">
-        <div id="content-wrap">
-          {% block content %} {% endblock %}
-        </div>
-      </main>
-
-      <!-- Footer Section -->
-      <footer>
-        <p>&copy; 2024 VHP4Safety. All Rights Reserved.</p>
-      </footer>
-    </div>
-    <!-- JavaScript for Accordions (If Used) -->
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        var acc = document.querySelectorAll(".accordion");
+        function toggleMenu() {
+            document.getElementById('menuOverlay').classList.toggle('open');
+        }
 
-        acc.forEach(function (button) {
-          button.addEventListener("click", function () {
-            this.classList.toggle("active");
-            var panel = this.nextElementSibling;
-            panel.style.display =
-              panel.style.display === "block" ? "none" : "block";
-          });
+        function toggleReadMore() {
+            const content = document.querySelector('.read-more-content');
+            const button = document.querySelector('.read-more-btn');
+            const isHidden = content.style.display === 'none';
+            content.style.display = isHidden ? 'block' : 'none';
+            button.textContent = isHidden ? 'Read less.' : 'Read more...';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.partner-logo').forEach(logo => {
+                logo.addEventListener('click', () => {
+                    window.open(logo.getAttribute('data-link'), '_blank');
+                });
+            });
         });
-      });
+
+        function scrollCarousel(direction) {
+            const carousel = document.querySelector('.carousel');
+            const logoWidth = 250; // Width of each logo including padding and gap
+            const scrollAmount = logoWidth * 2; // Scroll by 2 logos
+            carousel.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+        }
+
+        document.querySelectorAll('.menu-overlay a').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        document.addEventListener('click', (event) => {
+            const menuOverlay = document.getElementById('menuOverlay');
+            if (menuOverlay.classList.contains('open') && !menuOverlay.contains(event.target) && !event.target.classList.contains('hamburger-menu')) {
+                menuOverlay.classList.remove('open');
+            }
+        });
+
+        function scrollToNextSection() {
+            window.scrollBy({ top: window.innerHeight / 1.5, behavior: 'smooth' });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var acc = document.querySelectorAll(".accordion");
+
+            acc.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    this.classList.toggle("active");
+                    var panel = this.nextElementSibling;
+                    panel.style.display =
+                        panel.style.display === "block" ? "none" : "block";
+                });
+            });
+        });
     </script>
-  </body>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <header>
+            <a href="/"><img src="/static/images/vhp_higher_res.png" alt="Logo" class="logo-image"></a>
+        </header>
+        <div class="nav-links">
+            <button onclick="location.href='/assessment'">Assessment</button>
+            <button onclick="location.href='/workflows'">Workflows</button>
+            <button onclick="location.href='/templates/services/service_list'">Tools</button>
+            <button onclick="location.href='/data'">Data</button>
+        </div>
+        <div class="hamburger-menu" onclick="toggleMenu()">☰</div>
+    </nav>
+    <div class="menu-overlay" id="menuOverlay">
+        <div class="close-button" onclick="toggleMenu()">✖</div>
+        <ul>
+            <li><a href="{{ url_for('home') }}#about-section">About</a></li>
+            <li><a href="{{ url_for('home') }}#partners-section">Partners</a></li>
+            <li><a href="{{ url_for('home') }}#contact-section">Contact</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content Section -->
+    <main>
+        {% block content %} {% endblock %}
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>EXPLORE</h3>
+                <ul>
+                    <li><a href="/assessment">Assessment</a></li>
+                    <li><a href="/workflows">Workflows</a></li>
+                    <li><a href="/templates/services/service_list">Tools</a></li>
+                    <li><a href="/data">Data</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>RESOURCES</h3>
+                <ul>
+                    <li><a href="{{ url_for('home') }}#about-section">About</a></li>
+                    <li><a href="{{ url_for('home') }}#partners-section">Partners</a></li>
+                    <li><a href="{{ url_for('home') }}#contact-section">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>LEGAL</h3>
+                <ul>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>CONNECT</h3>
+                <ul>
+                    <li><a href="https://github.com/VHP4Safety">GitHub</a></li>
+                    <li><a href="https://www.linkedin.com/company/vhp4safety/posts/?feedView=all">LinkedIn</a></li>
+                </ul>
+            </div>
+        </div>
+        <p>&copy; 2025 VHP4Safety</p>
+    </footer>
+</body>
 </html>
