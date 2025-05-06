@@ -1,0 +1,15 @@
+/* This CSS file is used for service_list.html, it builds upon base.css */
+.card {
+    padding: 30px;
+    margin-bottom: 30px;
+    border-radius: 15px;
+    background-color: var(--light-blue);
+    width: 100%;
+}
+
+.card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px; /* Optional: to match the card's rounded corners */
+    object-fit: cover; /* Ensures the image fits nicely within the card */
+}
