@@ -1,0 +1,86 @@
+/* This CSS file is used for thyroid_hackathon_demo_workflow.html, it builds upon base.css */
+#service_selection { /* Container for the service selection section */
+    display: flex;
+    gap: 20px;
+}
+
+.service-tile { /* Individual service tile */
+    border-radius: 8px;
+    padding: 15px;
+    width: 250px;
+    background-color: var(--grey);
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s, opacity 0.3s;
+    color: #333;
+}
+
+.service-tile input[type="checkbox"] {
+    display: none; /* Hide the native checkbox */
+}
+
+.service-tile:hover { /* Hover effect */
+    background-color: var(--light-blue);
+    opacity: 0.7;
+}
+
+.service-tile:has(input:checked) { /* When the service tile is selected */
+    background-color: var(--light-blue);
+}
+
+.service-desc { /* Description of the service tile */
+    font-size: 0.9em;
+    text-align: left;
+}
+
+.qspr-section { /* Section for QSPR model selection*/
+    display: none; /* Hidden until QSPR is selected */
+}
+
+/* Styling for model checkboxes */
+.model-checkbox {
+    display: none; /* Hide the native checkbox */
+}
+
+.model-checkbox + label {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 6px;
+    background-color: var(--grey);
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    color: #333;
+}
+
+.model-checkbox:checked + label {
+    background-color: var(--light-blue);
+    border-color: var(--dark-blue);
+}
+
+.model-checkbox + label:hover {
+    opacity: 0.8;
+}
+
+/* Mirthe: I can't find the toggle in the page and can't see the results table because I can't select compound smiles, will check back later when it works again to adjust styling of #toggle_compound_table, #results_container and #results_table if needed. */
+
+#toggle_compound_table {
+    margin-top: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#results_container {
+    display: none;
+    background: var(--white);
+    border: 2px solid var(--dark-blue);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--dark-blue);
+    padding: 20px;
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+#results_table th {
+    background-color: #29235c;
+}

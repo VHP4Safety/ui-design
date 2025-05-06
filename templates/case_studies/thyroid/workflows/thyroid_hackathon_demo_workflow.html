@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/hackathondemo.css') }}">
+
 <!-- Include DataTables CSS and JS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
@@ -9,12 +11,8 @@
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-
+ <section>
 <h1>Thyroid Case Demo Workflow for the Hackathon</h1>
-<br />
-
-<div class="container">
-  <section>
       <h2>1. Select compounds from the table:</h2>
       <table class="table table-bordered table-striped" id="compound_table"> 
           <thead>
@@ -46,23 +44,17 @@
           </label>
         </div>
       </div>
-  </section>
-</div>
 
 <!-- QSPR Section -->
 <div id="qspr_section" class="qspr-section">
   <h2>3. Select models to use from QSPR Service:</h2>
   <div id="model_selection">
-    <label>
-      <input type="checkbox" class="model-checkbox" value="P10827_RF_Model" />
-      P10827_RF_Model
-    </label><br />
-    <label>
-      <input type="checkbox" class="model-checkbox" value="P10828_RF_Model" />
-      P10828_RF_Model
-    </label>
+    <input type="checkbox" class="model-checkbox" id="model1" value="P10827_RF_Model" />
+    <label for="model1">P10827_RF_Model</label><br />
+    <input type="checkbox" class="model-checkbox" id="model2" value="P10828_RF_Model" />
+    <label for="model2">P10828_RF_Model</label>
   </div>
-  <p><button id="run_model" class="btn btn-success">Run QSAR Model</button></p>
+  <p><button id="run_model" class="button-blue">Run QSAR Model</button></p>
   <div class="container" id="results_container">
     <h2>Model Results:</h2>
     <table class="table table-bordered table-striped" id="results_table">
@@ -81,6 +73,8 @@
   <h2>SOMpredictor Service</h2>
   <p>Additional fields for SOMpredictor service will be added later.</p>
 </div>
+
+</section> 
 
 <script>
   $(document).ready(function () {

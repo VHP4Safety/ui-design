@@ -1,385 +1,133 @@
-{% extends "base.html" %} {% block content %}
-<section id="home-intro">
-  <h1>VHP4Safety</h1>
-  <p>
-    Hi There! You have reached the public documentation pages for the Virtual
-    Human Platform for Safety Evaluation of Chemicals. This is a large Dutch
-    research project, funded by NWO. These pages contain information,
-    documentation, installation instructions, and demos on how to use the
-    software, models, and data generated in the project.
-  </p>
-</section>
+{% extends "base.html" %}
+{% block content %}
 
-<section id="mission-and-vision">
-  <h1>Mission and Vision</h1>
-  <p>
-    Towards safety assessment based on human data. Imagine a world in which we
-    perform precision safety testing of chemicals and pharmaceuticals without
-    using laboratory animals. Imagine that the safety of chemicals and
-    pharmaceuticals can be assessed for vulnerable groups such as infants, the
-    elderly, or the diseased. Imagine that we know how these substances interact
-    with human biology and physiology and how they can be used safely at home,
-    school, or at work during the course of our lives. This is our vision for
-    the future, the vision that underlies the development of the Virtual Human
-    Platform for Safety Assessment, VHP4Safety.
-  </p>
-  <p>
-    <img
-      src="https://www.sciencrew.com/media/?art=333921498&amp;url=https%3A%2F%2Fstorage.imgzine.com%2Fprotected%2F432-feed-538%2FiStock-1195694221.jpg&amp;v=0&amp;w=1200"
-      style="width: 100%; height: auto"
-    />
-  </p>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 
-  <h2>Towards Safety Assessment Based on Human Data</h2>
+<!-- Font Awesome Icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
-  <p>
-    The mission of the Virtual Human Platform is to improve the prediction of
-    the potential harmful effects of chemicals and pharmaceuticals based on a
-    holistic, interdisciplinary definition of human health by developing the
-    Virtual Human Platform and accelerating the transition from animal-based
-    testing to innovative safety assessment. The Virtual Human Platform
-    integrates data on human physiology, chemical characteristics, and
-    perturbations of biological pathways, for the first time in an inclusive and
-    integrated manner that incorporates:
-  </p>
-
-  <ol>
-    <li>
-      Human-relevant scenarios to discriminate vulnerable groups, such as
-      disease state, life course exposure, gender, and age
-    </li>
-    <li>
-      Chemicals from different sectors: pharma, consumer products, and chemical
-      industry
-    </li>
-    <li>Different regulatory and stakeholder needs</li>
-  </ol>
-
-  <p>
-    The Virtual Human Platform addresses the emerging societal challenge of the
-    transition to animal-free safety assessment, by integrating various
-    scientific disciplines in the consortium and working with all stakeholders
-    towards implementation and societal acceptance of an approach to chemical
-    safety assessment that is based on human data rather than animal data.
-  </p>
-
-  <h2>Moving Away from Animal Experimentation</h2>
-
-  <p>
-    Current legal and regulatory frameworks for the assessment of the safety of
-    chemicals and pharmaceuticals for human health rely predominantly on data
-    from in vivo animal studies. However, the accuracy of animal studies to
-    predict toxicity in humans is limited. In addition, current animal testing
-    regimes do not reflect human-relevant scenarios, such as differences in
-    susceptibility due to age, sex, timing of exposure, or disease state. The
-    Virtual Human Platform will be developed within three interacting research
-    lines (RL):
-  </p>
-
-  <ul>
-    <li><strong>RL1:</strong> Building the platform</li>
-    <li>
-      <strong>RL2:</strong> Feeding the platform with newly generated data
-    </li>
-    <li>
-      <strong>RL3:</strong> Implementing the platform to ensure stakeholders’
-      acceptance, governance, and sustainability
-    </li>
-  </ul>
-
-  <p>
-    In a national and international arena urgently calling for the reduction of
-    animal testing, the current approach to gradually refine, reduce, and
-    replace animal testing has not led to the necessary and desired pace of
-    innovation in animal-free safety assessment. Furthermore, the opportunities
-    offered by state-of-the-art technologies in human health and data science
-    have hardly been explored in the realm of safety assessment.
-  </p>
-
-  <p>
-    VHP4Safety is a research project funded by the Dutch Research Council (NWO)
-    programme entitled the ‘Dutch Research Agenda: Research on Routes by
-    Consortia (NWA‐ORC).’ With a budget of over 10 million Euros, the project
-    started on June 1, 2021, and will last for the duration of 5 years.
-  </p>
-</section>
-
-<section id="research-lines">
-  <h1>Research Lines</h1>
-
-  <p>
-    The VHP will be developed within three interacting research lines (RL),
-    involving:
-  </p>
-  <ul>
-    <li>Building the platform (RL1)</li>
-    <li>Feeding the platform with newly generated data (RL2)</li>
-    <li>
-      Implementing the platform (RL3) to ensure stakeholder acceptance,
-      governance, and sustainability.
-    </li>
-  </ul>
-  <p>
-    <img
-      src="https://raw.githubusercontent.com/VHP4Safety/vhp4safety-docs/main/introduction/vhp4safety_project_apporach.png"
-      alt="VHP4Safety Project Approach"
-    />
-  </p>
-
-  <h2 id="rl1-building-the-virtual-human-platform">
-    RL1: Building the Virtual Human Platform
-  </h2>
-  <p>
-    Research Line 1 focuses on the technical side of building the Virtual Human
-    Platform by developing all the different tools and services needed for
-    VHP4Safety.
-  </p>
-
-  <h2 id="rl2-feeding-the-virtual-human-platform">
-    RL2: Feeding the Virtual Human Platform
-  </h2>
-  <p>
-    Research Line 2 focuses on feeding the Virtual Human Platform with in vitro
-    data from our own experiments and case studies.
-  </p>
-
-  <h2 id="rl3-implementing-the-virtual-human-platform">
-    RL3: Implementing the Virtual Human Platform
-  </h2>
-  <p>
-    Research Line 3 focuses on the acceptance and implementation of the Virtual
-    Human Platform by looking at the broader societal context.
-  </p>
-</section>
-
-<p>
-  Find more details
-  <a href="https://www.sciencrew.com/c/6608?title=VHP4Safety_Research_Lines"
-    >here</a
-  >.
-</p>
-
-<section id="case-studies-and-regulatory-questions">
-  <h1>Case Studies and Regulatory Questions</h1>
-
-  <p>
-    In the VHP4Safety project, three case studies and two regulatory questions
-    attributed to each case study are under research. Below are these case
-    studies and regulatory questions.
-  </p>
-
-  <ol>
-    <li>
-      <strong>Kidney Disease:</strong> Disease scenario to study disease and
-      pharmacovigilance.
-      <ul>
-        <li>(a) What is the safe cisplatin dose in cancer patients?</li>
-        <li>
-          (b) How can we take into account variability in activity and
-          expression of P-glycoprotein* in patients who underwent
-          transplantation and were treated with tacrolimus?
-        </li>
-      </ul>
-    </li>
-  </ol>
-
-  <blockquote>
-    <p>
-      *P-glycoprotein 1 (permeability glycoprotein), also known as multidrug
-      resistance protein 1 (MDR1) or ATP-binding cassette sub-family B member 1
-      (ABCB1) or cluster of differentiation 243 (CD243), is an important protein
-      of the cell membrane that pumps many foreign substances out of cells (<a
-        href="https://www.uniprot.org/uniprot/P08183"
-        class="highlight-link"
-        >UniProt:P08183</a
-      >).
-    </p>
-  </blockquote>
-
-  <ol start="2">
-    <li>
-      <strong
-        >Life Course Pesticide Exposure and Neurodegenerative Disease:</strong
-      >
-      Life course exposure scenario to study life course exposure and
-      neurodegenerative disease.
-      <ul>
-        <li>(a) Can compound X cause Parkinson’s Disease?</li>
-        <li>
-          (b) Can we identify groups at extra risk of developing Parkinson’s
-          Disease after exposure to compound Y?
-        </li>
-      </ul>
-    </li>
-  </ol>
-
-  <ol start="3">
-    <li>
-      <strong>Thyroid-Mediated Developmental Neurotoxicity:</strong> Age and sex
-      scenario to study health effects discriminated by age and sex on
-      thyroid-mediated neurodevelopment.
-      <ul>
-        <li>
-          (a) What information about a compound do we need to advise women in
-          early pregnancy on whether the compound can be used?
-        </li>
-        <li>
-          (b) Does compound Z influence thyroid-mediated brain development in
-          the fetus, resulting in cognitive impairment in children?
-        </li>
-      </ul>
-    </li>
-  </ol>
-</section>
-
-<section id="partners-and-consortium">
-  <h1>Partners and Consortium</h1>
-
-  <p>
-    The VHP consortium consists of leading scientific groups from Dutch
-    universities, university medical centres, public health institutes, and
-    applied research organisations. These groups bring expertise in
-    technological, biological, chemical, medical, and social sciences.
-  </p>
-  <p>
-    Co-funders and cooperation partners ensure active involvement from academic,
-    regulatory, industrial, and societal stakeholders, covering the entire
-    safety assessment knowledge chain. This collaboration unites the necessary
-    and complementary expertise to build, test, and evaluate the Virtual Human
-    Platform.
-  </p>
-
-  <p>
-    View the
-    <a
-      href="https://www.sciencrew.com/c/9319/a/329042452?title=VHP4Safety_Partners"
-      >VHP4Safety Partners</a
-    >. <br />
-    See the full list of consortium members
-    <a
-      href="https://www.sciencrew.com/c/10002/a/334238431?title=VHP4Safety_Consortium"
-      >here</a
-    >.
-  </p>
-
-  <!-- Swiper Carousel -->
-  <div class="swiper-container">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide">
-        <a href="https://www.maastrichtuniversity.nl/" target="_blank">
-          <img src="static\images\partners\UM.png" alt="Maastricht University" />
-        </a>
-      </div>
-      <div class="swiper-slide">
-        <a href="https://www.uu.nl/en" target="_blank">
-          <img src="static\images\partners\UU.png" alt="Utrecht University" />
-        </a>
-      </div>
-      <div class="swiper-slide">
-        <a href="https://www.rivm.nl/" target="_blank">
-          <img src="static\images\partners\RIVM.jpg" alt="RIVM" />
-        </a>
-      </div>
-      <div class="swiper-slide">
-        <a href="https://www.hu.nl/" target="_blank">
-          <img src="static\images\partners\HU.png" alt="University of Applied Sciences Utrecht" />
-        </a>
-      </div>
-      <div class="swiper-slide">
-        <a href="https://www.amc.nl/web/home.htm" target="_blank">
-          <img src="static\images\partners\AUMC.png" alt="Amsterdam UMC" />
-        </a>
-      </div>
-      <div class="swiper-slide">
-        <a href="https://www.bayer.com/en/" target="_blank">
-          <img src="static\images\partners\bayer.svg" alt="Bayer" />
-        </a>
-      </div>
-      <div class="swiper-slide">
-        <a href="https://www.certara.com/" target="_blank">
-          <img src="static\images\partners\certara.jpg" alt="Certara" />
-        </a>
-      </div>
-      <div class="swiper-slide">
-        <a href="https://www.criver.com/" target="_blank">
-          <img src="static\images\partners\CR.png" alt="Charles River" />
-        </a>
-      </div>
-      <div class="swiper-slide">
-        <a href="https://www.iccs-cosmetics.org/" target="_blank">
-          <img src="static\images\partners\ICCS.jpg" alt="ICCS" />
-        </a>
-      </div>
-            <div class="swiper-slide">
-        <a href="https://brandwondenstichting.nl/" target="_blank">
-          <img src="static\images\partners\DBF.jpg" alt="Dutch Burns Foundation" />
-        </a>
-      </div>
-      <div class="swiper-slide">
-        <a href="https://www.shell.com/" target="_blank">
-          <img src="static\images\partners\shell.png" alt="Shell" />
-        </a>
-      </div>
-      <div class="swiper-slide">
-        <a href="https://www.unilever.com/" target="_blank">
-          <img src="static\images\partners\unilever.jpg" alt="Unilever" />
-        </a>
-      </div>
-      <!-- Will add more partner logos -->
+<section class="hero">
+    <div class="hero-text">
+        <h1>THE VIRTUAL <br> HUMAN PLATFORM</h1>
+        <p>TOWARDS SAFETY ASSESSMENT BASED ON HUMAN DATA</p>
     </div>
-    <!-- Navigation buttons -->
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
-  </div>
+    <div class="hero-image">
+        <img src="/static/images/hero.png" alt="Hero Image">
+    </div>
 </section>
-
-<!-- Swiper Initialization Script -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    new Swiper(".swiper-container", {
-      loop: true,
-      spaceBetween: 20,
-      slidesPerView: 6,
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-    });
-  });
-</script>
-
+<section class="tab-section">
+    <div class="hexagram-container">
+        <div class="hexagram-wrapper">
+            <button onclick="location.href='/assessment'" class="tab-button assessment">Assessment</button>
+            <div class="hexagram">
+                <p>Discover the VHP tools most relevant to your research by selecting the risk assessment stage you are working on.</p>
+            </div>
+            <div class="arrow assessment-arrow" onclick="location.href='/assessment'"></div>
+        </div>
+        <div class="hexagram-wrapper">
+            <button onclick="location.href='/workflows'" class="tab-button workflows">Workflows</button>
+            <div class="hexagram">
+                <p>Try out our workflows to combine multiple VHP tools in a way that is most likely to answer your research question.</p>
+            </div>
+            <div class="arrow workflows-arrow" onclick="location.href='/workflows'"></div>
+        </div>
+        <div class="hexagram-wrapper">
+            <button class="tab-button tools" onclick="location.href='/templates/services/service_list'">Tools</button>
+            <div class="hexagram">
+                <p>Select any of the VHP tools to streamline your risk assessment process and get results relevant to your research.</p>
+            </div>
+            <div class="arrow tools-arrow" onclick="location.href='/templates/services/service_list'"></div>
+        </div>
+        <div class="hexagram-wrapper">
+            <button class="tab-button data" onclick="location.href='/data'">Data</button>
+            <div class="hexagram">
+                <p>Find all the (meta)data you may need to use the VHP tools and run the workflows as efficiently as possible.</p>
+            </div>
+            <div class="arrow data-arrow" onclick="location.href='/data'"></div>
+        </div>
+    </div>
 </section>
-
-<section id="contact-us">
-  <h1>Contact Us</h1>
-  <p>
-    If you want to know more, feel free to contact us using the form below or by
-    sending an email to
-    <a href="mailto:vhp4safety@uu.nl" class="highlight-link">vhp4safety@uu.nl</a
-    >. More information can also be found through our
-    <a href="https://twitter.com/VHP4Safety" class="highlight-link">Twitter</a>
-    and
-    <a
-      href="https://www.linkedin.com/company/virtual-human-platform-for-safety-assessment-vhp4safety/"
-      class="highlight-link"
-      >LinkedIn</a
-    >
-    profiles. To contact someone from our coordination team or research line
-    leaders, find out more about them
-    <a
-      href="https://www.sciencrew.com/c/6596/a/328990448?title=Contact_us"
-      class="highlight-link"
-      >here</a
-    >.
-  </p>
-
-  <div class="contact-form">
-    <form>
-      <input type="text" placeholder="Your Name" required />
-      <input type="email" placeholder="Your Email" required />
-      <textarea placeholder="Your Message" required></textarea>
-      <button type="submit">Send Message</button>
-    </form>
-  </div>
-  {% endblock %}
+<section class="about-section" id="about-section">
+    <h2>About VHP4Safety</h2>
+    <p>
+        The Virtual Human Platform (VHP) was developed through the VHP4Safety project to support chemical and pharmaceutical safety testing. By developing in silico tools and in vitro models, we provided a platform for precision safety testing that aims to eliminate the need for laboratory animals. VHP helps risk assessors evaluate the safety of chemicals for human use, focusing on vulnerable groups like infants, the elderly, and individuals with health conditions.
+    </p>
+    <h3>Our Mission</h3>
+    <p>VHP aims to facilitate the prediction of harmful effects of chemicals and pharmaceuticals by integrating human physiology, chemical properties, and biological pathway disturbances. The platform supports:</p>
+    <ul>
+        <li>Human-relevant scenarios, such as age, gender, disease states, and exposure timing;</li>
+        <li>Chemicals from pharmaceuticals, consumer products, and the chemical industry;</li>
+        <li>The needs of regulators and stakeholders.</li>
+    </ul>
+    <p>
+        VHP represents a major step forward in moving away from animal testing by providing tools based on human data. 
+        <span class="read-more-btn" onclick="toggleReadMore()">Read more...</span>
+    </p>
+    <div class="read-more-content" style="display: none;">
+        <h3>Moving Beyond Animal Testing</h3>
+        <p>Traditional animal studies often fail to predict toxicity in humans. VHP aims to overcome this by focusing on human-relevant data and providing the needed services and workflows to translate this data into new insights. The platform has been developed within three research lines:</p>
+        <ol>
+            <li>Building the platform</li>
+            <li>Generating and integrating human-relevant data</li>
+            <li>Ensuring stakeholder acceptance and sustainability</li>
+        </ol>
+        <p>With global efforts to reduce animal testing, VHP accelerates the shift to human-centered safety assessment.</p>
+        <h3>VHP4Safety: The project behind VHP</h3>
+        <p>VHP was developed through the VHP4Safety project, funded by the Dutch Research Council (NWO). The project ran from June 1, 2021, for five years, paving the way for a future of safety assessments based entirely on human data.</p>
+        <span class="read-more-btn" onclick="toggleReadMore()">Read less.</span>
+    </div>
 </section>
+<section class="partners-section" id="partners-section">
+    <div class="content">
+        <h2>Project Partners</h2>
+        <p>Collaboration and support in innovation.</p>
+        <div class="carousel-container">
+            <button class="carousel-arrow left" onclick="scrollCarousel('left')">&#8249;</button>
+            <div class="carousel">
+                <div class="carousel-item">
+                    <img src="/static/images/partners/AUMC.png" alt="AUMC Logo" class="partner-logo" data-link="https://www.amsterdamumc.org/nl.htm">
+                </div>
+                <div class="carousel-item">
+                    <img src="/static/images/partners/HU.png" alt="HU Logo" class="partner-logo" data-link="https://www.hu.nl/">
+                </div>
+                <div class="carousel-item">
+                    <img src="/static/images/partners/RIVM.jpg" alt="RIVM Logo" class="partner-logo" data-link="https://www.rivm.nl/">
+                </div>
+                <div class="carousel-item">
+                    <img src="/static/images/partners/UM.png" alt="UM Logo" class="partner-logo" data-link="https://www.maastrichtuniversity.nl/">
+                </div>
+                <div class="carousel-item">
+                    <img src="/static/images/partners/UU.png" alt="UU Logo" class="partner-logo" data-link="https://www.uu.nl/en">
+                </div>
+            </div>
+            <button class="carousel-arrow right" onclick="scrollCarousel('right')">&#8250;</button>
+        </div>
+    </div>
+</section>
+<section class="contact-section" id="contact-section">
+    <div class="content">
+        <h2>Let’s chat!</h2>
+        <p>We’d love to hear from you! Whether you have feedback on our services, a question about our platform, or just want to connect, we’re here to help. Fill out the form or use our contact info down below, and we’ll get back to you as soon as possible.</p>
+        <a href="mailto:vhp4safety@uu.nl" class="contact-icon">
+            <i class="fas fa-envelope"></i>
+        </a>
+        <a href="https://www.linkedin.com/company/vhp4safety/posts/?feedView=all" class="contact-icon">
+            <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="https://github.com/VHP4Safety" class="contact-icon">
+            <i class="fab fa-github"></i>
+        </a>
+    </div>
+    <div class="contact-form">
+        <form action="mailto:mirthe.klaassen@maastrichtuniversity.nl" method="post" enctype="text/plain">
+            <input type="text" name="name" placeholder="Name *" required>
+            <input type="email" name="email" placeholder="Email *" required>
+            <input type="text" name="organization" placeholder="Organization">
+            <input type="tel" name="phone" placeholder="Phone">
+            <textarea name="message" placeholder="Message *" required></textarea>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+</section>
+<div class="scroll-down-arrow" onclick="scrollToNextSection()"></div>
+{% endblock %}
