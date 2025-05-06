@@ -47,6 +47,10 @@ def workflows():
 def data():
     return render_template('tabs/data.html')
 
+@app.route('/archive')
+def archive():
+    return render_template('tabs/archive.html')
+
 ################################################################################
 ### Pages under 'Project Information', these are now part of home.html
 
