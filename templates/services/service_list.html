@@ -12,8 +12,9 @@
               <div class="card-body">
                 <h2 class="card-title">{{ item.service }}</h2>
                 <p id="desc" class="card-text">{{ item.description }}</p>
-                <a href="{{ item.url }}" class="btn btn-outline-info">Service information</a>
-                <a href="{{ item.meta_data }}" class="btn btn-outline-info">Meta data</a>
+                <a class="tools-links" href="{{ item.url }}" class="btn btn-outline-info">Service information</a>
+                <h3 class="tools-links">&nbsp;&nbsp; - &nbsp;&nbsp;</h3>
+                <a class="tools-links" href="{{ item.meta_data }}" class="btn btn-outline-info">Meta data</a>
               </div>
             </div>
           {% else %}
