@@ -13,3 +13,7 @@
     border-radius: 8px; /* Optional: to match the card's rounded corners */
     object-fit: cover; /* Ensures the image fits nicely within the card */
 }
+
+.tools-links {
+    display: inline-block; /* Placing 2 links and seperator in one line */
+}
