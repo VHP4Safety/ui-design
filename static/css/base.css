@@ -131,6 +131,11 @@ button:hover { /* Hover effect for all buttons */
     opacity: 0.5;
 }
 
+.tab-button:hover {
+    box-shadow: 5px 5px 5px rgba(103, 103, 103, 0.8);
+    opacity: 1;
+}
+
 /* Navbar */
 .navbar {
     display: flex;
