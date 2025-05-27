@@ -98,6 +98,11 @@ def archive():
 
 
 # Page to list all the tools based on the list of tools on the cloud repo.
+
+# Below is the original way of creating the service_list page which runs slow.
+# Further down below it, I try to implement a way to get the combined json file 
+# rather than getting individual service information one-by-one. 
+""" 
 @app.route("/templates/tools/tools")
 def tools():
     # Github API link to receive the list of the tools on the cloud repo:
@@ -185,6 +190,32 @@ def tools():
         return render_template("tools/tools.html", tools=tools)
     else:
         return f"Error fetching files: {response.status_code}"
+"""
+### Here begins the updated version for creating the tool list page. 
+@app.route("/templates/tools/tools")
+def tools():
+    url = 'https://raw.githubusercontent.com/VHP4Safety/cloud/main/cap/service_index.json'
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        return f"Error fetching service list: {response.status_code}", 503
+
+    try:
+        tools = response.json()
+
+        for tool in tools:
+            html_name = tool.get('html_name')
+            md_name = tool.get('md_file_name')
+            png_name = tool.get('png_file_name')
+
+            tool['url'] = f"https://cloud.vhp4safety.nl/service/{html_name}"
+            tool['meta_data'] = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{md_name}" if md_name else "md file not found"
+            tool['png'] = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}" if png_name else "../../static/images/logo.png"
+
+        return render_template("tools/tools.html", tools=tools)
+
+    except Exception as e:
+        return f"Error processing service data: {e}", 500
 
 
 @app.route("/tools/qsprpred")
