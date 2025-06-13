@@ -17,6 +17,7 @@
 
 html, body {
     scroll-behavior: smooth; /* Smooth scrolling for the anchor links */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
     height: 100%; /* Ensuring the body takes full height */
     display: flex; /* Flexbox to center all content */
     flex-direction: column; /* Using column layouts for all content */
@@ -172,10 +173,9 @@ button:hover { /* Hover effect for all buttons */
 }
 
 /* Giving each tab it's own color */
-.nav-links button:nth-child(1), .assessment, .button-pink { background-color: var(--pink);}
-.nav-links button:nth-child(2), .workflows, .button-blue { background-color: var(--blue);}
-.nav-links button:nth-child(3), .tools, .button-purple { background-color: var(--purple);}
-.nav-links button:nth-child(4), .data, .button-orange { background-color: var(--orange);}
+.nav-links button:nth-child(1), .tools, .button-pink { background-color: var(--pink);}
+.nav-links button:nth-child(2), .casestudies, .button-blue { background-color: var(--blue);}
+.nav-links button:nth-child(3), .data, .button-orange { background-color: var(--orange);}
 
 /* Hamburger Menu Icon */
 .hamburger-menu {
