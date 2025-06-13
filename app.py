@@ -1,13 +1,16 @@
 ################################################################################
 ### Loading the required modules
-from flask import Flask, request, jsonify, render_template, send_file, Blueprint, render_template, abort
-import requests
-from wikidataintegrator import wdi_core
 import json
 import re
-from werkzeug.routing import BaseConverter
+
+import requests
+from flask import Blueprint, Flask, abort, jsonify, render_template, request, send_file
 from jinja2 import TemplateNotFound
+from werkzeug.routing import BaseConverter
+from wikidataintegrator import wdi_core
+
 ################################################################################
+
 
 class RegexConverter(BaseConverter):
     """Converter for regular expression routes.
@@ -24,32 +27,41 @@ class RegexConverter(BaseConverter):
         super(RegexConverter, self).__init__(url_map)
         self.regex = items[0]
 
+
 app = Flask(__name__)
+
 
 ################################################################################
 ### The landing page
-@app.route('/')
+@app.route("/")
 def home():
-    return render_template('home.html')
+    return render_template("home.html")
+
+
 ################################################################################
+
 
 ################################################################################
 ### Main tabs
-@app.route('/assessment')
+@app.route("/assessment")
 def assessments():
-    return render_template('tabs/assessments.html')
+    return render_template("tabs/assessments.html")
 
-@app.route('/workflows')
+
+@app.route("/workflows")
 def workflows():
-    return render_template('tabs/workflows.html')
+    return render_template("tabs/workflows.html")
 
-@app.route('/data')
+
+@app.route("/data")
 def data():
-    return render_template('tabs/data.html')
+    return render_template("tabs/data.html")
 
-@app.route('/archive')
+
+@app.route("/archive")
 def archive():
-    return render_template('tabs/archive.html')
+    return render_template("tabs/archive.html")
+
 
 ################################################################################
 ### Pages under 'Project Information', these are now part of home.html
@@ -82,106 +94,128 @@ def archive():
 ################################################################################
 
 ################################################################################
-### Pages under 'Services'
+### Pages under 'Tools'
 
-# Page to list all the services based on the list of services on the cloud repo.
-@app.route('/templates/services/service_list')
-def service_list():
-    # Github API link to receive the list of the services on the cloud repo:
-    url = f'https://api.github.com/repos/VHP4Safety/cloud/contents/docs/service'
+
+# Page to list all the tools based on the list of tools on the cloud repo.
+@app.route("/templates/tools/tools")
+def tools():
+    # Github API link to receive the list of the tools on the cloud repo:
+    url = f"https://api.github.com/repos/VHP4Safety/cloud/contents/docs/service"
     response = requests.get(url)
 
     # Checking if the request was successful (status code 200).
     if response.status_code == 200:
         # Extracting the list of files.
-        service_content = response.json()
+        tools_content = response.json()
 
         # Separating .json and .md files.
-        json_files = {file['name']: file for file in service_content if file['type'] == 'file' and file['name'].endswith('.json')}
-        md_files = {file['name']: file for file in service_content if file['type'] == 'file' and file['name'].endswith('.md')}
-        png_files = {file['name']: file for file in service_content if file['type'] == 'file' and file['name'].endswith('.png')}
+        json_files = {
+            file["name"]: file
+            for file in tools_content
+            if file["type"] == "file" and file["name"].endswith(".json")
+        }
+        md_files = {
+            file["name"]: file
+            for file in tools_content
+            if file["type"] == "file" and file["name"].endswith(".md")
+        }
+        png_files = {
+            file["name"]: file
+            for file in tools_content
+            if file["type"] == "file" and file["name"].endswith(".png")
+        }
 
-        # Creating an empty list to store the results. 
-        services = []
+        # Creating an empty list to store the results.
+        tools = []
 
         # Fetching the .json files.
         for json_file_name, json_file in json_files.items():
-            # Skipping the template.json file. 
-            if json_file_name == 'template.json':
+            # Skipping the template.json file.
+            if json_file_name == "template.json":
                 continue
- 
-            json_url = json_file['download_url']  # Using the download URL from the API response.
+
+            json_url = json_file[
+                "download_url"
+            ]  # Using the download URL from the API response.
             json_response = requests.get(json_url)
 
             if json_response.status_code == 200:
                 json_data = json_response.json()
-                
-                # Extracting the 'service' field from the json file.
-                service_name = json_data.get('service')
-                description_string = json_data.get('description') 
 
-                if service_name:
+                # Extracting the 'tool' field from the json file.
+                tool_name = json_data.get("service")
+                description_string = json_data.get("description")
+
+                if tool_name:
                     # Replacing the .json extension with the .md to get the corresponding .md file.
-                    md_file_name = json_file_name.replace('.json', '.md')
-                    html_name = json_file_name.replace('.json', '.html')
-                    url = "https://cloud.vhp4safety.nl/service/"+ html_name 
+                    md_file_name = json_file_name.replace(".json", ".md")
+                    html_name = json_file_name.replace(".json", ".html")
+                    url = "https://cloud.vhp4safety.nl/service/" + html_name
 
                     if md_file_name in md_files:
-                        md_file_url = f'https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{md_file_name}'
+                        md_file_url = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{md_file_name}"
                     else:
                         md_file_url = "md file not found"
-                    png_file_name = md_file_name.replace('.md', '.png')
+                    png_file_name = md_file_name.replace(".md", ".png")
 
                     if png_file_name in png_files:
-                        png_file_url = f'https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_file_name}'
-                        services.append({
-                            'service': service_name,
-                            'url': url,
-                            'meta_data': md_file_url,
-                            'description': description_string,
-                            'png': png_file_url
-                        })
+                        png_file_url = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_file_name}"
+                        tools.append(
+                            {
+                                "service": tool_name,
+                                "url": url,
+                                "meta_data": md_file_url,
+                                "description": description_string,
+                                "png": png_file_url,
+                            }
+                        )
                     else:
-                        services.append({
-                            'service': service_name,
-                            'url': url,
-                            'meta_data': md_file_url,
-                            'description': description_string,
-                            'png': "../../static/images/logo.png"
-                        })
+                        tools.append(
+                            {
+                                "service": tool_name,
+                                "url": url,
+                                "meta_data": md_file_url,
+                                "description": description_string,
+                                "png": "../../static/images/logo.png",
+                            }
+                        )
 
-        # Passing the services data to the template after processing all JSON files.
-        return render_template('services/service_list.html', services=services)
+        # Passing the tools data to the template after processing all JSON files.
+        return render_template("tools/tools.html", tools=tools)
     else:
         return f"Error fetching files: {response.status_code}"
 
-    # return render_template('services/service_list.html')
 
-@app.route('/services/qsprpred')
+@app.route("/tools/qsprpred")
 def qsprpred():
-    return render_template('services/qsprpred.html')
+    return render_template("tools/qsprpred.html")
 
-@app.route("/services/qaop_app")
+
+@app.route("/tools/qaop_app")
 def qaop_app():
     return render_template("qaop_app.html")
+
 
 ################################################################################
 
 ################################################################################
 ### Pages under 'Case Studies'
 
-@app.route('/case_studies/kidney/kidney')
+
+@app.route("/case_studies/kidney/kidney")
 def kidney_main():
-    return render_template('case_studies/kidney/kidney.html')
+    return render_template("case_studies/kidney/kidney.html")
 
-@app.route('/case_studies/parkinson/parkinson')
+
+@app.route("/case_studies/parkinson/parkinson")
 def parkinson_main():
-    return render_template('case_studies/parkinson/parkinson.html')
+    return render_template("case_studies/parkinson/parkinson.html")
 
 
-@app.route('/case_studies/parkinson/workflows/parkinson_qAOP')
+@app.route("/case_studies/parkinson/workflows/parkinson_qAOP")
 def parkinson_qaop():
-    return render_template('case_studies/parkinson/workflows/parkinson_qAOP.html')
+    return render_template("case_studies/parkinson/workflows/parkinson_qAOP.html")
 
 
 @app.route("/case_studies/thyroid/workflows/thyroid_qAOP")
@@ -189,30 +223,40 @@ def thyroid_qaop():
     return render_template("case_studies/thyroid/workflows/thyroid_qAOP.html")
 
 
-@app.route('/workflow/<workflow>')
+@app.route("/workflow/<workflow>")
 def show(workflow):
     try:
-        return render_template(f'case_studies/parkinson/workflows/{workflow}_workflow.html')
+        return render_template(
+            f"case_studies/parkinson/workflows/{workflow}_workflow.html"
+        )
     except TemplateNotFound:
         abort(404)
 
-@app.route('/compound/<cwid>')
+
+@app.route("/compound/<cwid>")
 def show_compound(cwid):
     try:
-        return render_template(f'compound.html', cwid=cwid)
+        return render_template(f"compound.html", cwid=cwid)
     except TemplateNotFound:
         abort(404)
 
-@app.route('/case_studies/thyroid/thyroid')
-def thyroid_main():
-    return render_template('case_studies/thyroid/thyroid.html')
 
-@app.route('/case_studies/thyroid/workflows/thyroid_hackathon_demo_workflow')
+@app.route("/case_studies/thyroid/thyroid")
+def thyroid_main():
+    return render_template("case_studies/thyroid/thyroid.html")
+
+
+@app.route("/case_studies/thyroid/workflows/thyroid_hackathon_demo_workflow")
 def thyroid_workflow_1():
-    return render_template('case_studies/thyroid/workflows/thyroid_hackathon_demo_workflow.html')
-@app.route('/case_studies/thyroid/workflows/ngra_silymarin')
+    return render_template(
+        "case_studies/thyroid/workflows/thyroid_hackathon_demo_workflow.html"
+    )
+
+
+@app.route("/case_studies/thyroid/workflows/ngra_silymarin")
 def ngra_silymarin():
-    return render_template('case_studies/thyroid/workflows/ngra_silymarin.html')
+    return render_template("case_studies/thyroid/workflows/ngra_silymarin.html")
+
 
 ################################################################################
 
@@ -220,13 +264,16 @@ def ngra_silymarin():
 
 ### Pages under 'Legal'
 
-@app.route('/legal/terms_of_service')
-def terms_of_service():
-    return render_template('legal/terms_of_service.html')
 
-@app.route('/legal/privacypolicy')
+@app.route("/legal/terms_of_service")
+def terms_of_service():
+    return render_template("legal/terms_of_service.html")
+
+
+@app.route("/legal/privacypolicy")
 def privacy_policy():
-    return render_template('legal/privacypolicy.html')
+    return render_template("legal/privacypolicy.html")
+
 
 # Import the new blueprint
 from routes.aop_app import aop_app
@@ -236,5 +283,5 @@ app.register_blueprint(aop_app)
 
 ################################################################################
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)

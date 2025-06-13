@@ -3,21 +3,22 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tools.css') }}">
 
 <section>
-    <h1>Services</h1>
+    <h1>Tools</h1>
       <div class="row align-items-start">
         <ul>
-          {% for item in services %}
+          {% for item in tools %}
             <div class="card">
               <img src="{{ item.png }}" class="card-img-top" alt="Your logo here">
               <div class="card-body">
                 <h2 class="card-title">{{ item.service }}</h2>
                 <p id="desc" class="card-text">{{ item.description }}</p>
-                <a href="{{ item.url }}" class="btn btn-outline-info">Service information</a>
-                <a href="{{ item.meta_data }}" class="btn btn-outline-info">Meta data</a>
+                <a class="tools-links" href="{{ item.url }}" class="btn btn-outline-info">Tool information</a>
+                <h3 class="tools-links">&nbsp;&nbsp; - &nbsp;&nbsp;</h3>
+                <a class="tools-links" href="{{ item.meta_data }}" class="btn btn-outline-info">Meta data</a>
               </div>
             </div>
           {% else %}
-              <li>No services found.</li>
+              <li>No tools found.</li>
           {% endfor %}
         </ul>
       </div>

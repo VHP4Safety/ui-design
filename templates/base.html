@@ -1,15 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VHP4Safety</title>
-    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/base.css" />
 
     <!-- jQuery, Popper.js, and Bootstrap JS -->
     <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"
+    ></script>
+    <script
+      defer
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    ></script>
 
     <!-- Cytoscape.js -->
     <script src="/static/js/cytoscape.min.js"></script>
@@ -25,72 +31,82 @@
     />
 
     <script>
-        function toggleMenu() {
-            document.getElementById('menuOverlay').classList.toggle('open');
-        }
+      function toggleMenu() {
+        document.getElementById("menuOverlay").classList.toggle("open");
+      }
 
-        function toggleReadMore() {
-            const content = document.querySelector('.read-more-content');
-            const button = document.querySelector('.read-more-btn');
-            const isHidden = content.style.display === 'none';
-            content.style.display = isHidden ? 'block' : 'none';
-            button.textContent = isHidden ? 'Read less.' : 'Read more...';
-        }
+      function toggleReadMore() {
+        const content = document.querySelector(".read-more-content");
+        const button = document.querySelector(".read-more-btn");
+        const isHidden = content.style.display === "none";
+        content.style.display = isHidden ? "block" : "none";
+        button.textContent = isHidden ? "Read less." : "Read more...";
+      }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.partner-logo').forEach(logo => {
-                logo.addEventListener('click', () => {
-                    window.open(logo.getAttribute('data-link'), '_blank');
-                });
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".partner-logo").forEach((logo) => {
+          logo.addEventListener("click", () => {
+            window.open(logo.getAttribute("data-link"), "_blank");
+          });
+        });
+      });
+
+      function scrollCarousel(direction) {
+        const carousel = document.querySelector(".carousel");
+        const logoWidth = 250; // Width of each logo including padding and gap
+        const scrollAmount = logoWidth * 2; // Scroll by 2 logos
+        carousel.scrollBy({
+          left: direction === "left" ? -scrollAmount : scrollAmount,
+          behavior: "smooth",
+        });
+      }
+
+      document.querySelectorAll(".menu-overlay a").forEach((link) => {
+        link.addEventListener("click", function (event) {
+          event.preventDefault();
+          const targetId = this.getAttribute("href").substring(1);
+          const targetElement = document.getElementById(targetId);
+
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
             });
+          }
         });
+      });
 
-        function scrollCarousel(direction) {
-            const carousel = document.querySelector('.carousel');
-            const logoWidth = 250; // Width of each logo including padding and gap
-            const scrollAmount = logoWidth * 2; // Scroll by 2 logos
-            carousel.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+      document.addEventListener("click", (event) => {
+        const menuOverlay = document.getElementById("menuOverlay");
+        if (
+          menuOverlay.classList.contains("open") &&
+          !menuOverlay.contains(event.target) &&
+          !event.target.classList.contains("hamburger-menu")
+        ) {
+          menuOverlay.classList.remove("open");
         }
+      });
 
-        document.querySelectorAll('.menu-overlay a').forEach(link => {
-            link.addEventListener('click', function(event) {
-                event.preventDefault();
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
+      function scrollToNextSection() {
+        window.scrollBy({ top: window.innerHeight / 1.5, behavior: "smooth" });
+      }
 
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
+      document.addEventListener("DOMContentLoaded", function () {
+        var acc = document.querySelectorAll(".accordion");
+
+        acc.forEach(function (button) {
+          button.addEventListener("click", function () {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            panel.style.display =
+              panel.style.display === "block" ? "none" : "block";
+          });
         });
-
-        document.addEventListener('click', (event) => {
-            const menuOverlay = document.getElementById('menuOverlay');
-            if (menuOverlay.classList.contains('open') && !menuOverlay.contains(event.target) && !event.target.classList.contains('hamburger-menu')) {
-                menuOverlay.classList.remove('open');
-            }
-        });
-
-        function scrollToNextSection() {
-            window.scrollBy({ top: window.innerHeight / 1.5, behavior: 'smooth' });
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            var acc = document.querySelectorAll(".accordion");
-
-            acc.forEach(function (button) {
-                button.addEventListener("click", function () {
-                    this.classList.toggle("active");
-                    var panel = this.nextElementSibling;
-                    panel.style.display =
-                        panel.style.display === "block" ? "none" : "block";
-                });
-            });
-        });
+      });
     </script>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
         <header>
@@ -105,55 +121,60 @@
         <div class="hamburger-menu" onclick="toggleMenu()">☰</div>
     </nav>
     <div class="menu-overlay" id="menuOverlay">
-        <div class="close-button" onclick="toggleMenu()">✖</div>
-        <ul>
-            <li><a href="{{ url_for('home') }}#about-section">About</a></li>
-            <li><a href="{{ url_for('home') }}#partners-section">Partners</a></li>
-            <li><a href="{{ url_for('home') }}#contact-section">Contact</a></li>
-        </ul>
+      <div class="close-button" onclick="toggleMenu()">✖</div>
+      <ul>
+        <li><a href="{{ url_for('home') }}#about-section">About</a></li>
+        <li><a href="{{ url_for('home') }}#partners-section">Partners</a></li>
+        <li><a href="{{ url_for('home') }}#contact-section">Contact</a></li>
+      </ul>
     </div>
 
     <!-- Main Content Section -->
-    <main>
-        {% block content %} {% endblock %}
-    </main>
+    <main>{% block content %} {% endblock %}</main>
 
     <!-- Footer Section -->
     <footer>
-        <div class="footer-container">
-            <div class="footer-column">
-                <h3>EXPLORE</h3>
-                <ul>
-                    <li><a href="/assessment">Assessment</a></li>
-                    <li><a href="/workflows">Workflows</a></li>
-                    <li><a href="/templates/services/service_list">Tools</a></li>
-                    <li><a href="/data">Data</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h3>RESOURCES</h3>
-                <ul>
-                    <li><a href="{{ url_for('home') }}#about-section">About</a></li>
-                    <li><a href="{{ url_for('home') }}#partners-section">Partners</a></li>
-                    <li><a href="{{ url_for('home') }}#contact-section">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h3>LEGAL</h3>
-                <ul>
-                    <li><a href="/legal/terms_of_service">Terms of Service</a></li>
-                    <li><a href="/legal/privacypolicy">Privacy Policy</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h3>CONNECT</h3>
-                <ul>
-                    <li><a href="https://github.com/VHP4Safety">GitHub</a></li>
-                    <li><a href="https://www.linkedin.com/company/vhp4safety/posts/?feedView=all">LinkedIn</a></li>
-                </ul>
-            </div>
+      <div class="footer-container">
+        <div class="footer-column">
+          <h3>EXPLORE</h3>
+          <ul>
+            <li><a href="/assessment">Assessment</a></li>
+            <li><a href="/workflows">Workflows</a></li>
+            <li><a href="/templates/tools/tools">Tools</a></li>
+            <li><a href="/data">Data</a></li>
+          </ul>
         </div>
-        <p>&copy; 2025 VHP4Safety</p>
+        <div class="footer-column">
+          <h3>RESOURCES</h3>
+          <ul>
+            <li><a href="{{ url_for('home') }}#about-section">About</a></li>
+            <li>
+              <a href="{{ url_for('home') }}#partners-section">Partners</a>
+            </li>
+            <li><a href="{{ url_for('home') }}#contact-section">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>LEGAL</h3>
+          <ul>
+            <li><a href="/legal/terms_of_service">Terms of Service</a></li>
+            <li><a href="/legal/privacypolicy">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>CONNECT</h3>
+          <ul>
+            <li><a href="https://github.com/VHP4Safety">GitHub</a></li>
+            <li>
+              <a
+                href="https://www.linkedin.com/company/vhp4safety/posts/?feedView=all"
+                >LinkedIn</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p>&copy; 2025 VHP4Safety</p>
     </footer>
-</body>
+  </body>
 </html>
