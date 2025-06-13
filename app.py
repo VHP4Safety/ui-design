@@ -43,14 +43,9 @@ def home():
 
 ################################################################################
 ### Main tabs
-@app.route("/assessment")
-def assessments():
-    return render_template("tabs/assessments.html")
-
-
-@app.route("/workflows")
+@app.route("/casestudies")
 def workflows():
-    return render_template("tabs/workflows.html")
+    return render_template("tabs/casestudies.html")
 
 
 @app.route("/data")
@@ -98,7 +93,7 @@ def archive():
 
 
 # Page to list all the tools based on the list of tools on the cloud repo.
-@app.route("/templates/tools/tools")
+@app.route("/tools")
 def tools():
     # Github API link to receive the list of the tools on the cloud repo:
     url = f"https://api.github.com/repos/VHP4Safety/cloud/contents/docs/service"
@@ -203,12 +198,12 @@ def qaop_app():
 ### Pages under 'Case Studies'
 
 
-@app.route("/case_studies/kidney/kidney")
+@app.route("/casestudies/kidney")
 def kidney_main():
     return render_template("case_studies/kidney/kidney.html")
 
 
-@app.route("/case_studies/parkinson/parkinson")
+@app.route("/casestudies/parkinson")
 def parkinson_main():
     return render_template("case_studies/parkinson/parkinson.html")
 
@@ -241,7 +236,7 @@ def show_compound(cwid):
         abort(404)
 
 
-@app.route("/case_studies/thyroid/thyroid")
+@app.route("/casestudies/thyroid")
 def thyroid_main():
     return render_template("case_studies/thyroid/thyroid.html")
 
