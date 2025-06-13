@@ -1,6 +1,214 @@
 {% extends "base.html" %} {% block content %}
-<section>
-<h1>Main Page for the Thyroid Case Study</h1>
-<p>Content to be added</p>
-</section>
+<link rel="stylesheet" href="/static/css/casestudies.css" />
+<div class="steps-container">
+  <!-- Progress Bar (floating between white and grey sections)
+  <div class="progress-bar-container">
+    <div class="progress-bar">
+      <div class="progress-slider step-1" id="progressSlider"></div>
+    </div>
+  </div> -->
+  <!-- Steps Wrapper -->
+  <div class="steps-wrapper" id="stepsWrapper">
+    <!-- Step 1 -->
+    <section class="step first-step">
+      <div class="step-top white-bg">
+        <div class="title-desc">
+          <h1>Thyroid Case Study</h1>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat. Duis aute irure dolor in
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur.
+          </p>
+        </div>
+        <div class="step-buttons">
+          <button class="btn blue" onclick="goToStep(2)">
+            <b>Question 1: Compound Information</b><br />What information about
+            a compound do we need to advise women in their early pregnancy to
+            decide whether the compound can be used?
+          </button>
+          <button class="btn blue" onclick="goToStep(3)">
+            <b>Question 2: Fetal Brain Development</b><br />Does compound Z
+            influence the thyroid-mediated brain development in the fetus
+            resulting in cognitive impairment in children?
+          </button>
+        </div>
+      </div>
+      <div class="step-bottom grey-bg">
+        <h2>Case Study Overview</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat.
+        </p>
+      </div>
+    </section>
+    <!-- Step 2 -->
+    <section class="step">
+      <div class="step-top white-bg">
+        <div class="breadcrumbs" id="breadcrumbs-step2">
+          <a href="#" onclick="goToStep(1); return false;"
+            >Thyroid Case Study</a
+          >
+          <span> &rarr; </span> <span>Regulatory Question 2</span>
+        </div>
+        <h1>Assessment Components</h1>
+        <p>
+          This regulatory question has been researched using the following risk
+          assessment components. Choose one to find out our approach or scroll
+          down to learn more about the regulatory question.
+        </p>
+        <div class="step-buttons step-buttons-row">
+          <button class="btn blue" onclick="goToStep(3)">
+            <b>External Exposure</b>
+          </button>
+          <button class="btn blue" onclick="goToStep(3)">
+            <b>Kinetics</b>
+          </button>
+          <button class="btn blue" onclick="goToStep(3)">
+            <b>AOP</b>
+          </button>
+          <button class="btn blue" onclick="goToStep(3)">
+            <b>Adverse Outcome</b>
+          </button>
+        </div>
+      </div>
+      <div class="step-bottom grey-bg">
+        <h2>Thyroid-related Regulatory Question 2</h2>
+        <p>
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+          accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
+          ab illo inventore veritatis et quasi architecto beatae vitae dicta
+          sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
+          aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+          qui ratione voluptatem sequi nesciunt.
+        </p>
+      </div>
+    </section>
+    <!-- Step 3 -->
+    <section class="step">
+      <div class="step-top white-bg">
+        <div class="breadcrumbs" id="breadcrumbs-step3">
+          <a href="#" onclick="goToStep(1); return false;"
+            >Thyroid Case Study</a
+          >
+          <span>&rarr;</span>
+          <a href="#" onclick="goToStep(2); return false;"
+            >Regulatory Question 2</a
+          >
+          <span>&rarr;</span> <span>Kinetics</span>
+        </div>
+        <h1>
+          <span class="kinetics-bold">Kinetics</span> - Tools and Workflow
+        </h1>
+        <p class="step-desc">
+          The kinetics aspect of regulatory question 1 of the Thyroid case study
+          has been researched using the following tools. Select one to learn
+          more or scroll down to read more about the kinetics research process.
+        </p>
+        <div class="step-buttons step-buttons-row">
+          <button class="btn light-blue">
+            <b>Short description – Tool name</b><br />Longer description about
+            what the tool does and a little mention of how it was implemented
+            but not too long because that’s also described below.
+          </button>
+          <button class="btn light-blue">
+            <b>Short description – Tool name</b><br />Longer description about
+            what the tool does and a little mention of how it was implemented
+            but not too long because that’s also described below.
+          </button>
+        </div>
+        <div class="step-buttons step-buttons-row">
+          <button class="btn light-blue">
+            <b>Short description – Tool name</b><br />Longer description about
+            what the tool does and a little mention of how it was implemented
+            but not too long because that’s also described below.
+          </button>
+          <button class="btn light-blue">
+            <b>Short description – Tool name</b><br />Longer description about
+            what the tool does and a little mention of how it was implemented
+            but not too long because that’s also described below.
+          </button>
+        </div>
+      </div>
+      <div class="step-bottom grey-bg">
+        <h2>Kinetics Workflow for Regulatory Question 2</h2>
+        <p>
+          At vero eos et accusamus et iusto odio dignissimos ducimus qui
+          blanditiis praesentium voluptatum deleniti atque corrupti quos dolores
+          et quas molestias excepturi sint occaecati cupiditate non provident,
+          similique sunt in culpa qui officia deserunt mollitia animi, id est
+          laborum et dolorum fuga.
+        </p>
+      </div>
+    </section>
+  </div>
+</div>
+<script>
+  // Ensure each step is always the full height for the white section
+  function setStepHeights() {
+    const tops = document.querySelectorAll(".step-top.white-bg");
+    let maxHeight = 0;
+    tops.forEach((top) => {
+      top.style.height = "auto";
+      if (top.offsetHeight > maxHeight) maxHeight = top.offsetHeight;
+    });
+    tops.forEach((top) => {
+      top.style.height = maxHeight + "px";
+    });
+  }
+  window.addEventListener("resize", setStepHeights);
+  document.addEventListener("DOMContentLoaded", setStepHeights);
+
+  // Ensure each step is always the full width of the viewport
+  function setStepWidths() {
+    const steps = document.querySelectorAll(".step");
+    const width = window.innerWidth;
+    steps.forEach((step) => {
+      step.style.width = width + "px";
+      step.style.minWidth = width + "px";
+      step.style.maxWidth = width + "px";
+    });
+  }
+  window.addEventListener("resize", setStepWidths);
+  document.addEventListener("DOMContentLoaded", setStepWidths);
+
+  // Breadcrumb logic
+  function updateBreadcrumb(step) {
+    // Hide all breadcrumbs first
+    document.querySelectorAll(".breadcrumbs").forEach((bc) => {
+      bc.classList.remove("visible");
+    });
+    // Show the correct breadcrumb for the current step
+    if (step === 2) {
+      const bc = document.getElementById("breadcrumbs-step2");
+      if (bc) bc.classList.add("visible");
+    } else if (step === 3) {
+      const bc = document.getElementById("breadcrumbs-step3");
+      if (bc) bc.classList.add("visible");
+    }
+    // No breadcrumb for step 1
+  }
+
+  // Horizontal scroll navigation (snap to step)
+  function goToStep(step) {
+    const wrapper = document.getElementById("stepsWrapper");
+    const slider = document.getElementById("progressSlider");
+    const width = window.innerWidth;
+    const scrollAmount = width * (step - 1);
+    wrapper.scrollTo({ left: scrollAmount, behavior: "smooth" });
+    // Update progress slider position
+    if (slider) slider.className = "progress-slider step-" + step;
+    // Update breadcrumb
+    updateBreadcrumb(step);
+  }
+
+  // On load, ensure correct breadcrumb is shown
+  document.addEventListener("DOMContentLoaded", function () {
+    updateBreadcrumb(1);
+  });
+</script>
 {% endblock %}
