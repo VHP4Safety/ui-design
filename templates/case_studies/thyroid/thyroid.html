@@ -3,12 +3,6 @@
 <div class="steps-container">
   <!-- Breadcrumbs bar, now outside the steps-wrapper so it stays fixed -->
   <div class="breadcrumbs" id="breadcrumbs"></div>
-  <!-- Progress Bar (floating between white and grey sections)
-  <div class="progress-bar-container">
-    <div class="progress-bar">
-      <div class="progress-slider step-1" id="progressSlider"></div>
-    </div>
-  </div> -->
   <!-- Steps Wrapper -->
   <div class="steps-wrapper" id="stepsWrapper">
     <!-- Step 1 -->
@@ -26,12 +20,12 @@
           </p>
         </div>
         <div class="step-buttons">
-          <button class="btn blue" onclick="goToStep(2)">
+          <button class="btn blue" onclick="selectQuestion(1)">
             <b>Question 1: Compound Information</b><br />What information about
             a compound do we need to advise women in their early pregnancy to
             decide whether the compound can be used?
           </button>
-          <button class="btn blue" onclick="goToStep(3)">
+          <button class="btn blue" onclick="selectQuestion(2)">
             <b>Question 2: Fetal Brain Development</b><br />Does compound Z
             influence the thyroid-mediated brain development in the fetus
             resulting in cognitive impairment in children?
@@ -51,91 +45,133 @@
     <!-- Step 2 -->
     <section class="step">
       <div class="step-top white-bg">
-        <!-- Breadcrumbs removed from here -->
-        <h1>Assessment Components</h1>
-        <p>
-          This regulatory question has been researched using the following risk
-          assessment components. Choose one to find out our approach or scroll
-          down to learn more about the regulatory question.
-        </p>
-        <div class="step-buttons step-buttons-row">
-          <button class="btn blue" onclick="goToStep(3)">
-            <b>External Exposure</b>
-          </button>
-          <button class="btn blue" onclick="goToStep(3)">
-            <b>Kinetics</b>
-          </button>
-          <button class="btn blue" onclick="goToStep(3)">
-            <b>AOP</b>
-          </button>
-          <button class="btn blue" onclick="goToStep(3)">
-            <b>Adverse Outcome</b>
-          </button>
+        <!-- Dynamic content for Step 2 -->
+        <div id="step2-content">
+          <!-- Content will be injected here -->
         </div>
       </div>
       <div class="step-bottom grey-bg">
-        <h2>Thyroid-related Regulatory Question 2</h2>
-        <p>
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-          accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
-          ab illo inventore veritatis et quasi architecto beatae vitae dicta
-          sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
-          aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
-          qui ratione voluptatem sequi nesciunt.
-        </p>
+        <div id="step2-bottom-content">
+          <!-- Content will be injected here -->
+        </div>
       </div>
     </section>
     <!-- Step 3 -->
     <section class="step">
       <div class="step-top white-bg">
-        <!-- Breadcrumbs removed from here -->
-        <h1>
-          <span class="kinetics-bold">Kinetics</span> - Tools and Workflow
-        </h1>
-        <p class="step-desc">
-          The kinetics aspect of regulatory question 1 of the Thyroid case study
-          has been researched using the following tools. Select one to learn
-          more or scroll down to read more about the kinetics research process.
-        </p>
-        <div class="step-buttons step-buttons-row">
-          <button class="btn light-blue">
-            <b>Short description – Tool name</b><br />Longer description about
-            what the tool does and a little mention of how it was implemented
-            but not too long because that’s also described below.
-          </button>
-          <button class="btn light-blue">
-            <b>Short description – Tool name</b><br />Longer description about
-            what the tool does and a little mention of how it was implemented
-            but not too long because that’s also described below.
-          </button>
-        </div>
-        <div class="step-buttons step-buttons-row">
-          <button class="btn light-blue">
-            <b>Short description – Tool name</b><br />Longer description about
-            what the tool does and a little mention of how it was implemented
-            but not too long because that’s also described below.
-          </button>
-          <button class="btn light-blue">
-            <b>Short description – Tool name</b><br />Longer description about
-            what the tool does and a little mention of how it was implemented
-            but not too long because that’s also described below.
-          </button>
+        <div id="step3-content">
+          <!-- Content will be injected here -->
         </div>
       </div>
       <div class="step-bottom grey-bg">
-        <h2>Kinetics Workflow for Regulatory Question 2</h2>
-        <p>
-          At vero eos et accusamus et iusto odio dignissimos ducimus qui
-          blanditiis praesentium voluptatum deleniti atque corrupti quos dolores
-          et quas molestias excepturi sint occaecati cupiditate non provident,
-          similique sunt in culpa qui officia deserunt mollitia animi, id est
-          laborum et dolorum fuga.
-        </p>
+        <div id="step3-bottom-content">
+          <!-- Content will be injected here -->
+        </div>
       </div>
     </section>
   </div>
 </div>
 <script>
+  // --- State management ---
+  let currentQuestion = 1; // Default to question 1
+
+  // --- Step 2 and 3 content for each question ---
+  const step2Contents = {
+    1: {
+      top: `
+        <h1>Assessment Components (Q1)</h1>
+        <p>This regulatory question has been researched using the following risk assessment components. Choose one to find out our approach or scroll down to learn more about the regulatory question.</p>
+        <div class="step-buttons step-buttons-row">
+          <button class="btn blue" onclick="goToStep(3)"><b>External Exposure</b></button>
+          <button class="btn blue" onclick="goToStep(3)"><b>Kinetics</b></button>
+          <button class="btn blue" onclick="goToStep(3)"><b>AOP</b></button>
+          <button class="btn blue" onclick="goToStep(3)"><b>Adverse Outcome</b></button>
+        </div>
+      `,
+      bottom: `
+        <h2>Thyroid-related Regulatory Question 1</h2>
+        <p>Content for regulatory question 1 goes here. (Replace with real content.)</p>
+      `,
+    },
+    2: {
+      top: `
+        <h1>Assessment Components (Q2)</h1>
+        <p>This regulatory question has been researched using the following risk assessment components. Choose one to find out our approach or scroll down to learn more about the regulatory question.</p>
+        <div class="step-buttons step-buttons-row">
+          <button class="btn blue" onclick="goToStep(3)"><b>External Exposure</b></button>
+          <button class="btn blue" onclick="goToStep(3)"><b>Kinetics</b></button>
+          <button class="btn blue" onclick="goToStep(3)"><b>AOP</b></button>
+          <button class="btn blue" onclick="goToStep(3)"><b>Adverse Outcome</b></button>
+        </div>
+      `,
+      bottom: `
+        <h2>Thyroid-related Regulatory Question 2</h2>
+        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+      `,
+    },
+  };
+
+  const step3Contents = {
+    1: {
+      top: `
+        <h1><span class="kinetics-bold">Kinetics</span> - Tools and Workflow (Q1)</h1>
+        <p class="step-desc">The kinetics aspect of regulatory question 1 of the Thyroid case study has been researched using the following tools. Select one to learn more or scroll down to read more about the kinetics research process.</p>
+        <div class="step-buttons step-buttons-row">
+          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+        </div>
+        <div class="step-buttons step-buttons-row">
+          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+        </div>
+      `,
+      bottom: `
+        <h2>Kinetics Workflow for Regulatory Question 1</h2>
+        <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.</p>
+      `,
+    },
+    2: {
+      top: `
+        <h1><span class="kinetics-bold">Kinetics</span> - Tools and Workflow (Q2)</h1>
+        <p class="step-desc">The kinetics aspect of regulatory question 2 of the Thyroid case study has been researched using the following tools. Select one to learn more or scroll down to read more about the kinetics research process.</p>
+        <div class="step-buttons step-buttons-row">
+          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+        </div>
+        <div class="step-buttons step-buttons-row">
+          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+        </div>
+      `,
+      bottom: `
+        <h2>Kinetics Workflow for Regulatory Question 2</h2>
+        <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.</p>
+      `,
+    },
+  };
+
+  // --- Content update functions ---
+  function updateStep2Content() {
+    document.getElementById("step2-content").innerHTML =
+      step2Contents[currentQuestion].top;
+    document.getElementById("step2-bottom-content").innerHTML =
+      step2Contents[currentQuestion].bottom;
+  }
+  function updateStep3Content() {
+    document.getElementById("step3-content").innerHTML =
+      step3Contents[currentQuestion].top;
+    document.getElementById("step3-bottom-content").innerHTML =
+      step3Contents[currentQuestion].bottom;
+  }
+
+  // --- Navigation logic ---
+  function selectQuestion(q) {
+    currentQuestion = q;
+    updateStep2Content();
+    updateStep3Content();
+    goToStep(2);
+  }
+
   // Ensure each step is always the full height for the white section
   function setStepHeights() {
     const tops = document.querySelectorAll(".step-top.white-bg");
@@ -168,10 +204,10 @@
   function updateBreadcrumb(step) {
     const el = document.getElementById("breadcrumbs");
     if (step === 2) {
-      el.innerHTML = `<a href="#" onclick="goToStep(1); return false;">Thyroid Case Study</a> <span> &rarr; </span> <span>Regulatory Question 2</span>`;
+      el.innerHTML = `<a href="#" onclick="goToStep(1); return false;">Thyroid Case Study</a> <span> &rarr; </span> <span>Regulatory Question ${currentQuestion}</span>`;
       el.classList.add("visible");
     } else if (step === 3) {
-      el.innerHTML = `<a href=\"#\" onclick=\"goToStep(1); return false;\">Thyroid Case Study</a> <span>&rarr;</span> <a href=\"#\" onclick=\"goToStep(2); return false;\">Regulatory Question 2</a> <span>&rarr;</span> <span>Kinetics</span>`;
+      el.innerHTML = `<a href=\"#\" onclick=\"goToStep(1); return false;\">Thyroid Case Study</a> <span>&rarr;</span> <a href=\"#\" onclick=\"goToStep(2); return false;\">Regulatory Question ${currentQuestion}</a> <span>&rarr;</span> <span>Kinetics</span>`;
       el.classList.add("visible");
     } else {
       el.innerHTML = "";
@@ -190,11 +226,16 @@
     if (slider) slider.className = "progress-slider step-" + step;
     // Update breadcrumb
     updateBreadcrumb(step);
+    // Update content if needed
+    if (step === 2) updateStep2Content();
+    if (step === 3) updateStep3Content();
   }
 
-  // On load, ensure correct breadcrumb is shown
+  // On load, ensure correct breadcrumb and content is shown
   document.addEventListener("DOMContentLoaded", function () {
     updateBreadcrumb(1);
+    updateStep2Content();
+    updateStep3Content();
   });
 </script>
 {% endblock %}
