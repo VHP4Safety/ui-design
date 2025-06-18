@@ -193,6 +193,7 @@ def tools():
 """
 ### Here begins the updated version for creating the tool list page. 
 @app.route("/templates/tools/tools")
+@app.route("/templates/tools/tools")
 def tools():
     url = 'https://raw.githubusercontent.com/VHP4Safety/cloud/main/cap/service_index.json'
     response = requests.get(url)
@@ -203,20 +204,58 @@ def tools():
     try:
         tools = response.json()
 
+        # Mapping the URLs with glossary IDs to their text values. 
+        stage_mapping = {
+            "https://vhp4safety.github.io/glossary#VHP0000056": "ADME",
+            "https://vhp4safety.github.io/glossary#VHP0000102": "Hazard Assessment",
+            "https://vhp4safety.github.io/glossary#VHP0000148": "Chemical Information",
+            "https://vhp4safety.github.io/glossary#VHP0000149": "General"
+        }
+
         for tool in tools:
+            full_stage_url = tool.get('stage', '')
+
+            # Writing the service name and stage values in the logs for troubleshooting.
+            # print(f"Tool: {tool['service']}, Stage URL: {full_stage_url}")  # Log the full URL
+
+            # Checking if the full URL is in the mapping and updating the stage.
+            if full_stage_url in stage_mapping:
+                # print(f"Mapping stage URL {full_stage_url} to {stage_mapping[full_stage_url]}")  # Log the mapping
+                tool['stage'] = stage_mapping[full_stage_url]
+            elif tool['stage'] in ['NA', 'Unknown']: 
+                tool['stage'] = 'Other'  # Combining "NA" and "Unknown" stages in a single stage-type, "Other".
+            
             html_name = tool.get('html_name')
             md_name = tool.get('md_file_name')
             png_name = tool.get('png_file_name')
 
             tool['url'] = f"https://cloud.vhp4safety.nl/service/{html_name}"
             tool['meta_data'] = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{md_name}" if md_name else "md file not found"
-            tool['png'] = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}" if png_name else "../../static/images/logo.png"
+            
+            if png_name == 'https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png':
+                tool['png'] = 'https://raw.githubusercontent.com/VHP4Safety/ui-design/refs/heads/main/static/images/logo.png'
+            else:
+                tool['png'] = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}"
 
-        return render_template("tools/tools.html", tools=tools)
+        # Getting selected stages from the URL.
+        selected_stages = request.args.getlist('stage')
+
+        # Filtering tools by selected stages.
+        if selected_stages:
+            tools = [tool for tool in tools if tool.get('stage') in selected_stages]
+
+        # Getting all unique stages from the tools for the filter options.
+        stages = sorted(set(tool.get('stage') for tool in tools if tool.get('stage')))
+
+        # Forcing "Other" to be the last item in the list of stages.
+        if 'Other' in stages:
+            stages.remove('Other')
+            stages.append('Other')
+
+        return render_template("tools/tools.html", tools=tools, stages=stages, selected_stages=selected_stages)
 
     except Exception as e:
         return f"Error processing service data: {e}", 500
-
 
 @app.route("/tools/qsprpred")
 def qsprpred():
