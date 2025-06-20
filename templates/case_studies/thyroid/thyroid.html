@@ -1,75 +1,112 @@
 {% extends "base.html" %} {% block content %}
 <link rel="stylesheet" href="/static/css/casestudies.css" />
-<div class="steps-container">
-  <!-- Breadcrumbs bar, now outside the steps-wrapper so it stays fixed -->
-  <div class="breadcrumbs" id="breadcrumbs"></div>
-  <!-- Steps Wrapper -->
-  <div class="steps-wrapper" id="stepsWrapper">
-    <!-- Step 1 -->
-    <section class="step first-step">
-      <div class="step-top white-bg">
-        <div class="title-desc">
-          <h1>Thyroid Case Study</h1>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur.
-          </p>
-        </div>
-        <div class="step-buttons">
-          <button class="btn blue" onclick="selectQuestion(1)">
-            <b>Question 1: Compound Information</b><br />What information about
-            a compound do we need to advise women in their early pregnancy to
-            decide whether the compound can be used?
-          </button>
-          <button class="btn blue" onclick="selectQuestion(2)">
-            <b>Question 2: Fetal Brain Development</b><br />Does compound Z
-            influence the thyroid-mediated brain development in the fetus
-            resulting in cognitive impairment in children?
-          </button>
-        </div>
-      </div>
-      <div class="step-bottom grey-bg">
-        <h2>Case Study Overview</h2>
+<!-- Breadcrumbs bar, now outside the steps-wrapper so it stays fixed -->
+<div class="breadcrumbs" id="breadcrumbs"></div>
+<!-- Steps Wrapper -->
+<div class="steps-wrapper" id="stepsWrapper">
+  <!-- Step 1 -->
+  <section class="step first-step">
+    <div class="nav-section">
+      <div class="title-desc">
+        <h1>Thyroid Case Study</h1>
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat.
+          aliquip ex ea commodo consequat. Duis aute irure dolor in
+          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur.
         </p>
       </div>
-    </section>
-    <!-- Step 2 -->
-    <section class="step">
-      <div class="step-top white-bg">
-        <!-- Dynamic content for Step 2 -->
-        <div id="step2-content">
-          <!-- Content will be injected here -->
-        </div>
+      <div class="step-buttons">
+        <button class="btn step1" onclick="selectQuestion(1)">
+          <b>Question 1: Compound Information</b><br />What information about a
+          compound do we need to advise women in their early pregnancy to decide
+          whether the compound can be used?
+        </button>
+        <button class="btn step1" onclick="selectQuestion(2)">
+          <b>Question 2: Fetal Brain Development</b><br />Does compound Z
+          influence the thyroid-mediated brain development in the fetus
+          resulting in cognitive impairment in children?
+        </button>
       </div>
-      <div class="step-bottom grey-bg">
-        <div id="step2-bottom-content">
-          <!-- Content will be injected here -->
-        </div>
+    </div>
+    <div class="content-section">
+      <h2>Case Study Overview</h2>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus
+        ex sapien vitae pellentesque sem placerat. In id cursus mi pretium
+        tellus duis convallis. Tempus leo eu aenean sed diam urna tempor.
+        Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis
+        massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper
+        vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra
+        inceptos himenaeos.
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus
+        ex sapien vitae pellentesque sem placerat. In id cursus mi pretium
+        tellus duis convallis. Tempus leo eu aenean sed diam urna tempor.
+        Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis
+        massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper
+        vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra
+        inceptos himenaeos.
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus
+        ex sapien vitae pellentesque sem placerat. In id cursus mi pretium
+        tellus duis convallis. Tempus leo eu aenean sed diam urna tempor.
+        Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis
+        massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper
+        vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra
+        inceptos himenaeos.
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus
+        ex sapien vitae pellentesque sem placerat. In id cursus mi pretium
+        tellus duis convallis. Tempus leo eu aenean sed diam urna tempor.
+        Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis
+        massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper
+        vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra
+        inceptos himenaeos.
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus
+        ex sapien vitae pellentesque sem placerat. In id cursus mi pretium
+        tellus duis convallis. Tempus leo eu aenean sed diam urna tempor.
+        Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis
+        massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper
+        vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra
+        inceptos himenaeos.
+      </p>
+    </div>
+  </section>
+  <!-- Step 2 -->
+  <section class="step">
+    <div class="nav-section">
+      <!-- Dynamic content for Step 2 -->
+      <div id="step2-content">
+        <!-- Content will be injected here -->
       </div>
-    </section>
-    <!-- Step 3 -->
-    <section class="step">
-      <div class="step-top white-bg">
-        <div id="step3-content">
-          <!-- Content will be injected here -->
-        </div>
+    </div>
+    <div class="content-section">
+      <div id="step2-bottom-content">
+        <!-- Content will be injected here -->
       </div>
-      <div class="step-bottom grey-bg">
-        <div id="step3-bottom-content">
-          <!-- Content will be injected here -->
-        </div>
+    </div>
+  </section>
+  <!-- Step 3 -->
+  <section class="step">
+    <div class="nav-section">
+      <div id="step3-content">
+        <!-- Content will be injected here -->
       </div>
-    </section>
-  </div>
+    </div>
+    <div class="content-section">
+      <div id="step3-bottom-content">
+        <!-- Content will be injected here -->
+      </div>
+    </div>
+  </section>
 </div>
 <script>
   // --- State management ---
@@ -81,11 +118,11 @@
       top: `
         <h1>Assessment Components (Q1)</h1>
         <p>This regulatory question has been researched using the following risk assessment components. Choose one to find out our approach or scroll down to learn more about the regulatory question.</p>
-        <div class="step-buttons step-buttons-row">
-          <button class="btn blue" onclick="goToStep(3)"><b>External Exposure</b></button>
-          <button class="btn blue" onclick="goToStep(3)"><b>Kinetics</b></button>
-          <button class="btn blue" onclick="goToStep(3)"><b>AOP</b></button>
-          <button class="btn blue" onclick="goToStep(3)"><b>Adverse Outcome</b></button>
+        <div class="step-buttons">
+          <button class="btn step2" onclick="goToStep(3)"><b>External Exposure</b></button>
+          <button class="btn step2" onclick="goToStep(3)"><b>Kinetics</b></button>
+          <button class="btn step2" onclick="goToStep(3)"><b>AOP</b></button>
+          <button class="btn step2" onclick="goToStep(3)"><b>Adverse Outcome</b></button>
         </div>
       `,
       bottom: `
@@ -97,11 +134,11 @@
       top: `
         <h1>Assessment Components (Q2)</h1>
         <p>This regulatory question has been researched using the following risk assessment components. Choose one to find out our approach or scroll down to learn more about the regulatory question.</p>
-        <div class="step-buttons step-buttons-row">
-          <button class="btn blue" onclick="goToStep(3)"><b>External Exposure</b></button>
-          <button class="btn blue" onclick="goToStep(3)"><b>Kinetics</b></button>
-          <button class="btn blue" onclick="goToStep(3)"><b>AOP</b></button>
-          <button class="btn blue" onclick="goToStep(3)"><b>Adverse Outcome</b></button>
+        <div class="step-buttons">
+          <button class="btn step2" onclick="goToStep(3)"><b>External Exposure</b></button>
+          <button class="btn step2" onclick="goToStep(3)"><b>Kinetics</b></button>
+          <button class="btn step2" onclick="goToStep(3)"><b>AOP</b></button>
+          <button class="btn step2" onclick="goToStep(3)"><b>Adverse Outcome</b></button>
         </div>
       `,
       bottom: `
@@ -116,13 +153,13 @@
       top: `
         <h1><span class="kinetics-bold">Kinetics</span> - Tools and Workflow (Q1)</h1>
         <p class="step-desc">The kinetics aspect of regulatory question 1 of the Thyroid case study has been researched using the following tools. Select one to learn more or scroll down to read more about the kinetics research process.</p>
-        <div class="step-buttons step-buttons-row">
-          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
-          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+        <div class="step-buttons">
+          <button class="btn step3"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+          <button class="btn step3"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
         </div>
-        <div class="step-buttons step-buttons-row">
-          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
-          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+        <div class="step-buttons">
+          <button class="btn step3"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+          <button class="btn step3"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
         </div>
       `,
       bottom: `
@@ -134,13 +171,13 @@
       top: `
         <h1><span class="kinetics-bold">Kinetics</span> - Tools and Workflow (Q2)</h1>
         <p class="step-desc">The kinetics aspect of regulatory question 2 of the Thyroid case study has been researched using the following tools. Select one to learn more or scroll down to read more about the kinetics research process.</p>
-        <div class="step-buttons step-buttons-row">
-          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
-          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+        <div class="step-buttons">
+          <button class="btn step3"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+          <button class="btn step3"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
         </div>
-        <div class="step-buttons step-buttons-row">
-          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
-          <button class="btn light-blue"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+        <div class="step-buttons">
+          <button class="btn step3"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
+          <button class="btn step3"><b>Short description – Tool name</b><br />Longer description about what the tool does and a little mention of how it was implemented but not too long because that’s also described below.</button>
         </div>
       `,
       bottom: `
