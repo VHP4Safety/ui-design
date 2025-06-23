@@ -1,5 +1,5 @@
 
-Version 0.1-0
+Version 0.1-1 (2025-06-23)
 --------------------------------------------------------------------------------
 - Landing page with scrollable sections "About", "Partners", and "Contact". 
 - Hamburger menu with the three sections on the landing page. 
