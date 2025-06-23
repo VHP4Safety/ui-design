@@ -1,0 +1,7 @@
+
+Version 0.1-0
+--------------------------------------------------------------------------------
+- Landing page with scrollable sections "About", "Partners", and "Contact". 
+- Hamburger menu with the three sections on the landing page. 
+- Tools tab with the list of tools based on the current information in the cloud repo and filtering option based on "Stage". 
+- Placeholder tabs for "Assessment", "Workflows" and "Data". 
