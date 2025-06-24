@@ -1,20 +1,20 @@
 {
   "step1Contents": {
-    "navTitle": "Thyroid Case Study",
-    "navDescription": "[Filler] Two regulatory questions for the thyroid case study. Choose one to explore or scroll for an overview.",
+    "navTitle": "Parkinson Case Study",
+    "navDescription": "[Filler] Two regulatory questions for the parkinson case study. Choose one to explore or scroll for an overview.",
     "questions": [
       {
-        "label": "Question 1: Compound Information",
-        "description": "What information about a compound do we need to advise women in their early pregnancy to decide whether the compound can be used?",
+        "label": "Question 1: Disease Causation",
+        "description": "Can compound X cause Parkinson’s Disease?",
         "value": "Q1"
       },
       {
-        "label": "Question 2: Fetal Brain Development",
-        "description": "Does compound Z influence the thyroid-mediated brain development in the fetus resulting in cognitive impairment in children?",
+        "label": "Question 2: Disease Progression",
+        "description": "Can we identify groups at extra risk of developing Parkinson’s Disease after exposure to compound Y?",
         "value": "Q2"
       }
     ],
-    "content": "<h2>Case Study Overview</h2><p>[Filler] This is a placeholder for the thyroid case study overview. More details will be added soon.</p>"
+    "content": "<h2>Case Study Overview</h2><p>[Filler] This is a placeholder for the parkinson case study overview. More details will be added soon.</p>"
   },
   "step2Contents": {
     "Q1": {
@@ -30,7 +30,7 @@
         { "label": "AOP", "value": "AOP" },
         { "label": "Adverse Outcome", "value": "Adverse Outcome" }
       ],
-      "content": "<h2>Thyroid-related Regulatory Question 1</h2><p>[Filler] Content for regulatory question 1. More info coming soon.</p>"
+      "content": "<h2>Parkinson-related Regulatory Question 1</h2><p>[Filler] Content for regulatory question 1. More info coming soon.</p>"
     },
     "Q2": {
       "navTitle": "Process Flow Steps (Q2)",
@@ -42,7 +42,7 @@
         { "label": "AOP", "value": "AOP" },
         { "label": "Adverse Outcome", "value": "Adverse Outcome" }
       ],
-      "content": "<h2>Thyroid-related Regulatory Question 2</h2><p>[Filler] Content for regulatory question 2. More info coming soon.</p>"
+      "content": "<h2>Parkinson-related Regulatory Question 2</h2><p>[Filler] Content for regulatory question 2. More info coming soon.</p>"
     }
   },
   "step3Contents": {
