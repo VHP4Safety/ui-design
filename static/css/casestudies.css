@@ -75,6 +75,8 @@
   color: #000;
   height: auto;
   width: 45%;
+  align-items: flex-start;
+  text-align: left;
 }
 
 /* --- Step Bottom --- */
