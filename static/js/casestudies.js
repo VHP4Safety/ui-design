@@ -85,13 +85,60 @@ function selectProcessStep(step) {
 }
 
 // Breadcrumb logic
+toTitleCase = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+function getCaseStudyNameFromUrl() {
+  // Assumes URL like /casestudies/<casestudy>
+  const path = window.location.pathname;
+  // Try to extract the case study name from the path
+  // e.g. /casestudies/kidney or /casestudies/thyroid
+  const match = path.match(/\/casestudies\/(thyroid|kidney|parkinson)/);
+  if (match && match[1]) {
+    return match[1];
+  }
+  // fallback: try query param ?case=xxx
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("case")) {
+    return params.get("case");
+  }
+  // fallback: default to 'thyroid'
+  return "thyroid";
+}
+
+function loadCaseStudyContent() {
+  const caseStudy = getCaseStudyNameFromUrl();
+  fetch(`/static/data/${caseStudy}_content.json`)
+    .then((res) => res.json())
+    .then((content) => {
+      step1Contents = content.step1Contents;
+      step2Contents = content.step2Contents;
+      step3Contents = content.step3Contents;
+      contentLoaded = true;
+      currentQuestion = "Q1";
+      updateStep1Content();
+      updateBreadcrumb(1);
+      updateStep2Content();
+      updateStep3Content();
+    });
+}
+
+function getCaseStudyDisplayName() {
+  // Optionally, you could add a mapping here for pretty names
+  const name = getCaseStudyNameFromUrl();
+  if (step1Contents && step1Contents.navTitle) {
+    return step1Contents.navTitle;
+  }
+  return toTitleCase(name) + " Case Study";
+}
+
 function updateBreadcrumb(step) {
   const el = document.getElementById("breadcrumbs");
+  const caseStudyName = getCaseStudyDisplayName();
   if (step === 2) {
-    el.innerHTML = `<a href="#" onclick="goToStep(1); return false;">Thyroid Case Study</a> <span> &rarr; </span> <span>Regulatory Question ${currentQuestion}</span>`;
+    el.innerHTML = `<a href="#" onclick="goToStep(1); return false;">${caseStudyName}</a> <span> &rarr; </span> <span>Regulatory Question ${currentQuestion}</span>`;
     el.classList.add("visible");
   } else if (step === 3) {
-    el.innerHTML = `<a href=\"#\" onclick=\"goToStep(1); return false;\">Thyroid Case Study</a> <span>&rarr;</span> <a href=\"#\" onclick=\"goToStep(2); return false;\">Regulatory Question ${currentQuestion}</a> <span>&rarr;</span> <span>${currentProcessStep}</span>`;
+    el.innerHTML = `<a href=\"#\" onclick=\"goToStep(1); return false;\">${caseStudyName}</a> <span>&rarr;</span> <a href=\"#\" onclick=\"goToStep(2); return false;\">Regulatory Question ${currentQuestion}</a> <span>&rarr;</span> <span>${currentProcessStep}</span>`;
     el.classList.add("visible");
   } else {
     el.innerHTML = "";
@@ -127,22 +174,6 @@ function goToStep(step) {
 }
 
 // --- Load content from JSON and initialize ---
-function loadThyroidContent() {
-  fetch("/static/data/thyroid_content.json")
-    .then((res) => res.json())
-    .then((content) => {
-      step1Contents = content.step1Contents;
-      step2Contents = content.step2Contents;
-      step3Contents = content.step3Contents;
-      contentLoaded = true;
-      currentQuestion = "Q1";
-      updateStep1Content();
-      updateBreadcrumb(1);
-      updateStep2Content();
-      updateStep3Content();
-    });
-}
-
 document.addEventListener("DOMContentLoaded", function () {
-  loadThyroidContent();
+  loadCaseStudyContent();
 });

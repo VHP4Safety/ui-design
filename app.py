@@ -198,14 +198,12 @@ def qaop_app():
 ### Pages under 'Case Studies'
 
 
-@app.route("/casestudies/kidney")
-def kidney_main():
-    return render_template("case_studies/kidney/kidney.html")
-
-
-@app.route("/casestudies/parkinson")
-def parkinson_main():
-    return render_template("case_studies/parkinson/parkinson.html")
+@app.route("/casestudies/<case>")
+def casestudy_main(case):
+    # Only allow known case studies
+    if case not in ["thyroid", "kidney", "parkinson"]:
+        abort(404)
+    return render_template(f"case_studies/casestudy.html", case=case)
 
 
 @app.route("/case_studies/parkinson/workflows/parkinson_qAOP")
@@ -234,23 +232,6 @@ def show_compound(cwid):
         return render_template(f"compound.html", cwid=cwid)
     except TemplateNotFound:
         abort(404)
-
-
-@app.route("/casestudies/thyroid")
-def thyroid_main():
-    return render_template("case_studies/thyroid/thyroid.html")
-
-
-@app.route("/case_studies/thyroid/workflows/thyroid_hackathon_demo_workflow")
-def thyroid_workflow_1():
-    return render_template(
-        "case_studies/thyroid/workflows/thyroid_hackathon_demo_workflow.html"
-    )
-
-
-@app.route("/case_studies/thyroid/workflows/ngra_silymarin")
-def ngra_silymarin():
-    return render_template("case_studies/thyroid/workflows/ngra_silymarin.html")
 
 
 ################################################################################
