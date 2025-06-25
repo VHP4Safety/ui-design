@@ -1,4 +1,12 @@
 
+Version 0.2-1 (2-25-06-25)
+--------------------------------------------------------------------------------
+- The "Workflows" has been changed to "Case Studies" tab.
+- Indivudal pages for case studies have been implented in the "Case Study" tab.
+- The "Assessment" tab is removed to be integrated into the "Tools" tab. 
+- Minor updates to logos.
+
+
 Version 0.1-1 (2025-06-23)
 --------------------------------------------------------------------------------
 - Landing page with scrollable sections "About", "Partners", and "Contact". 
