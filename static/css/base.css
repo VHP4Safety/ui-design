@@ -2,327 +2,363 @@
 
 /* Predefined Colors */
 :root {
-    --pink: #e6007e;
-    --blue: #307bbf;
-    --purple: #29235c;
-    --orange: #eb5b25;
-    --light-blue: #c1e5f5;
-    --white: #ffffff;
-    --black: #000000;
-    --grey: #e0e0e0;
+  --pink: #e6007e;
+  --blue: #307bbf;
+  --purple: #29235c;
+  --orange: #eb5b25;
+  --light-blue: #c1e5f5;
+  --white: #ffffff;
+  --black: #000000;
+  --grey: #e0e0e0;
 }
 
 /* General Styling */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap'); /* The Open Sans font imported from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap"); /* The Open Sans font imported from Google Fonts */
 
-html, body {
-    scroll-behavior: smooth; /* Smooth scrolling for the anchor links */
-    height: 100%; /* Ensuring the body takes full height */
-    display: flex; /* Flexbox to center all content */
-    flex-direction: column; /* Using column layouts for all content */
-    margin: 0; /* Resetting any default margins */
-    padding: 0; /* Resetting any default padding */
-    line-height: 1.6; /* Line height for better readability */
-    text-align: left; /* Aligning text to the left */
-    color: var(--black); /* Default text color */
-    font-family: 'Open Sans', Arial, sans-serif; /* Applying font */
+html,
+body {
+  scroll-behavior: smooth; /* Smooth scrolling for the anchor links */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  height: 100%; /* Ensuring the body takes full height */
+  display: flex; /* Flexbox to center all content */
+  flex-direction: column; /* Using column layouts for all content */
+  margin: 0; /* Resetting any default margins */
+  padding: 0; /* Resetting any default padding */
+  line-height: 1.6; /* Line height for better readability */
+  text-align: left; /* Aligning text to the left */
+  color: var(--black); /* Default text color */
+  font-family: "Open Sans", Arial, sans-serif; /* Applying font */
 }
 
 main {
-    flex-grow: 1; /* Push the footer to the bottom when content is short */
+  flex-grow: 1; /* Push the footer to the bottom when content is short */
 }
 
 section {
-    max-width: 55%; /* Width of sections is 55% of the viewport */
-    margin: 0 auto; /* Centering sections */
-    padding: 100px; /* Padding for sections */
+  max-width: 55%; /* Width of sections is 55% of the viewport */
+  margin: 0 auto; /* Centering sections */
+  padding: 100px; /* Padding for sections */
 }
 
 /* General Styles for headings, paragraphs, lists and Links */
 h1 {
-    font-size: 2.5em; 
-    font-weight: bold;
-    margin: 0;
-    line-height: 1;
+  font-size: 2.5em;
+  font-weight: bold;
+  margin: 0;
+  margin-bottom: 10px;
+  line-height: 1;
 }
 
 h2 {
-    font-size: 2em;
-    font-weight: bold;
-    margin: 0;
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0;
+  margin-bottom: 10px;
 }
 
 h3 {
-    font-size: 1.25em;
-    font-weight: bold; 
-    margin: 20px 0px 0px 0px;
+  font-size: 1.25em;
+  font-weight: bold;
+  margin: 20px 0px 0px 0px;
 }
 
-p, ul, ol, li, input, textarea {
-    font-size: 1em;
-    text-align: justify;
-    margin: 0px;
-    color: #3A3A3A;
-    font-family: 'Open Sans', Arial, sans-serif; /* Applying font */
+p,
+ul,
+ol,
+li,
+input,
+textarea {
+  font-size: 1em;
+  text-align: justify;
+  margin: 0px;
+  color: #3a3a3a;
+  font-family: "Open Sans", Arial, sans-serif; /* Applying font */
 }
 
 a {
-    color: var(--pink);
-    text-decoration: none;
-    font-weight: 600;
+  color: var(--pink);
+  text-decoration: none;
+  font-weight: 600;
 }
 
 a:hover {
-    text-decoration: underline;
-    color: var(--blue);
+  text-decoration: underline;
+  color: var(--blue);
 }
 
 /* General Table Styling */
 table {
-    width: 100%;
-    border-collapse: collapse; /* Remove gaps between table cells */
-    margin: 20px 0;
-    font-size: 1em;
-    text-align: left;
+  width: 100%;
+  border-collapse: collapse; /* Remove gaps between table cells */
+  margin: 20px 0;
+  font-size: 1em;
+  text-align: left;
 }
 
-table th, table td {
-    padding: 12px 15px; /* Add padding for better readability */
-    border: 1px solid #ddd; /* Light border for table cells */
+table th,
+table td {
+  padding: 12px 15px; /* Add padding for better readability */
+  border: 1px solid #ddd; /* Light border for table cells */
 }
 
 table th {
-    background-color: var(--purple); /* Header background color */
-    color: var(--white); /* Header text color */
-    text-transform: uppercase; /* Capitalize header text */
-    font-weight: bold;
+  background-color: var(--purple); /* Header background color */
+  color: var(--white); /* Header text color */
+  text-transform: uppercase; /* Capitalize header text */
+  font-weight: bold;
 }
 
 table tr:nth-child(even) {
-    background-color: var(--grey); /* Alternate row background color */
+  background-color: var(--grey); /* Alternate row background color */
 }
 
 table tr:hover {
-    background-color: var(--light-blue); /* Highlight row on hover */
-    transition: background-color 0.3s ease; /* Smooth transition */
+  background-color: var(--light-blue); /* Highlight row on hover */
+  transition: background-color 0.3s ease; /* Smooth transition */
 }
 
 /* General Style for buttons */
 button {
-    background: none;
-    border: none;
-    color: var(--white);
-    font-size: 17px;
-    font-weight: bold;
-    cursor: pointer;
-    padding: 10px 15px;
-    border-radius: 20px;
-    height: 50px;
-    width: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-    transition: opacity 0.3s ease; /* Smooth hover transition */
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 15px;
+  border-radius: 20px;
+  height: 50px;
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s ease; /* Smooth hover transition */
 }
 
-button:hover { /* Hover effect for all buttons */
-    opacity: 0.5;
+button:hover {
+  /* Hover effect for all buttons */
+  opacity: 0.5;
 }
 
 .tab-button:hover {
-    box-shadow: 5px 5px 5px rgba(103, 103, 103, 0.8);
-    opacity: 1;
+  box-shadow: 5px 5px 5px rgba(103, 103, 103, 0.8);
+  opacity: 1;
 }
 
 /* Navbar */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--white);
-    padding: 10px 20px;
-    border-bottom: 1px solid #ddd;
-    position: fixed; /* Fixed to top of window */
-    top: 0;
-    width: 100%; /* Full width */
-    z-index: 9999; /* Ensure navbar is above other content */
-    box-sizing: border-box;
-    height: 90px; /* Ensure consistent height */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--white);
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+  position: fixed; /* Fixed to top of window */
+  top: 0;
+  width: 100%; /* Full width */
+  z-index: 9999; /* Ensure navbar is above other content */
+  box-sizing: border-box;
+  height: 90px; /* Ensure consistent height */
 }
 
 .logo-image {
-    height: 70px;
-    width: auto;
-    margin-left: 20px;
+  height: 70px;
+  width: auto;
+  margin-left: 20px;
 }
 
-.nav-links { /* Positioning of navbar buttons and hamburger menu icon */
-    display: flex; /* Flexbox for horizontal alignment */
-    gap: 10px; /* Space between buttons */
-    align-items: center; /* Center items vertically in navbar */
-    margin-left: auto; /* Pushes the links to the right of the navbar */
+.nav-links {
+  /* Positioning of navbar buttons and hamburger menu icon */
+  display: flex; /* Flexbox for horizontal alignment */
+  gap: 10px; /* Space between buttons */
+  align-items: center; /* Center items vertically in navbar */
+  margin-left: auto; /* Pushes the links to the right of the navbar */
 }
 
 /* Buttons in navbar and tab-section, these are additions to the general button style above */
-.nav-links button, .tab-button, .contact-form button {
-    font-size:19px;
-    width: 150px;
+.nav-links button,
+.tab-button,
+.contact-form button {
+  font-size: 19px;
+  width: 150px;
 }
 
 /* Giving each tab it's own color */
-.nav-links button:nth-child(1), .assessment, .button-pink { background-color: var(--pink);}
-.nav-links button:nth-child(2), .workflows, .button-blue { background-color: var(--blue);}
-.nav-links button:nth-child(3), .tools, .button-purple { background-color: var(--purple);}
-.nav-links button:nth-child(4), .data, .button-orange { background-color: var(--orange);}
+.nav-links button:nth-child(1),
+.tools,
+.button-pink {
+  background-color: var(--pink);
+}
+.nav-links button:nth-child(2),
+.casestudies,
+.button-blue {
+  background-color: var(--blue);
+}
+.nav-links button:nth-child(3),
+.data,
+.button-orange {
+  background-color: var(--orange);
+}
 
 /* Hamburger Menu Icon */
 .hamburger-menu {
-    font-size: 2em;
-    font-weight: bold;
-    cursor: pointer; /* Pointer cursor for better UX, to show it's clickable */
-    margin-left: 20px;
-    margin-right: 10px;
-    display: flex;
-    align-items: center; /* Centering the icon vertically */
-    transition: color 0.3s ease; /* Smooth color transition on hover */
+  font-size: 2em;
+  font-weight: bold;
+  cursor: pointer; /* Pointer cursor for better UX, to show it's clickable */
+  margin-left: 20px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center; /* Centering the icon vertically */
+  transition: color 0.3s ease; /* Smooth color transition on hover */
 }
 
-.hamburger-menu:hover { /* Hover effect for hamburger menu icon */
-    color: var(--pink);
+.hamburger-menu:hover {
+  /* Hover effect for hamburger menu icon */
+  color: var(--pink);
 }
 
 /* Sliding Menu after clicking hamburger icon */
 .menu-overlay {
-    position: fixed; /* Fixed to the right side of the screen */
-    top: 0;
-    right: -100%; /* Starts off-screen to the right */
-    width: 280px;
-    height: 100%;
-    background-color: var(--light-blue);
-    z-index: 999999; /* Ensure it appears above other content */
-    display: flex;
-    flex-direction: column; /* Column layout for menu items */
-    padding: 50px;
-    transition: right 0.6s ease; /* Applies to both opening and closing */
-    box-shadow: -4px 0 6px rgba(0, 0, 0, 0.1);
+  position: fixed; /* Fixed to the right side of the screen */
+  top: 0;
+  right: -100%; /* Starts off-screen to the right */
+  width: 280px;
+  height: 100%;
+  background-color: var(--light-blue);
+  z-index: 999999; /* Ensure it appears above other content */
+  display: flex;
+  flex-direction: column; /* Column layout for menu items */
+  padding: 50px;
+  transition: right 0.6s ease; /* Applies to both opening and closing */
+  box-shadow: -4px 0 6px rgba(0, 0, 0, 0.1);
 }
 
 .menu-overlay.open {
-    right: 0; /* Moves into view when open */
+  right: 0; /* Moves into view when open */
 }
 
-.menu-overlay ul { /* Unordered list for menu items */
-    list-style: none; /* Removes default bulletpoints */
-    padding: 0;
-    margin: 0;
+.menu-overlay ul {
+  /* Unordered list for menu items */
+  list-style: none; /* Removes default bulletpoints */
+  padding: 0;
+  margin: 0;
 }
 
-.menu-overlay li { /* Individual menu items */
-    margin: 20px 0; /* Space between menu items */
+.menu-overlay li {
+  /* Individual menu items */
+  margin: 20px 0; /* Space between menu items */
 }
 
 .menu-overlay a {
-    color: var(--black);
-    text-decoration: none; /* No underline for links in menu */
-    font-size: 1.5em;
-    font-weight: bold;
-    margin: 20px;
+  color: var(--black);
+  text-decoration: none; /* No underline for links in menu */
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 20px;
 }
 
-.menu-overlay a:hover { /* Hover effect for links in menu */
-    color: var(--pink);
+.menu-overlay a:hover {
+  /* Hover effect for links in menu */
+  color: var(--pink);
 }
 
 /* Close Button for Menu Overlay */
-.menu-overlay .close-button { 
-    position: absolute; /* Positioned at the top right corner of the menu */
-    top: 20px;
-    right: 20px;
-    font-size: 2em;
-    cursor: pointer;
-    padding: 5px 10px;
-    transition: color 0.3s ease; /* Smooth color transition on hover */
+.menu-overlay .close-button {
+  position: absolute; /* Positioned at the top right corner of the menu */
+  top: 20px;
+  right: 20px;
+  font-size: 2em;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: color 0.3s ease; /* Smooth color transition on hover */
 }
 
-.menu-overlay .close-button:hover { /* Hover effect for close button */
-    color: var(--pink);
+.menu-overlay .close-button:hover {
+  /* Hover effect for close button */
+  color: var(--pink);
 }
 
 /* Footer */
 footer {
-    background-color: var(--light-blue);
-    font-size: 0.8em; /* Smaller font size for footer */
+  background-color: var(--light-blue);
+  font-size: 0.8em; /* Smaller font size for footer */
 }
 
 .footer-container {
-    display: flex;
-    max-width: 55%; /* Restrict the content width to 55% of the footer */
-    margin: 0 auto; /* Centering the footer content */
-    gap: 40px; /* Add spacing between columns */
+  display: flex;
+  max-width: 55%; /* Restrict the content width to 55% of the footer */
+  margin: 0 auto; /* Centering the footer content */
+  gap: 40px; /* Add spacing between columns */
 }
 
 .footer-column {
-    flex: 1; /* Each column takes equal space */
+  flex: 1; /* Each column takes equal space */
 }
 
 .footer-column h3 {
-    font-size: 1.1em;
-    margin-top: 30px;
-    text-transform: uppercase; /* Uppercase for headings */
+  font-size: 1.1em;
+  margin-top: 30px;
+  text-transform: uppercase; /* Uppercase for headings */
 }
 
-.footer-column ul { /* Unordered list for footer links */
-    list-style: none; /* Removes default bulletpoints */
-    padding: 0; /* No default indentation */
+.footer-column ul {
+  /* Unordered list for footer links */
+  list-style: none; /* Removes default bulletpoints */
+  padding: 0; /* No default indentation */
 }
 
 .footer-column ul li {
-    margin: 5px 0; /* Space between list items */
+  margin: 5px 0; /* Space between list items */
 }
 
-.footer-column ul li a { /* Links in the footer */
-    color: #3A3A3A;
-    text-decoration: none;
-    font-size: 0.9em;
+.footer-column ul li a {
+  /* Links in the footer */
+  color: #3a3a3a;
+  text-decoration: none;
+  font-size: 0.9em;
 }
 
-.footer-column ul li a:hover { /* Hover effect for footer links */
-    text-decoration: underline;
-    color: var(--pink);
+.footer-column ul li a:hover {
+  /* Hover effect for footer links */
+  text-decoration: underline;
+  color: var(--pink);
 }
 
 /* Responsive design for different screen sizes */
 @media (max-width: 1920px) {
-    .hero {
-        max-width: 80%;
-        padding: 80px;
-    }
+  .hero {
+    max-width: 80%;
+    padding: 80px;
+  }
 
-    section, .footer-container {
-        max-width: 60%;
-    }
+  section,
+  .footer-container {
+    max-width: 60%;
+  }
 }
 
 @media (max-width: 1680px) {
-    .hero {
-        max-width: 90%;
-        padding: 60px;
-    }
+  .hero {
+    max-width: 90%;
+    padding: 60px;
+  }
 
-    section, .footer-container {
-        max-width: 70%;
-    }
+  section,
+  .footer-container {
+    max-width: 70%;
+  }
 }
 
 @media (max-width: 1480px) {
-    .hero {
-        max-width: 100%;
-        padding: 40px;
-    }
+  .hero {
+    max-width: 100%;
+    padding: 40px;
+  }
 
-    section, .footer-container {
-        max-width: 80%;
-    }
+  section,
+  .footer-container {
+    max-width: 80%;
+  }
 }

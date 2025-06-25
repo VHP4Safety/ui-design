@@ -85,9 +85,8 @@
     z-index: 1000; /* Ensures it appears above the hexagram */
 }
 /* Specific Arrow Colors */
-.assessment-arrow {border-left-color: var(--pink);}
-.workflows-arrow {border-left-color: var(--blue);}
-.tools-arrow {border-left-color: var(--purple);}
+.tools-arrow {border-left-color: var(--pink);}
+.casestudies-arrow {border-left-color: var(--blue);}
 .data-arrow {border-left-color: var(--orange);}
 .arrow:hover{ /* Hover effect for arrows */
     opacity: 0.5;

@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -26,7 +26,7 @@
     <!-- Favicon -->
     <link
       rel="icon"
-      href="{{ url_for('static', filename='images/vhp_favicon.ico') }}"
+      href="/static/images/logos/VHP_Icon_Head_300.png"
       type="image/x-icon"
     />
 
@@ -112,15 +112,14 @@
       <header>
         <a href="/"
           ><img
-            src="/static/images/vhp_higher_res.png"
+            src="/static/images/logos/VHP_Logo_Long_02_300.png"
             alt="Logo"
             class="logo-image"
         /></a>
       </header>
       <div class="nav-links">
-        <button onclick="location.href='/assessment'">Assessment</button>
-        <button onclick="location.href='/workflows'">Workflows</button>
-        <button onclick="location.href='/templates/tools/tools'">Tools</button>
+        <button onclick="location.href='/tools'">Tools</button>
+        <button onclick="location.href='/casestudies'">Case Studies</button>
         <button onclick="location.href='/data'">Data</button>
       </div>
       <div class="hamburger-menu" onclick="toggleMenu()">☰</div>
@@ -143,9 +142,8 @@
         <div class="footer-column">
           <h3>EXPLORE</h3>
           <ul>
-            <li><a href="/assessment">Assessment</a></li>
-            <li><a href="/workflows">Workflows</a></li>
-            <li><a href="/templates/tools/tools">Tools</a></li>
+            <li><a href="/tools">Tools</a></li>
+            <li><a href="/casestudies">Case Studies</a></li>
             <li><a href="/data">Data</a></li>
           </ul>
         </div>
