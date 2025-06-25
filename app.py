@@ -187,8 +187,7 @@ def tools():
         return f"Error fetching files: {response.status_code}"
 """
 ### Here begins the updated version for creating the tool list page. 
-@app.route("/templates/tools/tools")
-@app.route("/templates/tools/tools")
+@app.route("/tools")
 def tools():
     url = 'https://raw.githubusercontent.com/VHP4Safety/cloud/main/cap/service_index.json'
     response = requests.get(url)
