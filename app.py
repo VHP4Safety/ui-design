@@ -182,14 +182,17 @@ def tools():
         return f"Error fetching files: {response.status_code}"
 
 
-@app.route("/tools/qsprpred")
-def qsprpred():
-    return render_template("tools/qsprpred.html")
-
-
-@app.route("/tools/qaop_app")
-def qaop_app():
-    return render_template("qaop_app.html")
+@app.route("/tools/<toolname>")
+def tool_page(toolname):
+    # Map toolname to the correct JSON file in the new tool folder
+    tool_json_map = {
+        "qsprpred": "tool/qsprpred_content.json",
+        "qaopapp": "tool/qaopapp_content.json",
+    }
+    if toolname not in tool_json_map:
+        abort(404)
+    # Pass the json filename to the template (for JS to pick up)
+    return render_template("tools/tool.html", tool_json=tool_json_map[toolname])
 
 
 ################################################################################
