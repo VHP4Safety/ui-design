@@ -107,7 +107,7 @@ function getCaseStudyNameFromUrl() {
 
 function loadCaseStudyContent() {
   const caseStudy = getCaseStudyNameFromUrl();
-  fetch(`/static/data/${caseStudy}_content.json`)
+  fetch(`/static/data/casestudies/${caseStudy}_content.json`)
     .then((res) => res.json())
     .then((content) => {
       step1Contents = content.step1Contents;
