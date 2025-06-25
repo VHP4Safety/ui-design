@@ -1,5 +1,5 @@
 
-Version 0.2-1 (2-25-06-25)
+Version 0.2-1 (2025-06-25)
 --------------------------------------------------------------------------------
 - The "Workflows" has been changed to "Case Studies" tab.
 - Indivudal pages for case studies have been implented in the "Case Study" tab.
