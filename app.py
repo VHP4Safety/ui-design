@@ -93,7 +93,7 @@ def archive():
 
 
 # Page to list all the tools based on the list of tools on the cloud repo.
-@app.route("/templates/tools/tools")
+@app.route("/tools")
 def tools():
     # Github API link to receive the list of the tools on the cloud repo:
     url = f"https://api.github.com/repos/VHP4Safety/cloud/contents/docs/service"
