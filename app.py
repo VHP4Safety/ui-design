@@ -57,37 +57,6 @@ def data():
 def archive():
     return render_template("tabs/archive.html")
 
-
-################################################################################
-### Pages under 'Project Information', these are now part of home.html
-
-# @app.route('/information/mission_and_vision')
-# def mission_and_vision():
-#     # This section is now part of the landing page or home.html.
-#     return render_template('information/mission_and_vision.html')
-
-# @app.route('/information/research_lines')
-# def research_lines():
-#     # This section is now part of the landing page or home.html.
-#     return render_template('information/research_lines.html')
-
-# @app.route('/case_studies_and_regulatory_questions')
-# def case_studies_and_regulatory_questions():
-#     # This section is now part of the landing page or home.html.
-#     return render_template('information/case_studies_and_regulatory_questions.html')
-
-# @app.route('/information/partners_and_consortium')
-# def partners_and_consortium():
-#     # This section is now part of the landing page or home.html.
-#     return render_template('information/partners_and_consortium.html')
-
-# @app.route('/information/contact')
-# def contact():
-#     # This section is now part of the landing page or home.html.
-#     return render_template('information/contact.html')
-
-################################################################################
-
 ################################################################################
 ### Pages under 'Tools'
 
