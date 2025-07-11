@@ -246,7 +246,34 @@ def tools():
             stages.remove('Other')
             stages.append('Other')
 
-        return render_template("tools/tools.html", tools=tools, stages=stages, selected_stages=selected_stages)
+        # Filtering over the regulatory questions.
+        reg_questions = {
+            "Q1a. Kidney (a)": "reg_q_1a",
+            "Q1b. Kidney (b)": "reg_q_1b",
+            "Q2a. Parkinson (a)": "reg_q_2a",
+            "Q2b. Parkinson (b)": "reg_q_2b",
+            "Q3a. Thyroid (a)": "reg_q_3a",
+            "Q3b. Thyroid (b)": "reg_q_3b",
+        }
+
+        selected_questions = request.args.getlist('reg_q')
+
+        for question in selected_questions:
+            field = reg_questions.get(question)
+            if field:
+                tools = [tool for tool in tools if str(tool.get(field, '')).lower() == 'true']
+
+        # Getting the search query from URL to add a search bar based on tool names.
+        search_query = request.args.get('search', '').strip().lower()
+
+        # Filtering tools by search query.
+        if search_query:
+            tools = [tool for tool in tools if search_query in tool.get('service', '').lower()]
+
+        return render_template("tools/tools.html", tools=tools, stages=stages, 
+            selected_stages=selected_stages, reg_questions=reg_questions,
+            selected_questions=selected_questions
+        )
 
     except Exception as e:
         return f"Error processing service data: {e}", 500

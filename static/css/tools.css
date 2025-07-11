@@ -64,9 +64,23 @@ a.btn-clear-filter:hover {
     background-color: var(--orange);
 }
 
+
+/* Filter button options */
+.filters-container {
+  display: flex;
+  gap: 2rem; /* space between the two filters */
+  flex-wrap: wrap; /* optional: allows wrapping on smaller screens */
+}
+
 /* Putting some space below the filter section to separate it from the first card. */
 .filter-section {
     padding-bottom: 20px;
+    flex: 1; /* allows each filter section to take equal space */
+    min-width: 250px; /* prevent too small columns on small screens */
+}
+
+.filter-buttons {
+  margin-top: 1rem;
 }
 
 /* Separating cards from each other a little. */
@@ -120,4 +134,28 @@ p, ul, ol, li, input, textarea {
     margin: 0px;
     color: #3A3A3A;
     font-family: 'Open Sans', Arial, sans-serif; /* Applying font */
+}
+
+
+/* Stylization for the search button. */
+.search-bar {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-bar input[type="text"] {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+.btn-search {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: var(--blue);
+  color: white;
+  cursor: pointer;
 }
