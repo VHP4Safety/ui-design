@@ -4,30 +4,57 @@
 
 <section>
     <div class="explanation-text">
-        <p>Here you can find the tools in the catalog. You can filter the tools with respect to their <a href="{{ url_for('workflows') }}#about-section">stage category</a> (i.e., blue boxes) by checking the boxes below. </p>
+        <p>Here you can find the tools in the catalog. You can search for a tools that you now by using the search box below. </p>
+        <p> Alternatively, you can filter the tools with respect to their <a href="{{ url_for('workflows') }}#about-section">stage category</a> (i.e., blue boxes) and the regulatory question they associated with by using the boxes below. </p>
         <p>Use the "Apply Filter" button to see results, and click "Clear Filter" to reset the filters.</p>
         <!--<br>
         <p><em>Note:</em> If there is no webpage associated with the tool, you will see a "No Available Webpage" message instead of a link to the tool.</p>-->
     </div>
 
+    <form method="get" action="{{ url_for('tools') }}">
+        <div class="search-bar">
+            <input type="text" name="search" placeholder="Search by tool name..." value="{{ request.args.get('search', '') }}">
+            <button type="submit" class="btn-search">Search</button>
+        </div>
+
+
     <!-- <h1>Tool Catalog</h1> --> <!-- I didn't like the look of the text at the top, so I'll just exclude it for now. --> 
     <!-- Filter section for stage values with checkboxes -->
     <form method="get" action="{{ url_for('tools') }}">
-      <div class="filter-section">
-        <h3>Filter by Stage</h3>
-        {% for stage in stages %}
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="stage" value="{{ stage }}" 
-              {% if stage in selected_stages %}checked{% endif %}>
-            <label class="form-check-label">{{ stage }}</label>
-          </div>
-        {% endfor %}
-        <!-- Apply Filter button -->
-        <button type="submit" class="btn-apply-filter">Apply Filter</button>
-        <!-- Clear Filter button -->
-        <a href="{{ url_for('tools') }}" class="btn-clear-filter">Clear Filter</a> 
+        <div class="filters-container">
+            <!-- Stage Filter -->
+            <div class="filter-section">
+                <h3>Filter by Stage</h3>
+                    {% for stage in stages %}
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="stage" value="{{ stage }}" 
+                    {% if stage in selected_stages %}checked{% endif %}>
+                    <label class="form-check-label">{{ stage }}</label>
+            </div>
+                    {% endfor %}
+        </div>
+
+    <!-- Regulatory Questions Filter -->
+    <div class="filter-section">
+      <h3>Filter by Regulatory Questions</h3>
+      {% for question, field in reg_questions.items() %}
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="reg_q" value="{{ question }}"
+             {% if question in selected_questions %}checked{% endif %}>
+          <label class="form-check-label">{{ question }}</label>
+        </div>
+            {% endfor %}
+        </div>
     </div>
-</form>
+
+        <!-- Filter Buttons -->
+        <div class="filter-buttons">
+            <button type="submit" class="btn-apply-filter">Apply Filter</button>
+            <a href="{{ url_for('tools') }}" class="btn-clear-filter">Clear Filter</a>
+        </div>
+    </form>
+
+    </form>
     <!-- Tools list -->
     <div class="row align-items-start">
         <ul>

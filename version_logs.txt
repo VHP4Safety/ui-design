@@ -1,10 +1,12 @@
 
-Version 0.2-1 (2025-06-25)
+Version 0.2-2 (2025-07-11)
 --------------------------------------------------------------------------------
 - The "Workflows" has been changed to "Case Studies" tab.
 - Indivudal pages for case studies have been implented in the "Case Study" tab.
 - The "Assessment" tab is removed to be integrated into the "Tools" tab. 
 - Minor updates to logos.
+- Addition of a second filtering in the tools page over the regulatory questions.
+- Addition of a search box over the tool names in the tools page. 
 
 
 Version 0.1-1 (2025-06-23)
