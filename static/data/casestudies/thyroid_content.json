@@ -36,7 +36,10 @@
       "navTitle": "Process Flow Steps (Q2)",
       "navDescription": "[Filler] Steps for this regulatory question. Click a button or scroll for more info.",
       "steps": [
-        { "value": "Chemical Characteristics" },
+        {
+          "label": "Chemical Characteristics",
+          "value": "Chemical Characteristics"
+        },
         { "label": "External Exposure", "value": "External Exposure" },
         { "label": "Kinetics", "value": "Kinetics" },
         { "label": "AOP", "value": "AOP" },
