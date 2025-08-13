@@ -12,8 +12,137 @@
   height: auto;
   border-radius: 8px; /* Optional: to match the card's rounded corners */
   object-fit: cover; /* Ensures the image fits nicely within the card */
+  width: 200px;
+  /* float: right; */
 }
 
 .tools-links {
   display: inline-block; /* Placing 2 links and seperator in one line */
+}
+
+
+/* Adding style configurations for the buttons in the tools page. */
+button.btn-apply-filter {
+    background-color: var(--blue);
+    color: white;
+    font-size: 18px;
+    margin-top: 10px;  /* Add space above the button */
+    margin-right: 10px;  /* Add space on the right */
+    margin-bottom: 20px; /* Add space below the button */
+}
+
+button.btn-apply-filter:hover {
+    background-color: var(--blue);
+}
+
+/* Clear Filter button */
+a.btn-clear-filter {
+    background-color: var(--orange);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-top: 10px; 
+    margin-left: 10px;
+    margin-bottom: 20px;
+}
+
+a.btn-clear-filter:hover {
+    background-color: var(--orange);
+}
+
+
+/* Filter button options */
+.filters-container {
+  display: flex;
+  gap: 2rem; /* space between the two filters */
+  flex-wrap: wrap; /* optional: allows wrapping on smaller screens */
+}
+
+/* Putting some space below the filter section to separate it from the first card. */
+.filter-section {
+    padding-bottom: 20px;
+    flex: 1; /* allows each filter section to take equal space */
+    min-width: 250px; /* prevent too small columns on small screens */
+}
+
+.filter-buttons {
+  margin-top: 1rem;
+}
+
+/* Separating cards from each other a little. */
+.row.align-items-start {
+    margin-top: 20px; 
+}
+
+/* Styling for the disabled "No Available Webpage" link to look like a button */
+a.tools-links.disabled {
+    background-color: #f8f9fa; /* Light background like a disabled button */
+    color: #6c757d; /* Greyed-out text */
+    border: 1px solid #6c757d; /* Grey border */
+    padding: 10px 15px; /* Padding to make it look like a button */
+    border-radius: 20px; /* Rounded corners */
+    text-decoration: none; /* Remove underline */
+    cursor: not-allowed; /* Show a 'not-allowed' cursor */
+    display: inline-block; /* Ensures it behaves like a button */
+    text-align: center; /* Center-align the text */
+}
+
+a.tools-links.disabled:hover {
+    background-color: #f8f9fa; /* No hover effect */
+    opacity: 1; /* Prevent any opacity changes on hover */
+}
+
+
+/* Text styles from base.css. This is probably not the correct way to do this, instead of adding the styles for this page to base.css. */
+/* General Styles for headings, paragraphs, lists and Links */
+h1 {
+    font-size: 2.5em; 
+    font-weight: bold;
+    margin: 0;
+    line-height: 1;
+}
+
+h2 {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0;
+}
+
+h3 {
+    font-size: 1.25em;
+    font-weight: bold; 
+    margin: 20px 0px 0px 0px;
+}
+
+p, ul, ol, li, input, textarea {
+    font-size: 1em;
+    text-align: justify;
+    margin: 0px;
+    color: #3A3A3A;
+    font-family: 'Open Sans', Arial, sans-serif; /* Applying font */
+}
+
+
+/* Stylization for the search button. */
+.search-bar {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-bar input[type="text"] {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+.btn-search {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: var(--blue);
+  color: white;
+  cursor: pointer;
 }

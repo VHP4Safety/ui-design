@@ -44,6 +44,11 @@ def data():
 ### Pages under 'Tools'
 
 # Page to list all the tools based on the list of tools on the cloud repo.
+
+# Below is the original way of creating the service_list page which runs slow.
+# Further down below it, I try to implement a way to get the combined json file 
+# rather than getting individual service information one-by-one. 
+""" 
 @app.route("/tools")
 def tools():
     # Github API link to receive the list of the tools on the cloud repo:
@@ -131,7 +136,98 @@ def tools():
         return render_template("tools/tools.html", tools=tools)
     else:
         return f"Error fetching files: {response.status_code}"
+"""
+### Here begins the updated version for creating the tool list page. 
+@app.route("/tools")
+def tools():
+    url = 'https://raw.githubusercontent.com/VHP4Safety/cloud/main/cap/service_index.json'
+    response = requests.get(url)
 
+    if response.status_code != 200:
+        return f"Error fetching service list: {response.status_code}", 503
+
+    try:
+        tools = response.json()
+
+        # Mapping the URLs with glossary IDs to their text values. 
+        stage_mapping = {
+            "https://vhp4safety.github.io/glossary#VHP0000056": "ADME",
+            "https://vhp4safety.github.io/glossary#VHP0000102": "Hazard Assessment",
+            "https://vhp4safety.github.io/glossary#VHP0000148": "Chemical Information",
+            "https://vhp4safety.github.io/glossary#VHP0000149": "General"
+        }
+
+        for tool in tools:
+            full_stage_url = tool.get('stage', '')
+
+            # Writing the service name and stage values in the logs for troubleshooting.
+            # print(f"Tool: {tool['service']}, Stage URL: {full_stage_url}")  # Log the full URL
+
+            # Checking if the full URL is in the mapping and updating the stage.
+            if full_stage_url in stage_mapping:
+                # print(f"Mapping stage URL {full_stage_url} to {stage_mapping[full_stage_url]}")  # Log the mapping
+                tool['stage'] = stage_mapping[full_stage_url]
+            elif tool['stage'] in ['NA', 'Unknown']: 
+                tool['stage'] = 'Other'  # Combining "NA" and "Unknown" stages in a single stage-type, "Other".
+            
+            html_name = tool.get('html_name')
+            md_name = tool.get('md_file_name')
+            png_name = tool.get('png_file_name')
+
+            tool['url'] = f"https://cloud.vhp4safety.nl/service/{html_name}"
+            tool['meta_data'] = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{md_name}" if md_name else "md file not found"
+            
+            if png_name == 'https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png':
+                tool['png'] = 'https://raw.githubusercontent.com/VHP4Safety/ui-design/refs/heads/main/static/images/logo.png'
+            else:
+                tool['png'] = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}"
+
+        # Getting selected stages from the URL.
+        selected_stages = request.args.getlist('stage')
+
+        # Filtering tools by selected stages.
+        if selected_stages:
+            tools = [tool for tool in tools if tool.get('stage') in selected_stages]
+
+        # Getting all unique stages from the tools for the filter options.
+        stages = sorted(set(tool.get('stage') for tool in tools if tool.get('stage')))
+
+        # Forcing "Other" to be the last item in the list of stages.
+        if 'Other' in stages:
+            stages.remove('Other')
+            stages.append('Other')
+
+        # Filtering over the regulatory questions.
+        reg_questions = {
+            "Q1a. Kidney (a)": "reg_q_1a",
+            "Q1b. Kidney (b)": "reg_q_1b",
+            "Q2a. Parkinson (a)": "reg_q_2a",
+            "Q2b. Parkinson (b)": "reg_q_2b",
+            "Q3a. Thyroid (a)": "reg_q_3a",
+            "Q3b. Thyroid (b)": "reg_q_3b",
+        }
+
+        selected_questions = request.args.getlist('reg_q')
+
+        for question in selected_questions:
+            field = reg_questions.get(question)
+            if field:
+                tools = [tool for tool in tools if str(tool.get(field, '')).lower() == 'true']
+
+        # Getting the search query from URL to add a search bar based on tool names.
+        search_query = request.args.get('search', '').strip().lower()
+
+        # Filtering tools by search query.
+        if search_query:
+            tools = [tool for tool in tools if search_query in tool.get('service', '').lower()]
+
+        return render_template("tools/tools.html", tools=tools, stages=stages, 
+            selected_stages=selected_stages, reg_questions=reg_questions,
+            selected_questions=selected_questions
+        )
+
+    except Exception as e:
+        return f"Error processing service data: {e}", 500
 
 @app.route("/tools/<toolname>")
 def tool_page(toolname):

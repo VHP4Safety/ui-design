@@ -1,0 +1,17 @@
+
+Version 0.2-2 (2025-07-11)
+--------------------------------------------------------------------------------
+- The "Workflows" has been changed to "Case Studies" tab.
+- Indivudal pages for case studies have been implented in the "Case Study" tab.
+- The "Assessment" tab is removed to be integrated into the "Tools" tab. 
+- Minor updates to logos.
+- Addition of a second filtering in the tools page over the regulatory questions.
+- Addition of a search box over the tool names in the tools page. 
+
+
+Version 0.1-1 (2025-06-23)
+--------------------------------------------------------------------------------
+- Landing page with scrollable sections "About", "Partners", and "Contact". 
+- Hamburger menu with the three sections on the landing page. 
+- Tools tab with the list of tools based on the current information in the cloud repo and filtering option based on "Stage". 
+- Placeholder tabs for "Assessment", "Workflows" and "Data". 
