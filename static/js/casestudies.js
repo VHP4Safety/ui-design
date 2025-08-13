@@ -1,5 +1,5 @@
 // casestudies.js
-// JavaScript for Thyroid Case Study page
+// JavaScript for Individual Case Study pages
 
 // --- State management ---
 let currentQuestion = "Q1"; // Default to question Q1

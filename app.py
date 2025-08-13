@@ -10,8 +10,6 @@ from werkzeug.routing import BaseConverter
 from wikidataintegrator import wdi_core
 
 ################################################################################
-
-
 class RegexConverter(BaseConverter):
     """Converter for regular expression routes.
 
@@ -30,36 +28,20 @@ class RegexConverter(BaseConverter):
 
 app = Flask(__name__)
 
-
 ################################################################################
 ### The landing page
 @app.route("/")
 def home():
     return render_template("home.html")
 
-
 ################################################################################
-
-
-################################################################################
-### Main tabs
-@app.route("/casestudies")
-def workflows():
-    return render_template("tabs/casestudies.html")
-
-
+### Pages under 'Data'
 @app.route("/data")
 def data():
-    return render_template("tabs/data.html")
-
-
-@app.route("/archive")
-def archive():
-    return render_template("tabs/archive.html")
+    return render_template("data/data.html")
 
 ################################################################################
 ### Pages under 'Tools'
-
 
 # Page to list all the tools based on the list of tools on the cloud repo.
 @app.route("/tools")
@@ -163,13 +145,16 @@ def tool_page(toolname):
     # Pass the json filename to the template (for JS to pick up)
     return render_template("tools/tool.html", tool_json=tool_json_map[toolname])
 
-
-################################################################################
-
 ################################################################################
 ### Pages under 'Case Studies'
 
+# General case studies page
+@app.route("/casestudies")
+def workflows():
+    return render_template("case_studies/casestudies.html")
 
+
+# Individual case study page, dynamically filled based on URL
 @app.route("/casestudies/<case>")
 def casestudy_main(case):
     # Only allow known case studies
@@ -205,14 +190,8 @@ def show_compound(cwid):
     except TemplateNotFound:
         abort(404)
 
-
 ################################################################################
-
-################################################################################
-
 ### Pages under 'Legal'
-
-
 @app.route("/legal/terms_of_service")
 def terms_of_service():
     return render_template("legal/terms_of_service.html")
@@ -222,6 +201,7 @@ def terms_of_service():
 def privacy_policy():
     return render_template("legal/privacypolicy.html")
 
+################################################################################
 
 # Import the new blueprint
 from routes.aop_app import aop_app
