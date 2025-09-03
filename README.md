@@ -1,37 +1,162 @@
-# ui-design
+# VHP4Safety UI Platform
 
-Repository to develop the main HTML-based website as central access point.
+Central HTML-based web application for the VHP4Safety project, providing access to tools, data, and resources for human safety assessment. The functionality of the platform is shown through three case studies.
 
-## Requirements
+## Table of Contents
 
-The user needs to install the from `flask`, `requests`, and `wikidataintegrator` Python modules. You can do so by running
+- [VHP4Safety UI Platform](#vhp4safety-ui-platform)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Project Structure](#project-structure)
+  - [Templates](#templates)
+  - [CSS Styles](#css-styles)
+  - [Key Files](#key-files)
+  - [Tech Stack](#tech-stack)
+  - [Installation \& Setup](#installation--setup)
+  - [Deployment](#deployment)
+    - [Deployment with Python](#deployment-with-python)
+    - [Deployment with Docker](#deployment-with-docker)
+  - [Techniques](#techniques)
+    - [Dynamic Page Filling: `tool.html` and `casestudy.html`](#dynamic-page-filling-toolhtml-and-casestudyhtml)
+  - [Contributing](#contributing)
+
+## Features
+
+- GUI for the Virtual Human Platform
+- Multiple tools for compound, gene, and risk assessment workflows
+- Interactive visualizations (Cytoscape.js, JSmol)
+- Modular templates and CSS for easy customization
+- RESTful API endpoints (Flask)
+- Data integration from Wikidata and custom sources
+- Dockerized deployment for reproducibility
+
+## Project Structure
 
 ```
-pip install -r requirements.txt
+├── app.py                # Main Flask app
+├── patch.py              # Python patch for dependency fix
+├── Dockerfile            # Docker build instructions
+├── entrypoint.sh         # Entrypoint for Docker
+├── requirements.txt      # Python dependencies
+├── routes/               # Flask blueprints & API endpoints
+├── static/
+│   ├── css/              # CSS stylesheets
+│   ├── js/               # JavaScript files
+│   ├── images/           # Logos, icons, partners
+│   └── data/             # Data files (CSV, JSON)
+├── templates/            # Jinja2 HTML templates
+└── README.md             # Project documentation
 ```
+
+## Templates
+
+- `base.html`: Main layout, includes navigation, header, footer, scripts, and styles
+- `home.html`: Landing page with tab descriptions, about section, partner carousel and contact form
+- `tools/tools.html`: Tool catalog with search and filter functionality
+- `tools/tool.html`: Tool-specific template, dynamically filled from .json files based on URL
+- `tabs/casestudies.html`: Case study catalog where user can choose between the case studies
+- `case_studies/casestudy.html`: Case study template, dynamically filled from .json files based on URL
+- `tabs/data.html`: Data tab where metadata will be shared
+- `legal/privacypolicy.html`, `legal/terms_of_service.html`: Pages to be filled with legal information
+
+## CSS Styles
+
+- `base.css`: Global styles, standard color variables, layout
+- `home.css`: Home page styles
+- `tools.css`, `tool.css`: Tool and service card styles
+- `casestudies.css`: Case study styles
+- `qaop_app.css`: qAOP app and Cytoscape visualizations
+- `hackathondemo.css`: Hackathon demo page styles _(not sure if still in use?)_
+
+## Key Files
+
+- `app.py`: Main Flask application, routing, and rendering
+- `routes/aop_app.py`: API endpoints for AOP tools and data
+- `patch.py`: Patch script to fix dependency issues (e.g., pyshexc)
+- `requirements.txt`: Python dependencies
+- `Dockerfile` & `entrypoint.sh`: Containerization and startup
+
+## Tech Stack
+
+- **Backend:** Python 3.10+, Flask, requests, wikidataintegrator, pyBiodatafuse
+- **Frontend:** HTML5, Jinja2, CSS3, JavaScript (Cytoscape.js, JSmol)
+- **Containerization:** Docker
+- **Data:** CSV, JSON, integration with Wikidata
+
+## Installation & Setup
+
+1. **Clone the repository:**
+   ```
+   git clone https://github.com/VHP4Safety/ui-design.git
+   cd ui-design
+   ```
+2. **Install Python dependencies:**
+   ```
+   pip install -r requirements.txt
+   ```
+3. **Apply the patch (required for pyshexc):**
+   ```
+   python patch.py
+   ```
 
 ## Deployment
 
-Deployment can be made in two ways: i) on the local machine with Python; ii) on a container on the local machine with Docker
-
 ### Deployment with Python
 
-Run the following commands in Bash:
+Run the following command in your terminal:
 
 ```
-python patch.py
 python app.py
 ```
 
-The page should be available at `http://localhost:5000/`.
+The application will be available at [http://localhost:5000/](http://localhost:5000/).
 
 ### Deployment with Docker
 
-Run the following codes for building the image and running the container
+Build and run the Docker container:
 
 ```
-docker build -t cap_demo .
-docker run -d -p 5001:5000 cap_demo
+docker build -t vhp4safety_ui .
+docker run -d -p 5001:5000 vhp4safety_ui
 ```
 
-The page should be available at `http://localhost:5001/`.
+The application will be available at [http://localhost:5001/](http://localhost:5001/).
+
+---
+
+## Techniques
+
+### Dynamic Page Filling: `tool.html` and `casestudy.html`
+
+This web app uses a dynamic content loading approach for both the tool and case study pages:
+
+- **Routes in `app.py`:**
+
+  - The route `/tools/<toolname>` renders `tools/tool.html` and passes the relevant JSON filename to the template.
+  - The route `/casestudies/<case>` renders `case_studies/casestudy.html` and passes the case name to the template.
+
+- **HTML Templates:**
+
+  - `tools/tool.html` and `case_studies/casestudy.html` are designed to be generic containers. They do not contain hardcoded content for each tool or case study.
+  - Instead, they include JavaScript that loads and displays content dynamically based on the URL.
+
+- **JavaScript Files:**
+
+  - A script (`tool.js` and `casestudies.js`) fetches the appropriate JSON file (such as `static/data/tool/qaopapp_content.json`) using the name from the URL. It then updates the HTML elements with the content from that file.
+
+- **JSON Files:**
+  - Each tool and case study has its own JSON file containing all the content and metadata needed for the page.
+  - The JavaScript reads these files and populates the HTML elements, enabling a single template to serve multiple tools or case studies.
+
+This technique allows for easy expansion and maintenance: new tools or case studies can be added simply by creating new JSON files, without modifying the HTML or Python backend.
+
+## Contributing
+
+1. **Fork** the repository on GitHub
+2. **Clone** your fork locally
+3. Create a new branch for your feature or fix
+4. Make your changes and commit them
+5. **Push** your branch to your fork
+6. **Open a Pull Request** to the main repository
+
+Please ensure your code is well-documented and tested. For major changes, discuss with the team first.

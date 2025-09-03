@@ -1,36 +1,23 @@
-/* This CSS file is used for service_list.html, it builds upon base.css */
-
-/* Predefined Colors from base.css. */
-:root {
-    --pink: #e6007e;
-    --blue: #307bbf;
-    --purple: #29235c;
-    --orange: #eb5b25;
-    --light-blue: #c1e5f5;
-    --white: #ffffff;
-    --black: #000000;
-    --grey: #e0e0e0;
-}
-
+/* This CSS file is used for tools.html, it builds upon base.css */
 .card {
-    padding: 30px;
-    margin-bottom: 30px;
-    border-radius: 15px;
-    background-color: var(--light-blue);
-    width: 100%;
+  padding: 30px;
+  margin-bottom: 30px;
+  border-radius: 15px;
+  background-color: var(--light-blue);
+  width: 100%;
 }
 
 .card img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px; /* Optional: to match the card's rounded corners */
-    object-fit: cover; /* Ensures the image fits nicely within the card */
-    width: 200px;
-    /* float: right; */
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px; /* Optional: to match the card's rounded corners */
+  object-fit: cover; /* Ensures the image fits nicely within the card */
+  width: 200px;
+  /* float: right; */
 }
 
 .tools-links {
-    display: inline-block; /* Placing 2 links and seperator in one line */
+  display: inline-block; /* Placing 2 links and seperator in one line */
 }
 
 

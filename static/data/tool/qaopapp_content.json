@@ -1,0 +1,29 @@
+{
+  "title": "qAOPapp",
+  "version": "0.0.0 (latest)",
+  "license": "MIT License",
+  "run_url": "https://qaop.vhp4safety.nl/",
+  "github_url": "https://github.com/VHP4Safety/qAOP-app",
+  "tabs": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "content": "This page will include an overview of the qAOPapp tool, its purpose, functionalities, and how it fits into the VHP4Safety project."
+    },
+    {
+      "id": "tutorial",
+      "label": "Tutorial",
+      "content": "This page will include a written tutorial, a video tutorial and data to perform a test run with. Please provide suggestions or feedback for this page below."
+    },
+    {
+      "id": "docs",
+      "label": "Documentation",
+      "content": "This page will include technical documentation, github repositories, additional links, assumptions, etc. Please provide suggestions or feedback for this page below."
+    },
+    {
+      "id": "faq",
+      "label": "FAQ & Support",
+      "content": "More FAQs and support information will be added here."
+    }
+  ]
+}

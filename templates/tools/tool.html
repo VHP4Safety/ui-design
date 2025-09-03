@@ -1,0 +1,27 @@
+{% extends "base.html" %} {% block content %}
+<link rel="stylesheet" href="/static/css/tool.css" />
+<div class="tool-container">
+  <h1 class="tool-title" id="tool-title"></h1>
+  <div class="tool-tabs" id="tool-tabs"></div>
+  <div class="tool-window">
+    <button class="tool-run-btn" id="tool-run-btn">
+      Use Tool
+      <span class="tool-run-version" id="tool-version"></span>
+    </button>
+    <div class="tool-run-note">
+      <span
+        >or go to
+        <a id="tool-github-link" href="#" target="_blank"
+          >the GitHub repository</a
+        ></span
+      >
+    </div>
+    <div class="tool-content" id="tool-content"></div>
+  </div>
+</div>
+<meta
+  name="tool_json"
+  content="{{ tool_json|default('qsprpred_content.json') }}"
+/>
+<script src="/static/js/tool.js"></script>
+{% endblock %}

@@ -1,5 +1,5 @@
 // casestudies.js
-// JavaScript for Thyroid Case Study page
+// JavaScript for Individual Case Study pages
 
 // --- State management ---
 let currentQuestion = "Q1"; // Default to question Q1
@@ -107,7 +107,7 @@ function getCaseStudyNameFromUrl() {
 
 function loadCaseStudyContent() {
   const caseStudy = getCaseStudyNameFromUrl();
-  fetch(`/static/data/${caseStudy}_content.json`)
+  fetch(`/static/data/casestudies/${caseStudy}_content.json`)
     .then((res) => res.json())
     .then((content) => {
       step1Contents = content.step1Contents;

@@ -17,17 +17,18 @@
 
 html,
 body {
-  scroll-behavior: smooth; /* Smooth scrolling for the anchor links */
-  overflow-x: hidden; /* Prevent horizontal scrolling */
-  height: 100%; /* Ensuring the body takes full height */
-  display: flex; /* Flexbox to center all content */
-  flex-direction: column; /* Using column layouts for all content */
-  margin: 0; /* Resetting any default margins */
-  padding: 0; /* Resetting any default padding */
-  line-height: 1.6; /* Line height for better readability */
-  text-align: left; /* Aligning text to the left */
-  color: var(--black); /* Default text color */
-  font-family: "Open Sans", Arial, sans-serif; /* Applying font */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the body takes the full viewport height */
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  text-align: left;
+  color: var(--black);
+  font-family: "Open Sans", Arial, sans-serif;
+  scrollbar-color: var(--grey) var(--white);
 }
 
 main {

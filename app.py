@@ -10,8 +10,6 @@ from werkzeug.routing import BaseConverter
 from wikidataintegrator import wdi_core
 
 ################################################################################
-
-
 class RegexConverter(BaseConverter):
     """Converter for regular expression routes.
 
@@ -30,67 +28,20 @@ class RegexConverter(BaseConverter):
 
 app = Flask(__name__)
 
-
 ################################################################################
 ### The landing page
 @app.route("/")
 def home():
     return render_template("home.html")
 
-
 ################################################################################
-
-
-################################################################################
-### Main tabs
-@app.route("/casestudies")
-def workflows():
-    return render_template("tabs/casestudies.html")
-
-
+### Pages under 'Data'
 @app.route("/data")
 def data():
-    return render_template("tabs/data.html")
-
-
-@app.route("/archive")
-def archive():
-    return render_template("tabs/archive.html")
-
-
-################################################################################
-### Pages under 'Project Information', these are now part of home.html
-
-# @app.route('/information/mission_and_vision')
-# def mission_and_vision():
-#     # This section is now part of the landing page or home.html.
-#     return render_template('information/mission_and_vision.html')
-
-# @app.route('/information/research_lines')
-# def research_lines():
-#     # This section is now part of the landing page or home.html.
-#     return render_template('information/research_lines.html')
-
-# @app.route('/case_studies_and_regulatory_questions')
-# def case_studies_and_regulatory_questions():
-#     # This section is now part of the landing page or home.html.
-#     return render_template('information/case_studies_and_regulatory_questions.html')
-
-# @app.route('/information/partners_and_consortium')
-# def partners_and_consortium():
-#     # This section is now part of the landing page or home.html.
-#     return render_template('information/partners_and_consortium.html')
-
-# @app.route('/information/contact')
-# def contact():
-#     # This section is now part of the landing page or home.html.
-#     return render_template('information/contact.html')
-
-################################################################################
+    return render_template("data/data.html")
 
 ################################################################################
 ### Pages under 'Tools'
-
 
 # Page to list all the tools based on the list of tools on the cloud repo.
 
@@ -98,7 +49,7 @@ def archive():
 # Further down below it, I try to implement a way to get the combined json file 
 # rather than getting individual service information one-by-one. 
 """ 
-@app.route("/templates/tools/tools")
+@app.route("/tools")
 def tools():
     # Github API link to receive the list of the tools on the cloud repo:
     url = f"https://api.github.com/repos/VHP4Safety/cloud/contents/docs/service"
@@ -278,22 +229,28 @@ def tools():
     except Exception as e:
         return f"Error processing service data: {e}", 500
 
-@app.route("/tools/qsprpred")
-def qsprpred():
-    return render_template("tools/qsprpred.html")
-
-
-@app.route("/tools/qaop_app")
-def qaop_app():
-    return render_template("qaop_app.html")
-
-
-################################################################################
+@app.route("/tools/<toolname>")
+def tool_page(toolname):
+    # Map toolname to the correct JSON file in the new tool folder
+    tool_json_map = {
+        "qsprpred": "tool/qsprpred_content.json",
+        "qaopapp": "tool/qaopapp_content.json",
+    }
+    if toolname not in tool_json_map:
+        abort(404)
+    # Pass the json filename to the template (for JS to pick up)
+    return render_template("tools/tool.html", tool_json=tool_json_map[toolname])
 
 ################################################################################
 ### Pages under 'Case Studies'
 
+# General case studies page
+@app.route("/casestudies")
+def workflows():
+    return render_template("case_studies/casestudies.html")
 
+
+# Individual case study page, dynamically filled based on URL
 @app.route("/casestudies/<case>")
 def casestudy_main(case):
     # Only allow known case studies
@@ -329,14 +286,8 @@ def show_compound(cwid):
     except TemplateNotFound:
         abort(404)
 
-
 ################################################################################
-
-################################################################################
-
 ### Pages under 'Legal'
-
-
 @app.route("/legal/terms_of_service")
 def terms_of_service():
     return render_template("legal/terms_of_service.html")
@@ -346,6 +297,7 @@ def terms_of_service():
 def privacy_policy():
     return render_template("legal/privacypolicy.html")
 
+################################################################################
 
 # Import the new blueprint
 from routes.aop_app import aop_app

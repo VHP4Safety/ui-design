@@ -1,16 +1,18 @@
 {% extends "base.html" %} {% block content %}
 
+<!-- Page-specific CSS for home page -->
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/home.css') }}"
 />
 
-<!-- Font Awesome Icons -->
+<!-- Font Awesome Icons for social/contact icons -->
 <link
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
   rel="stylesheet"
 />
 
+<!-- Hero section: main title and image -->
 <section class="hero">
   <div class="hero-text">
     <h1>
@@ -20,16 +22,17 @@
     <p>TOWARDS SAFETY ASSESSMENT BASED ON HUMAN DATA</p>
   </div>
   <div class="hero-image">
-    <img src="/static/images/hero.png" alt="Hero Image" />
+    <img
+      src="/static/images/logos/brandicon/long/VHP%20Brandicon_lang.png"
+      alt="Hero Image"
+    />
   </div>
 </section>
+<!-- Tab section: navigation to Tools, Case Studies, Data -->
 <section class="tab-section">
   <div class="hexagram-container">
     <div class="hexagram-wrapper">
-      <button
-        class="tab-button tools"
-        onclick="location.href='/templates/tools/tools'"
-      >
+      <button class="tab-button tools" onclick="location.href='/tools'">
         Tools
       </button>
       <div class="hexagram">
@@ -38,10 +41,7 @@
           and get results relevant to your research.
         </p>
       </div>
-      <div
-        class="arrow tools-arrow"
-        onclick="location.href='/templates/tools/tools'"
-      ></div>
+      <div class="arrow tools-arrow" onclick="location.href='/tools'"></div>
     </div>
     <div class="hexagram-wrapper">
       <button
@@ -59,7 +59,7 @@
       </div>
       <div
         class="arrow casestudies-arrow"
-        onclick="location.href='/workflows'"
+        onclick="location.href='/casestudies'"
       ></div>
     </div>
     <div class="hexagram-wrapper">
@@ -76,6 +76,7 @@
     </div>
   </div>
 </section>
+<!-- About section: project description and mission -->
 <section class="about-section" id="about-section">
   <h2>About VHP4Safety</h2>
   <p>
@@ -108,6 +109,7 @@
     VHP represents a major step forward in moving away from animal testing by
     providing tools based on human data.
   </p>
+  <!-- Hidden read-more content, toggled by button -->
   <div class="read-more-content" style="display: none">
     <h3>Moving Beyond Animal Testing</h3>
     <p>
@@ -136,6 +138,7 @@
   </div>
   <span class="read-more-btn" onclick="toggleReadMore()">Read more.</span>
 </section>
+<!-- Partners section: carousel of partner logos -->
 <section class="partners-section" id="partners-section">
   <div class="content">
     <h2>Project Partners</h2>
@@ -145,6 +148,7 @@
         &#8249;
       </button>
       <div class="carousel">
+        <!-- Partner logos, clickable -->
         <div class="carousel-item">
           <img
             src="/static/images/partners/AUMC.png"
@@ -192,6 +196,7 @@
     </div>
   </div>
 </section>
+<!-- Contact section: contact info and form -->
 <section class="contact-section" id="contact-section">
   <div class="content">
     <h2>Let’s chat!</h2>
@@ -213,6 +218,7 @@
     </a>
   </div>
   <div class="contact-form">
+    <!-- Contact form: sends email via mailto -->
     <form
       action="mailto:mirthe.klaassen@maastrichtuniversity.nl"
       method="post"
@@ -227,5 +233,6 @@
     </form>
   </div>
 </section>
+<!-- Scroll down arrow for navigation -->
 <div class="scroll-down-arrow" onclick="scrollToNextSection()"></div>
 {% endblock %}
