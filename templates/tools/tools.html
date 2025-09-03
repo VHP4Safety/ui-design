@@ -5,7 +5,7 @@
 <section>
     <div class="explanation-text">
         <p>Here you can find the tools in the catalog. You can search for a tools that you now by using the search box below. </p>
-        <p> Alternatively, you can filter the tools with respect to their <a href="{{ url_for('workflows') }}#about-section">stage category</a> (i.e., blue boxes) and the regulatory question they associated with by using the boxes below. </p>
+        <p> Alternatively, you can filter the tools with respect to the <a href="{{ url_for('workflows') }}#about-section">flow step</a> (i.e., blue box) that they belong to and/or the regulatory question that they associated with by ticking the boxes below. </p>
         <p>Use the "Apply Filter" button to see results, and click "Clear Filter" to reset the filters.</p>
         <!--<br>
         <p><em>Note:</em> If there is no webpage associated with the tool, you will see a "No Available Webpage" message instead of a link to the tool.</p>-->
@@ -24,7 +24,7 @@
         <div class="filters-container">
             <!-- Stage Filter -->
             <div class="filter-section">
-                <h3>Filter by Stage</h3>
+                <h3>Filter by Flow Step</h3>
                     {% for stage in stages %}
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="stage" value="{{ stage }}" 

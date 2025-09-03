@@ -1,4 +1,13 @@
 
+Version 0.3-2 (2025-09-03)
+--------------------------------------------------------------------------------
+- A new construction has been integrated to generate individual tool pages through a generic and data-driven process.
+- The direcotry names under 'templates' have been updated to be more self-explanatory and correct.
+- Refreshing the brand assests with new logos. 
+- The main README file has been updated to explain the use of the application better and in more detail.
+- Bug fixes, removal of unused pages and more comments in the application scripts. 
+
+
 Version 0.2-2 (2025-07-11)
 --------------------------------------------------------------------------------
 - The "Workflows" has been changed to "Case Studies" tab.
