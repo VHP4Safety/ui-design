@@ -1,5 +1,5 @@
 
-Version 0.3-1 (2025-09-03)
+Version 0.3-2 (2025-09-03)
 --------------------------------------------------------------------------------
 - A new construction has been integrated to generate individual tool pages through a generic and data-driven process.
 - The direcotry names under 'templates' have been updated to be more self-explanatory and correct.
