@@ -1,7 +1,7 @@
 {
   "step1Contents": {
     "navTitle": "Kidney Case Study",
-    "navDescription": "[Filler] Two regulatory questions for the kidney case study. Choose one to explore or scroll for an overview.",
+    "navDescription": "Two regulatory questions for the kidney case study. Choose one to explore or scroll for an overview.",
     "questions": [
       {
         "label": "Question 1: Cisplatin Dose",
@@ -10,11 +10,11 @@
       },
       {
         "label": "Question 2: P-glycoprotein Variability",
-        "description": "How can we take into account variability in activity and expression of P-glycoprotein* in patients who underwent transplantation and treated with tacrolimus?",
+        "description": "What is the intrinsic hazard of tacrolimus for nephrotoxicity?",
         "value": "Q2"
       }
     ],
-    "content": "<h2>Case Study Overview</h2><p>[Filler] This is a placeholder for the kidney case study overview. More details will be added soon.</p>"
+    "content": "<h2>Introduction</h2><p><b>Nephrotoxicity</b> refers to kidney damage or impaired kidney function caused by exposure to toxic substances, including certain medications. Since the kidneys play a central role in filtering waste products, regulating electrolytes, and maintaining overall fluid balance, any drug-induced injury can significantly affect health. Evaluating kidney toxicity during drug development and treatment is crucial because as (drug-induced) kidney failure is becoming the 5<sup>th</sup> leading cause of death worldwide. Animal models do not truthfully recapitulate nor are able to predict nephrotoxicity and therefore there is a need for human-based relevant models for risk assessment.</p>"
   },
   "step2Contents": {
     "Q1": {
@@ -34,7 +34,7 @@
     },
     "Q2": {
       "navTitle": "Process Flow Steps (Q2)",
-      "navDescription": "[Filler] Steps for this regulatory question. Click a button or scroll for more info.",
+      "navDescription": "Steps for this regulatory question. Click a button or scroll for more info.",
       "steps": [
         {
           "label": "Chemical Characteristics",
@@ -45,7 +45,7 @@
         { "label": "AOP", "value": "AOP" },
         { "label": "Adverse Outcome", "value": "Adverse Outcome" }
       ],
-      "content": "<h2>Kidney-related Regulatory Question 2</h2><p>[Filler] Content for regulatory question 2. More info coming soon.</p>"
+      "content": "<h2>What is the intrinsic hazard of tacrolimus for nephrotoxicity?</h2><p>Tacrolimus is a potent immunosuppressant that is commonly used to prevent organ rejection after transplantation. Recent data indicated that tacrolimus exposure is linked to kidney toxicity in 20-40% of patients treated with this drug. A better understanding of the molecular mechanisms that lead to kidney injury and failure upon tacrolimus exposure is crucial for risk assessment and decision making in the clinic.</p>"
     }
   },
   "step3Contents": {
@@ -53,16 +53,9 @@
       "Chemical Characteristics": {
         "navTitle": "Chemical Characteristics - Tools and Workflow (Q1)",
         "navDescription": "[Filler] Chemical characteristics for Q1.",
-        "tools": [
-          {
-            "label": "Tool A - Farmacotherapeutisch Kompas",
-            "description": "The Farmacotherapeutisch Kompas contains a wide spectrum of information on prescribing and pharmacology, among others indications, side effects and costs of the prescription of all pharmaceutical drugs available in the Netherlands.",
-            "id": "farmacokompas"
-          },
-          {
-            "label": "Tool B - Short description",
-            "description": "Longer description about the tool and what it does but not about it's application for this regulatory question, that's described below."
-          }
+        "steps": [
+          { "label": "Parenteral", "value": "Parenteral"},
+          { "label": "Oral", "value": "Oral" }
         ],
         "content": "<h2>Chemical Characteristics Workflow for Regulatory Question 1</h2><p>[Filler] Details coming soon.</p>"
       },
@@ -176,17 +169,11 @@
       "AOP": {
         "navTitle": "AOP - Tools and Workflow (Q2)",
         "navDescription": "[Filler] AOP for Q2.",
-        "tools": [
-          {
-            "label": "Tool A - Short description",
-            "description": "Longer description about the tool and what it does but not about it's application for this regulatory question, that's described below."
-          },
-          {
-            "label": "Tool B - Short description",
-            "description": "Longer description about the tool and what it does but not about it's application for this regulatory question, that's described below."
-          }
+        "steps": [
+          { "label": "MIE activation", "value": "MIE activation" },
+          { "label": "AOP development", "value": "AOP development" }
         ],
-        "content": "<h2>AOP Workflow for Regulatory Question 2</h2><p>[Filler] Details coming soon.</p>"
+        "content": "<h2>AOP Workflow for Regulatory Question 2</h2><p>In order investigate the hazard of tacrolimus treatment we aimed to identify the key biological targets that are associated with tacrolimus-induced nephrotoxicity. For this reason, the AOP below was constructed. During the AOP development we could not find a MIE and therefore an advanced in vitro platform consisting of several relevant models was developed to identify novel molecular initiating events and validate the current AOP key events.</p>"
       },
       "Adverse Outcome": {
         "navTitle": "Adverse Outcome - Tools and Workflow (Q2)",
@@ -202,6 +189,74 @@
           }
         ],
         "content": "<h2>Adverse Outcome Workflow for Regulatory Question 2</h2><p>[Filler] Details coming soon.</p>"
+      }
+    }
+  },
+  "step4Contents": {
+    "Q1": {
+      "step4content": "true",
+      "Chemical Characteristics": {
+        "Parenteral": {
+          "navTitle": "Parenteral",
+          "navDescription": "Parenteral",
+          "tools": [
+            {
+              "label": "Tool A - TDM",
+              "description": "...."
+            }
+          ]
+        },
+        "Oral": {
+          "navTitle": "Oral",
+          "navDescription": "Oral",
+          "tools": [
+            {
+              "label": "Tool A - Farmacotherapeutisch Kompas",
+              "description": "The Farmacotherapeutisch Kompas contains a wide spectrum of information on prescribing and pharmacology, among others indications, side effects and costs of the prescription of all pharmaceutical drugs available in the Netherlands.",
+              "id": "farmacokompas"
+            }
+          ]
+        },
+        "content": "<h2>Oral</h2><p>[Filler] Details coming soon.</p>"
+      }
+    },
+    "Q2": {
+      "step4content": "true",
+      "Chemical Characteristics": {
+        "Parenteral": {
+          "navTitle": "Parenteral",
+          "navDescription": "Parenteral",
+          "tools": [
+            {
+              "label": "Tool A - TDM",
+              "description": "...."
+            }
+          ]
+        },
+        "Oral": {
+          "navTitle": "Oral",
+          "navDescription": "Oral",
+          "tools": [
+            {
+              "label": "Tool A - Farmacotherapeutisch Kompas",
+              "description": "The Farmacotherapeutisch Kompas contains a wide spectrum of information on prescribing and pharmacology, among others indications, side effects and costs of the prescription of all pharmaceutical drugs available in the Netherlands.",
+              "id": "farmacokompas"
+            }
+          ]
+        },
+        "content": "<h2>Oral</h2><p>[Filler] Details coming soon.</p>"
+      },
+      "AOP": {
+        "MIE activation": {
+          "navTitle": "MIE activitation",
+          "navDescription": "MIE activitation",
+        "content": "<p>Molecular initiating events (MIEs) are chemical interactions with biological targets that trigger cascades leading to adverse outcomes, but the MIE underlying tacrolimus-induced nephrotoxicity remains unknown. To address this, advanced in vitro kidney models—including iPSC-derived organoids (proximal nephron), ASC-derived tubuloids (distal nephron), and organoid-derived proximal tubule cells—were used to characterize the MIE and downstream key events. Dose–response relationships were determined with LDH assays to establish IC10 and IC50 values for subsequent analyses. In proximal tubule cells, transcriptomics (bulk RNA-seq) indicated CD44 upregulation as a potential MIE, while fluorescence-based assays revealed ROS production, altered intracellular pH, disrupted mitochondrial function, and organelle changes following tacrolimus exposure. Complementary transcriptomics and immunofluorescence in iPSC-derived organoids identified dysregulated pathways, epithelial injury, fibrosis, and senescence, and analyses in ASC-derived tubuloids extended insights to distal nephron toxicity. Finally, CRISPR/Cas9-edited iPSC organoids with pgp mutations were generated to mimic patient variability, enabling assessment of dose–response relationships under different pgp expression conditions.</p>"
+        },
+        "AOP development": {
+          "navTitle": "AOP development",
+          "navDescription": "AOP development"
+        },
+        "content": "<p>An Adverse Outcome Pathway (AOP) is a structured framework that links a molecular-level event caused by a stressor (tacrolimus) through a series of measurable biological changes, leading to an adverse outcome at the individual or population level. Developing an AOP aids in the selection of relevant models that address important key events necessary to answer regulatory questions. An AOP for tacrolimus, linking tacrolimus exposure to kidney failure, has been developed by gathering and organizing scientific information from PubMed. Mechanistic evidence for KEs and KERs in this AOP primarily comes from rodent studies, immortalized kidney cell lines and limited clinical evidence. The current AOP suggests that tacrolimus exposure leads to activation of Nf-Kb and NOX, which can lead to increased ROS production and oxidative stress. Increase oxidative stress is associated with increased mitochondrial disfunction eventually resulting in metabolic impairment, aberrant TGF-B, increase in fibrosis and apoptosis in the kidney causing kidney failure. In this AOP, although the sequence of KEs is depicted linearly, we propose that the KEs of ROS production, oxidative stress, and mitochondrial dysfunction are fundamentally interconnected and dynamic processes that occur simultaneously. This simultaneity complicates the assessment of whether one event precedes another or if they occur concurrently and made it impossible to identify a specific molecular initiating event.</p>"
       }
     }
   }
