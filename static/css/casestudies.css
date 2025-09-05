@@ -71,6 +71,14 @@
   height: 50px;
 }
 .step3 {
+  background: var(--light-green); /* light-green */
+  color: #000;
+  height: auto;
+  width: 45%;
+  align-items: flex-start;
+  text-align: left;
+}
+.step4 {
   background: var(--light-blue); /* light-blue */
   color: #000;
   height: auto;

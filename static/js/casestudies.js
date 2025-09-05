@@ -4,11 +4,13 @@
 // --- State management ---
 let currentQuestion = "Q1"; // Default to question Q1
 let currentProcessStep = "Kinetics"; // Default process step
+let currentCaseStudyStep = "Oral"; // Default process step
 
 // --- Content storage ---
 let step1Contents = {};
 let step2Contents = {};
 let step3Contents = {};
+let step4Contents = {};
 let contentLoaded = false;
 
 // Helper to render step buttons from array
@@ -66,24 +68,52 @@ function updateStep2Content() {
 function updateStep3Content() {
   if (!contentLoaded) return;
   const step = step3Contents[currentQuestion][currentProcessStep];
-  document.getElementById("step3-content").innerHTML =
-    `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
-    renderToolButtons(step.tools);
+  if (step.steps) {
+    document.getElementById("step3-content").innerHTML =
+      `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      renderStepButtons(step.steps, "step3", "selectCaseStudyStep");
+  } else if (step.tools) {
+      `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      renderStepButtons(step.tools);
+  }
   document.getElementById("step3-bottom-content").innerHTML = step.content;
+}
+function updateStep4Content() {
+  if (!contentLoaded) return;
+  if (!step4Contents) return;
+  if (!step4Contents[currentQuestion]) return;
+  if (!step4Contents[currentQuestion][currentProcessStep]) return;
+  console.log(step4Contents);
+  console.log(step4Contents[currentQuestion]);
+  console.log(step4Contents[currentQuestion][currentProcessStep]);
+  const step = step4Contents[currentQuestion][currentProcessStep][currentCaseStudyStep];
+  if (step.tools) {
+    document.getElementById("step4-content").innerHTML =
+      `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      renderToolButtons(step.tools);
+  }
+  document.getElementById("step4-bottom-content").innerHTML = step.content;
 }
 
 // --- Navigation logic ---
 function selectQuestion(q) {
   currentQuestion = q;
   currentProcessStep = "Kinetics";
+  currentCaseStudyStep = "Oral";
   updateStep2Content();
   updateStep3Content();
+  updateStep4Content();
   goToStep(2);
 }
 function selectProcessStep(step) {
   currentProcessStep = step;
   updateStep3Content();
   goToStep(3);
+}
+function selectCaseStudyStep(step) {
+  currentCaseStudyStep = step;
+  updateStep4Content();
+  goToStep(4);
 }
 
 // Breadcrumb logic
@@ -115,12 +145,14 @@ function loadCaseStudyContent() {
       step1Contents = content.step1Contents;
       step2Contents = content.step2Contents;
       step3Contents = content.step3Contents;
+      step4Contents = content.step4Contents;
       contentLoaded = true;
       currentQuestion = "Q1";
       updateStep1Content();
       updateBreadcrumb(1);
       updateStep2Content();
       updateStep3Content();
+      updateStep4Content();
     });
 }
 
@@ -141,6 +173,9 @@ function updateBreadcrumb(step) {
     el.classList.add("visible");
   } else if (step === 3) {
     el.innerHTML = `<a href=\"#\" onclick=\"goToStep(1); return false;\">${caseStudyName}</a> <span>&rarr;</span> <a href=\"#\" onclick=\"goToStep(2); return false;\">Regulatory Question ${currentQuestion}</a> <span>&rarr;</span> <span>${currentProcessStep}</span>`;
+    el.classList.add("visible");
+  } else if (step === 4) {
+    el.innerHTML = `<a href=\"#\" onclick=\"goToStep(1); return false;\">${caseStudyName}</a> <span>&rarr;</span> <a href=\"#\" onclick=\"goToStep(2); return false;\">Regulatory Question ${currentQuestion}</a> <span>&rarr;</span> <span>${currentProcessStep}</span>&rarr;</span> <span>${currentCaseStudyStep}</span>`;
     el.classList.add("visible");
   } else {
     el.innerHTML = "";
@@ -173,6 +208,7 @@ function goToStep(step) {
   updateBreadcrumb(step);
   if (step === 2) updateStep2Content();
   if (step === 3) updateStep3Content();
+  if (step === 4) updateStep4Content();
 }
 
 // --- Load content from JSON and initialize ---
