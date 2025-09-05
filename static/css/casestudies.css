@@ -78,7 +78,7 @@
   align-items: flex-start;
   text-align: left;
 }
-.step4 {
+.stepTool {
   background: var(--light-blue); /* light-blue */
   color: #000;
   height: auto;
