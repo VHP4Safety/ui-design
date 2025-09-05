@@ -73,8 +73,9 @@ function updateStep3Content() {
       `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
       renderStepButtons(step.steps, "step3", "selectCaseStudyStep");
   } else if (step.tools) {
+    document.getElementById("step3-content").innerHTML =
       `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
-      renderStepButtons(step.tools);
+      renderToolButtons(step.tools);
   }
   document.getElementById("step3-bottom-content").innerHTML = step.content;
 }
@@ -91,7 +92,7 @@ function updateStep4Content() {
   } else if (step.steps) {
     document.getElementById("step4-content").innerHTML =
       `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
-      renderToolButtons(step.steps);
+      renderStepButtons(step.steps);
   } else {
     document.getElementById("step4-content").innerHTML =
       `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
