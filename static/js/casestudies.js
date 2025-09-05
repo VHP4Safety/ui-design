@@ -88,6 +88,13 @@ function updateStep4Content() {
     document.getElementById("step4-content").innerHTML =
       `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
       renderToolButtons(step.tools);
+  } else if (step.steps) {
+    document.getElementById("step4-content").innerHTML =
+      `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      renderToolButtons(step.steps);
+  } else {
+    document.getElementById("step4-content").innerHTML =
+      `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
   }
   document.getElementById("step4-bottom-content").innerHTML = step.content;
 }
