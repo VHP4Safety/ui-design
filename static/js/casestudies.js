@@ -83,9 +83,6 @@ function updateStep4Content() {
   if (!step4Contents) return;
   if (!step4Contents[currentQuestion]) return;
   if (!step4Contents[currentQuestion][currentProcessStep]) return;
-  console.log(step4Contents);
-  console.log(step4Contents[currentQuestion]);
-  console.log(step4Contents[currentQuestion][currentProcessStep]);
   const step = step4Contents[currentQuestion][currentProcessStep][currentCaseStudyStep];
   if (step.tools) {
     document.getElementById("step4-content").innerHTML =
