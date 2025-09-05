@@ -37,6 +37,8 @@ function renderToolButtons(tools) {
         (tool) =>
           `<button class="btn step3"><b>${tool.label}</b>${
             tool.description ? "<br />" + tool.description : ""
+          }${
+            tool.id ? "<br /><a href=\"https://cloud.vhp4safety.nl/service/" + tool.id + ".html\">more info</a>" : ""
           }</button>`
       )
       .join("") +
