@@ -55,8 +55,9 @@
         "navDescription": "[Filler] Chemical characteristics for Q1.",
         "tools": [
           {
-            "label": "Tool A - Short description",
-            "description": "Longer description about the tool and what it does but not about it's application for this regulatory question, that's described below."
+            "label": "Tool A - Farmacotherapeutisch Kompas",
+            "description": "The Farmacotherapeutisch Kompas contains a wide spectrum of information on prescribing and pharmacology, among others indications, side effects and costs of the prescription of all pharmaceutical drugs available in the Netherlands.",
+            "id": "farmacokompas"
           },
           {
             "label": "Tool B - Short description",
