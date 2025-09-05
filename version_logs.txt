@@ -1,3 +1,7 @@
+Version 0.3-3 (2025-09-03)
+--------------------------------------------------------------------------------
+- Case Study step 3 can now also have a fourth step (see Kidney case study)
+- Kidney case study content from Hackathon 6A
 
 Version 0.3-2 (2025-09-03)
 --------------------------------------------------------------------------------
