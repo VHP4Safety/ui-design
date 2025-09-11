@@ -1,4 +1,8 @@
-Version 0.3-3 (2025-09-03)
+Version 0.3-4 (2025-09-11)
+--------------------------------------------------------------------------------
+- Case Study config is now in a separate ontology
+
+Version 0.3-3 (2025-09-05)
 --------------------------------------------------------------------------------
 - Case Study step 3 can now also have a fourth step (see Kidney case study)
 - Kidney case study content from Hackathon 6A

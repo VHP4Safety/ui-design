@@ -7,7 +7,7 @@ import requests
 from flask import Blueprint, Flask, abort, jsonify, render_template, request, send_file
 from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
-from wikidataintegrator import wdi_core
+#from wikidataintegrator import wdi_core
 
 ################################################################################
 class RegexConverter(BaseConverter):
@@ -300,10 +300,10 @@ def privacy_policy():
 ################################################################################
 
 # Import the new blueprint
-from routes.aop_app import aop_app
+#from routes.aop_app import aop_app
 
 # Register the blueprint
-app.register_blueprint(aop_app)
+#app.register_blueprint(aop_app)
 
 ################################################################################
 
