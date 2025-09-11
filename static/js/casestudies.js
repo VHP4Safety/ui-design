@@ -146,7 +146,9 @@ function getCaseStudyVersionFromUrl() {
   // Assumes URL like /casestudies/<casestudy>
   const params = new URLSearchParams(window.location.search);
   if (params.has("casestudybranch")) {
-    return params.get("casestudybranch");
+    return "refs/heads/" + params.get("casestudybranch");
+  } else if (params.has("casestudycommit")) {
+    return params.get("casestudycommit");
   }
   // fallback: default to 'thyroid'
   return "main";
@@ -155,7 +157,7 @@ function getCaseStudyVersionFromUrl() {
 function loadCaseStudyContent() {
   const caseStudy = getCaseStudyNameFromUrl();
   const caseStudyBranch = getCaseStudyVersionFromUrl();
-  fetch(`https://raw.githubusercontent.com/VHP4Safety/ui-casestudy-config/refs/heads/${caseStudyBranch}/${caseStudy}_content.json`)
+  fetch(`https://raw.githubusercontent.com/VHP4Safety/ui-casestudy-config/${caseStudyBranch}/${caseStudy}_content.json`)
     .then((res) => res.json())
     .then((content) => {
       step1Contents = content.step1Contents;
