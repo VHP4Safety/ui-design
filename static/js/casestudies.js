@@ -144,7 +144,7 @@ function getCaseStudyNameFromUrl() {
 
 function loadCaseStudyContent() {
   const caseStudy = getCaseStudyNameFromUrl();
-  fetch(`/static/data/casestudies/${caseStudy}_content.json`)
+  fetch(`https://vhp4safety.github.io/ui-casestudy-config/${caseStudy}_content.json`)
     .then((res) => res.json())
     .then((content) => {
       step1Contents = content.step1Contents;
