@@ -142,9 +142,20 @@ function getCaseStudyNameFromUrl() {
   return "thyroid";
 }
 
+function getCaseStudyVersionFromUrl() {
+  // Assumes URL like /casestudies/<casestudy>
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("casestudybranch")) {
+    return params.get("casestudybranch");
+  }
+  // fallback: default to 'thyroid'
+  return "main";
+}
+
 function loadCaseStudyContent() {
   const caseStudy = getCaseStudyNameFromUrl();
-  fetch(`https://vhp4safety.github.io/ui-casestudy-config/${caseStudy}_content.json`)
+  const caseStudyBranch = getCaseStudyVersionFromUrl();
+  fetch(`https://raw.githubusercontent.com/VHP4Safety/ui-casestudy-config/refs/heads/${caseStudyBranch}/${caseStudy}_content.json`)
     .then((res) => res.json())
     .then((content) => {
       step1Contents = content.step1Contents;
