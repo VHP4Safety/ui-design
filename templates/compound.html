@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/home.css') }}"
+/>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
- 
+
+<div style="max-width: 75%; margin: 0 auto; padding: 100px;">
+
 <h1 id="title">{{ cwid }}</h1>
 
 <h2>Basic info</h2>
@@ -102,5 +108,7 @@
             <tbody></tbody>
         </table>
 
+</div>
+        
 
 {% endblock %}
