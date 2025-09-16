@@ -4,10 +4,12 @@ import json
 import re
 
 import requests
+import urllib.parse
 from flask import Blueprint, Flask, abort, jsonify, render_template, request, send_file
 from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
 #from wikidataintegrator import wdi_core
+from wikibaseintegrator import wbi_helpers
 
 ################################################################################
 class RegexConverter(BaseConverter):
@@ -278,6 +280,12 @@ def show(workflow):
     except TemplateNotFound:
         abort(404)
 
+################################################################################
+### Pages related to chemical compounds
+
+def is_valid_qid(qid):
+    return re.fullmatch(r"Q\d+", qid) is not None
+
 
 @app.route("/compound/<cwid>")
 def show_compound(cwid):
@@ -285,6 +293,172 @@ def show_compound(cwid):
         return render_template(f"compound.html", cwid=cwid)
     except TemplateNotFound:
         abort(404)
+
+
+@app.route("/get_compound_properties/<cwid>")
+def show_compounds_properties_as_json(cwid):
+    if not is_valid_qid(cwid):
+        return jsonify({"error": "Invalid compound identifier"}), 400
+    compoundwikiEP = "https://compoundcloud.wikibase.cloud/query/sparql"
+    sparqlquery = (
+        "PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>\n"
+        "PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>\n\n"
+        "SELECT ?cmp ?cmpLabel ?inchiKey ?SMILES WHERE {\n"
+        "  VALUES ?cmp { wd:" + cwid + " }\n"
+        "  ?cmp wdt:P10 ?inchiKey .\n"
+        "  OPTIONAL { ?cmp wdt:P7 ?chiralSMILES }\n"
+        "  OPTIONAL { ?cmp wdt:P12 ?nonchiralSMILES }\n"
+        '  BIND (COALESCE(IF(BOUND(?chiralSMILES), ?chiralSMILES, 1/0), IF(BOUND(?nonchiralSMILES), ?nonchiralSMILES, 1/0), "") AS ?SMILES)\n'
+        '  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }\n'
+        "}"
+    )
+    try:
+        compound_dat = wbi_helpers.execute_sparql_query(
+            sparqlquery, endpoint=compoundwikiEP
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    if not bool(compound_dat):
+        return jsonify({"error": "No data found"}), 404
+    compound_dat = compound_dat["results"]["bindings"][0]
+    #return jsonify(compound_dat);
+    compound_list = [
+        {
+            "wcid": compound_dat["cmp"]["value"],
+            "label": compound_dat["cmpLabel"]["value"],
+            "inchikey": compound_dat["inchiKey"]["value"],
+            "SMILES": compound_dat["SMILES"]["value"],
+        }
+    ]
+    return jsonify(compound_list), 200
+        
+
+@app.route("/get_compound_identifiers/<cwid>")
+def show_compounds_identifiers_as_json(cwid):
+    if not is_valid_qid(cwid):
+        return jsonify({"error": "Invalid compound identifier"}), 400
+    compoundwikiEP = "https://compoundcloud.wikibase.cloud/query/sparql"
+    sparqlquery = (
+        "PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>\n"
+        "PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>\n\n"
+        "SELECT ?propertyLabel ?value\n"
+        "WHERE {\n"
+        "  VALUES ?property { wd:P3 wd:P2 wd:P32 }\n"
+        "  ?property wikibase:directClaim ?valueProp .\n"
+        "  OPTIONAL { wd:" + cwid + " ?valueProp ?value }\n"
+        '  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }\n'
+        "}"
+    )
+    try:
+        compound_dat = wbi_helpers.execute_sparql_query(
+            sparqlquery, endpoint=compoundwikiEP
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    if len(compound_dat["results"]["bindings"]) == 0:
+        return jsonify({"error": "No data found"}), 404
+    compound_dat = compound_dat["results"]["bindings"]
+    #return jsonify(compound_dat)
+
+    compound_list = []
+    for expProp in compound_dat:
+        print(expProp)
+        if "value" in expProp:
+            compound_list.append(
+                {
+                    "propertyLabel": expProp["propertyLabel"]["value"],
+                    "value": expProp["value"]["value"]
+                }
+            )
+        else:
+            compound_list.append(
+                {
+                    "propertyLabel": expProp["propertyLabel"]["value"],
+                    "value": ""
+                }
+            )
+    return jsonify(compound_list), 200
+
+
+@app.route("/get_compound_expdata/<cwid>")
+def show_compounds_expdata_as_json(cwid):
+    if not is_valid_qid(cwid):
+        return jsonify({"error": "Invalid compound identifier"}), 400
+    compoundwikiEP = "https://compoundcloud.wikibase.cloud/query/sparql"
+    sparqlquery = (
+        "PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>\n"
+        "PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>\n"
+        "PREFIX wid: <http://www.wikidata.org/entity/>\n"
+        "PREFIX widt: <http://www.wikidata.org/prop/direct/>\n"
+        "PREFIX prov: <http://www.w3.org/ns/prov#>\n\n"
+        "SELECT ?qid WHERE {\n"
+        "  wd:P5 wikibase:directClaim ?identifierProp .\n"
+        "  wd:" + cwid + " ?identifierProp ?wikidata .\n"
+        '  BIND (iri(CONCAT("http://www.wikidata.org/entity/", ?wikidata)) AS ?qid)\n'
+        "}"
+    )
+    try:
+        compound_dat = wbi_helpers.execute_sparql_query(
+            sparqlquery, endpoint=compoundwikiEP
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    if not bool(compound_dat):
+        return jsonify({"error": "No data found"}), 404
+    if len(compound_dat["results"]["bindings"]) == 0:
+        return jsonify({"error": "No data found"}), 404
+    compound_dat = compound_dat["results"]["bindings"][0]
+    qid = compound_dat["qid"]["value"]
+    print(qid);
+
+    # the next query may be affected by https://github.com/ad-freiburg/qlever-control/issues/187
+    sparqlquery = (
+        "PREFIX wd: <http://www.wikidata.org/entity/>\n"
+        "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n"
+        "PREFIX prov: <http://www.w3.org/ns/prov#>\n"
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+        "PREFIX pr: <http://www.wikidata.org/prop/reference/>\n"
+        "PREFIX wikibase: <http://wikiba.se/ontology#>\n\n"
+        "SELECT ?propEntityLabel ?value ?unitsLabel ?source ?doi ?statement\n"
+        "WHERE {\n"
+        "    <" + qid + "> ?propp ?statement .\n"
+        "    ?statement a wikibase:BestRank ;\n"
+        "      ?proppsv [ wikibase:quantityAmount ?value ; wikibase:quantityUnit ?units ] .\n"
+        "    #OPTIONAL { ?statement prov:wasDerivedFrom/pr:P248 ?sourceTmp . OPTIONAL { ?sourceTmp wdt:P356 ?doiTmp . } }\n"
+        "    ?property wikibase:claim ?propp ; wikibase:statementValue ?proppsv ; wdt:P1629 ?propEntity ; wdt:P31 wd:Q21077852 .\n"
+        "    ?propEntity @en@rdfs:label ?propEntityLabel .\n"
+        "    ?units @en@rdfs:label ?unitsLabel .\n"
+        "    BIND (COALESCE(IF(BOUND(?sourceTmp), ?sourceTmp, 1/0), \"\") AS ?source)\n"
+        "    BIND (COALESCE(IF(BOUND(?doiTmp), ?doiTmp, 1/0), \"\") AS ?doi)\n"
+        "}"
+    )
+    #return sparqlquery
+    try:
+        sparqlqueryURL = "https://qlever.cs.uni-freiburg.de/api/wikidata?format=json&query=" +           urllib.parse.quote_plus(sparqlquery)
+        #return sparqlqueryURL
+        compound_dat = requests.get(sparqlqueryURL)
+        #return json.loads(compound_dat.content)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    if not bool(compound_dat):
+        return jsonify({"error": "No data found"}), 404
+    compound_dat = json.loads(compound_dat.content)["results"]["bindings"]
+    #return jsonify(compound_dat)
+    compound_list = []
+    for expProp in compound_dat:
+        #return jsonify(expProp)
+        compound_list.append(
+            {
+                "propEntityLabel": expProp["propEntityLabel"]["value"],
+                "value": expProp["value"]["value"],
+                "unitsLabel": expProp["unitsLabel"]["value"],
+                "source": expProp["source"]["value"],
+                "doi": expProp["doi"]["value"],
+                "seeAlso": expProp["statement"]["value"]
+            }
+        )
+    return jsonify(compound_list), 200
+
 
 ################################################################################
 ### Pages under 'Legal'
