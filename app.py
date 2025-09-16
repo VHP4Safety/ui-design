@@ -8,8 +8,8 @@ import urllib.parse
 from flask import Blueprint, Flask, abort, jsonify, render_template, request, send_file
 from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
-#from wikidataintegrator import wdi_core
-from wikibaseintegrator import wbi_helpers
+# from wikidataintegrator import wdi_core
+# from wikibaseintegrator import wbi_helpers
 
 ################################################################################
 class RegexConverter(BaseConverter):
@@ -142,14 +142,15 @@ def tools():
 ### Here begins the updated version for creating the tool list page. 
 @app.route("/tools")
 def tools():
-    url = 'https://raw.githubusercontent.com/VHP4Safety/cloud/main/cap/service_index.json'
+    url = 'https://raw.githubusercontent.com/ozancinar/cloud-ozan/refs/heads/main/cap/service_index.json'
     response = requests.get(url)
 
     if response.status_code != 200:
         return f"Error fetching service list: {response.status_code}", 503
 
     try:
-        tools = response.json()
+        tools = response.json()   # Geting the service_list.json in the dictionary format.
+        tools = list(tools.values())  # Converting the dictionary to a list object.
 
         # Mapping the URLs with glossary IDs to their text values. 
         stage_mapping = {
