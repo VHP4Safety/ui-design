@@ -9,7 +9,7 @@ from flask import Blueprint, Flask, abort, jsonify, render_template, request, se
 from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
 # from wikidataintegrator import wdi_core
-# from wikibaseintegrator import wbi_helpers
+from wikibaseintegrator import wbi_helpers
 
 ################################################################################
 class RegexConverter(BaseConverter):
@@ -142,7 +142,7 @@ def tools():
 ### Here begins the updated version for creating the tool list page. 
 @app.route("/tools")
 def tools():
-    url = 'https://raw.githubusercontent.com/ozancinar/cloud-ozan/refs/heads/main/cap/service_index.json'
+    url = 'https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/service_index.json'
     response = requests.get(url)
 
     if response.status_code != 200:

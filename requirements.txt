@@ -4,3 +4,5 @@ requests==2.32.3
 setuptools==75.8.0 # Provides pkg_resources module, required for wikidataintegrator
 werkzeug>=3.0.6
 #pyBiodatafuse @ git+https://github.com/BioDataFuse/pyBiodatafuse.git
+wikibaseintegrator>=0.12.14
+
