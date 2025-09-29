@@ -1,3 +1,7 @@
+Version 0.4-2 (2025-09-29)
+--------------------------------------------------------------------------------
+- Adding icons for the case studies in the case studies page.
+
 Version 0.4-1 (2025-09-29)
 --------------------------------------------------------------------------------
 - Separating the buttons with links to the main webpage for the tools and to their VHP instances, if available.
