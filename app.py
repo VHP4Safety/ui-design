@@ -159,6 +159,25 @@ def tools():
             "https://vhp4safety.github.io/glossary#VHP0000148": "Chemical Information",
             "https://vhp4safety.github.io/glossary#VHP0000149": "General"
         }
+        
+        # Explanations for stages
+        stage_explanations = {
+            "ADME": "Absorption, distribution, metabolism, and excretion of a substance (toxic or not) in a living organism, following exposure to this substance.",
+            "Hazard Assessment": "The process of assessing the intrinsic hazard a substance poses to human health and/or the environment.",
+            "Chemical Information": "Information about chemical properties and identity.",
+            "General": "General tools not specific to a flow step.",
+            "Other": "Other or unknown category."
+        }
+        
+        # Explanations for regulatory questions
+        reg_question_explanations = {
+            "Kidney Case Study (a)": "What is the safe cisplatin dose in cancer patients?",
+            "Kidney Case Study (b)": "What is the intrinsic hazard of tacrolimus for nephrotoxicity?",
+            "Parkinson Case Study (a)": "Can compound X cause Parkinson’s Disease?",
+            "Parkinson Case Study (b)": "What level of exposure to compound X leads to risk for developing Parkinsons disease?",
+            "Thyroid Case Study (a)": "What information about silychristin do we need to give an advice to women in their early pregnancy to decide whether the substance can be used?",
+            "Thyroid Case Study (b)": "Does silychristin influence the thyroid-mediated brain development in the fetus resulting in cognitive impairment in children?"
+        }
 
         for tool in tools:
             full_stage_url = tool.get('stage', '')
@@ -180,10 +199,17 @@ def tools():
             tool['url'] = f"https://cloud.vhp4safety.nl/service/{html_name}"
             tool['meta_data'] = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{md_name}" if md_name else "md file not found"
             
-            if png_name == 'https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png':
-                tool['png'] = 'https://raw.githubusercontent.com/VHP4Safety/ui-design/refs/heads/main/static/images/logo.png'
+            # Check if the tool has the placeholder logo
+            placeholder_logo = 'https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png'
+            if png_name == placeholder_logo:
+                tool['png'] = None  # set to None if it's the common placeholder
             else:
-                tool['png'] = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}"
+                tool['png'] = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}" if not png_name.startswith("http") else png_name
+                
+            inst_url = tool.get('inst_url', 'no_url')
+            if not inst_url:  # catches "" as well
+                inst_url = "no_url"
+            tool['inst_url'] = inst_url
 
         # Getting selected stages from the URL.
         selected_stages = request.args.getlist('stage')
@@ -202,12 +228,12 @@ def tools():
 
         # Filtering over the regulatory questions.
         reg_questions = {
-            "Q1a. Kidney (a)": "reg_q_1a",
-            "Q1b. Kidney (b)": "reg_q_1b",
-            "Q2a. Parkinson (a)": "reg_q_2a",
-            "Q2b. Parkinson (b)": "reg_q_2b",
-            "Q3a. Thyroid (a)": "reg_q_3a",
-            "Q3b. Thyroid (b)": "reg_q_3b",
+            "Kidney Case Study (a)": "reg_q_1a",
+            "Kidney Case Study (b)": "reg_q_1b",
+            "Parkinson Case Study (a)": "reg_q_2a",
+            "Parkinson Case Study (b)": "reg_q_2b",
+            "Thyroid Case Study (a)": "reg_q_3a",
+            "Thyroid Case Study (b)": "reg_q_3b",
         }
 
         selected_questions = request.args.getlist('reg_q')
@@ -226,7 +252,9 @@ def tools():
 
         return render_template("tools/tools.html", tools=tools, stages=stages, 
             selected_stages=selected_stages, reg_questions=reg_questions,
-            selected_questions=selected_questions
+            selected_questions=selected_questions, 
+            stage_explanations=stage_explanations,
+            reg_question_explanations=reg_question_explanations
         )
 
     except Exception as e:

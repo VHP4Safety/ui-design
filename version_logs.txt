@@ -1,3 +1,9 @@
+Version 0.4-1 (2025-09-29)
+--------------------------------------------------------------------------------
+- Separating the buttons with links to the main webpage for the tools and to their VHP instances, if available.
+- Removing the placeholder logo in the tools page for the tools that do not have a logo. 
+- Adding tooltip icons and explanations to the filtering items in the tools page.  
+
 Version 0.3-7 (2025-09-29)
 --------------------------------------------------------------------------------
 - Minor changes in the application to fix the compound page. 

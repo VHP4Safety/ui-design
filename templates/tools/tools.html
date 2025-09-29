@@ -4,48 +4,54 @@
 
 <section>
     <div class="explanation-text">
-        <p>Here you can find the tools in the catalog. You can search for a tools that you now by using the search box below. </p>
-        <p> Alternatively, you can filter the tools with respect to the <a href="{{ url_for('workflows') }}#about-section">flow step</a> (i.e., blue box) that they belong to and/or the regulatory question that they associated with by ticking the boxes below. </p>
+        <p>Here you can find the tools in the catalog. You can search for a tool that you know using the search box below.</p>
+        <p>Alternatively, you can filter the tools with respect to the <a href="{{ url_for('workflows') }}#about-section">flow step</a> (i.e., blue box) that they belong to and/or the regulatory question that they are associated with by ticking the boxes below.</p>
         <p>Use the "Apply Filter" button to see results, and click "Clear Filter" to reset the filters.</p>
-        <!--<br>
-        <p><em>Note:</em> If there is no webpage associated with the tool, you will see a "No Available Webpage" message instead of a link to the tool.</p>-->
     </div>
 
+    <!-- Single Filter/Search Form -->
     <form method="get" action="{{ url_for('tools') }}">
+
+        <!-- Search Bar -->
         <div class="search-bar">
             <input type="text" name="search" placeholder="Search by tool name..." value="{{ request.args.get('search', '') }}">
             <button type="submit" class="btn-search">Search</button>
         </div>
 
-
-    <!-- <h1>Tool Catalog</h1> --> <!-- I didn't like the look of the text at the top, so I'll just exclude it for now. --> 
-    <!-- Filter section for stage values with checkboxes -->
-    <form method="get" action="{{ url_for('tools') }}">
+        <!-- Filters -->
         <div class="filters-container">
             <!-- Stage Filter -->
-            <div class="filter-section">
-                <h3>Filter by Flow Step</h3>
-                    {% for stage in stages %}
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="stage" value="{{ stage }}" 
-                    {% if stage in selected_stages %}checked{% endif %}>
-                    <label class="form-check-label">{{ stage }}</label>
-            </div>
-                    {% endfor %}
+        <!-- Stage Filter -->
+        <div class="filter-section">
+            <h3>Filter by Flow Step</h3>
+            {% for stage in stages %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="stage" value="{{ stage }}" 
+                        {% if stage in selected_stages %}checked{% endif %}>
+                    <label class="form-check-label">
+                        {{ stage }}
+                        <span class="tooltip-icon" data-tooltip="{{ stage_explanations[stage] }}">&#x2753;</span>
+                    </label>
+                </div>
+            {% endfor %}
+
         </div>
 
-    <!-- Regulatory Questions Filter -->
-    <div class="filter-section">
-      <h3>Filter by Regulatory Questions</h3>
-      {% for question, field in reg_questions.items() %}
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="reg_q" value="{{ question }}"
-             {% if question in selected_questions %}checked{% endif %}>
-          <label class="form-check-label">{{ question }}</label>
-        </div>
+        <!-- Regulatory Questions Filter -->
+        <div class="filter-section">
+            <h3>Filter by Regulatory Questions</h3>
+            {% for question, field in reg_questions.items() %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="reg_q" value="{{ question }}"
+                        {% if question in selected_questions %}checked{% endif %}>
+                    <label class="form-check-label">
+                        {{ question }}
+                        <span class="tooltip-icon" data-tooltip="{{ reg_question_explanations[question] }}">&#x2753;</span>
+                    </label>
+                </div>
             {% endfor %}
         </div>
-    </div>
+        </div>
 
         <!-- Filter Buttons -->
         <div class="filter-buttons">
@@ -54,30 +60,42 @@
         </div>
     </form>
 
-    </form>
-    <!-- Tools list -->
+    <!-- Tools List -->
     <div class="row align-items-start">
         <ul>
             {% for item in tools %}
                 <div class="card">
-                    <img src="{{ item.png }}" class="card-img-top" alt="Your logo here">
+                    {% if item.png %}
+                        <img src="{{ item.png }}" class="card-img-top" alt="Tool logo">
+                    {% endif %}
+                    
                     <div class="card-body">
                         <h2 class="card-title">{{ item.service }}</h2>
                         <p id="desc" class="card-text">{{ item.description }}</p>
 
-                        <!-- Adding a button to visit the main webpage -->
-                        <!-- Checking if 'main_url' is 'no_url' and if it is there won't be a link. -->
+                        <!-- Tool Webpage -->
                         {% if item.main_url == "no_url" %}
-                          <a class="tools-links disabled">No Available Webpage</a> 
+                            <a class="tools-links disabled">No Available Webpage</a> 
                         {% else %}
-                          <a href="{{ item.main_url }}" class="btn btn-outline-info" target="_blank">Tool Webpage</a>
+                            <a href="{{ item.main_url }}" class="btn btn-outline-info" target="_blank">Main Webpage</a>
                         {% endif %}
 
-                        <!--<a href="{{ item.main_url }}" class="btn btn-outline-info" target="_blank">Tool Webpage</a>-->
-                        
                         <h3 class="tools-links">&nbsp;&nbsp; - &nbsp;&nbsp;</h3>
+
+                        <!-- Instance Page -->
+                        {% if item.inst_url == "no_url" %}
+                            <a class="tools-links disabled">No VHP Instance</a> 
+                        {% else %}
+                            <a href="{{ item.inst_url }}" class="btn btn-outline-info" target="_blank">VHP Instance</a>
+                        {% endif %}                   
+
+                        <h3 class="tools-links">&nbsp;&nbsp; - &nbsp;&nbsp;</h3>
+
+                        <!-- Catalog Page -->
                         <a class="tools-links" href="{{ item.url }}" class="btn btn-outline-info">Catalog Page</a>
                         <h3 class="tools-links">&nbsp;&nbsp; - &nbsp;&nbsp;</h3>
+
+                        <!-- Meta-Data -->
                         <a class="tools-links" href="{{ item.meta_data }}" class="btn btn-outline-info">Meta-Data</a>
                     </div>
                 </div>
