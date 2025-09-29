@@ -67,6 +67,7 @@ function updateStep2Content() {
 }
 function updateStep3Content() {
   if (!contentLoaded) return;
+  if (!step3Contents[currentQuestion]) return;
   const step = step3Contents[currentQuestion][currentProcessStep];
   if (step.steps) {
     document.getElementById("step3-content").innerHTML =
@@ -84,6 +85,7 @@ function updateStep4Content() {
   if (!step4Contents) return;
   if (!step4Contents[currentQuestion]) return;
   if (!step4Contents[currentQuestion][currentProcessStep]) return;
+  if (!step4Contents[currentQuestion][currentProcessStep][currentCaseStudyStep]) return;
   const step = step4Contents[currentQuestion][currentProcessStep][currentCaseStudyStep];
   if (step.tools) {
     document.getElementById("step4-content").innerHTML =
