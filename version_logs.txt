@@ -1,6 +1,6 @@
-Version 0.4-2 (2025-09-29)
+Version 0.4-3 (2025-09-30)
 --------------------------------------------------------------------------------
-- Adding icons for the case studies in the case studies page.
+- Adding icons and descriptions to the case studies in the case studies page.
 
 Version 0.4-1 (2025-09-29)
 --------------------------------------------------------------------------------
