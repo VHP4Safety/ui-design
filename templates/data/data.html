@@ -82,6 +82,13 @@
 
     <div class="results-section">
         <div id="results-list" class="results-list"></div>
+        <!-- Loading indicator for infinite scroll -->
+        <div id="loading-indicator" class="text-center my-4" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading more studies...</p>
+        </div>
         <div id="study-detail" class="study-detail" style="display: none;">
             <button id="back-btn" class="btn-back">← Back to Results</button>
             <div id="study-content"></div>
@@ -97,12 +104,21 @@
     let currentResults = [];
     let collectionName = 'BioStudies';
 
+    // Pagination state for infinite scroll
+    let currentPage = 1;
+    let isLoading = false;
+    let hasMorePages = true;
+    let totalStudies = 0;
+    const PAGE_SIZE = 20;
+    const MAX_PAGES = 30;
+
     // DOM elements
     const searchInput = document.getElementById('search-input');
     const searchBtn = document.getElementById('search-btn');
     const listBtn = document.getElementById('list-btn');
     const searchStatus = document.getElementById('search-status');
     const resultsList = document.getElementById('results-list');
+    const loadingIndicator = document.getElementById('loading-indicator');
     const studyDetail = document.getElementById('study-detail');
     const studyContent = document.getElementById('study-content');
     const backBtn = document.getElementById('back-btn');
@@ -316,11 +332,16 @@
     }
 
     async function listAllStudies() {
+        // Reset pagination state
+        currentPage = 1;
+        hasMorePages = true;
+        allStudies = [];
+        
         showStatus('Loading studies...', 'loading');
         resultsList.innerHTML = '<div class="loading">Loading studies from BioStudies database...</div>';
 
         try {
-            const response = await fetch(`${API_BASE}/list?pageSize=50&maxPages=3`);
+            const response = await fetch(`${API_BASE}/list?pageSize=${PAGE_SIZE}&maxPages=1`);
             const data = await response.json();
 
             if (data.error) {
@@ -331,17 +352,94 @@
 
             currentResults = data.hits || [];
             allStudies = currentResults; // Store for filtering
-            displayResults(currentResults, data.total || 0);
-            showStatus(`Showing ${currentResults.length} of ${data.total || 0} studies`, 'success');
+            totalStudies = data.total || 0;
+            
+            // Check if there are more pages
+            hasMorePages = currentResults.length >= PAGE_SIZE && currentPage < MAX_PAGES;
+            
+            displayResults(currentResults, totalStudies, false); // false = replace content
+            showStatus(`Showing ${currentResults.length} of ${totalStudies} studies`, 'success');
+            
+            // Setup infinite scroll after first page loads
+            setupInfiniteScroll();
         } catch (error) {
             showStatus('Error connecting to server', 'error');
             resultsList.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
         }
     }
 
-    function displayResults(results, total) {
+    async function loadNextPage() {
+        if (isLoading || !hasMorePages) return;
+        
+        isLoading = true;
+        currentPage++;
+        
+        // Show loading indicator
+        loadingIndicator.style.display = 'block';
+        
+        try {
+            const response = await fetch(`${API_BASE}/list?pageSize=${PAGE_SIZE}&maxPages=1&page=${currentPage}`);
+            const data = await response.json();
+            
+            if (data.error) {
+                console.error('Error loading next page:', data.error);
+                loadingIndicator.style.display = 'none';
+                isLoading = false;
+                return;
+            }
+            
+            const newResults = data.hits || [];
+            
+            if (newResults.length > 0) {
+                // Append new results
+                currentResults = currentResults.concat(newResults);
+                allStudies = allStudies.concat(newResults);
+                
+                // Check if there are more pages
+                hasMorePages = newResults.length >= PAGE_SIZE && currentPage < MAX_PAGES;
+                
+                // Append to display (true = append)
+                displayResults(newResults, totalStudies, true);
+                
+                // Update status
+                showStatus(`Showing ${currentResults.length} of ${totalStudies} studies`, 'success');
+            } else {
+                hasMorePages = false;
+            }
+        } catch (error) {
+            console.error('Error loading next page:', error);
+        } finally {
+            loadingIndicator.style.display = 'none';
+            isLoading = false;
+        }
+    }
+
+    function setupInfiniteScroll() {
+        // Remove existing listener if any
+        window.removeEventListener('scroll', handleScroll);
+        
+        // Add scroll listener
+        window.addEventListener('scroll', handleScroll);
+    }
+
+    function handleScroll() {
+        // Only trigger if we're viewing results (not study detail)
+        if (studyDetail.style.display !== 'none') return;
+        
+        // Calculate if user is near bottom (200px from bottom)
+        const scrollPosition = window.innerHeight + window.scrollY;
+        const pageHeight = document.documentElement.scrollHeight;
+        
+        if (scrollPosition >= pageHeight - 200) {
+            loadNextPage();
+        }
+    }
+
+    function displayResults(results, total, append = false) {
         if (!results || results.length === 0) {
-            resultsList.innerHTML = '<div class="no-results">No studies found</div>';
+            if (!append) {
+                resultsList.innerHTML = '<div class="no-results">No studies found</div>';
+            }
             return;
         }
 
@@ -352,7 +450,7 @@
             const releaseDate = study.releaseDate || study.rdate || 'N/A';
 
             return `
-                <div class="result-card" data-accession="${accession}">
+                <div class="result-card pb-3    " data-accession="${accession}">
                     <div class="result-header">
                         <span class="result-accession">${accession}</span>
                         <span class="result-type">${type}</span>
@@ -366,7 +464,13 @@
             `;
         }).join('');
 
-        resultsList.innerHTML = html;
+        if (append) {
+            // Append new results to existing content
+            resultsList.innerHTML += html;
+        } else {
+            // Replace all content
+            resultsList.innerHTML = html;
+        }
     }
 
     async function viewStudy(accession) {
