@@ -119,24 +119,6 @@ table tr:hover {
 }
 
 /* General Style for buttons */
-button {
-  background: none;
-  border: none;
-  color: var(--white);
-  font-size: 17px;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 10px 15px;
-  border-radius: 20px;
-  height: 50px;
-  width: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-  transition: opacity 0.3s ease; /* Smooth hover transition */
-}
 
 button:hover {
   /* Hover effect for all buttons */
