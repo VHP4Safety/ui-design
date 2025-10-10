@@ -26,6 +26,8 @@ class VHP4SafetyParser:
                 - endpoint_readout_info
                 - files
         """
+        print(f"[VHP4Safety Parser] Parsing study: {raw_data.get('accno', 'Unknown')}")
+        
         modules = {
             "general_info": {},
             "author_info": [],
@@ -57,6 +59,14 @@ class VHP4SafetyParser:
         if "section" in raw_data:
             self._extract_files(raw_data["section"], modules)
         
+        # Debug output
+        print(f"[VHP4Safety Parser] Extracted modules:")
+        print(f"  - Authors: {len(modules['author_info'])} found")
+        print(f"  - Chemicals: {len(modules['chemical_info']['test_chemicals'])} test, {len(modules['chemical_info']['positive_controls'])} controls")
+        print(f"  - Cell lines: {len(modules['biological_model_info']['cell_lines'])} found")
+        print(f"  - Exposure info: {len(modules['exposure_info'])} entries")
+        print(f"  - Files: {len(modules['files'])} found")
+        
         return modules
     
     def _extract_general_info(self, raw_data, modules):
@@ -77,7 +87,8 @@ class VHP4SafetyParser:
                 # Store specific fields with their qualifiers
                 if attr_name_lower in ["title", "releasedate", "description", "organism", 
                                        "license", "bioassay", "organ", "tissue",
-                                       "adverse outcome pathway", "aop event"]:
+                                       "adverse outcome pathway", "aop event", "case study",
+                                       "flow step", "regulatory questions"]:
                     modules["general_info"][attr_name] = {
                         "value": attr_value,
                         "valqual": attr.get("valqual", [])
