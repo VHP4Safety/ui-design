@@ -7,8 +7,8 @@ from urllib.parse import quote, unquote
 import pandas as pd
 import csv
 import os
-from pyBiodatafuse import id_mapper
-from pyBiodatafuse.annotators import opentargets, bgee
+#from pyBiodatafuse import id_mapper
+#from pyBiodatafuse.annotators import opentargets, bgee
 
 aop_app = Blueprint("aop_app", __name__)
 
