@@ -10,6 +10,14 @@ from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
 # from wikidataintegrator import wdi_core
 from wikibaseintegrator import wbi_helpers
+# Import BioStudies extractor
+from biostudies.search import BioStudiesExtractor
+
+################################################################################
+### Configuration for BioStudies Integration
+# Change these variables to switch between collections
+BIOSTUDIES_COLLECTION = "EU-ToxRisk"  # Current: "EU-ToxRisk", Future: "vhp4safety"
+BIOSTUDIES_COLLECTION_NAME = "EU-ToxRisk"  # Display name for the page
 
 ################################################################################
 class RegexConverter(BaseConverter):
@@ -41,6 +49,58 @@ def home():
 @app.route("/data")
 def data():
     return render_template("data/data.html")
+
+# BioStudies API endpoints
+@app.route("/api/biostudies/search")
+def biostudies_search():
+    """Search for BioStudies entries"""
+    query = request.args.get('query', '')
+    page = request.args.get('page', 1, type=int)
+    page_size = request.args.get('pageSize', 10, type=int)
+    
+    if not query:
+        return jsonify({"error": "Query parameter is required"}), 400
+    
+    extractor = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION)
+    results = extractor.search_studies(query, page=page, page_size=page_size)
+    
+    if "error" in results:
+        return jsonify(results), 404
+    
+    return jsonify(results), 200
+
+@app.route("/api/biostudies/study/<study_id>")
+def biostudies_get_study(study_id):
+    """Get detailed metadata for a specific BioStudies entry"""
+    extractor = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION)
+    metadata = extractor.get_study_metadata(study_id)
+    
+    if "error" in metadata:
+        return jsonify(metadata), 404
+    
+    return jsonify(metadata), 200
+
+@app.route("/api/biostudies/list")
+def biostudies_list():
+    """List all available BioStudies entries"""
+    page_size = request.args.get('pageSize', 50, type=int)
+    max_pages = request.args.get('maxPages', 5, type=int)
+    
+    extractor = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION)
+    results = extractor.list_studies(page_size=page_size, max_pages=max_pages)
+    
+    if "error" in results:
+        return jsonify(results), 500
+    
+    return jsonify(results), 200
+
+@app.route("/api/biostudies/config")
+def biostudies_config():
+    """Get current BioStudies configuration"""
+    return jsonify({
+        "collection": BIOSTUDIES_COLLECTION,
+        "collection_name": BIOSTUDIES_COLLECTION_NAME
+    }), 200
 
 ################################################################################
 ### Pages under 'Tools'
@@ -511,4 +571,4 @@ def privacy_policy():
 ################################################################################
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5050, debug=True)
