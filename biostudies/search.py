@@ -26,7 +26,7 @@ class BioStudiesExtractor:
         cleaned_id = study_id.strip().upper()
         
         # Basic format validation for common BioStudies ID patterns
-        # Examples: S-ONTX26, E-MTAB-1234, S-BSST123
+        # Examples: S-ONTX26, E-MTAB-1234, S-BSST123 
         import re
         patterns = [
             r'^S-[A-Z0-9]+$',  # Studies starting with S-
@@ -94,7 +94,7 @@ class BioStudiesExtractor:
         except Exception as e:
             return {"error": f"Unexpected error occurred: {str(e)}"}
     
-    def list_studies(self, query, page=1, page_size=10)->dict:
+    def search_studies(self, query, page=1, page_size=10) -> dict:
         """
         Search for studies in BioStudies database
         
@@ -113,7 +113,7 @@ class BioStudiesExtractor:
             params = {
                 'query': query,
                 'page': page,
-                'size': page_size
+                'pageSize': page_size
             }
             
             headers = {
@@ -128,7 +128,7 @@ class BioStudiesExtractor:
                     data = response.json()
                     if not data or data.get("totalHits", 0) == 0:
                         return {"error": "No results found."}
-                    return data | {"next":response._next}
+                    return data
                 except json.JSONDecodeError as e:
                     return {"error": f"Invalid JSON response from BioStudies API: {str(e)}"}
             elif response.status_code == 400:
@@ -150,6 +150,80 @@ class BioStudiesExtractor:
             return {"error": f"Network error: {str(e)}"}
         except Exception as e:
             return {"error": f"Unexpected error occurred: {str(e)}"}        
+        
+    def list_studies(self, page_size=50, max_pages=None):
+        """
+        List all public studies in the configured BioStudies collection by paginating through results.
+        Uses page/pageSize (e.g., ?page=1&amp;pageSize=50) because some BioStudies endpoints ignore offset/size
+        and always return the first page (default pageSize=20).
+        """
+        headers = {
+            'Accept': 'application/json',
+            'User-Agent': 'BioStudies-VHP4Safety-App/1.0'
+        }
+
+        results = []
+        seen_accessions = set()
+        page = 1
+        pages_fetched = 0
+        total_hits = None
+
+        while True:
+            params = {'page': page, 'pageSize': page_size}
+            try:
+                response = requests.get(self.search_url, headers=headers, params=params, timeout=30)
+            except requests.exceptions.RequestException as e:
+                return {"error": f"Network error during listing: {e}", "total": len(results), "hits": results}
+
+            if response.status_code != 200:
+                return {"error": f"BioStudies API returned status {response.status_code} while listing.",
+                        "total": len(results), "hits": results}
+
+            try:
+                data = response.json()
+            except json.JSONDecodeError as e:
+                return {"error": f"Invalid JSON response from BioStudies API: {str(e)}",
+                        "total": len(results), "hits": results}
+
+            if total_hits is None:
+                total_hits = data.get("totalHits") or data.get("total") or 0
+
+            hits = data.get("hits", [])
+            if not hits:
+                break
+
+            # Add only new accessions in case the server keeps sending the same page
+            new_items = []
+            for h in hits:
+                acc = h.get("accession") or h.get("accno")
+                if acc and acc not in seen_accessions:
+                    seen_accessions.add(acc)
+                    new_items.append(h)
+
+            if not new_items:
+                # No new items -> stop to avoid infinite loop
+                break
+
+            results.extend(new_items)
+            pages_fetched += 1
+
+            # Stop when collected all known hits
+            if total_hits and len(results) >= total_hits:
+                break
+
+            # Stop when we hit the last page (short page)
+            if len(hits) < page_size:
+                break
+
+            # Safety cap
+            if max_pages is not None and pages_fetched >= max_pages:
+                break
+
+            page += 1
+
+        reported_total = total_hits if total_hits is not None else len(results)
+        return {"total": reported_total, "hits": results}
+    
 
     def parse_metadata(self, raw_data):
         """
