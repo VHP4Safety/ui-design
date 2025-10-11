@@ -15,7 +15,7 @@
             <input type="text" class="form-control me-2" name="query" id="search-input" value="{{ search_query or '' }}" placeholder="Search for datasets (e.g., S-ONTX26, toxicity, liver...)" />
             <div class="btn-group" role="group" aria-label="Search and filter buttons">
                 <button type="submit" class="btn btn-outline-primary">Search</button>
-                <a href="{{ url_for('data') }}" class="btn btn-outline-primary text-nowrap">All datasets</a>
+                <a href="{{ url_for('data') }}" class="btn btn-outline-danger text-nowrap">Clear</a>
                 <button type="button" id="filter-toggle-btn" class="btn btn-outline-secondary">Filters</button>
             </div>
         </form>
@@ -87,7 +87,7 @@
         
         <a href="{{ url_for('data', page=page-1, page_size=page_size, query=search_query) }}" class="btn btn-sm btn-secondary {% if not has_prev %} disabled {% endif %}">Previous</a>
         
-        <span class="d-inline">Page {{ page }} | Showing {{ studies|length }} of {{ total }} studies</span>
+        <span class="d-inline">Page {{ page }} | Showing {{ (page-1) * studies|length + 1 }} - {{ page * studies|length }} of {{ total }} studies</span>
         
         {% if has_next %}
             <a href="{{ url_for('data', page=page+1, page_size=page_size, query=search_query) }}" class="btn btn-sm btn-secondary">Next</a>

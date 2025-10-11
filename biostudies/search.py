@@ -346,6 +346,17 @@ class BioStudiesExtractor:
                     # add collection
                     if attr_name == "attachto":
                         metadata["collection"] = attr_value
+
+                    # VHP4Safety filterable fields
+                    
+                    elif attr_name == "case study":
+                        metadata["case_study"] = attr_value
+
+                    elif attr_name == "regulatory question":
+                        metadata["regulatory_question"] = attr_value
+                    
+                    elif attr_name == "flow step":
+                        metadata["flow_step"] = attr_value
                     
                     # Categorize biological context
                     elif attr_name in ["organism", "species", "organism part", "organ", "cell type", "tissue", "disease", "disease state", "sample type"]:
