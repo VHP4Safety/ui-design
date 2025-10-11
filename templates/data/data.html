@@ -7,15 +7,15 @@
 <div class="data-container">
     <div class="data-header">
         <h1><span id="collection-name">{{ collection_name or 'Data catalog' }}</span></h1>
-        <p class="data-subtitle">Explore datasets generated or used in <span id="collection-name-sub">{{ collection_name or 'BioStudies' }}</span></p>
+        <p class="data-subtitle">Explore datasets generated or used in <span id="collection-name-sub">{{ collection_name }}</span></p>
     </div>
 
     <div class="search-section">
         <form method="GET" action="{{ url_for('data') }}" class="search-box">
             <input type="text" name="query" id="search-input" value="{{ search_query or '' }}" placeholder="Search for datasets (e.g., S-ONTX26, toxicity, liver...)" />
-            <button type="submit" class="btn-primary">Search</button>
-            <a href="{{ url_for('data') }}" class="btn-primary">All datasets</a>
-            <button type="button" id="filter-toggle-btn" class="btn-secondary">Filters</button>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="{{ url_for('data') }}" class="btn btn-primary">All datasets</a>
+            <button type="button" id="filter-toggle-btn" class="btn btn-secondary">Filters</button>
         </form>
         
         <!-- Filter Panel -->
@@ -96,22 +96,22 @@
                         {{ study.title or 'Untitled Study' }}
                     </h3>
                     <div class="result-meta">
-                        <span class="result-date">Released: {{ study.releaseDate or study.rdate or 'N/A' }}</span>
+                        <span class="result-date">Released: {{ study.release_date or study.rdate or 'N/A' }}</span>
                     </div>
-                    <a href="{{ study.url or '#' }}" class="btn-view" target="_blank">View Details</a>
+                    <a href="{{ study.url or '#' }}" class="btn-view" target="_blank">View in BioStudies</a>
                 </div>
                 {% endfor %}
                 
                 <!-- Pagination controls -->
                 <div class="pagination-controls" style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 2rem 0;">
                     {% if has_prev %}
-                        <a href="{{ url_for('data', page=page-1, page_size=page_size, query=search_query) }}" class="btn-primary">← Previous</a>
+                        <a href="{{ url_for('data', page=page-1, page_size=page_size, query=search_query) }}" class="btn btn-primary">← Previous</a>
                     {% endif %}
                     
                     <span class="page-info">Page {{ page }} | Showing {{ studies|length }} of {{ total }} studies</span>
                     
                     {% if has_next %}
-                        <a href="{{ url_for('data', page=page+1, page_size=page_size, query=search_query) }}" class="btn-primary">Next →</a>
+                        <a href="{{ url_for('data', page=page+1, page_size=page_size, query=search_query) }}" class="btn btn-primary">Next →</a>
                     {% endif %}
                 </div>
             {% else %}
@@ -128,7 +128,7 @@
         </div>
         
         <div id="study-detail" class="study-detail" style="display: none;">
-            <button id="back-btn" class="btn-back">← Back to Results</button>
+            <button id="back-btn" class="btn btn-back">← Back to Results</button>
             <div id="study-content"></div>
         </div>
     </div>
