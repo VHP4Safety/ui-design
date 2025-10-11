@@ -236,96 +236,61 @@ class BioStudiesExtractor:
         return hits
 
     def list_studies(
-        self, page_size=50, max_pages=None, include_urls: bool = False
+        self, page=1, page_size=50, include_urls: bool = False
     ) -> dict:
         """
-        List all public studies in the configured BioStudies collection by paginating through results.
-        Uses page/pageSize (e.g., ?page=1&amp;pageSize=50) because some BioStudies endpoints ignore offset/size
-        and always return the first page (default pageSize=20).
+        List studies in the configured BioStudies collection for a specific page.
+        
+        Args:
+            page (int): Page number for pagination (default: 1)
+            page_size (int): Number of results per page (default: 50)
+            include_urls (bool): Whether to include study URLs in results (default: False)
+            
+        Returns:
+            dict: Dictionary containing 'total' (total number of studies) and 'hits' (list of studies for the requested page)
         """
         headers = {
             "Accept": "application/json",
             "User-Agent": "BioStudies-VHP4Safety-App/1.0",
         }
 
-        results = []
-        seen_accessions = set()
-        page = 1
-        pages_fetched = 0
-        total_hits = None
+        params = {"page": page, "pageSize": page_size}
+        
+        try:
+            response = requests.get(
+                self.search_url, headers=headers, params=params, timeout=30
+            )
+        except requests.exceptions.RequestException as e:
+            return {
+                "error": f"Network error during listing: {e}",
+                "total": 0,
+                "hits": [],
+            }
 
-        while True:
-            params = {"page": page, "pageSize": page_size}
-            try:
-                response = requests.get(
-                    self.search_url, headers=headers, params=params, timeout=30
-                )
-            except requests.exceptions.RequestException as e:
-                return {
-                    "error": f"Network error during listing: {e}",
-                    "total": len(results),
-                    "hits": results,
-                }
+        if response.status_code != 200:
+            return {
+                "error": f"BioStudies API returned status {response.status_code} while listing.",
+                "total": 0,
+                "hits": [],
+            }
 
-            if response.status_code != 200:
-                return {
-                    "error": f"BioStudies API returned status {response.status_code} while listing.",
-                    "total": len(results),
-                    "hits": results,
-                }
+        try:
+            data = response.json()
+        except json.JSONDecodeError as e:
+            return {
+                "error": f"Invalid JSON response from BioStudies API: {str(e)}",
+                "total": 0,
+                "hits": [],
+            }
 
-            try:
-                data = response.json()
-            except json.JSONDecodeError as e:
-                return {
-                    "error": f"Invalid JSON response from BioStudies API: {str(e)}",
-                    "total": len(results),
-                    "hits": results,
-                }
-
-            if total_hits is None:
-                total_hits = data.get("totalHits") or data.get("total") or 0
-
-            hits = data.get("hits", [])
-            if not hits:
-                break
-
-            # Add only new accessions in case the server keeps sending the same page
-            new_items = []
-            for h in hits:
-                acc = h.get("accession") or h.get("accno")
-                if acc and acc not in seen_accessions:
-                    seen_accessions.add(acc)
-                    if include_urls:
-                        new_items.append(
-                            h | {"url": self.build_study_url(acc).get("url", "")}
-                        )
-                    else:
-                        new_items.append(h)
-
-            if not new_items:
-                # No new items -> stop to avoid infinite loop
-                break
-
-            results.extend(new_items)
-            pages_fetched += 1
-
-            # Stop when collected all known hits
-            if total_hits and len(results) >= total_hits:
-                break
-
-            # Stop when we hit the last page (short page)
-            if len(hits) < page_size:
-                break
-
-            # Safety cap
-            if max_pages is not None and pages_fetched >= max_pages:
-                break
-
-            page += 1
-
-        reported_total = total_hits if total_hits is not None else len(results)
-        return {"total": reported_total, "hits": results}
+        total_hits = data.get("totalHits") or data.get("total") or 0
+        hits = data.get("hits", [])
+        
+        # Add URLs if requested
+        if include_urls:
+            hits = self._hit_url(hits)
+        
+        return {"total": total_hits, "hits": hits}
 
     def parse_metadata(self, raw_data):
         """

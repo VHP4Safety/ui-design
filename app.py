@@ -66,7 +66,7 @@ def data():
         results = extractor.search_studies(search_query, page=page, page_size=page_size)
     else:
         results = extractor.list_studies(
-            page_size=page_size, max_pages=1, include_urls=True
+            page=page, page_size=page_size, include_urls=True
         )
 
     # Extract studies and metadata
