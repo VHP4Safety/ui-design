@@ -1,102 +1,9 @@
 
 
 
-/* Filter button options */
-.filters-container {
-  display: flex;
-  gap: 2rem; /* space between the two filters */
-  flex-wrap: wrap; /* optional: allows wrapping on smaller screens */
-}
-
-/* Putting some space below the filter section to separate it from the first card. */
-.filter-section {
-    padding-bottom: 20px;
-    flex: 1; /* allows each filter section to take equal space */
-    min-width: 250px; /* prevent too small columns on small screens */
-}
-
-.filter-buttons {
-  margin-top: 1rem;
-}
-
-/* Separating cards from each other a little. */
-.row.align-items-start {
-    margin-top: 20px; 
-}
-
-/* Styling for the disabled "No Available Webpage" link to look like a button */
-a.tools-links.disabled {
-    background-color: #f8f9fa; /* Light background like a disabled button */
-    color: #6c757d; /* Greyed-out text */
-    border: 1px solid #6c757d; /* Grey border */
-    padding: 10px 15px; /* Padding to make it look like a button */
-    border-radius: 20px; /* Rounded corners */
-    text-decoration: none; /* Remove underline */
-    cursor: not-allowed; /* Show a 'not-allowed' cursor */
-    display: inline-block; /* Ensures it behaves like a button */
-    text-align: center; /* Center-align the text */
-}
-
-a.tools-links.disabled:hover {
-    background-color: #f8f9fa; /* No hover effect */
-    opacity: 1; /* Prevent any opacity changes on hover */
-}
 
 
 
-
-/* Stylization for the search button. */
-.search-bar {
-  margin-bottom: 1rem;
-  display: flex;
-  gap: 0.5rem;
-}
-
-.search-bar input[type="text"] {
-  flex: 1;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  border: 1px solid #ccc;
-}
-
-
-/* ============================================
-   BioStudies Data Page Styles
-   ============================================ */
-
-.data-container {
-    max-width: 55%;
-    margin: 0 auto;
-    padding: 100px;
-    margin-top: 90px; /* Account for fixed navbar height */
-}
-
-.data-header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.data-header h1 {
-    color: var(--blue);
-    margin-bottom: 10px;
-}
-
-.data-subtitle {
-    font-size: 1.1em;
-    color: #666;
-}
-
-
-
-/* Filter Panel Styles */
-.filter-panel {
-    background-color: var(--light-blue);
-    border-radius: 15px;
-    padding: 20px 30px;
-    margin-top: 15px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-    animation: slideDown 0.3s ease-out;
-}
 
 @keyframes slideDown {
     from {
@@ -109,13 +16,7 @@ a.tools-links.disabled:hover {
     }
 }
 
-/* Filter dropdowns container */
-.filter-dropdowns {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-}
+
 
 /* Selected Filters Display */
 .selected-filters {
@@ -201,141 +102,9 @@ a.tools-links.disabled:hover {
 
 
 
-/* Authors Grid */
-.authors-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 15px;
-    margin-top: 10px;
-}
 
-.author-card {
-    background-color: var(--white);
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-}
 
-.author-email {
-    color: var(--pink);
-    font-size: 0.9em;
-}
 
-.author-affiliation {
-    color: #666;
-    font-size: 0.9em;
-    font-style: italic;
-}
-
-/* Files Table */
-.files-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-.files-table thead {
-    background-color: var(--purple);
-}
-
-.files-table th {
-    padding: 12px 15px;
-    text-align: left;
-    color: var(--white);
-    border: 1px solid #ddd;
-    text-transform: uppercase;
-    font-weight: bold;
-}
-
-.files-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border: 1px solid #ddd;
-    background-color: var(--white);
-}
-
-.files-table tbody tr:nth-child(even) {
-    background-color: var(--grey);
-}
-
-.files-table tbody tr:hover {
-    background-color: var(--light-blue);
-    transition: background-color 0.3s ease;
-}
-
-/* Links List */
-.links-list {
-    margin-top: 10px;
-}
-
-.link-item {
-    padding: 10px;
-    background-color: var(--white);
-    border-radius: 8px;
-    margin-bottom: 8px;
-    border: 1px solid #ddd;
-}
-
-.link-item a {
-    color: var(--pink);
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.link-item a:hover {
-    text-decoration: underline;
-    color: var(--blue);
-}
-
-/* Collapsible Sections */
-.collapsible h2 {
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-}
-
-.collapsible .toggle-icon {
-    float: right;
-    transition: transform 0.3s ease;
-}
-
-.collapsible.expanded .toggle-icon {
-    transform: rotate(180deg);
-}
-
-.collapsible-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
-}
-
-.collapsible.expanded .collapsible-content {
-    max-height: 2000px;
-    transition: max-height 0.5s ease-in;
-}
-
-/* Loading and Error States */
-.loading,
-.error-message,
-.no-results {
-    text-align: center;
-    padding: 40px;
-    font-size: 1.1em;
-    color: #666;
-    border-radius: 15px;
-}
-
-.error-message {
-    color: #721c24;
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-}
-
-.no-results {
-    background-color: #fff3cd;
-    border: 1px solid #ffeaa7;
-    color: #856404;
-}
 
 /* Responsive Design */
 @media (max-width: 1920px) {
