@@ -163,7 +163,14 @@ class BioStudiesExtractor:
 
         return {"accession": verified_id, "url": url}
 
-    def search_studies(self, query, page=1, page_size=10, load_metadate:bool=True, filter:tuple=tuple()) -> dict:
+    def search_studies(
+        self,
+        query,
+        page=1,
+        page_size=10,
+        load_metadate: bool = True,
+        filter: list[tuple] = list(tuple()),
+    ) -> dict:
         """
         Search for studies in BioStudies database
 
@@ -173,7 +180,7 @@ class BioStudiesExtractor:
             page_size (int): Number of results per page
             load_metadate (bool): Whether to load metadata for each hit (default: True)
                 Only use when page_size is small to avoid performance issues
-            filter (tuple): Optional tuple of (field, value) to filter results (default: no filter)
+            filter (list): Optional list of tuples of (field, value) to filter results (default: no filter)
 
         Returns:
             dict: Search results or error information
@@ -196,9 +203,25 @@ class BioStudiesExtractor:
             if response.status_code == 200:
                 try:
                     data = response.json()
+                    hits = data.get("hits", [])
                     if not data or data.get("totalHits", 0) == 0:
                         return {"error": "No results found."}
-                    return data | {"hits": self._hit_url(data.get("hits", []))}
+                    
+                    # augment hits with URLS and metadata if requested
+                    if load_metadate:
+                        hits = self._hit_metadata(hits)
+                    hits = self._hit_url(hits)
+                    # Apply filter if provided
+                    if filter and isinstance(filter, list):
+                        for field, value in filter:
+                            hits = [
+                                hit
+                                for hit in hits
+                                if field in hit
+                                and isinstance(hit[field], str)
+                                and value.lower() in hit[field].lower()
+                            ]
+                    return data | {"hits": hits}
                 except json.JSONDecodeError as e:
                     return {
                         "error": f"Invalid JSON response from BioStudies API: {str(e)}"
@@ -237,7 +260,7 @@ class BioStudiesExtractor:
             if acc:
                 hit["url"] = self.build_study_url(acc).get("url", "")
         return hits
-    
+
     def _hit_metadata(self, hits: list) -> list:
         for hit in hits:
             acc = hit.get("accession") or hit.get("accno")
@@ -245,17 +268,15 @@ class BioStudiesExtractor:
                 hit["metadata"] = self.get_study_metadata(acc)
         return hits
 
-    def list_studies(
-        self, page=1, page_size=50, include_urls: bool = False
-    ) -> dict:
+    def list_studies(self, page=1, page_size=50, include_urls: bool = False) -> dict:
         """
         List studies in the configured BioStudies collection for a specific page.
-        
+
         Args:
             page (int): Page number for pagination (default: 1)
             page_size (int): Number of results per page (default: 50)
             include_urls (bool): Whether to include study URLs in results (default: False)
-            
+
         Returns:
             dict: Dictionary containing 'total' (total number of studies) and 'hits' (list of studies for the requested page)
         """
@@ -265,7 +286,7 @@ class BioStudiesExtractor:
         }
 
         params = {"page": page, "pageSize": page_size}
-        
+
         try:
             response = requests.get(
                 self.search_url, headers=headers, params=params, timeout=30
@@ -295,20 +316,20 @@ class BioStudiesExtractor:
 
         total_hits = data.get("totalHits") or data.get("total") or 0
         hits = data.get("hits", [])
-        
+
         # Add URLs if requested
         if include_urls:
             hits = self._hit_url(hits)
-        
+
         return {"total": total_hits, "hits": hits}
 
     def parse_metadata(self, raw_data):
         """
         Parse and structure the metadata from BioStudies API response
-        
+
         Args:
             raw_data (dict): Raw JSON response from API
-            
+
         Returns:
             dict: Structured metadata
         """
@@ -330,102 +351,161 @@ class BioStudiesExtractor:
                 "biological_context": {},
                 "technical_details": {},
                 "experimental_design": {},
-                "raw_data": raw_data  # Keep raw data for debugging
+                "raw_data": raw_data,  # Keep raw data for debugging
             }
-            
+
             # Extract attributes with enhanced categorization
             if "attributes" in raw_data:
                 for attr in raw_data["attributes"]:
                     attr_name = attr.get("name", "").lower()
                     attr_value = attr.get("value", "")
-                    
-                    metadata["attributes"].append({
-                        "name": attr.get("name", ""),
-                        "value": attr_value
-                    })
+                    # initialize VHP4Safety specific fields
+                    metadata["case_study"] = ""
+                    metadata["regulatory_question"] = ""
+                    metadata["flow_step"] = ""
+
+                    metadata["attributes"].append(
+                        {"name": attr.get("name", ""), "value": attr_value}
+                    )
                     # add collection
                     if attr_name == "attachto":
                         metadata["collection"] = attr_value
 
                     # VHP4Safety filterable fields
-                    
+
                     elif attr_name == "case study":
                         metadata["case_study"] = attr_value
 
                     elif attr_name == "regulatory question":
                         metadata["regulatory_question"] = attr_value
-                    
+
                     elif attr_name == "flow step":
                         metadata["flow_step"] = attr_value
-                    
+
                     # Categorize biological context
-                    elif attr_name in ["organism", "species", "organism part", "organ", "cell type", "tissue", "disease", "disease state", "sample type"]:
+                    elif attr_name in [
+                        "organism",
+                        "species",
+                        "organism part",
+                        "organ",
+                        "cell type",
+                        "tissue",
+                        "disease",
+                        "disease state",
+                        "sample type",
+                    ]:
                         metadata["biological_context"][attr_name] = attr_value
-                    
+
                     # Categorize technical details
-                    elif attr_name in ["platform", "instrument", "assay", "assay type", "library strategy", "library source", "data type", "sequencing mode", "sequencing date", "index adapters", "pipeline"]:
+                    elif attr_name in [
+                        "platform",
+                        "instrument",
+                        "assay",
+                        "assay type",
+                        "library strategy",
+                        "library source",
+                        "data type",
+                        "sequencing mode",
+                        "sequencing date",
+                        "index adapters",
+                        "pipeline",
+                    ]:
                         metadata["technical_details"][attr_name] = attr_value
-                    
+
                     # Extract authors
                     elif attr_name in ["author", "authors", "contact", "submitter"]:
                         if attr_value not in metadata["authors"]:
                             metadata["authors"].append(attr_value)
-            
+
             # Build organization lookup table first
             organization_lookup = {}
             if "section" in raw_data:
-                self._build_organization_lookup(raw_data["section"], organization_lookup)
-            
+                self._build_organization_lookup(
+                    raw_data["section"], organization_lookup
+                )
+
             # Process main section attributes first (this contains the main study metadata)
             if "section" in raw_data and "attributes" in raw_data["section"]:
                 for attr in raw_data["section"]["attributes"]:
                     attr_name = attr.get("name", "").lower()
                     attr_value = attr.get("value", "")
-                    
+
                     # Update title and description from section if not found at top level
                     if attr_name == "title" and metadata["title"] == "N/A":
                         metadata["title"] = attr_value
-                    elif attr_name == "description" and metadata["description"] == "N/A":
+                    elif (
+                        attr_name == "description" and metadata["description"] == "N/A"
+                    ):
                         metadata["description"] = attr_value
-                    
+
                     # Categorize biological context
-                    elif attr_name in ["organism", "species", "organism part", "organ", "cell type", "tissue", "disease", "disease state", "sample type"]:
+                    elif attr_name in [
+                        "organism",
+                        "species",
+                        "organism part",
+                        "organ",
+                        "cell type",
+                        "tissue",
+                        "disease",
+                        "disease state",
+                        "sample type",
+                    ]:
                         metadata["biological_context"][attr_name] = attr_value
-                    
+
                     # Categorize technical details
-                    elif attr_name in ["platform", "instrument", "assay", "assay type", "library strategy", "library source", "data type", "sequencing mode", "sequencing date", "index adapters", "pipeline"]:
+                    elif attr_name in [
+                        "platform",
+                        "instrument",
+                        "assay",
+                        "assay type",
+                        "library strategy",
+                        "library source",
+                        "data type",
+                        "sequencing mode",
+                        "sequencing date",
+                        "index adapters",
+                        "pipeline",
+                    ]:
                         metadata["technical_details"][attr_name] = attr_value
-                    
+
                     # Add to main attributes as well
-                    metadata["attributes"].append({
-                        "name": attr.get("name", ""),
-                        "value": attr_value
-                    })
-            
+                    metadata["attributes"].append(
+                        {"name": attr.get("name", ""), "value": attr_value}
+                    )
+
             # Process sections for enhanced metadata extraction
             if "section" in raw_data:
-                self._extract_comprehensive_metadata(raw_data["section"], metadata, organization_lookup)
-            
+                self._extract_comprehensive_metadata(
+                    raw_data["section"], metadata, organization_lookup
+                )
+
             # Extract links with better categorization
             if "links" in raw_data:
                 for link in raw_data["links"]:
                     link_data = {
                         "url": link.get("url", ""),
                         "type": link.get("type", ""),
-                        "description": link.get("description", "")
+                        "description": link.get("description", ""),
                     }
                     metadata["links"].append(link_data)
-                    
+
                     # Check if it's a publication link
                     link_type = link.get("type", "").lower()
-                    if "doi" in link_type or "pubmed" in link_type or "publication" in link_type:
+                    if (
+                        "doi" in link_type
+                        or "pubmed" in link_type
+                        or "publication" in link_type
+                    ):
                         metadata["publications"].append(link_data)
-            
+
             return metadata
-            
+
         except Exception as e:
-            return {"error": f"Failed to parse metadata: {str(e)}", "raw_data": raw_data}
-    
+            return {
+                "error": f"Failed to parse metadata: {str(e)}",
+                "raw_data": raw_data,
+            }
+
     def _build_organization_lookup(self, section, org_lookup):
         """Build a lookup table for organization references"""
         if isinstance(section, dict):
@@ -437,21 +517,30 @@ class BioStudiesExtractor:
                     for attr in section["attributes"]:
                         attr_name = attr.get("name", "").lower()
                         attr_value = attr.get("value", "")
-                        if attr_name in ["name", "organization", "email", "address", "department", "affiliation"]:
+                        if attr_name in [
+                            "name",
+                            "organization",
+                            "email",
+                            "address",
+                            "department",
+                            "affiliation",
+                        ]:
                             org_data[attr_name] = attr_value
                     if org_data:
                         org_lookup[org_id] = org_data
-            
+
             # Process subsections recursively
             if "subsections" in section:
                 for subsection in section["subsections"]:
                     self._build_organization_lookup(subsection, org_lookup)
-        
+
         elif isinstance(section, list):
             for item in section:
                 self._build_organization_lookup(item, org_lookup)
 
-    def _extract_comprehensive_metadata(self, section, metadata, organization_lookup=None):
+    def _extract_comprehensive_metadata(
+        self, section, metadata, organization_lookup=None
+    ):
         """Comprehensively extract all metadata from sections and subsections"""
         if organization_lookup is None:
             organization_lookup = {}
@@ -459,48 +548,61 @@ class BioStudiesExtractor:
             # Extract files
             if "files" in section:
                 for file_info in section["files"]:
-                    metadata["files"].append({
-                        "name": file_info.get("name", ""),
-                        "size": file_info.get("size", ""),
-                        "type": file_info.get("type", ""),
-                        "path": file_info.get("path", ""),
-                        "description": file_info.get("description", "")
-                    })
-            
+                    metadata["files"].append(
+                        {
+                            "name": file_info.get("name", ""),
+                            "size": file_info.get("size", ""),
+                            "type": file_info.get("type", ""),
+                            "path": file_info.get("path", ""),
+                            "description": file_info.get("description", ""),
+                        }
+                    )
+
             # Extract protocols
-            if section.get("type", "").lower() == "protocols" or "protocol" in section.get("type", "").lower():
+            if (
+                section.get("type", "").lower() == "protocols"
+                or "protocol" in section.get("type", "").lower()
+            ):
                 if "subsections" in section:
                     for protocol in section["subsections"]:
                         protocol_data = {
                             "type": protocol.get("type", ""),
                             "description": protocol.get("description", ""),
-                            "attributes": []
+                            "attributes": [],
                         }
-                        
+
                         if "attributes" in protocol:
                             for attr in protocol["attributes"]:
-                                protocol_data["attributes"].append({
-                                    "name": attr.get("name", ""),
-                                    "value": attr.get("value", "")
-                                })
-                        
+                                protocol_data["attributes"].append(
+                                    {
+                                        "name": attr.get("name", ""),
+                                        "value": attr.get("value", ""),
+                                    }
+                                )
+
                         metadata["protocols"].append(protocol_data)
-            
+
             # Extract author and organization information
             if section.get("type", "").lower() in ["author", "contact", "person"]:
                 if "attributes" in section:
                     author_info = {}
                     author_affiliation_ref = None
-                    
+
                     for attr in section["attributes"]:
                         attr_name = attr.get("name", "").lower()
                         attr_value = attr.get("value", "")
-                        
-                        if attr_name in ["name", "first name", "last name", "email", "e-mail"]:
+
+                        if attr_name in [
+                            "name",
+                            "first name",
+                            "last name",
+                            "email",
+                            "e-mail",
+                        ]:
                             author_info[attr_name] = attr_value
                         elif attr_name == "affiliation" and attr.get("reference"):
                             author_affiliation_ref = attr_value
-                    
+
                     if author_info:
                         author_name = author_info.get("name", "")
                         if not author_name:
@@ -508,52 +610,76 @@ class BioStudiesExtractor:
                             first = author_info.get("first name", "")
                             last = author_info.get("last name", "")
                             author_name = f"{first} {last}".strip()
-                        
+
                         # Create author entry with affiliation info
-                        email = author_info.get("email") or author_info.get("e-mail", "")
+                        email = author_info.get("email") or author_info.get(
+                            "e-mail", ""
+                        )
                         author_entry = {
                             "name": author_name,
                             "email": email,
                             "affiliation_ref": author_affiliation_ref,
-                            "affiliation_name": ""
+                            "affiliation_name": "",
                         }
-                        
+
                         # Resolve affiliation if reference exists
-                        if author_affiliation_ref and author_affiliation_ref in organization_lookup:
+                        if (
+                            author_affiliation_ref
+                            and author_affiliation_ref in organization_lookup
+                        ):
                             resolved_org = organization_lookup[author_affiliation_ref]
-                            author_entry["affiliation_name"] = resolved_org.get("name", "")
-                        
+                            author_entry["affiliation_name"] = resolved_org.get(
+                                "name", ""
+                            )
+
                         if author_name:
                             # Check if author already exists to avoid duplicates
-                            existing_author = next((a for a in metadata.get("author_details", []) if a["name"] == author_name), None)
+                            existing_author = next(
+                                (
+                                    a
+                                    for a in metadata.get("author_details", [])
+                                    if a["name"] == author_name
+                                ),
+                                None,
+                            )
                             if not existing_author:
                                 if "author_details" not in metadata:
                                     metadata["author_details"] = []
                                 metadata["author_details"].append(author_entry)
-                            
+
                             # Keep simple authors list for backward compatibility
                             if author_name not in metadata["authors"]:
                                 metadata["authors"].append(author_name)
-            
+
             # Extract experimental design information
             if "attributes" in section:
                 for attr in section["attributes"]:
                     attr_name = attr.get("name", "").lower()
                     attr_value = attr.get("value", "")
-                    
-                    if attr_name in ["experimental factor", "variable", "treatment", "condition", "time point"]:
+
+                    if attr_name in [
+                        "experimental factor",
+                        "variable",
+                        "treatment",
+                        "condition",
+                        "time point",
+                    ]:
                         if "factors" not in metadata["experimental_design"]:
                             metadata["experimental_design"]["factors"] = []
-                        metadata["experimental_design"]["factors"].append({
-                            "name": attr_name,
-                            "value": attr_value
-                        })
-            
+                        metadata["experimental_design"]["factors"].append(
+                            {"name": attr_name, "value": attr_value}
+                        )
+
             # Process subsections recursively
             if "subsections" in section:
                 for subsection in section["subsections"]:
-                    self._extract_comprehensive_metadata(subsection, metadata, organization_lookup)
-        
+                    self._extract_comprehensive_metadata(
+                        subsection, metadata, organization_lookup
+                    )
+
         elif isinstance(section, list):
             for item in section:
-                self._extract_comprehensive_metadata(item, metadata, organization_lookup)
+                self._extract_comprehensive_metadata(
+                    item, metadata, organization_lookup
+                )
+
