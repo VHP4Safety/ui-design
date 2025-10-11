@@ -1,55 +1,4 @@
-/* This CSS file is used for tools.html, it builds upon base.css */
-.card {
-  padding: 30px;
-  margin-bottom: 30px;
-  border-radius: 15px;
-  background-color: var(--light-blue);
-  width: 100%;
-}
 
-.card img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px; /* Optional: to match the card's rounded corners */
-  object-fit: cover; /* Ensures the image fits nicely within the card */
-  width: 200px;
-  /* float: right; */
-}
-
-.tools-links {
-  display: inline-block; /* Placing 2 links and seperator in one line */
-}
-
-
-/* Adding style configurations for the buttons in the tools page. */
-button.btn-apply-filter {
-    background-color: var(--blue);
-    color: white;
-    font-size: 18px;
-    margin-top: 10px;  /* Add space above the button */
-    margin-right: 10px;  /* Add space on the right */
-    margin-bottom: 20px; /* Add space below the button */
-}
-
-button.btn-apply-filter:hover {
-    background-color: var(--blue);
-}
-
-/* Clear Filter button */
-a.btn-clear-filter {
-    background-color: var(--orange);
-    color: white;
-    padding: 10px 15px;
-    border-radius: 20px;
-    text-decoration: none;
-    margin-top: 10px; 
-    margin-left: 10px;
-    margin-bottom: 20px;
-}
-
-a.btn-clear-filter:hover {
-    background-color: var(--orange);
-}
 
 
 /* Filter button options */
@@ -94,34 +43,6 @@ a.tools-links.disabled:hover {
 }
 
 
-/* Text styles from base.css. This is probably not the correct way to do this, instead of adding the styles for this page to base.css. */
-/* General Styles for headings, paragraphs, lists and Links */
-h1 {
-    font-size: 2.5em; 
-    font-weight: bold;
-    margin: 0;
-    line-height: 1;
-}
-
-h2 {
-    font-size: 2em;
-    font-weight: bold;
-    margin: 0;
-}
-
-h3 {
-    font-size: 1.25em;
-    font-weight: bold; 
-    margin: 20px 0px 0px 0px;
-}
-
-p, ul, ol, li, input, textarea {
-    font-size: 1em;
-    text-align: justify;
-    margin: 0px;
-    color: #3A3A3A;
-    font-family: 'Open Sans', Arial, sans-serif; /* Applying font */
-}
 
 
 /* Stylization for the search button. */
@@ -138,23 +59,10 @@ p, ul, ol, li, input, textarea {
   border: 1px solid #ccc;
 }
 
-.btn-search {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: none;
-  background-color: var(--blue);
-  color: white;
-  cursor: pointer;
-}
 
 /* ============================================
    BioStudies Data Page Styles
    ============================================ */
-
-/* Override Bootstrap styles for navbar buttons on data page */
-.navbar button {
-    border-radius: 20px !important;
-}
 
 .data-container {
     max-width: 55%;
@@ -178,62 +86,7 @@ p, ul, ol, li, input, textarea {
     color: #666;
 }
 
-/* Search Section */
-.search-section {
-    margin-bottom: 30px;
-}
 
-.search-box {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.search-box input {
-    flex: 1;
-    padding: 12px 20px;
-    border: 2px solid #ddd;
-    border-radius: 20px;
-    font-size: 1em;
-    font-family: 'Open Sans', Arial, sans-serif;
-    transition: border-color 0.3s ease;
-}
-
-.search-box input:focus {
-    outline: none;
-    border-color: var(--blue);
-}
-
-.btn-primary, .btn-secondary {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 20px;
-    font-size: 17px;
-    font-weight: bold;
-    cursor: pointer;
-    height: 50px;
-    width: 150px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-    transition: opacity 0.3s ease;
-}
-
-.btn-primary {
-    background-color: var(--blue);
-    color: var(--white);
-}
-
-.btn-primary:hover {
-    opacity: 0.5;
-}
-
-.btn-secondary {
-    background-color: var(--orange);
-    color: var(--white);
-}
-
-.btn-secondary:hover {
-    opacity: 0.5;
-}
 
 /* Filter Panel Styles */
 .filter-panel {
@@ -262,55 +115,6 @@ p, ul, ol, li, input, textarea {
     gap: 10px;
     margin-bottom: 15px;
     flex-wrap: wrap;
-}
-
-.filter-dropdowns .btn-group {
-    flex: 0 0 auto;
-}
-
-.filter-dropdowns .btn {
-    background-color: var(--blue);
-    color: white;
-    border: none;
-    font-size: 1em;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: 600;
-    width: auto;
-    white-space: nowrap;
-}
-
-.filter-dropdowns .btn:hover,
-.filter-dropdowns .btn:focus {
-    background-color: var(--blue);
-    opacity: 0.8;
-}
-
-.filter-dropdowns .dropdown-menu {
-    border-radius: 10px;
-    padding: 10px 0;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-height: 300px;
-    overflow-y: auto;
-    display: none; /* Hidden by default */
-}
-
-.filter-dropdowns .dropdown-menu.show {
-    display: block; /* Show when Bootstrap adds .show class */
-}
-
-.filter-dropdowns .dropdown-menu .form-check {
-    margin: 0;
-}
-
-.filter-dropdowns .dropdown-menu .dropdown-item {
-    cursor: pointer;
-    padding: 8px 15px;
-    transition: background-color 0.2s ease;
-}
-
-.filter-dropdowns .dropdown-menu .dropdown-item:hover {
-    background-color: var(--light-blue);
 }
 
 /* Selected Filters Display */
@@ -371,22 +175,6 @@ p, ul, ol, li, input, textarea {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Bootstrap form-check overrides for VHP4Safety styling */
-.form-check-input:checked {
-    background-color: var(--blue);
-    border-color: var(--blue);
-}
-
-.form-check-label {
-    cursor: pointer;
-    color: #3A3A3A;
-    user-select: none;
-}
-
-.form-check-label:hover {
-    color: var(--blue);
-}
-
 .filter-buttons {
     display: flex;
     gap: 10px;
@@ -399,32 +187,6 @@ p, ul, ol, li, input, textarea {
     height: auto;
 }
 
-.search-status {
-    padding: 10px 15px;
-    border-radius: 8px;
-    font-size: 0.95em;
-    text-align: center;
-    transition: all 0.3s ease;
-    margin-top: 10px;
-}
-
-.search-status.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.search-status.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.search-status.loading {
-    background-color: var(--light-blue);
-    color: var(--blue);
-    border: 1px solid var(--blue);
-}
 
 /* Results Section */
 .results-section {
@@ -437,147 +199,7 @@ p, ul, ol, li, input, textarea {
     gap: 20px;
 }
 
-.result-card {
-    background-color: var(--light-blue);
-    border-radius: 15px;
-    padding: 30px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-}
 
-.result-card:hover {
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
-    transform: translateY(-2px);
-}
-
-.result-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.result-accession {
-    font-weight: bold;
-    color: var(--blue);
-    font-size: 1.1em;
-}
-
-.result-type {
-    background-color: var(--white);
-    padding: 4px 12px;
-    border-radius: 15px;
-    font-size: 0.85em;
-    color: var(--blue);
-    font-weight: 600;
-}
-
-.result-title {
-    font-size: 1.1em;
-    color: #3a3a3a;
-    margin: 10px 0;
-    line-height: 1.4;
-}
-
-.result-meta {
-    font-size: 0.9em;
-    color: #666;
-    margin: 10px 0;
-}
-
-.btn-view {
-    width: 100%;
-    padding: 10px 15px;
-    background-color: var(--orange);
-    color: var(--white);
-    border: none;
-    border-radius: 20px;
-    font-size: 17px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: opacity 0.3s ease;
-    margin-top: 10px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.btn-view:hover {
-    opacity: 0.5;
-}
-
-/* Study Detail View */
-.study-detail {
-    background-color: var(--white);
-    border-radius: 15px;
-    padding: 30px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.btn-back {
-    background-color: #6c757d;
-    color: var(--white);
-    border: none;
-    padding: 10px 15px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 17px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    transition: opacity 0.3s ease;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.btn-back:hover {
-    opacity: 0.5;
-}
-
-.metadata-section {
-    background-color: var(--light-blue);
-    border-radius: 15px;
-    padding: 30px;
-    margin-bottom: 20px;
-}
-
-.metadata-section h2 {
-    color: var(--blue);
-    border-bottom: 2px solid var(--blue);
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-    font-size: 2em;
-}
-
-.metadata-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-.metadata-table th {
-    text-align: left;
-    padding: 12px 15px;
-    background-color: var(--purple);
-    color: var(--white);
-    font-weight: bold;
-    width: 200px;
-    border: 1px solid #ddd;
-    text-transform: uppercase;
-}
-
-.metadata-table td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    background-color: var(--white);
-}
-
-.metadata-table tr:nth-child(even) td {
-    background-color: var(--grey);
-}
-
-.description-text {
-    line-height: 1.6;
-    color: #3a3a3a;
-    text-align: justify;
-}
 
 /* Authors Grid */
 .authors-grid {
