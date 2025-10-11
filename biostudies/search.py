@@ -245,8 +245,8 @@ class BioStudiesExtractor:
                             "page_size_met": page_size_met
                         }
                     else:
-                        # No filtering - return standard response
-                        return data | {"hits": hits}
+                        # No filtering - return standard response with normalized keys
+                        return data | {"hits": hits, "total": total_hits}
                         
                 except json.JSONDecodeError as e:
                     return {
