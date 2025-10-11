@@ -87,7 +87,7 @@
         
         <a href="{{ url_for('data', page=page-1, page_size=page_size, query=search_query) }}" class="btn btn-sm btn-secondary {% if not has_prev %} disabled {% endif %}">Previous</a>
         
-        <span class="d-inline">Page {{ page }} | Showing {{ (page-1) * studies|length + 1 }} - {{ page * studies|length }} of {{ total }} studies</span>
+        <span class="d-inline">Page {{ page }} | Showing {{ (page - 1) * page_size + 1 }} - {{ (page - 1) * page_size + studies|length }} of {{ total }} studies</span>
         
         {% if has_next %}
             <a href="{{ url_for('data', page=page+1, page_size=page_size, query=search_query) }}" class="btn btn-sm btn-secondary">Next</a>
