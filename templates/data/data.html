@@ -6,17 +6,17 @@
 
 <div class="data-container">
     <div class="data-header">
-        <h1><span id="collection-name">Data catalog</span></h1>
-        <p class="data-subtitle">Explore datasets generated or used in <span id="collection-name-sub"></span></p>
+        <h1><span id="collection-name">{{ collection_name or 'Data catalog' }}</span></h1>
+        <p class="data-subtitle">Explore datasets generated or used in <span id="collection-name-sub">{{ collection_name or 'BioStudies' }}</span></p>
     </div>
 
     <div class="search-section">
-        <div class="search-box">
-            <input type="text" id="search-input" placeholder="Search for datasets (e.g., S-ONTX26, toxicity, liver...)" />
-            <button id="search-btn" class="btn-primary">Search</button>
-            <button id="list-btn" class="btn-primary">All datasets</button>
-            <button id="filter-toggle-btn" class="btn-secondary">Filters</button>
-        </div>
+        <form method="GET" action="{{ url_for('data') }}" class="search-box">
+            <input type="text" name="query" id="search-input" value="{{ search_query or '' }}" placeholder="Search for datasets (e.g., S-ONTX26, toxicity, liver...)" />
+            <button type="submit" class="btn-primary">Search</button>
+            <a href="{{ url_for('data') }}" class="btn-primary">All datasets</a>
+            <button type="button" id="filter-toggle-btn" class="btn-secondary">Filters</button>
+        </form>
         
         <!-- Filter Panel -->
         <div id="filter-panel" class="filter-panel" style="display: none;">
@@ -81,14 +81,52 @@
     </div>
 
     <div class="results-section">
-        <div id="results-list" class="results-list"></div>
-        <!-- Loading indicator for infinite scroll -->
+        <div id="results-list" class="results-list">
+            {% if error %}
+                <div class="error-message">{{ error }}</div>
+            {% elif studies %}
+                <!-- Server-rendered studies -->
+                {% for study in studies %}
+                <div class="result-card pb-3" data-accession="{{ study.accession or study.accno }}">
+                    <div class="result-header">
+                        <span class="result-accession">{{ study.accession or study.accno }}</span>
+                        <span class="result-type">{{ study.type or 'Unknown' }}</span>
+                    </div>
+                    <h3 class="result-title" style="white-space: normal; word-break: break-word; overflow-wrap: anywhere; hyphens: auto;">
+                        {{ study.title or 'Untitled Study' }}
+                    </h3>
+                    <div class="result-meta">
+                        <span class="result-date">Released: {{ study.releaseDate or study.rdate or 'N/A' }}</span>
+                    </div>
+                    <a href="{{ study.url or '#' }}" class="btn-view" target="_blank">View Details</a>
+                </div>
+                {% endfor %}
+                
+                <!-- Pagination controls -->
+                <div class="pagination-controls" style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 2rem 0;">
+                    {% if has_prev %}
+                        <a href="{{ url_for('data', page=page-1, page_size=page_size, query=search_query) }}" class="btn-primary">← Previous</a>
+                    {% endif %}
+                    
+                    <span class="page-info">Page {{ page }} | Showing {{ studies|length }} of {{ total }} studies</span>
+                    
+                    {% if has_next %}
+                        <a href="{{ url_for('data', page=page+1, page_size=page_size, query=search_query) }}" class="btn-primary">Next →</a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="no-results">No studies found</div>
+            {% endif %}
+        </div>
+        
+        <!-- Loading indicator for infinite scroll (kept for potential AJAX use) -->
         <div id="loading-indicator" class="text-center my-4" style="display: none;">
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
             <p class="mt-2">Loading more studies...</p>
         </div>
+        
         <div id="study-detail" class="study-detail" style="display: none;">
             <button id="back-btn" class="btn-back">← Back to Results</button>
             <div id="study-content"></div>
@@ -100,38 +138,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    const API_BASE = '/api/biostudies';
-    let currentResults = [];
-    let collectionName = 'BioStudies';
-
-    // Pagination state for infinite scroll
-    let currentPage = 1;
-    let isLoading = false;
-    let hasMorePages = true;
-    let totalStudies = 0;
-    const PAGE_SIZE = 20;
-    const MAX_PAGES = 30;
-
-    // DOM elements
-    const searchInput = document.getElementById('search-input');
-    const searchBtn = document.getElementById('search-btn');
-    const listBtn = document.getElementById('list-btn');
-    const searchStatus = document.getElementById('search-status');
-    const resultsList = document.getElementById('results-list');
-    const loadingIndicator = document.getElementById('loading-indicator');
-    const studyDetail = document.getElementById('study-detail');
-    const studyContent = document.getElementById('study-content');
-    const backBtn = document.getElementById('back-btn');
-
-    // Search functionality
-    searchBtn.addEventListener('click', performSearch);
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') performSearch();
-    });
-
-    listBtn.addEventListener('click', listAllStudies);
-    backBtn.addEventListener('click', showResults);
-
     // Filter functionality
     const filterToggleBtn = document.getElementById('filter-toggle-btn');
     const filterPanel = document.getElementById('filter-panel');
@@ -277,566 +283,9 @@
             'reg-question': []
         };
         updateFilterDisplay();
-        displayResults(allStudies, allStudies.length);
-        showStatus('All filters cleared', 'success');
+        // Note: Filters currently only work with JavaScript-fetched data
+        // To fully implement, would need server-side filter support
     }
-
-    // Load collection configuration on page load
-    async function loadConfig() {
-        try {
-            const response = await fetch(`${API_BASE}/config`);
-            const config = await response.json();
-            if (config.collection_name) {
-                collectionName = config.collection_name;
-                document.getElementById('collection-name').textContent = collectionName;
-                document.getElementById('collection-name-sub').textContent = collectionName;
-            }
-        } catch (error) {
-            console.error('Failed to load collection config:', error);
-        }
-        
-        // Automatically load all studies after configuration is loaded
-        listAllStudies();
-    }
-
-    // Load configuration and studies when page loads
-    loadConfig();
-
-    async function performSearch() {
-        const query = searchInput.value.trim();
-        if (!query) {
-            showStatus('Please enter a search term', 'error');
-            return;
-        }
-
-        showStatus('Searching...', 'loading');
-        resultsList.innerHTML = '<div class="loading">Searching BioStudies database...</div>';
-
-        try {
-            const response = await fetch(`${API_BASE}/search?query=${encodeURIComponent(query)}`);
-            const data = await response.json();
-
-            if (data.error) {
-                showStatus(data.error, 'error');
-                resultsList.innerHTML = `<div class="error-message">${data.error}</div>`;
-                return;
-            }
-
-            currentResults = data.hits || [];
-            displayResults(currentResults, data.totalHits || 0);
-            showStatus(`Found ${data.totalHits || 0} results`, 'success');
-        } catch (error) {
-            showStatus('Error connecting to server', 'error');
-            resultsList.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
-        }
-    }
-
-    async function listAllStudies() {
-        // Reset pagination state
-        currentPage = 1;
-        hasMorePages = true;
-        allStudies = [];
-        
-        showStatus('Loading studies...', 'loading');
-        resultsList.innerHTML = '<div class="loading">Loading studies from BioStudies database...</div>';
-
-        try {
-            const response = await fetch(`${API_BASE}/list?pageSize=${PAGE_SIZE}&maxPages=1`);
-            const data = await response.json();
-
-            if (data.error) {
-                showStatus(data.error, 'error');
-                resultsList.innerHTML = `<div class="error-message">${data.error}</div>`;
-                return;
-            }
-
-            currentResults = data.hits || [];
-            allStudies = currentResults; // Store for filtering
-            totalStudies = data.total || 0;
-            
-            // Check if there are more pages
-            hasMorePages = currentResults.length >= PAGE_SIZE && currentPage < MAX_PAGES;
-            
-            displayResults(currentResults, totalStudies, false); // false = replace content
-            showStatus(`Showing ${currentResults.length} of ${totalStudies} studies`, 'success');
-            
-            // Setup infinite scroll after first page loads
-            setupInfiniteScroll();
-        } catch (error) {
-            showStatus('Error connecting to server', 'error');
-            resultsList.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
-        }
-    }
-
-    async function loadNextPage() {
-        if (isLoading || !hasMorePages) return;
-        
-        isLoading = true;
-        currentPage++;
-        
-        // Show loading indicator
-        loadingIndicator.style.display = 'block';
-        
-        try {
-            const response = await fetch(`${API_BASE}/list?pageSize=${PAGE_SIZE}&maxPages=1&page=${currentPage}`);
-            const data = await response.json();
-            
-            if (data.error) {
-                console.error('Error loading next page:', data.error);
-                loadingIndicator.style.display = 'none';
-                isLoading = false;
-                return;
-            }
-            
-            const newResults = data.hits || [];
-            
-            if (newResults.length > 0) {
-                // Append new results
-                currentResults = currentResults.concat(newResults);
-                allStudies = allStudies.concat(newResults);
-                
-                // Check if there are more pages
-                hasMorePages = newResults.length >= PAGE_SIZE && currentPage < MAX_PAGES;
-                
-                // Append to display (true = append)
-                displayResults(newResults, totalStudies, true);
-                
-                // Update status
-                showStatus(`Showing ${currentResults.length} of ${totalStudies} studies`, 'success');
-            } else {
-                hasMorePages = false;
-            }
-        } catch (error) {
-            console.error('Error loading next page:', error);
-        } finally {
-            loadingIndicator.style.display = 'none';
-            isLoading = false;
-        }
-    }
-
-    function setupInfiniteScroll() {
-        // Remove existing listener if any
-        window.removeEventListener('scroll', handleScroll);
-        
-        // Add scroll listener
-        window.addEventListener('scroll', handleScroll);
-    }
-
-    function handleScroll() {
-        // Only trigger if we're viewing results (not study detail)
-        if (studyDetail.style.display !== 'none') return;
-        
-        // Calculate if user is near bottom (200px from bottom)
-        const scrollPosition = window.innerHeight + window.scrollY;
-        const pageHeight = document.documentElement.scrollHeight;
-        
-        if (scrollPosition >= pageHeight - 200) {
-            loadNextPage();
-        }
-    }
-
-    function displayResults(results, total, append = false) {
-        if (!results || results.length === 0) {
-            if (!append) {
-                resultsList.innerHTML = '<div class="no-results">No studies found</div>';
-            }
-            return;
-        }
-
-        const html = results.map(study => {
-            const accession = study.accession || study.accno || 'N/A';
-            const title = study.title || 'Untitled Study';
-            const type = study.type || 'Unknown';
-            const releaseDate = study.releaseDate || study.rdate || 'N/A';
-
-            return `
-                <div class="result-card pb-3    " data-accession="${accession}">
-                    <div class="result-header">
-                        <span class="result-accession">${accession}</span>
-                        <span class="result-type">${type}</span>
-                    </div>
-                    <h3 class="result-title" style="white-space: normal; word-break: break-word; overflow-wrap: anywhere; hyphens: auto;">${title}</h3>
-                    <div class="result-meta">
-                        <span class="result-date">Released: ${releaseDate}</span>
-                    </div>
-                    <button class="btn-view" onclick="viewStudy('${accession}')">View Details</button>
-                </div>
-            `;
-        }).join('');
-
-        if (append) {
-            // Append new results to existing content
-            resultsList.innerHTML += html;
-        } else {
-            // Replace all content
-            resultsList.innerHTML = html;
-        }
-    }
-
-    async function viewStudy(accession) {
-        showStatus('Loading study details...', 'loading');
-        studyContent.innerHTML = '<div class="loading">Loading study metadata...</div>';
-        
-        resultsList.style.display = 'none';
-        studyDetail.style.display = 'block';
-
-        try {
-            const response = await fetch(`${API_BASE}/study/${accession}`);
-            const data = await response.json();
-
-            if (data.error) {
-                studyContent.innerHTML = `<div class="error-message">${data.error}</div>`;
-                showStatus(data.error, 'error');
-                return;
-            }
-
-            displayStudyDetail(data);
-            showStatus('Study loaded successfully', 'success');
-        } catch (error) {
-            studyContent.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
-            showStatus('Error loading study', 'error');
-        }
-    }
-
-    function displayStudyDetail(metadata) {
-        const sections = [];
-
-        // MODULE 1: General Information
-        if (metadata.general_info && Object.keys(metadata.general_info).length > 0) {
-            let generalHtml = '<table class="metadata-table">';
-            
-            // Basic fields
-            if (metadata.general_info.accession) {
-                generalHtml += `<tr><th>Accession</th><td>${metadata.general_info.accession}</td></tr>`;
-            }
-            if (metadata.general_info.title) {
-                const titleVal = metadata.general_info.title.value || metadata.general_info.title;
-                generalHtml += `<tr><th>Title</th><td>${titleVal}</td></tr>`;
-            }
-            if (metadata.general_info.type) {
-                generalHtml += `<tr><th>Type</th><td>${metadata.general_info.type}</td></tr>`;
-            }
-            if (metadata.general_info.release_date) {
-                generalHtml += `<tr><th>Release Date</th><td>${metadata.general_info.release_date}</td></tr>`;
-            }
-            
-            // Additional fields with qualifiers
-            ['Description', 'Organism', 'License', 'Bioassay', 'Organ', 'Tissue', 'Adverse outcome Pathway', 'AOP event'].forEach(field => {
-                if (metadata.general_info[field]) {
-                    const fieldData = metadata.general_info[field];
-                    const value = fieldData.value || fieldData;
-                    let displayValue = value;
-                    
-                    // Add links from valqual if present
-                    if (fieldData.valqual && fieldData.valqual.length > 0) {
-                        const urlQual = fieldData.valqual.find(q => q.name === 'URL');
-                        if (urlQual) {
-                            displayValue = `<a href="${urlQual.value}" target="_blank">${value}</a>`;
-                        }
-                    }
-                    
-                    generalHtml += `<tr><th>${field}</th><td>${displayValue}</td></tr>`;
-                }
-            });
-            
-            // Funding
-            if (metadata.general_info.funding && metadata.general_info.funding.length > 0) {
-                const fundingList = metadata.general_info.funding.map(f => 
-                    `${f.Agency || ''} (Grant: ${f.grant_id || 'N/A'})`
-                ).join('<br>');
-                generalHtml += `<tr><th>Funding</th><td>${fundingList}</td></tr>`;
-            }
-            
-            generalHtml += '</table>';
-            
-            // Add links section
-            if (metadata.general_info.links && metadata.general_info.links.length > 0) {
-                generalHtml += '<h3>Related Links</h3><div class="links-list">';
-                metadata.general_info.links.forEach(link => {
-                    generalHtml += `
-                        <div class="link-item">
-                            <a href="${link.url}" target="_blank">${link.description || link.url}</a>
-                        </div>
-                    `;
-                });
-                generalHtml += '</div>';
-            }
-            
-            sections.push(`
-                <div class="metadata-section">
-                    <h2>General Information</h2>
-                    ${generalHtml}
-                </div>
-            `);
-        }
-
-        // MODULE 2: Author Information
-        if (metadata.author_info && metadata.author_info.length > 0) {
-            const authorsHtml = metadata.author_info.map(author => `
-                <div class="author-card">
-                    <strong>${author.Name || 'N/A'}</strong>
-                    ${author['E-mail'] ? `<br/><span class="author-email">${author['E-mail']}</span>` : ''}
-                    ${author.ORCID ? `<br/><span class="author-orcid">ORCID: ${author.ORCID}</span>` : ''}
-                    ${author.Role ? `<br/><span class="author-role">Role: ${author.Role}</span>` : ''}
-                    ${author.affiliation_resolved ? `<br/><span class="author-affiliation">${author.affiliation_resolved}</span>` : ''}
-                </div>
-            `).join('');
-            sections.push(`
-                <div class="metadata-section">
-                    <h2>Author Information</h2>
-                    <div class="authors-grid">${authorsHtml}</div>
-                </div>
-            `);
-        }
-
-        // MODULE 3: Chemical Information
-        if (metadata.chemical_info && (metadata.chemical_info.test_chemicals.length > 0 || metadata.chemical_info.positive_controls.length > 0)) {
-            let chemHtml = '';
-            
-            // Test Chemicals
-            if (metadata.chemical_info.test_chemicals.length > 0) {
-                chemHtml += '<h3>Test Chemicals</h3><table class="metadata-table">';
-                chemHtml += '<thead><tr><th>Chemical</th><th>CAS</th><th>CompoundWikiID</th></tr></thead><tbody>';
-                metadata.chemical_info.test_chemicals.forEach(chem => {
-                    const compoundId = chem.CompoundWikiID || chem.compoundwikiid || '';
-                    const compoundLink = compoundId ? `<a href="/compound/${compoundId}" target="_blank">${compoundId}</a>` : 'N/A';
-                    chemHtml += `
-                        <tr>
-                            <td>${chem.Chemical || 'N/A'}</td>
-                            <td>${chem.CAS || 'N/A'}</td>
-                            <td>${compoundLink}</td>
-                        </tr>
-                    `;
-                });
-                chemHtml += '</tbody></table>';
-            }
-            
-            // Positive Controls
-            if (metadata.chemical_info.positive_controls.length > 0) {
-                chemHtml += '<h3>Positive Controls</h3><table class="metadata-table">';
-                chemHtml += '<thead><tr><th>Chemical</th><th>CAS</th><th>Concentration</th><th>Unit</th><th>Exposure Duration</th></tr></thead><tbody>';
-                metadata.chemical_info.positive_controls.forEach(control => {
-                    chemHtml += `
-                        <tr>
-                            <td>${control.Chemical || 'N/A'}</td>
-                            <td>${control.CAS || 'N/A'}</td>
-                            <td>${control.Concentration || 'N/A'}</td>
-                            <td>${control.Unit || 'N/A'}</td>
-                            <td>${control.Exposure_duration || 'N/A'}</td>
-                        </tr>
-                    `;
-                });
-                chemHtml += '</tbody></table>';
-            }
-            
-            sections.push(`
-                <div class="metadata-section">
-                    <h2>Chemical Information</h2>
-                    ${chemHtml}
-                </div>
-            `);
-        }
-        
-        // MODULE 4: Biological Model Information
-        if (metadata.biological_model_info && metadata.biological_model_info.cell_lines.length > 0) {
-            let bioModelHtml = '<table class="metadata-table">';
-            bioModelHtml += '<thead><tr><th>Cell Line</th><th>RRID</th><th>Supplier</th></tr></thead><tbody>';
-            metadata.biological_model_info.cell_lines.forEach(cell => {
-                bioModelHtml += `
-                    <tr>
-                        <td>${cell['Cell line'] || cell.cell_line || 'N/A'}</td>
-                        <td>${cell.RRID || 'N/A'}</td>
-                        <td>${cell.Supplier || 'N/A'}</td>
-                    </tr>
-                `;
-            });
-            bioModelHtml += '</tbody></table>';
-            
-            sections.push(`
-                <div class="metadata-section">
-                    <h2>Biological Model Information</h2>
-                    ${bioModelHtml}
-                </div>
-            `);
-        }
-        
-        // MODULE 5: Exposure Information
-        if (metadata.exposure_info && metadata.exposure_info.length > 0) {
-            let expHtml = '<table class="metadata-table">';
-            expHtml += '<thead><tr><th>Time Point</th><th>Time Point Unit</th><th>Exposure Type</th><th>Replicates</th><th>Detection Instrument</th><th>Endpoint</th></tr></thead><tbody>';
-            metadata.exposure_info.forEach(exp => {
-                expHtml += `
-                    <tr>
-                        <td>${exp['Time point'] || 'N/A'}</td>
-                        <td>${exp['Time point_unit'] || 'N/A'}</td>
-                        <td>${exp['Exposure type'] || 'N/A'}</td>
-                        <td>${exp.Replicates || 'N/A'}</td>
-                        <td>${exp['Detection instrument'] || 'N/A'}</td>
-                        <td>${exp.Endpoint || 'N/A'} ${exp['Endpoint_unit'] ? '(' + exp['Endpoint_unit'] + ')' : ''}</td>
-                    </tr>
-                `;
-            });
-            expHtml += '</tbody></table>';
-            
-            sections.push(`
-                <div class="metadata-section">
-                    <h2>Exposure Information</h2>
-                    ${expHtml}
-                </div>
-            `);
-        }
-        
-        // MODULE 6: Endpoint Readout Information
-        if (metadata.endpoint_readout_info && Object.keys(metadata.endpoint_readout_info).length > 0) {
-            let endpointHtml = '<table class="metadata-table">';
-            Object.entries(metadata.endpoint_readout_info).forEach(([key, value]) => {
-                endpointHtml += `<tr><th>${key}</th><td>${value}</td></tr>`;
-            });
-            endpointHtml += '</table>';
-            
-            sections.push(`
-                <div class="metadata-section">
-                    <h2>Endpoint Readout Information</h2>
-                    ${endpointHtml}
-                </div>
-            `);
-        }
-
-        // Description (kept for backward compatibility)
-        if (metadata.description && metadata.description !== 'N/A') {
-            sections.push(`
-                <div class="metadata-section">
-                    <h2>Description</h2>
-                    <p class="description-text">${metadata.description}</p>
-                </div>
-            `);
-        }
-
-        // Authors (backward compatibility - show if author_info not available)
-        if (!metadata.author_info || metadata.author_info.length === 0) {
-            if (metadata.author_details && metadata.author_details.length > 0) {
-                const authorsHtml = metadata.author_details.map(author => `
-                    <div class="author-card">
-                        <strong>${author.name}</strong>
-                        ${author.email ? `<br/><span class="author-email">${author.email}</span>` : ''}
-                        ${author.affiliation_name ? `<br/><span class="author-affiliation">${author.affiliation_name}</span>` : ''}
-                    </div>
-                `).join('');
-                sections.push(`
-                    <div class="metadata-section">
-                        <h2>Authors</h2>
-                        <div class="authors-grid">${authorsHtml}</div>
-                    </div>
-                `);
-            } else if (metadata.authors && metadata.authors.length > 0) {
-                sections.push(`
-                    <div class="metadata-section">
-                        <h2>Authors</h2>
-                        <p>${metadata.authors.join(', ')}</p>
-                    </div>
-                `);
-            }
-        }
-
-        // Biological Context
-        if (metadata.biological_context && Object.keys(metadata.biological_context).length > 0) {
-            const bioHtml = Object.entries(metadata.biological_context)
-                .map(([key, value]) => `<tr><th>${key}</th><td>${value}</td></tr>`)
-                .join('');
-            sections.push(`
-                <div class="metadata-section">
-                    <h2>Biological Context</h2>
-                    <table class="metadata-table">${bioHtml}</table>
-                </div>
-            `);
-        }
-
-        // Technical Details
-        if (metadata.technical_details && Object.keys(metadata.technical_details).length > 0) {
-            const techHtml = Object.entries(metadata.technical_details)
-                .map(([key, value]) => `<tr><th>${key}</th><td>${value}</td></tr>`)
-                .join('');
-            sections.push(`
-                <div class="metadata-section">
-                    <h2>Technical Details</h2>
-                    <table class="metadata-table">${techHtml}</table>
-                </div>
-            `);
-        }
-
-        // Files
-        if (metadata.files && metadata.files.length > 0) {
-            const filesHtml = metadata.files.map(file => `
-                <tr>
-                    <td>${file.name || 'N/A'}</td>
-                    <td>${file.type || 'N/A'}</td>
-                    <td>${file.size || 'N/A'}</td>
-                </tr>
-            `).join('');
-            sections.push(`
-                <div class="metadata-section">
-                    <h2>Files (${metadata.files.length})</h2>
-                    <table class="files-table">
-                        <thead>
-                            <tr><th>Name</th><th>Type</th><th>Size</th></tr>
-                        </thead>
-                        <tbody>${filesHtml}</tbody>
-                    </table>
-                </div>
-            `);
-        }
-
-        // Links
-        if (metadata.links && metadata.links.length > 0) {
-            const linksHtml = metadata.links.map(link => `
-                <div class="link-item">
-                    <a href="${link.url}" target="_blank">${link.description || link.type || link.url}</a>
-                </div>
-            `).join('');
-            sections.push(`
-                <div class="metadata-section">
-                    <h2>External Links</h2>
-                    <div class="links-list">${linksHtml}</div>
-                </div>
-            `);
-        }
-
-        // All Attributes
-        if (metadata.attributes && metadata.attributes.length > 0) {
-            const attrsHtml = metadata.attributes
-                .map(attr => `<tr><th>${attr.name}</th><td>${attr.value}</td></tr>`)
-                .join('');
-            sections.push(`
-                <div class="metadata-section collapsible">
-                    <h2 onclick="this.parentElement.classList.toggle('expanded')">
-                        All Attributes (${metadata.attributes.length})
-                        <span class="toggle-icon">▼</span>
-                    </h2>
-                    <div class="collapsible-content">
-                        <table class="metadata-table">${attrsHtml}</table>
-                    </div>
-                </div>
-            `);
-        }
-
-        studyContent.innerHTML = sections.join('');
-    }
-
-    function showResults() {
-        resultsList.style.display = 'block';
-        studyDetail.style.display = 'none';
-    }
-
-    function showStatus(message, type) {
-        searchStatus.textContent = message;
-        searchStatus.className = `search-status ${type}`;
-        setTimeout(() => {
-            searchStatus.className = 'search-status';
-        }, 5000);
-    }
-
-    // Make viewStudy globally accessible
-    window.viewStudy = viewStudy;
 </script>
 
 {% endblock %}

@@ -8,8 +8,10 @@ import urllib.parse
 from flask import Blueprint, Flask, abort, jsonify, render_template, request, send_file
 from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
+
 # from wikidataintegrator import wdi_core
 from wikibaseintegrator import wbi_helpers
+
 # Import BioStudies extractor
 from biostudies.search import BioStudiesExtractor
 
@@ -18,6 +20,7 @@ from biostudies.search import BioStudiesExtractor
 # Change these variables to switch between collections
 BIOSTUDIES_COLLECTION = "EU-ToxRisk"  # Current: "EU-ToxRisk", Future: "vhp4safety"
 BIOSTUDIES_COLLECTION_NAME = "EU-ToxRisk"  # Display name for the page
+
 
 ################################################################################
 class RegexConverter(BaseConverter):
@@ -38,69 +41,57 @@ class RegexConverter(BaseConverter):
 
 app = Flask(__name__)
 
+
 ################################################################################
 ### The landing page
 @app.route("/")
 def home():
     return render_template("home.html")
 
+
 ################################################################################
 ### Pages under 'Data'
 @app.route("/data")
 def data():
-    return render_template("data/data.html")
+    # Get query parameters for pagination and search
+    page = request.args.get("page", 1, type=int)
+    page_size = request.args.get("page_size", 20, type=int)
+    search_query = request.args.get("query", "", type=str)
 
-# BioStudies API endpoints
-@app.route("/api/biostudies/search")
-def biostudies_search():
-    """Search for BioStudies entries"""
-    query = request.args.get('query', '')
-    page = request.args.get('page', 1, type=int)
-    page_size = request.args.get('pageSize', 10, type=int)
-    
-    if not query:
-        return jsonify({"error": "Query parameter is required"}), 400
-    
+    # Initialize extractor
     extractor = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION)
-    results = extractor.search_studies(query, page=page, page_size=page_size)
-    
-    if "error" in results:
-        return jsonify(results), 404
-    
-    return jsonify(results), 200
 
-@app.route("/api/biostudies/study/<study_id>")
-def biostudies_get_study(study_id):
-    """Get detailed metadata for a specific BioStudies entry"""
-    extractor = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION)
-    metadata = extractor.get_study_metadata(study_id)
-    
-    if "error" in metadata:
-        return jsonify(metadata), 404
-    
-    return jsonify(metadata), 200
+    # Fetch data based on search query or list all
+    if search_query:
+        results = extractor.search_studies(search_query, page=page, page_size=page_size)
+    else:
+        results = extractor.list_studies(
+            page_size=page_size, max_pages=1, include_urls=True
+        )
 
-@app.route("/api/biostudies/list")
-def biostudies_list():
-    """List all available BioStudies entries"""
-    page_size = request.args.get('pageSize', 50, type=int)
-    max_pages = request.args.get('maxPages', 5, type=int)
-    
-    extractor = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION)
-    results = extractor.list_studies(page_size=page_size, max_pages=max_pages)
-    
-    if "error" in results:
-        return jsonify(results), 500
-    
-    return jsonify(results), 200
+    # Extract studies and metadata
+    studies = results.get("hits", [])
+    total = results.get("total", 0)
+    error = results.get("error", None)
 
-@app.route("/api/biostudies/config")
-def biostudies_config():
-    """Get current BioStudies configuration"""
-    return jsonify({
-        "collection": BIOSTUDIES_COLLECTION,
-        "collection_name": BIOSTUDIES_COLLECTION_NAME
-    }), 200
+    # Calculate pagination info
+    has_next = len(studies) >= page_size and page < 30  # Max 30 pages
+    has_prev = page > 1
+
+    # Pass data to template
+    return render_template(
+        "data/data.html",
+        studies=studies,
+        total=total,
+        page=page,
+        page_size=page_size,
+        search_query=search_query,
+        collection_name=BIOSTUDIES_COLLECTION_NAME,
+        collection=BIOSTUDIES_COLLECTION,
+        error=error,
+        has_next=has_next,
+        has_prev=has_prev,
+    )
 
 ################################################################################
 ### Pages under 'Tools'
@@ -108,8 +99,8 @@ def biostudies_config():
 # Page to list all the tools based on the list of tools on the cloud repo.
 
 # Below is the original way of creating the service_list page which runs slow.
-# Further down below it, I try to implement a way to get the combined json file 
-# rather than getting individual service information one-by-one. 
+# Further down below it, I try to implement a way to get the combined json file
+# rather than getting individual service information one-by-one.
 """ 
 @app.route("/tools")
 def tools():
@@ -199,36 +190,40 @@ def tools():
     else:
         return f"Error fetching files: {response.status_code}"
 """
-### Here begins the updated version for creating the tool list page. 
+
+
+### Here begins the updated version for creating the tool list page.
 @app.route("/tools")
 def tools():
-    url = 'https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/service_index.json'
+    url = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/service_index.json"
     response = requests.get(url)
 
     if response.status_code != 200:
         return f"Error fetching service list: {response.status_code}", 503
 
     try:
-        tools = response.json()   # Geting the service_list.json in the dictionary format.
+        tools = (
+            response.json()
+        )  # Geting the service_list.json in the dictionary format.
         tools = list(tools.values())  # Converting the dictionary to a list object.
 
-        # Mapping the URLs with glossary IDs to their text values. 
+        # Mapping the URLs with glossary IDs to their text values.
         stage_mapping = {
             "https://vhp4safety.github.io/glossary#VHP0000056": "ADME",
             "https://vhp4safety.github.io/glossary#VHP0000102": "Hazard Assessment",
             "https://vhp4safety.github.io/glossary#VHP0000148": "Chemical Information",
-            "https://vhp4safety.github.io/glossary#VHP0000149": "General"
+            "https://vhp4safety.github.io/glossary#VHP0000149": "General",
         }
-        
+
         # Explanations for stages
         stage_explanations = {
             "ADME": "Absorption, distribution, metabolism, and excretion of a substance (toxic or not) in a living organism, following exposure to this substance.",
             "Hazard Assessment": "The process of assessing the intrinsic hazard a substance poses to human health and/or the environment.",
             "Chemical Information": "Information about chemical properties and identity.",
             "General": "General tools not specific to a flow step.",
-            "Other": "Other or unknown category."
+            "Other": "Other or unknown category.",
         }
-        
+
         # Explanations for regulatory questions
         reg_question_explanations = {
             "Kidney Case Study (a)": "What is the safe cisplatin dose in cancer patients?",
@@ -236,11 +231,11 @@ def tools():
             "Parkinson Case Study (a)": "Can compound X cause Parkinson’s Disease?",
             "Parkinson Case Study (b)": "What level of exposure to compound X leads to risk for developing Parkinsons disease?",
             "Thyroid Case Study (a)": "What information about silychristin do we need to give an advice to women in their early pregnancy to decide whether the substance can be used?",
-            "Thyroid Case Study (b)": "Does silychristin influence the thyroid-mediated brain development in the fetus resulting in cognitive impairment in children?"
+            "Thyroid Case Study (b)": "Does silychristin influence the thyroid-mediated brain development in the fetus resulting in cognitive impairment in children?",
         }
 
         for tool in tools:
-            full_stage_url = tool.get('stage', '')
+            full_stage_url = tool.get("stage", "")
 
             # Writing the service name and stage values in the logs for troubleshooting.
             # print(f"Tool: {tool['service']}, Stage URL: {full_stage_url}")  # Log the full URL
@@ -248,43 +243,53 @@ def tools():
             # Checking if the full URL is in the mapping and updating the stage.
             if full_stage_url in stage_mapping:
                 # print(f"Mapping stage URL {full_stage_url} to {stage_mapping[full_stage_url]}")  # Log the mapping
-                tool['stage'] = stage_mapping[full_stage_url]
-            elif tool['stage'] in ['NA', 'Unknown']: 
-                tool['stage'] = 'Other'  # Combining "NA" and "Unknown" stages in a single stage-type, "Other".
-            
-            html_name = tool.get('html_name')
-            md_name = tool.get('md_file_name')
-            png_name = tool.get('png_file_name')
+                tool["stage"] = stage_mapping[full_stage_url]
+            elif tool["stage"] in ["NA", "Unknown"]:
+                tool["stage"] = (
+                    "Other"  # Combining "NA" and "Unknown" stages in a single stage-type, "Other".
+                )
 
-            tool['url'] = f"https://cloud.vhp4safety.nl/service/{html_name}"
-            tool['meta_data'] = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{md_name}" if md_name else "md file not found"
-            
+            html_name = tool.get("html_name")
+            md_name = tool.get("md_file_name")
+            png_name = tool.get("png_file_name")
+
+            tool["url"] = f"https://cloud.vhp4safety.nl/service/{html_name}"
+            tool["meta_data"] = (
+                f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{md_name}"
+                if md_name
+                else "md file not found"
+            )
+
             # Check if the tool has the placeholder logo
-            placeholder_logo = 'https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png'
+            placeholder_logo = "https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png"
             if png_name == placeholder_logo:
-                tool['png'] = None  # set to None if it's the common placeholder
+                tool["png"] = None  # set to None if it's the common placeholder
             else:
-                tool['png'] = f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}" if not png_name.startswith("http") else png_name
-                
-            inst_url = tool.get('inst_url', 'no_url')
+                tool["png"] = (
+                    f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}"
+                    if not png_name.startswith("http")
+                    else png_name
+                )
+
+            inst_url = tool.get("inst_url", "no_url")
             if not inst_url:  # catches "" as well
                 inst_url = "no_url"
-            tool['inst_url'] = inst_url
+            tool["inst_url"] = inst_url
 
         # Getting selected stages from the URL.
-        selected_stages = request.args.getlist('stage')
+        selected_stages = request.args.getlist("stage")
 
         # Filtering tools by selected stages.
         if selected_stages:
-            tools = [tool for tool in tools if tool.get('stage') in selected_stages]
+            tools = [tool for tool in tools if tool.get("stage") in selected_stages]
 
         # Getting all unique stages from the tools for the filter options.
-        stages = sorted(set(tool.get('stage') for tool in tools if tool.get('stage')))
+        stages = sorted(set(tool.get("stage") for tool in tools if tool.get("stage")))
 
         # Forcing "Other" to be the last item in the list of stages.
-        if 'Other' in stages:
-            stages.remove('Other')
-            stages.append('Other')
+        if "Other" in stages:
+            stages.remove("Other")
+            stages.append("Other")
 
         # Filtering over the regulatory questions.
         reg_questions = {
@@ -296,29 +301,40 @@ def tools():
             "Thyroid Case Study (b)": "reg_q_3b",
         }
 
-        selected_questions = request.args.getlist('reg_q')
+        selected_questions = request.args.getlist("reg_q")
 
         for question in selected_questions:
             field = reg_questions.get(question)
             if field:
-                tools = [tool for tool in tools if str(tool.get(field, '')).lower() == 'true']
+                tools = [
+                    tool for tool in tools if str(tool.get(field, "")).lower() == "true"
+                ]
 
         # Getting the search query from URL to add a search bar based on tool names.
-        search_query = request.args.get('search', '').strip().lower()
+        search_query = request.args.get("search", "").strip().lower()
 
         # Filtering tools by search query.
         if search_query:
-            tools = [tool for tool in tools if search_query in tool.get('service', '').lower()]
+            tools = [
+                tool
+                for tool in tools
+                if search_query in tool.get("service", "").lower()
+            ]
 
-        return render_template("tools/tools.html", tools=tools, stages=stages, 
-            selected_stages=selected_stages, reg_questions=reg_questions,
-            selected_questions=selected_questions, 
+        return render_template(
+            "tools/tools.html",
+            tools=tools,
+            stages=stages,
+            selected_stages=selected_stages,
+            reg_questions=reg_questions,
+            selected_questions=selected_questions,
             stage_explanations=stage_explanations,
-            reg_question_explanations=reg_question_explanations
+            reg_question_explanations=reg_question_explanations,
         )
 
     except Exception as e:
         return f"Error processing service data: {e}", 500
+
 
 @app.route("/tools/<toolname>")
 def tool_page(toolname):
@@ -332,8 +348,10 @@ def tool_page(toolname):
     # Pass the json filename to the template (for JS to pick up)
     return render_template("tools/tool.html", tool_json=tool_json_map[toolname])
 
+
 ################################################################################
 ### Pages under 'Case Studies'
+
 
 # General case studies page
 @app.route("/casestudies")
@@ -369,8 +387,10 @@ def show(workflow):
     except TemplateNotFound:
         abort(404)
 
+
 ################################################################################
 ### Pages related to chemical compounds
+
 
 def is_valid_qid(qid):
     return re.fullmatch(r"Q\d+", qid) is not None
@@ -410,7 +430,7 @@ def show_compounds_properties_as_json(cwid):
     if not bool(compound_dat):
         return jsonify({"error": "No data found"}), 404
     compound_dat = compound_dat["results"]["bindings"][0]
-    #return jsonify(compound_dat);
+    # return jsonify(compound_dat);
     compound_list = [
         {
             "wcid": compound_dat["cmp"]["value"],
@@ -420,7 +440,7 @@ def show_compounds_properties_as_json(cwid):
         }
     ]
     return jsonify(compound_list), 200
-        
+
 
 @app.route("/get_compound_identifiers/<cwid>")
 def show_compounds_identifiers_as_json(cwid):
@@ -447,7 +467,7 @@ def show_compounds_identifiers_as_json(cwid):
     if len(compound_dat["results"]["bindings"]) == 0:
         return jsonify({"error": "No data found"}), 404
     compound_dat = compound_dat["results"]["bindings"]
-    #return jsonify(compound_dat)
+    # return jsonify(compound_dat)
 
     compound_list = []
     for expProp in compound_dat:
@@ -456,15 +476,12 @@ def show_compounds_identifiers_as_json(cwid):
             compound_list.append(
                 {
                     "propertyLabel": expProp["propertyLabel"]["value"],
-                    "value": expProp["value"]["value"]
+                    "value": expProp["value"]["value"],
                 }
             )
         else:
             compound_list.append(
-                {
-                    "propertyLabel": expProp["propertyLabel"]["value"],
-                    "value": ""
-                }
+                {"propertyLabel": expProp["propertyLabel"]["value"], "value": ""}
             )
     return jsonify(compound_list), 200
 
@@ -498,8 +515,7 @@ def show_compounds_expdata_as_json(cwid):
         return jsonify({"error": "No data found"}), 404
     compound_dat = compound_dat["results"]["bindings"][0]
     qid = compound_dat["qid"]["value"]
-    print(qid);
-
+    print(qid)
     # the next query may be affected by https://github.com/ad-freiburg/qlever-control/issues/187
     sparqlquery = (
         "PREFIX wd: <http://www.wikidata.org/entity/>\n"
@@ -517,25 +533,28 @@ def show_compounds_expdata_as_json(cwid):
         "    ?property wikibase:claim ?propp ; wikibase:statementValue ?proppsv ; wdt:P1629 ?propEntity ; wdt:P31 wd:Q21077852 .\n"
         "    ?propEntity @en@rdfs:label ?propEntityLabel .\n"
         "    ?units @en@rdfs:label ?unitsLabel .\n"
-        "    BIND (COALESCE(IF(BOUND(?sourceTmp), ?sourceTmp, 1/0), \"\") AS ?source)\n"
-        "    BIND (COALESCE(IF(BOUND(?doiTmp), ?doiTmp, 1/0), \"\") AS ?doi)\n"
+        '    BIND (COALESCE(IF(BOUND(?sourceTmp), ?sourceTmp, 1/0), "") AS ?source)\n'
+        '    BIND (COALESCE(IF(BOUND(?doiTmp), ?doiTmp, 1/0), "") AS ?doi)\n'
         "}"
     )
-    #return sparqlquery
+    # return sparqlquery
     try:
-        sparqlqueryURL = "https://qlever.cs.uni-freiburg.de/api/wikidata?format=json&query=" +           urllib.parse.quote_plus(sparqlquery)
-        #return sparqlqueryURL
+        sparqlqueryURL = (
+            "https://qlever.cs.uni-freiburg.de/api/wikidata?format=json&query="
+            + urllib.parse.quote_plus(sparqlquery)
+        )
+        # return sparqlqueryURL
         compound_dat = requests.get(sparqlqueryURL)
-        #return json.loads(compound_dat.content)
+        # return json.loads(compound_dat.content)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     if not bool(compound_dat):
         return jsonify({"error": "No data found"}), 404
     compound_dat = json.loads(compound_dat.content)["results"]["bindings"]
-    #return jsonify(compound_dat)
+    # return jsonify(compound_dat)
     compound_list = []
     for expProp in compound_dat:
-        #return jsonify(expProp)
+        # return jsonify(expProp)
         compound_list.append(
             {
                 "propEntityLabel": expProp["propEntityLabel"]["value"],
@@ -543,7 +562,7 @@ def show_compounds_expdata_as_json(cwid):
                 "unitsLabel": expProp["unitsLabel"]["value"],
                 "source": expProp["source"]["value"],
                 "doi": expProp["doi"]["value"],
-                "seeAlso": expProp["statement"]["value"]
+                "seeAlso": expProp["statement"]["value"],
             }
         )
     return jsonify(compound_list), 200
@@ -560,13 +579,14 @@ def terms_of_service():
 def privacy_policy():
     return render_template("legal/privacypolicy.html")
 
+
 ################################################################################
 
 # Import the new blueprint
-#from routes.aop_app import aop_app
+# from routes.aop_app import aop_app
 
 # Register the blueprint
-#app.register_blueprint(aop_app)
+# app.register_blueprint(aop_app)
 
 ################################################################################
 

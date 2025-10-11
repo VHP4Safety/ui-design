@@ -236,7 +236,7 @@ class BioStudiesExtractor:
         return hits
 
     def list_studies(
-        self, page_size=50, max_pages=None, inlcude_urls: bool = False
+        self, page_size=50, max_pages=None, include_urls: bool = False
     ) -> dict:
         """
         List all public studies in the configured BioStudies collection by paginating through results.
@@ -296,7 +296,7 @@ class BioStudiesExtractor:
                 acc = h.get("accession") or h.get("accno")
                 if acc and acc not in seen_accessions:
                     seen_accessions.add(acc)
-                    if inlcude_urls:
+                    if include_urls:
                         new_items.append(
                             h | {"url": self.build_study_url(acc).get("url", "")}
                         )
