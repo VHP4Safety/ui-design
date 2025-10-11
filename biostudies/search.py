@@ -1,6 +1,5 @@
 import requests
 import json
-from .vhp4safety_parser import VHP4SafetyParser
 
 
 class BioStudiesExtractor:
@@ -14,7 +13,6 @@ class BioStudiesExtractor:
             if collection
             else f"{self.base_url}/search"
         )
-        self.vhp_parser = VHP4SafetyParser()
 
     def validate_study_id(self, study_id):
         """
@@ -30,7 +28,7 @@ class BioStudiesExtractor:
             return False, None, "Study ID is required"
 
         # Clean the study ID
-        cleaned_id = study_id.strip().upper()
+        verified_id = study_id.strip().upper()
 
         # Basic format validation for common BioStudies ID patterns
         # Examples: S-ONTX26, E-MTAB-1234, S-BSST123
@@ -42,14 +40,14 @@ class BioStudiesExtractor:
             r"^[A-Z]+-\d+$",  # General pattern like BSST123
         ]
 
-        if not any(re.match(pattern, cleaned_id) for pattern in patterns):
+        if not any(re.match(pattern, verified_id) for pattern in patterns):
             return (
                 False,
-                cleaned_id,
+                verified_id,
                 "Invalid BioStudies ID format. Expected format: S-ONTX26, E-MTAB-1234, etc.",
             )
 
-        return True, cleaned_id, None
+        return True, verified_id, None
 
     def get_study_metadata(self, study_id):
         """
@@ -63,12 +61,12 @@ class BioStudiesExtractor:
         """
         try:
             # Validate study ID format
-            is_valid, cleaned_id, validation_error = self.validate_study_id(study_id)
+            is_valid, verified_id, validation_error = self.validate_study_id(study_id)
             if not is_valid:
                 return {"error": validation_error}
 
             # Construct API URL
-            url = self.studies_url + f"/{cleaned_id}"
+            url = self.studies_url + f"/{verified_id}"
 
             # Make request with proper headers
             headers = {
@@ -83,16 +81,21 @@ class BioStudiesExtractor:
                     data = response.json()
                     if not data:
                         return {
-                            "error": f"Empty response received for study {cleaned_id}"
+                            "error": f"Empty response received for study {verified_id}"
                         }
-                    return self.parse_metadata(data)
+
+                    # Parse metadata first, then build URL using the derived collection (no extra API calls)
+                    md = self.parse_metadata(data)
+                    collection = md.get("collection", "")
+                    url = self.build_study_url(verified_id, collection).get("url", "")
+                    return md | {"url": url}
                 except json.JSONDecodeError as e:
                     return {
                         "error": f"Invalid JSON response from BioStudies API: {str(e)}"
                     }
             elif response.status_code == 404:
                 return {
-                    "error": f"Study '{cleaned_id}' not found in BioStudies database. Please check the ID and try again."
+                    "error": f"Study '{verified_id}' not found in BioStudies database. Please check the ID and try again."
                 }
             elif response.status_code == 403:
                 return {
@@ -121,6 +124,44 @@ class BioStudiesExtractor:
             return {"error": f"Network error: {str(e)}"}
         except Exception as e:
             return {"error": f"Unexpected error occurred: {str(e)}"}
+
+    def get_study_collection(self, study_id):
+        """
+        Extract collection for a given BioStudies ID
+
+        Args:
+            study_id (str): BioStudies accession ID (e.g., S-ONTX26)
+
+        Returns:
+            dict: Parsed collection or error information
+        """
+        metadata = self.get_study_metadata(study_id)
+        if "error" in metadata:
+            return metadata
+        collection = metadata.get("collection", "")
+        return {"accession": study_id, "collection": collection}
+
+    def build_study_url(self, study_id, collection: str = ""):
+        """
+        Build the URL to access the study in BioStudies web interface
+
+        Args:
+            study_id (str): BioStudies accession
+            collection (str): Optional collection name if already known
+        Returns:
+            dict: URL or error information
+        """
+        is_valid, verified_id, validation_error = self.validate_study_id(study_id)
+        if not is_valid:
+            return {"error": validation_error}
+
+        # If collection is provided, use it; otherwise, build the non-collection URL
+        if collection:
+            url = f"https://www.ebi.ac.uk/biostudies/{collection}/studies/{verified_id}"
+        else:
+            url = f"https://www.ebi.ac.uk/biostudies/studies/{verified_id}"
+
+        return {"accession": verified_id, "url": url}
 
     def search_studies(self, query, page=1, page_size=10) -> dict:
         """
@@ -154,7 +195,7 @@ class BioStudiesExtractor:
                     data = response.json()
                     if not data or data.get("totalHits", 0) == 0:
                         return {"error": "No results found."}
-                    return data
+                    return data | {"hits": self._hit_url(data.get("hits", []))}
                 except json.JSONDecodeError as e:
                     return {
                         "error": f"Invalid JSON response from BioStudies API: {str(e)}"
@@ -187,7 +228,16 @@ class BioStudiesExtractor:
         except Exception as e:
             return {"error": f"Unexpected error occurred: {str(e)}"}
 
-    def list_studies(self, page_size=50, max_pages=None):
+    def _hit_url(self, hits: list) -> list:
+        for hit in hits:
+            acc = hit.get("accession") or hit.get("accno")
+            if acc:
+                hit["url"] = self.build_study_url(acc).get("url", "")
+        return hits
+
+    def list_studies(
+        self, page_size=50, max_pages=None, inlcude_urls: bool = False
+    ) -> dict:
         """
         List all public studies in the configured BioStudies collection by paginating through results.
         Uses page/pageSize (e.g., ?page=1&amp;pageSize=50) because some BioStudies endpoints ignore offset/size
@@ -246,7 +296,12 @@ class BioStudiesExtractor:
                 acc = h.get("accession") or h.get("accno")
                 if acc and acc not in seen_accessions:
                     seen_accessions.add(acc)
-                    new_items.append(h)
+                    if inlcude_urls:
+                        new_items.append(
+                            h | {"url": self.build_study_url(acc).get("url", "")}
+                        )
+                    else:
+                        new_items.append(h)
 
             if not new_items:
                 # No new items -> stop to avoid infinite loop
@@ -309,6 +364,7 @@ class BioStudiesExtractor:
                 "endpoint_readout_info": {},
                 "raw_data": raw_data,  # Keep raw data for debugging
             }
+            metadata["collection"] = ""
 
             # Extract attributes with enhanced categorization
             if "attributes" in raw_data:
@@ -319,9 +375,12 @@ class BioStudiesExtractor:
                     metadata["attributes"].append(
                         {"name": attr.get("name", ""), "value": attr_value}
                     )
+                    # Extract collection info (only set when present)
+                    if attr_name in ["attachto", "collection"]:
+                        metadata["collection"] = attr_value
 
                     # Categorize biological context
-                    if attr_name in [
+                    elif attr_name in [
                         "organism",
                         "species",
                         "organism part",
@@ -435,10 +494,6 @@ class BioStudiesExtractor:
                         or "publication" in link_type
                     ):
                         metadata["publications"].append(link_data)
-            
-            # Add VHP4Safety-specific module parsing
-            vhp_modules = self.vhp_parser.parse_to_modules(raw_data)
-            metadata.update(vhp_modules)
 
             return metadata
 
