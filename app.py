@@ -75,7 +75,7 @@ def data():
     error = results.get("error", None)
 
     # Calculate pagination info
-    has_next = len(studies) >= page_size and page < 30  # Max 30 pages
+    has_next = (page * page_size) < total
     has_prev = page > 1
 
     # Pass data to template
