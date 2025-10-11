@@ -5,6 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VHP4Safety</title>
+    
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <!-- Custom CSS (color scheme and overrides) -->
     <link rel="stylesheet" href="/static/css/base.css" />
 
     <!-- jQuery -->
@@ -25,11 +30,6 @@
 
     <!-- Main JavaScript functions for UI interactions -->
     <script>
-      // Toggle hamburger menu overlay
-      function toggleMenu() {
-        document.getElementById("menuOverlay").classList.toggle("open");
-      }
-
       // Toggle read more/less content
       function toggleReadMore() {
         const content = document.querySelector(".read-more-content");
@@ -59,34 +59,6 @@
         });
       }
 
-      // Smooth scroll for menu overlay links
-      document.querySelectorAll(".menu-overlay a").forEach((link) => {
-        link.addEventListener("click", function (event) {
-          event.preventDefault();
-          const targetId = this.getAttribute("href").substring(1);
-          const targetElement = document.getElementById(targetId);
-
-          if (targetElement) {
-            targetElement.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
-            });
-          }
-        });
-      });
-
-      // Close menu overlay when clicking outside
-      document.addEventListener("click", (event) => {
-        const menuOverlay = document.getElementById("menuOverlay");
-        if (
-          menuOverlay.classList.contains("open") &&
-          !menuOverlay.contains(event.target) &&
-          !event.target.classList.contains("hamburger-menu")
-        ) {
-          menuOverlay.classList.remove("open");
-        }
-      });
-
       // Scroll to next section (used for navigation)
       function scrollToNextSection() {
         window.scrollBy({ top: window.innerHeight / 1.5, behavior: "smooth" });
@@ -108,79 +80,101 @@
     </script>
   </head>
 
-  <body>
+  <body class="d-flex flex-column min-vh-100">
     <!-- Navigation Bar: Logo, main links, hamburger menu -->
-    <nav class="navbar">
-      <header>
-        <a href="/"
-          ><img
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand ms-3" href="/">
+          <img
             src="/static/images/logos/logo/PNG/300ppi/VHP_Logo_Long_02_300.png"
-            alt="Logo"
-            class="logo-image"
-        /></a>
-      </header>
-      <div class="nav-links">
-        <button onclick="location.href='/tools'">Tools</button>
-        <button onclick="location.href='/casestudies'">Case Studies</button>
-        <button onclick="location.href='/data'">Data</button>
+            alt="VHP4Safety Logo"
+            height="70"
+            class="d-inline-block align-text-top"
+          />
+        </a>
+        
+        <!-- Main navigation buttons (visible on large screens) -->
+        <div class="d-none d-lg-flex gap-2 me-3">
+          <button class="btn btn-pink" onclick="location.href='/tools'">Tools</button>
+          <button class="btn btn-blue" onclick="location.href='/casestudies'">Case Studies</button>
+          <button class="btn btn-orange" onclick="location.href='/data'">Data</button>
+        </div>
+        
+        <!-- Hamburger toggle button for offcanvas menu -->
+        <button class="navbar-toggler me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
       </div>
-      <div class="hamburger-menu" onclick="toggleMenu()">☰</div>
     </nav>
-    <!-- Overlay menu for mobile navigation -->
-    <div class="menu-overlay" id="menuOverlay">
-      <div class="close-button" onclick="toggleMenu()">✖</div>
-      <ul>
-        <li><a href="{{ url_for('home') }}#about-section">About</a></li>
-        <li><a href="{{ url_for('home') }}#partners-section">Partners</a></li>
-        <li><a href="{{ url_for('home') }}#contact-section">Contact</a></li>
-      </ul>
+
+    <!-- Offcanvas menu (slides in from right) -->
+    <div class="offcanvas offcanvas-end bg-light-blue" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="nav flex-column fs-5 fw-bold">
+          <li class="nav-item mb-3">
+            <a class="nav-link text-dark" href="{{ url_for('home') }}#about-section" data-bs-dismiss="offcanvas">About</a>
+          </li>
+          <li class="nav-item mb-3">
+            <a class="nav-link text-dark" href="{{ url_for('home') }}#partners-section" data-bs-dismiss="offcanvas">Partners</a>
+          </li>
+          <li class="nav-item mb-3">
+            <a class="nav-link text-dark" href="{{ url_for('home') }}#contact-section" data-bs-dismiss="offcanvas">Contact</a>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <!-- Main Content Section: replaced by child templates -->
-    <main>{% block content %} {% endblock %}</main>
+    <main class="flex-grow-1 mt-5 pt-4">{% block content %} {% endblock %}</main>
 
     <!-- Footer Section: site links, resources, legal, connect -->
-    <footer>
-      <div class="footer-container">
-        <div class="footer-column">
-          <h3>EXPLORE</h3>
-          <ul>
-            <li><a href="/tools">Tools</a></li>
-            <li><a href="/casestudies">Case Studies</a></li>
-            <li><a href="/data">Data</a></li>
-          </ul>
+    <footer class="bg-light-blue py-4">
+      <div class="container" style="max-width: 55%;">
+        <div class="row g-4">
+          <div class="col-md-3">
+            <h6 class="text-uppercase fw-bold mb-3">EXPLORE</h6>
+            <ul class="list-unstyled">
+              <li><a href="/tools" class="text-decoration-none">Tools</a></li>
+              <li><a href="/casestudies" class="text-decoration-none">Case Studies</a></li>
+              <li><a href="/data" class="text-decoration-none">Data</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3">
+            <h6 class="text-uppercase fw-bold mb-3">RESOURCES</h6>
+            <ul class="list-unstyled">
+              <li><a href="{{ url_for('home') }}#about-section" class="text-decoration-none">About</a></li>
+              <li><a href="{{ url_for('home') }}#partners-section" class="text-decoration-none">Partners</a></li>
+              <li><a href="{{ url_for('home') }}#contact-section" class="text-decoration-none">Contact</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3">
+            <h6 class="text-uppercase fw-bold mb-3">LEGAL</h6>
+            <ul class="list-unstyled">
+              <li><a href="/legal/terms_of_service" class="text-decoration-none">Terms of Service</a></li>
+              <li><a href="/legal/privacypolicy" class="text-decoration-none">Privacy Policy</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3">
+            <h6 class="text-uppercase fw-bold mb-3">CONNECT</h6>
+            <ul class="list-unstyled">
+              <li><a href="https://github.com/VHP4Safety" class="text-decoration-none">GitHub</a></li>
+              <li><a href="https://www.linkedin.com/company/vhp4safety/posts/?feedView=all" class="text-decoration-none">LinkedIn</a></li>
+            </ul>
+          </div>
         </div>
-        <div class="footer-column">
-          <h3>RESOURCES</h3>
-          <ul>
-            <li><a href="{{ url_for('home') }}#about-section">About</a></li>
-            <li>
-              <a href="{{ url_for('home') }}#partners-section">Partners</a>
-            </li>
-            <li><a href="{{ url_for('home') }}#contact-section">Contact</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h3>LEGAL</h3>
-          <ul>
-            <li><a href="/legal/terms_of_service">Terms of Service</a></li>
-            <li><a href="/legal/privacypolicy">Privacy Policy</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h3>CONNECT</h3>
-          <ul>
-            <li><a href="https://github.com/VHP4Safety">GitHub</a></li>
-            <li>
-              <a
-                href="https://www.linkedin.com/company/vhp4safety/posts/?feedView=all"
-                >LinkedIn</a
-              >
-            </li>
-          </ul>
+        <div class="row mt-3">
+          <div class="col-12 text-center">
+            <p class="mb-0 small">&copy; 2025 VHP4Safety</p>
+          </div>
         </div>
       </div>
-      <p>&copy; 2025 VHP4Safety</p>
     </footer>
+
+    <!-- Bootstrap 5.3.3 JS Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </body>
 </html>
