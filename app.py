@@ -55,7 +55,7 @@ def home():
 def data():
     # Get query parameters for pagination and search
     page = request.args.get("page", 1, type=int)
-    page_size = request.args.get("page_size", 20, type=int)
+    page_size = request.args.get("page_size", 18, type=int)
     search_query = request.args.get("query", "", type=str)
     
     # Get filter parameters
