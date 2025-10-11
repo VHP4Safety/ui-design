@@ -1,5 +1,6 @@
 import requests
 import json
+import time
 
 
 class BioStudiesExtractor:
@@ -189,6 +190,11 @@ class BioStudiesExtractor:
             if not query or not isinstance(query, str):
                 return {"error": "Search query must be a non-empty string."}
 
+            # If filters are provided, metadata must be loaded
+            filters_applied = bool(filter)
+            if filters_applied:
+                load_metadate = True
+
             params = {"query": query, "page": page, "pageSize": page_size}
 
             headers = {
@@ -204,14 +210,44 @@ class BioStudiesExtractor:
                 try:
                     data = response.json()
                     hits = data.get("hits", [])
-                    if not data or data.get("totalHits", 0) == 0:
+                    total_hits = data.get("totalHits", 0)
+                    
+                    if not data or total_hits == 0:
                         return {"error": "No results found."}
                     
-                    # augment hits with URLS and metadata if requested
+                    # Augment hits with URLs and metadata if requested
                     if load_metadate:
                         hits = self._hit_metadata(hits)
                     hits = self._hit_url(hits)
-                    return data | {"hits": hits}
+                    
+                    # Apply filters if provided
+                    if filters_applied:
+                        hits = self._apply_filters(hits, filter)
+                        
+                        # Backfill if we don't have enough filtered results
+                        page_size_met = len(hits) >= page_size
+                        pages_fetched = 1
+                        
+                        if not page_size_met:
+                            hits, page_size_met, pages_fetched = self._backfill_filtered_results(
+                                hits, page, page_size, filter, query
+                            )
+                        
+                        # Build response with filtering metadata
+                        return {
+                            "totalHits": total_hits,
+                            "hits": hits,
+                            "hits_returned": len(hits),
+                            "page": page,
+                            "pageSize": page_size,
+                            "pages_fetched": pages_fetched,
+                            "filters_applied": True,
+                            "page_size_met": page_size_met
+                        }
+                    else:
+                        # No filtering - return standard response
+                        return data | {"hits": hits}
+                        
                 except json.JSONDecodeError as e:
                     return {
                         "error": f"Invalid JSON response from BioStudies API: {str(e)}"
@@ -258,7 +294,117 @@ class BioStudiesExtractor:
                 hit["metadata"] = self.get_study_metadata(acc)
         return hits
 
-    def list_studies(self, page=1, page_size=50, include_urls: bool = False, load_metadata:bool=False) -> dict:
+    def _apply_filters(self, hits: list, filters: list[tuple]) -> list:
+        """
+        Filter hits based on metadata field values (case-insensitive AND logic)
+        
+        Args:
+            hits (list): List of hits to filter
+            filters (list): List of tuples of (field_name, value) to filter by
+            
+        Returns:
+            list: Filtered hits that match all filter conditions
+        """
+        if not filters:
+            return hits
+        
+        filtered = []
+        for hit in hits:
+            metadata = hit.get('metadata', {})
+            if not metadata:
+                continue
+            
+            matches_all = True
+            for field, value in filters:
+                field_value = metadata.get(field, "").lower()
+                filter_value = value.lower()
+                if field_value != filter_value:
+                    matches_all = False
+                    break
+            
+            if matches_all:
+                filtered.append(hit)
+        
+        return filtered
+
+    def _backfill_filtered_results(self, initial_hits: list, page: int, page_size: int, 
+                                   filters: list[tuple], query: str = None) -> tuple:
+        """
+        Backfill filtered results by fetching additional pages until page_size is met or timeout
+        
+        Args:
+            initial_hits (list): Initial filtered hits from first page
+            page (int): Starting page number
+            page_size (int): Target number of results
+            filters (list): List of filter tuples
+            query (str): Search query (None for list_studies)
+            
+        Returns:
+            tuple: (filtered_hits, page_size_met, pages_fetched)
+        """
+        filtered = initial_hits[:]
+        current_page = page
+        start_time = time.time()
+        pages_fetched = 1
+        
+        while len(filtered) < page_size:
+            # Timeout check (30 seconds)
+            if time.time() - start_time > 30:
+                break
+            
+            # Fetch next page
+            current_page += 1
+            
+            try:
+                if query:
+                    # For search_studies
+                    params = {"query": query, "page": current_page, "pageSize": page_size}
+                    headers = {
+                        "Accept": "application/json",
+                        "User-Agent": "BioStudies-VHP4Safety-App/1.0",
+                    }
+                    response = requests.get(self.search_url, headers=headers, params=params, timeout=30)
+                    
+                    if response.status_code != 200:
+                        break
+                    
+                    data = response.json()
+                    next_hits = data.get('hits', [])
+                else:
+                    # For list_studies
+                    params = {"page": current_page, "pageSize": page_size}
+                    headers = {
+                        "Accept": "application/json",
+                        "User-Agent": "BioStudies-VHP4Safety-App/1.0",
+                    }
+                    response = requests.get(self.search_url, headers=headers, params=params, timeout=30)
+                    
+                    if response.status_code != 200:
+                        break
+                    
+                    data = response.json()
+                    next_hits = data.get('hits', [])
+                
+                if not next_hits:
+                    break
+                
+                # Load metadata for next page hits
+                next_hits = self._hit_metadata(next_hits)
+                
+                # Apply filters to next page
+                next_filtered = self._apply_filters(next_hits, filters)
+                filtered.extend(next_filtered)
+                pages_fetched += 1
+                
+            except Exception:
+                # On any error, stop backfilling
+                break
+        
+        # Trim to exact page_size
+        page_size_met = len(filtered) >= page_size
+        return filtered[:page_size], page_size_met, pages_fetched
+
+    def list_studies(self, page=1, page_size=50, include_urls: bool = False, load_metadata:bool=False, filter: list[tuple] = list(tuple())) -> dict:
         """
         List studies in the configured BioStudies collection for a specific page.
 
@@ -268,10 +414,17 @@ class BioStudiesExtractor:
             include_urls (bool): Whether to include study URLs in results (default: False)
             load_metadata (bool): Whether to load metadata for each hit (default: False)
                 Only use when page_size is small to avoid performance issues
+            filter (list): Optional list of tuples of (field, value) to filter results (default: no filter)
 
         Returns:
             dict: Dictionary containing 'total' (total number of studies) and 'hits' (list of studies for the requested page)
         """
+        # If filters are provided, metadata must be loaded
+        filters_applied = bool(filter)
+        if filters_applied:
+            load_metadata = True
+            include_urls = True
+        
         headers = {
             "Accept": "application/json",
             "User-Agent": "BioStudies-VHP4Safety-App/1.0",
@@ -314,8 +467,35 @@ class BioStudiesExtractor:
             hits = self._hit_url(hits)
         if load_metadata:
             hits = self._hit_metadata(hits)
+        
+        # Apply filters if provided
+        if filters_applied:
+            hits = self._apply_filters(hits, filter)
             
-        return {"total": total_hits, "hits": hits}
+            # Backfill if we don't have enough filtered results
+            page_size_met = len(hits) >= page_size
+            pages_fetched = 1
+            
+            if not page_size_met:
+                hits, page_size_met, pages_fetched = self._backfill_filtered_results(
+                    hits, page, page_size, filter, query=None
+                )
+            
+            # Build response with filtering metadata
+            return {
+                "totalHits": total_hits,
+                "total": total_hits,
+                "hits": hits,
+                "hits_returned": len(hits),
+                "page": page,
+                "pageSize": page_size,
+                "pages_fetched": pages_fetched,
+                "filters_applied": True,
+                "page_size_met": page_size_met
+            }
+        else:
+            # No filtering - return standard response
+            return {"total": total_hits, "hits": hits}
 
     def parse_metadata(self, raw_data):
         """
@@ -1020,4 +1200,3 @@ class BioStudiesExtractor:
 #       'affiliation_ref': 'Swetox-KI',
 #       'affiliation_name': 'Swedish Toxicology Sciences Research Center (Karolinska Institutet)'}],
 #     'url': 'https://www.ebi.ac.uk/biostudies/EU-ToxRisk/studies/S-TOXR1735'}},
-  

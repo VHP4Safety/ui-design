@@ -11,8 +11,12 @@
     </div>
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3 d-inline">
-        <form method="GET" action="{{ url_for('data') }}" class="d-flex" role="search">
+        <form method="GET" action="{{ url_for('data') }}" class="d-flex" role="search" id="search-form">
             <input type="text" class="form-control me-2" name="query" id="search-input" value="{{ search_query or '' }}" placeholder="Search for datasets (e.g., S-ONTX26, toxicity, liver...)" />
+            <!-- Hidden inputs for filters -->
+            <input type="hidden" name="filter_case_study" id="filter_case_study" value="{{ filter_case_study or '' }}" />
+            <input type="hidden" name="filter_regulatory_question" id="filter_regulatory_question" value="{{ filter_regulatory_question or '' }}" />
+            <input type="hidden" name="filter_flow_step" id="filter_flow_step" value="{{ filter_flow_step or '' }}" />
             <div class="btn-group" role="group" aria-label="Search and filter buttons">
                 <button type="submit" class="btn btn-outline-primary">Search</button>
                 <a href="{{ url_for('data') }}" class="btn btn-outline-danger text-nowrap">Clear</a>
@@ -82,15 +86,27 @@
         <div id="search-status" class="search-status"></div>
     </nav>
 
+    <!-- Filter Status Display -->
+    {% if filters_applied %}
+    <div class="alert alert-info">
+        <strong>Filters Active:</strong> Showing {{ hits_returned }} results
+        {% if not page_size_met %}(fetched {{ pages_fetched }} page(s), timeout reached){% endif %}
+        | 
+        {% if filter_case_study %}<span class="badge bg-primary">Case Study: {{ filter_case_study }}</span> {% endif %}
+        {% if filter_flow_step %}<span class="badge bg-primary">Flow Step: {{ filter_flow_step }}</span> {% endif %}
+        {% if filter_regulatory_question %}<span class="badge bg-primary">Regulatory Question: {{ filter_regulatory_question }}</span> {% endif %}
+    </div>
+    {% endif %}
+
     <!-- Pagination controls -->
     <div class="justify-content-between d-flex my-3 ">
         
-        <a href="{{ url_for('data', page=page-1, page_size=page_size, query=search_query) }}" class="btn btn-sm btn-secondary {% if not has_prev %} disabled {% endif %}">Previous</a>
+        <a href="{{ url_for('data', page=page-1, page_size=page_size, query=search_query, filter_case_study=filter_case_study, filter_regulatory_question=filter_regulatory_question, filter_flow_step=filter_flow_step) }}" class="btn btn-sm btn-secondary {% if not has_prev %} disabled {% endif %}">Previous</a>
         
-        <span class="d-inline">Page {{ page }} | Showing {{ (page - 1) * page_size + 1 }} - {{ (page - 1) * page_size + studies|length }} of {{ total }} studies</span>
+        <span class="d-inline">Page {{ page }} | Showing {{ (page - 1) * page_size + 1 }} - {{ (page - 1) * page_size + studies|length }} of {{ total }} studies{% if filters_applied %} (filtered){% endif %}</span>
         
         {% if has_next %}
-            <a href="{{ url_for('data', page=page+1, page_size=page_size, query=search_query) }}" class="btn btn-sm btn-secondary">Next</a>
+            <a href="{{ url_for('data', page=page+1, page_size=page_size, query=search_query, filter_case_study=filter_case_study, filter_regulatory_question=filter_regulatory_question, filter_flow_step=filter_flow_step) }}" class="btn btn-sm btn-secondary">Next</a>
         {% endif %}
     </div>
 
@@ -143,60 +159,35 @@
 </div>
 
 <script>
-    // Define API_BASE if not already defined
-    const API_BASE = window.API_BASE || '/api';
-
-    // Filter functionality
+    // Filter functionality - Server-side filtering
     const filterToggleBtn = document.getElementById('filter-toggle-btn');
     const filterPanel = document.getElementById('filter-panel');
     const applyFilterBtn = document.getElementById('apply-filter-btn');
     const clearFilterBtn = document.getElementById('clear-filter-btn');
     const selectedFiltersContainer = document.getElementById('selected-filters');
     const filterTagsContainer = document.getElementById('filter-tags');
-    const resultsListContainer = document.getElementById('results-list');
-    const searchStatusContainer = document.getElementById('search-status');
-    let allStudies = []; // Store all studies for filtering
+    const searchForm = document.getElementById('search-form');
+    
+    // Track selected filters (only one per category for server-side implementation)
     let selectedFilters = {
-        'case-study': [],
-        'flow-step': [],
-        'reg-question': []
+        'case-study': '{{ filter_case_study or "" }}',
+        'flow-step': '{{ filter_flow_step or "" }}',
+        'reg-question': '{{ filter_regulatory_question or "" }}'
     };
-
-    // Helper function to display results
-    function displayResults(studies, totalCount) {
-        if (!resultsListContainer) return;
-        
-        if (studies.length === 0) {
-            resultsListContainer.innerHTML = '<div class="alert alert-warning">No studies found</div>';
-            return;
-        }
-        
-        // For now, just show a message since we're filtering server-rendered content
-        console.log(`Would display ${studies.length} of ${totalCount} studies`);
-    }
-
-    // Helper function to show status messages
-    function showStatus(message, type = 'info') {
-        if (!searchStatusContainer) return;
-        
-        searchStatusContainer.textContent = message;
-        searchStatusContainer.className = `search-status ${type}`;
-        
-        // Auto-hide success messages after 3 seconds
-        if (type === 'success') {
-            setTimeout(() => {
-                searchStatusContainer.textContent = '';
-                searchStatusContainer.className = 'search-status';
-            }, 3000);
-        }
-    }
 
     // Initialize when DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
+        // Show filter panel if filters are active
+        {% if filter_case_study or filter_flow_step or filter_regulatory_question %}
+        filterPanel.style.display = 'block';
+        {% endif %}
+        
+        // Initialize filter display
+        updateFilterDisplay();
+        
         filterToggleBtn.addEventListener('click', () => {
             const isVisible = filterPanel.style.display !== 'none';
             filterPanel.style.display = isVisible ? 'none' : 'block';
-            filterToggleBtn.textContent = isVisible ? 'Filters' : 'Filters';
         });
 
         // Add click handlers for dropdown items
@@ -205,23 +196,19 @@
                 e.preventDefault();
                 const filterType = e.target.dataset.filterType;
                 const filterValue = e.target.dataset.filterValue;
-                addFilter(filterType, filterValue);
+                setFilter(filterType, filterValue);
             });
         });
     });
 
-    function addFilter(type, value) {
-        // Prevent duplicates
-        if (selectedFilters[type].includes(value)) {
-            return;
-        }
-        
-        selectedFilters[type].push(value);
+    function setFilter(type, value) {
+        // For server-side filtering, we only support one value per filter type
+        selectedFilters[type] = value;
         updateFilterDisplay();
     }
 
-    function removeFilter(type, value) {
-        selectedFilters[type] = selectedFilters[type].filter(v => v !== value);
+    function removeFilter(type) {
+        selectedFilters[type] = '';
         updateFilterDisplay();
     }
 
@@ -230,9 +217,9 @@
         filterTagsContainer.innerHTML = '';
         
         // Count total filters
-        const totalFilters = selectedFilters['case-study'].length + 
-                           selectedFilters['flow-step'].length + 
-                           selectedFilters['reg-question'].length;
+        const totalFilters = (selectedFilters['case-study'] ? 1 : 0) + 
+                           (selectedFilters['flow-step'] ? 1 : 0) + 
+                           (selectedFilters['reg-question'] ? 1 : 0);
         
         // Show/hide container
         if (totalFilters === 0) {
@@ -242,92 +229,63 @@
         
         selectedFiltersContainer.style.display = 'block';
         
-        // Create tags for each filter
-        Object.entries(selectedFilters).forEach(([type, values]) => {
-            values.forEach(value => {
-                const tag = document.createElement('span');
-                tag.className = 'filter-tag';
-                tag.innerHTML = `
-                    ${value}
-                    <button class="filter-tag-remove" onclick="removeFilterTag('${type}', '${value}')">×</button>
-                `;
-                filterTagsContainer.appendChild(tag);
-            });
-        });
+        // Create tags for each active filter
+        if (selectedFilters['case-study']) {
+            const tag = document.createElement('span');
+            tag.className = 'filter-tag';
+            tag.innerHTML = `
+                Case Study: ${selectedFilters['case-study']}
+                <button class="filter-tag-remove" onclick="removeFilterTag('case-study')">×</button>
+            `;
+            filterTagsContainer.appendChild(tag);
+        }
+        
+        if (selectedFilters['flow-step']) {
+            const tag = document.createElement('span');
+            tag.className = 'filter-tag';
+            tag.innerHTML = `
+                Flow Step: ${selectedFilters['flow-step']}
+                <button class="filter-tag-remove" onclick="removeFilterTag('flow-step')">×</button>
+            `;
+            filterTagsContainer.appendChild(tag);
+        }
+        
+        if (selectedFilters['reg-question']) {
+            const tag = document.createElement('span');
+            tag.className = 'filter-tag';
+            tag.innerHTML = `
+                Reg. Question: ${selectedFilters['reg-question']}
+                <button class="filter-tag-remove" onclick="removeFilterTag('reg-question')">×</button>
+            `;
+            filterTagsContainer.appendChild(tag);
+        }
     }
 
     // Make removeFilter accessible globally for onclick handler
-    window.removeFilterTag = function(type, value) {
-        removeFilter(type, value);
+    window.removeFilterTag = function(type) {
+        removeFilter(type);
     };
 
-    applyFilterBtn.addEventListener('click', applyFilters);
-    clearFilterBtn.addEventListener('click', clearFilters);
+    // Apply filters by updating hidden form fields and submitting
+    applyFilterBtn.addEventListener('click', () => {
+        // Update hidden form fields
+        document.getElementById('filter_case_study').value = selectedFilters['case-study'];
+        document.getElementById('filter_regulatory_question').value = selectedFilters['reg-question'];
+        document.getElementById('filter_flow_step').value = selectedFilters['flow-step'];
+        
+        // Submit the form
+        searchForm.submit();
+    });
 
-    async function applyFilters() {
-        const caseStudyFilters = selectedFilters['case-study'];
-        const flowStepFilters = selectedFilters['flow-step'];
-        const regQuestionFilters = selectedFilters['reg-question'];
-        
-        const hasAnyFilter = caseStudyFilters.length > 0 || flowStepFilters.length > 0 || regQuestionFilters.length > 0;
-        
-        if (!hasAnyFilter) {
-            displayResults(allStudies, allStudies.length);
-            showStatus('Showing all studies', 'success');
-            return;
-        }
-        
-        showStatus('Applying filters...', 'loading');
-        
-        const filteredStudies = [];
-        for (const study of allStudies) {
-            try {
-                const accession = study.accession || study.accno;
-                const response = await fetch(`${API_BASE}/study/${accession}`);
-                const metadata = await response.json();
-                
-                let matchesCaseStudy = caseStudyFilters.length === 0;
-                let matchesFlowStep = flowStepFilters.length === 0;
-                let matchesRegQuestion = regQuestionFilters.length === 0;
-                
-                if (caseStudyFilters.length > 0 && metadata.general_info && metadata.general_info['Case study']) {
-                    const caseStudy = metadata.general_info['Case study'].value || metadata.general_info['Case study'];
-                    matchesCaseStudy = caseStudyFilters.includes(caseStudy);
-                }
-                
-                if (flowStepFilters.length > 0 && metadata.general_info && metadata.general_info['Flow step']) {
-                    const flowStep = metadata.general_info['Flow step'].value || metadata.general_info['Flow step'];
-                    matchesFlowStep = flowStepFilters.includes(flowStep);
-                }
-                
-                if (regQuestionFilters.length > 0 && metadata.general_info && metadata.general_info['Regulatory questions']) {
-                    const regQuestion = metadata.general_info['Regulatory questions'].value || metadata.general_info['Regulatory questions'];
-                    matchesRegQuestion = regQuestionFilters.includes(regQuestion);
-                }
-                
-                if (matchesCaseStudy && matchesFlowStep && matchesRegQuestion) {
-                    filteredStudies.push(study);
-                }
-            } catch (error) {
-                console.error('Error fetching study metadata:', error);
-            }
-        }
-        
-        const activeFilterCount = caseStudyFilters.length + flowStepFilters.length + regQuestionFilters.length;
-        displayResults(filteredStudies, filteredStudies.length);
-        showStatus(`Showing ${filteredStudies.length} studies matching ${activeFilterCount} selected filter(s)`, 'success');
-    }
-
-    function clearFilters() {
+    // Clear filters
+    clearFilterBtn.addEventListener('click', () => {
         selectedFilters = {
-            'case-study': [],
-            'flow-step': [],
-            'reg-question': []
+            'case-study': '',
+            'flow-step': '',
+            'reg-question': ''
         };
         updateFilterDisplay();
-        // Note: Filters currently only work with JavaScript-fetched data
-        // To fully implement, would need server-side filter support
-    }
+    });
 </script>
 
 {% endblock %}
