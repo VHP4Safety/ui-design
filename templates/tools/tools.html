@@ -1,102 +1,113 @@
 {% extends "base.html" %}{% block content %}
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tools.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/data.css') }}">
 
-<section>
+
+<section class="container py-5">
     <div class="explanation-text">
         <p>Here you can find the tools in the catalog. You can search for a tool that you know using the search box below.</p>
-        <p>Alternatively, you can filter the tools with respect to the <a href="{{ url_for('workflows') }}#about-section">flow step</a> (i.e., blue box) that they belong to and/or the regulatory question that they are associated with by ticking the boxes below.</p>
-        <p>Use the "Apply Filter" button to see results, and click "Clear Filter" to reset the filters.</p>
+        <p>Alternatively, you can filter the tools with respect to the <a href="{{ url_for('workflows') }}#about-section">flow step</a> (i.e., blue box) that they belong to and/or the regulatory question that they are associated with.</p>
+        <p>Use the "Filters" button to show filter options, then "Apply Filter" to see results, and click "Clear Filter" to reset the filters.</p>
     </div>
 
-    <!-- Single Filter/Search Form -->
-    <form method="get" action="{{ url_for('tools') }}">
-
-        <!-- Search Bar -->
-        <div class="search-bar">
-            <input type="text" name="search" placeholder="Search by tool name..." value="{{ request.args.get('search', '') }}">
-            <button type="submit" class="btn-search">Search</button>
-        </div>
-
-        <!-- Filters -->
-        <div class="filters-container">
-            <!-- Stage Filter -->
-        <!-- Stage Filter -->
-        <div class="filter-section">
-            <h3>Filter by Flow Step</h3>
-            {% for stage in stages %}
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="stage" value="{{ stage }}" 
-                        {% if stage in selected_stages %}checked{% endif %}>
-                    <label class="form-check-label">
-                        {{ stage }}
-                        <span class="tooltip-icon" data-tooltip="{{ stage_explanations[stage] }}">&#x2753;</span>
-                    </label>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3 d-inline">
+        <form method="GET" action="{{ url_for('tools') }}" class="d-flex" role="search" id="search-form">
+            <input type="text" class="form-control me-2" name="search" id="search-input" value="{{ request.args.get('search', '') }}" placeholder="Search by tool name..." />
+            <!-- Hidden inputs for filters -->
+            <input type="hidden" name="stage" id="filter_stage" value="{{ request.args.get('stage', '') }}" />
+            <input type="hidden" name="reg_q" id="filter_reg_q" value="{{ request.args.get('reg_q', '') }}" />
+            <div class="btn-group" role="group" aria-label="Search and filter buttons">
+                <button type="submit" class="btn btn-outline-vhppink">Search</button>
+                <a href="{{ url_for('tools') }}" class="btn btn-outline-danger text-nowrap">Clear</a>
+                <button type="button" id="filter-toggle-btn" class="btn btn-outline-secondary">Filters</button>
+            </div>
+        </form>
+        
+        <!-- Filter Panel -->
+        <div id="filter-panel" class="card bg-secondary-subtle p-3 mt-2" style="display: none;">
+            <div class="gap-2 pb-2">
+                <!-- Flow Step Dropdown -->
+                <div class="btn-group">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                        Flow Step
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% for stage in stages %}
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="{{ stage }}">{{ stage }}</a></li>
+                        {% endfor %}
+                    </ul>
                 </div>
-            {% endfor %}
-
-        </div>
-
-        <!-- Regulatory Questions Filter -->
-        <div class="filter-section">
-            <h3>Filter by Regulatory Questions</h3>
-            {% for question, field in reg_questions.items() %}
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="reg_q" value="{{ question }}"
-                        {% if question in selected_questions %}checked{% endif %}>
-                    <label class="form-check-label">
-                        {{ question }}
-                        <span class="tooltip-icon" data-tooltip="{{ reg_question_explanations[question] }}">&#x2753;</span>
-                    </label>
+                
+                <!-- Regulatory Questions Dropdown -->
+                <div class="btn-group">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                        Regulatory Question
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% for question in reg_questions.keys() %}
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="{{ question }}">{{ question }}</a></li>
+                        {% endfor %}
+                    </ul>
                 </div>
-            {% endfor %}
+            </div>
+            
+            <!-- Selected Filters Display -->
+            <div id="selected-filters" class="input-group">
+                <span class="input-group-text" id="filters_label">Selected Filters:</span>
+                <div id="filter-tags"
+                    class="form-control d-flex flex-wrap align-items-center gap-2"
+                    aria-describedby="filters_label"
+                    role="group">
+                </div>
+            </div>
+            
+            <div class="">
+                <button id="apply-filter-btn" class="btn btn-sm btn-vhppink mt-2">Apply</button>
+                <button id="clear-filter-btn" class="btn btn-sm btn-outline-danger mt-2">Clear</button>
+            </div>
         </div>
-        </div>
-
-        <!-- Filter Buttons -->
-        <div class="filter-buttons">
-            <button type="submit" class="btn-apply-filter">Apply Filter</button>
-            <a href="{{ url_for('tools') }}" class="btn-clear-filter">Clear Filter</a>
-        </div>
-    </form>
+    </nav>
 
     <!-- Tools List -->
-    <div class="row align-items-start">
-        <ul>
+    <div class="results-section py-5">
+        <ul class="results-list">
             {% for item in tools %}
                 <div class="card">
+                    <div class="card-img-top overflow-hidden" style="aspect-ratio: 21/9;">
                     {% if item.png %}
-                        <img src="{{ item.png }}" class="card-img-top" alt="Tool logo">
+                        <img src="{{ item.png }}" alt="Tool logo" class="w-100 h-100 d-block" style="object-fit: cover; object-position: left;">
                     {% endif %}
-                    
+                    </div>
                     <div class="card-body">
                         <h2 class="card-title">{{ item.service }}</h2>
                         <p id="desc" class="card-text">{{ item.description }}</p>
+                    </div>
+                    <div class="card-footer bg-white border-0 py-3">
 
-                        <!-- Tool Webpage -->
-                        {% if item.main_url == "no_url" %}
-                            <a class="tools-links disabled">No Available Webpage</a> 
-                        {% else %}
-                            <a href="{{ item.main_url }}" class="btn btn-outline-info" target="_blank">Main Webpage</a>
-                        {% endif %}
+                        <div class="btn-group" role="group" aria-label="Tool example">
+                            <!-- Tool Webpage -->
+                            {% if item.main_url == "no_url" %}
+                                <a type="button" class="btn btn-outline-secondary disabled">No Available Webpage</a> 
+                            {% else %}
+                                <a type="button" href="{{ item.main_url }}" class="btn btn-outline-secondary" target="_blank">Main Webpage</a>
+                            {% endif %}
 
-                        <h3 class="tools-links">&nbsp;&nbsp; - &nbsp;&nbsp;</h3>
 
-                        <!-- Instance Page -->
-                        {% if item.inst_url == "no_url" %}
-                            <a class="tools-links disabled">No VHP Instance</a> 
-                        {% else %}
-                            <a href="{{ item.inst_url }}" class="btn btn-outline-info" target="_blank">VHP Instance</a>
-                        {% endif %}                   
+                            <!-- Instance Page -->
+                            {% if item.inst_url == "no_url" %}
+                                <a type="button" class="btn btn-outline-vhppink disabled">No VHP Instance</a> 
+                            {% else %}
+                                <a type="button" href="{{ item.inst_url }}" class="btn btn-outline-vhppink" target="_blank">VHP Instance</a>
+                            {% endif %}                   
 
-                        <h3 class="tools-links">&nbsp;&nbsp; - &nbsp;&nbsp;</h3>
 
-                        <!-- Catalog Page -->
-                        <a class="tools-links" href="{{ item.url }}" class="btn btn-outline-info">Catalog Page</a>
-                        <h3 class="tools-links">&nbsp;&nbsp; - &nbsp;&nbsp;</h3>
+                            <!-- Catalog Page -->
+                            <a href="{{ item.url }}" class="btn btn-outline-secondary">Catalog Page</a>
 
-                        <!-- Meta-Data -->
-                        <a class="tools-links" href="{{ item.meta_data }}" class="btn btn-outline-info">Meta-Data</a>
+                            <!-- Meta-Data -->
+                            <a href="{{ item.meta_data }}" class="btn btn-outline-vhpteal">Meta-Data</a>
+                        </div>
                     </div>
                 </div>
             {% else %}
@@ -105,5 +116,185 @@
         </ul>
     </div>
 </section>
+
+<script>
+    // Filter functionality - MULTIPLE selections supported
+    const filterToggleBtn = document.getElementById('filter-toggle-btn');
+    const filterPanel = document.getElementById('filter-panel');
+    const applyFilterBtn = document.getElementById('apply-filter-btn');
+    const clearFilterBtn = document.getElementById('clear-filter-btn');
+    const selectedFiltersContainer = document.getElementById('selected-filters');
+    const filterTagsContainer = document.getElementById('filter-tags');
+    const searchForm = document.getElementById('search-form');
+    
+    // Track selected filters (arrays for multiple selections)
+    let selectedFilters = {
+        'flow-step': [{% for stage in selected_stages %}'{{ stage }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+        'reg-question': [{% for question in selected_questions %}'{{ question }}'{% if not loop.last %}, {% endif %}{% endfor %}]
+    };
+
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        // Show filter panel if filters are active
+        {% if selected_stages or selected_questions %}
+        filterPanel.style.display = 'block';
+        {% endif %}
+        
+        // Initialize filter display
+        updateFilterDisplay();
+        
+        filterToggleBtn.addEventListener('click', () => {
+            const isVisible = filterPanel.style.display !== 'none';
+            filterPanel.style.display = isVisible ? 'none' : 'block';
+        });
+
+        // Add click handlers for dropdown items - toggle selection
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation(); // Prevent dropdown from closing
+                const filterType = e.target.dataset.filterType;
+                const filterValue = e.target.dataset.filterValue;
+                toggleFilter(filterType, filterValue);
+                // Toggle active class for visual feedback
+                e.target.classList.toggle('active');
+            });
+        });
+        
+        // Mark already selected items as active
+        updateDropdownVisuals();
+    });
+
+    function toggleFilter(type, value) {
+        const index = selectedFilters[type].indexOf(value);
+        if (index > -1) {
+            // Remove if already selected
+            selectedFilters[type].splice(index, 1);
+        } else {
+            // Add if not selected
+            selectedFilters[type].push(value);
+        }
+        updateFilterDisplay();
+    }
+
+    function removeFilter(type, value) {
+        const index = selectedFilters[type].indexOf(value);
+        if (index > -1) {
+            selectedFilters[type].splice(index, 1);
+        }
+        updateFilterDisplay();
+        updateDropdownVisuals();
+    }
+
+    function updateDropdownVisuals() {
+        // Update active class on dropdown items
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            const filterType = item.dataset.filterType;
+            const filterValue = item.dataset.filterValue;
+            if (selectedFilters[filterType] && selectedFilters[filterType].includes(filterValue)) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    function updateFilterDisplay() {
+        // Clear current tags
+        filterTagsContainer.innerHTML = '';
+        
+        // Count total filters
+        const totalFilters = selectedFilters['flow-step'].length + selectedFilters['reg-question'].length;
+        
+        // Show/hide container
+        if (totalFilters === 0) {
+            selectedFiltersContainer.style.display = 'none';
+            return;
+        }
+        
+        selectedFiltersContainer.style.display = 'flex';
+        
+        // Create tags for flow-step filters
+        selectedFilters['flow-step'].forEach(value => {
+            const tag = document.createElement('span');
+            tag.className = 'badge rounded-pill text-bg-vhppink d-inline-flex align-items-center';
+            tag.innerHTML = `
+                Flow Step: ${value}
+                <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('flow-step', '${value.replace(/'/g, "\\'")}')">×</button>
+            `;
+            filterTagsContainer.appendChild(tag);
+        });
+        
+        // Create tags for reg-question filters
+        selectedFilters['reg-question'].forEach(value => {
+            const tag = document.createElement('span');
+            tag.className = 'badge rounded-pill text-bg-vhppink d-inline-flex align-items-center';
+            tag.innerHTML = `
+                Reg. Q: ${value}
+                <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('reg-question', '${value.replace(/'/g, "\\'")}')">×</button>
+            `;
+            filterTagsContainer.appendChild(tag);
+        });
+    }
+
+    // Make removeFilter accessible globally
+    window.removeFilterTag = function(type, value) {
+        removeFilter(type, value);
+    };
+
+    // Apply filters by creating multiple hidden inputs
+    applyFilterBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        applyFiltersAndSubmit();
+    });
+    
+    // Also handle form submission (for Search button)
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        applyFiltersAndSubmit();
+    });
+    
+    function applyFiltersAndSubmit() {
+        // Remove any existing stage/reg_q hidden inputs (except the template ones)
+        document.querySelectorAll('input[name="stage"]:not(#filter_stage), input[name="reg_q"]:not(#filter_reg_q)').forEach(input => {
+            input.remove();
+        });
+        
+        // Remove the template hidden inputs to avoid empty values
+        document.getElementById('filter_stage').remove();
+        document.getElementById('filter_reg_q').remove();
+        
+        // Add hidden input for each selected flow-step
+        selectedFilters['flow-step'].forEach(value => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'stage';
+            input.value = value;
+            searchForm.appendChild(input);
+        });
+        
+        // Add hidden input for each selected reg-question
+        selectedFilters['reg-question'].forEach(value => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'reg_q';
+            input.value = value;
+            searchForm.appendChild(input);
+        });
+        
+        // Submit the form
+        searchForm.submit();
+    }
+
+    // Clear all filters
+    clearFilterBtn.addEventListener('click', () => {
+        selectedFilters = {
+            'flow-step': [],
+            'reg-question': []
+        };
+        updateFilterDisplay();
+        updateDropdownVisuals();
+    });
+</script>
 
 {% endblock %}

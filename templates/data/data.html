@@ -106,7 +106,7 @@
     {% endif %}
 
     <!-- Pagination controls -->
-    <div class="justify-content-between d-flex my-3 ">
+    <div class="justify-content-between d-flex my-3 py-2 ">
         
         <a href="{{ url_for('data', page=page-1, page_size=page_size, query=search_query, filter_case_study=filter_case_study, filter_regulatory_question=filter_regulatory_question, filter_flow_step=filter_flow_step) }}" class="btn btn-sm btn-secondary {% if not has_prev %} disabled {% endif %}">Previous</a>
         
