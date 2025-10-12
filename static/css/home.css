@@ -1,136 +1,32 @@
 /* This CSS file is used for home.html, it builds upon base.css */
 
 
-/* Tab section */
-.tab-section {
-  background-color: var(--light-blue);
-  text-align: center; /* Centering text in the tab section */
-  max-width: 100%; /* Full width instead of standard 55% */
-}
+
 
 .card-button:hover, .card-button:focus{
     transition: all 0.3s ease;
     cursor: pointer;
 }
 
-.card-button-pink:hover, .card-button-pink:focus{
-      color: var(--pink);
-      border-color: var(--pink);
+.card-button-vhppink:hover, .card-button-vhppink:focus{
+      color: var(--bs-vhppink);
+      border-color: var(--bs-vhppink);
 }
-.card-button-blue:hover, .card-button-blue:focus{
-      color: var(--blue);
-      border-color: var(--blue);
+.card-button-vhpblue:hover, .card-button-vhpblue:focus{
+      color: var(--bs-vhpblue);
+      border-color: var(--bs-vhpblue);
 }
-.card-button-orange:hover,  .card-button-orange:focus{
-      color: var(--orange);
-      border-color: var(--orange);
+.card-button-vhporange:hover,  .card-button-vhporange:focus{
+      color: var(--bs-vhporange);
+      border-color: var(--bs-vhporange);
 }   
 
-.card-button-teal:hover,  .card-button-teal:focus{
-      color: var(--teal);
-      border-color: var(--teal);
+.card-button-vhpteal:hover,  .card-button-vhpteal:focus{
+      color: var(--bs-vphteal);
+      border-color: var(--bs-vhpteal);
 }  
 
-.tab-button {
-  /* Tab button on top of the hexagram */
-  position: absolute; /* Positioned absolutely to overlap the hexagram */
-  top: 10px; /* Adjusted to be at the top of the hexagram */
-  z-index: 1000; /* Ensures it appears above the hexagram */
-}
 
-.arrow {
-  /* Arrow at the bottom of each hexagram */
-  position: absolute;
-  bottom: 90px;
-  width: 0; /* Width and height set to 0 for the arrow effect */
-  height: 0;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-left: 10px solid var(--pink); /* Default color */
-  z-index: 1000; /* Ensures it appears above the hexagram */
-}
-/* Specific Arrow Colors */
-.tools-arrow {
-  border-left-color: var(--pink);
-}
-.casestudies-arrow {
-  border-left-color: var(--blue);
-}
-.data-arrow {
-  border-left-color: var(--orange);
-}
-.arrow:hover {
-  /* Hover effect for arrows */
-  opacity: 0.5;
-  transition: opacity 0.3s ease;
-}
-
-/* About Section on landing page */
-.read-more-content {
-  /* Hidden content that appears when "Read More" is clicked */
-  transition: all 0.3s ease-in-out;
-}
-
-.read-more-btn {
-  /* Button to toggle the read more content */
-  color: var(--pink);
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.read-more-btn:hover {
-  /* Hover effect for the read more button */
-  color: var(--blue);
-  transition: color 0.3s ease;
-}
-
-/* Partners Section */
-.partners-section {
-  background-color: var(--light-blue);
-  padding: 80px 0px;
-  max-width: 100%;
-}
-
-.partners-section .content {
-  max-width: 55%; /* Restricting width of content to 55% of the viewport */
-  margin: 0 auto; /* Centering the content */
-}
-
-.carousel-container {
-  /* Container for the carousel */
-  position: relative; /* Positioned relative to allow absolute positioning of arrows */
-}
-
-.carousel-arrow {
-  /* Arrow buttons for the carousel */
-  font-size: 2.5em;
-  color: #3a3a3a;
-  background-color: none;
-  border: none;
-  cursor: pointer;
-  z-index: 10;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%); /* Centering vertically in container*/
-  box-shadow: none;
-}
-/* Moving the arrows a little out of the wrapper */
-.carousel-arrow.left {
-  left: -40px;
-}
-.carousel-arrow.right {
-  right: -40px;
-}
-
-.carousel {
-  /* Carousel for partner logos */
-  display: flex; /* Flexbox for horizontal alignment */
-  justify-content: flex-start; /* Start from the left */
-  align-items: center; /* Center items vertically */
-  gap: 20px; /* Space between logos */
-  overflow: hidden; /* Hides overflow for smooth scrolling effect */
-  padding: 10px;
-}
 
 .partner-logo {
   /* Individual partner logo styling */
@@ -149,54 +45,18 @@
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
 }
 
-/* Contact Section */
-.contact-section {
-  display: flex; /* Flexbox for two columns*/
-  flex-direction: row;
-  gap: 50px;
-}
 
-.contact-section .content {
-  /* Left column with text */
-  flex: 1;
-  max-width: 100%;
-}
-
-.contact-section .contact-form {
-  /* Right column with form */
-  flex: 1;
-  max-width: 100%;
-  margin-top: 10px; /* Aligns the form with the text */
-}
-
-.contact-form input,
-.contact-form textarea {
-  /* Input fields and textarea in the form */
-  width: 100%;
-  padding: 10px; /* Padding inside input fields */
-  margin: 5px; /* Space between fields */
-  border: none;
-  border-radius: 15px;
-  background-color: #d3d3d3;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2); /* Inner shadow for depth */
-}
-
-.contact-form button {
-  /* Submit button in the form */
-  background-color: var(--purple);
-  height: 40px; /* Little less high than regular button */
-}
 
 .contact-icon {
   font-size: 2em;
-  color: var(--pink);
+  color: var(--bs-vhppink);
   margin: 10px;
   transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .contact-icon:hover {
   transform: scale(1.2);
-  color: var(--blue);
+  color: var(--bs-vhppink);
   text-decoration: none; /* No underline on hover */
 }
 
@@ -220,44 +80,4 @@
 .scroll-down-arrow:hover {
   border-top-color: black;
   transition: border-top-color 0.3s;
-}
-
-/* Responsive design for different screen sizes */
-@media (max-width: 1920px) {
-  .hero {
-    max-width: 80%;
-    padding: 80px;
-  }
-
-  .about-section,
-  .partners-section .content,
-  .contact-section {
-    max-width: 60%;
-  }
-}
-
-@media (max-width: 1680px) {
-  .hero {
-    max-width: 90%;
-    padding: 60px;
-  }
-
-  .about-section,
-  .partners-section .content,
-  .contact-section {
-    max-width: 70%;
-  }
-}
-
-@media (max-width: 1480px) {
-  .hero {
-    max-width: 100%;
-    padding: 40px;
-  }
-
-  .about-section,
-  .partners-section .content,
-  .contact-section {
-    max-width: 80%;
-  }
 }
