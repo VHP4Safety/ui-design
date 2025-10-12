@@ -10,6 +10,7 @@ Central HTML-based web application for the VHP4Safety project, providing access 
   - [Project Structure](#project-structure)
   - [Templates](#templates)
   - [CSS Styles](#css-styles)
+    - [Bootstrap5 SASS maps](#bootstrap5-sass-maps)
   - [Key Files](#key-files)
   - [Tech Stack](#tech-stack)
   - [Installation \& Setup](#installation--setup)
@@ -67,6 +68,21 @@ Central HTML-based web application for the VHP4Safety project, providing access 
 - `casestudies.css`: Case study styles
 - `qaop_app.css`: qAOP app and Cytoscape visualizations
 - `hackathondemo.css`: Hackathon demo page styles _(not sure if still in use?)_
+
+### Bootstrap5 SASS maps
+Create a custom color compiled version of bootstrap5. 
+
+```bash 
+cd bootstrap-custom
+npm install bootstrap sass --save-dev
+```
+
+Customize `custom.scss` for example with additional colors or padding specs etc. 
+Then compile to css with
+```
+bootstrap-custom % npx sass --load-path=node_modules custom.scss bootstrap-custom.css
+```
+Move bootstrap-custom.css to `static/css`. 
 
 ## Key Files
 

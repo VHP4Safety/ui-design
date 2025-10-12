@@ -1,0 +1,18 @@
+// 1️⃣ Import Bootstrap's functions first
+@import "node_modules/bootstrap/scss/functions";
+
+// 2️⃣ Define your custom colors
+$custom-colors: (
+  "vhppink": #e6007e,
+  "vhpblue": #307bbf,
+  "vhporange": #eb5b25,
+  "vhpteal": #0b5a6c,
+  "vhplight-blue": #c1e5f5
+);  
+
+// 3️⃣ Import Bootstrap’s variables and merge
+@import "node_modules/bootstrap/scss/variables";
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+// 4️⃣ Import the rest of Bootstrap (it now uses your colors)
+@import "node_modules/bootstrap/scss/bootstrap";
