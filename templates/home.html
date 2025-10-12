@@ -13,226 +13,294 @@
 />
 
 <!-- Hero section: main title and image -->
-<section class="hero">
-  <div class="hero-text">
-    <h1>
-      THE VIRTUAL <br />
-      HUMAN PLATFORM
-    </h1>
-    <p>TOWARDS SAFETY ASSESSMENT BASED ON HUMAN DATA</p>
-  </div>
-  <div class="hero-image">
-    <img
-      src="/static/images/logos/brandicon/long/VHP%20Brandicon_lang.png"
-      alt="Hero Image"
-    />
+<section class="">
+  <div class="row align-items-center">
+    <div class="col-md-6">
+      <h1 class="display-3 fw-bold text-uppercase mb-4" style="color: #29235c;">
+        The Virtual <br />
+        Human Platform
+      </h1>
+      <p class="lead text-uppercase text-secondary">
+        Towards <span class="text-vhppink">safety</span> assessment based on human data
+      </p>
+    </div>
+    <div class="col-md-6 text-center">
+      <img
+        src="/static/images/logos/brandicon/long/VHP%20Brandicon_lang.png"
+        alt="Virtual Human Platform Logo"
+        class="img-fluid"
+      />
+    </div>
   </div>
 </section>
 <!-- Tab section: navigation to Tools, Case Studies, Data -->
 <section class="tab-section">
   <div class="hexagram-container">
-    <div class="hexagram-wrapper">
-      <button class="tab-button tools" onclick="location.href='/tools'">
-        Tools
-      </button>
-      <div class="hexagram">
-        <p>
-          Select any of the VHP tools to streamline your risk assessment process
-          and get results relevant to your research.
-        </p>
+    <div class="container py-4">
+      <div class="row gy-4">
+
+        <!-- Tools card -->
+        <div class="col-md-4">
+
+          <div class="card text-center  card-vhppink card-button card-button-vhppink h-100 shadow-sm" onclick="location.href='/tools'">
+            <div class="card-header bg-vhppink ">
+              <h5 class="card-title text-white m-0">Tools</h5>
+            </div>
+            <div class="card-body">
+              Select any of the VHP tools to streamline your risk assessment process
+                and get results relevant to your research.
+            </div>
+            <div class="card-footer text-body-secondary">
+              <span class="badge rounded-pill bg-vhppink text-white">{{num_tools}}</span> tools available
+            </div>
+          </div>
+        </div>
+
+        <!-- Case Studies card -->
+        <div class="col-md-4">
+
+          <div class="card text-center card-vhpblue card-button card-button-vhpblue h-100 shadow-sm" onclick="location.href='/casestudies'">
+            <div class="card-header bg-vhpblue ">
+              <h5 class="card-title text-white m-0">Case Studies</h5>
+            </div>
+            <div class="card-body">
+              Have a look at our case studies to see how multiple VHP tools can be
+              combined to best answer your research question.
+            </div>
+            <div class="card-footer text-body-secondary">
+              <span class="badge rounded-pill bg-vhpblue text-white">{{num_case_studies}}</span> case studies 
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Data card -->
+        <div class="col-md-4">
+
+          <div class="card text-center card-vhpteal card-button card-button-vhpteal h-100 shadow-sm" onclick="location.href='/data'">
+            <div class="card-header bg-vhpteal ">
+              <h5 class="card-title text-white m-0">Data</h5>
+            </div>
+            <div class="card-body">
+               Find all the (meta)data you need to use the VHP tools and run
+                workflows as efficiently as possible.
+            </div>
+            <div class="card-footer text-body-secondary">
+              <span class="badge rounded-pill bg-vhpteal text-white">{{num_datasets}}</span> data sets 
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="arrow tools-arrow" onclick="location.href='/tools'"></div>
     </div>
-    <div class="hexagram-wrapper">
-      <button
-        onclick="location.href='/casestudies'"
-        class="tab-button casestudies"
-      >
-        Case Studies
-      </button>
-      <div class="hexagram">
-        <p>
-          Have a look at our case studies to see how multiple VHP tools can be
-          combined in a way that is most likely to answer your research
-          question.
-        </p>
-      </div>
-      <div
-        class="arrow casestudies-arrow"
-        onclick="location.href='/casestudies'"
-      ></div>
-    </div>
-    <div class="hexagram-wrapper">
-      <button class="tab-button data" onclick="location.href='/data'">
-        Data
-      </button>
-      <div class="hexagram">
-        <p>
-          Find all the (meta)data you may need to use the VHP tools and run the
-          workflows as efficiently as possible.
-        </p>
-      </div>
-      <div class="arrow data-arrow" onclick="location.href='/data'"></div>
-    </div>
+
   </div>
 </section>
 <!-- About section: project description and mission -->
 <section class="about-section" id="about-section">
-  <h2>About VHP4Safety</h2>
-  <p>
-    The Virtual Human Platform (VHP) was developed through the VHP4Safety
-    project to support chemical and pharmaceutical safety testing. By developing
-    in silico tools and in vitro models, we provided a platform for precision
-    safety testing that aims to eliminate the need for laboratory animals. VHP
-    helps risk assessors evaluate the safety of chemicals for human use,
-    focusing on vulnerable groups like infants, the elderly, and individuals
-    with health conditions.
-  </p>
-  <h3>Our Mission</h3>
-  <p>
-    VHP aims to facilitate the prediction of harmful effects of chemicals and
-    pharmaceuticals by integrating human physiology, chemical properties, and
-    biological pathway disturbances. The platform supports:
-  </p>
-  <ul>
-    <li>
-      Human-relevant scenarios, such as age, gender, disease states, and
-      exposure timing;
-    </li>
-    <li>
-      Chemicals from pharmaceuticals, consumer products, and the chemical
-      industry;
-    </li>
-    <li>The needs of regulators and stakeholders.</li>
-  </ul>
-  <p>
-    VHP represents a major step forward in moving away from animal testing by
-    providing tools based on human data.
-  </p>
-  <!-- Hidden read-more content, toggled by button -->
-  <div class="read-more-content" style="display: none">
-    <h3>Moving Beyond Animal Testing</h3>
-    <p>
-      Traditional animal studies often fail to predict toxicity in humans. VHP
-      aims to overcome this by focusing on human-relevant data and providing the
-      needed services and workflows to translate this data into new insights.
-      The platform has been developed within three research lines:
-    </p>
-    service
-    <ol>
-      <li>Building the platform</li>
-      <li>Generating and integrating human-relevant data</li>
-      <li>Ensuring stakeholder acceptance and sustainability</li>
-    </ol>
-    <p>
-      With global efforts to reduce animal testing, VHP accelerates the shift to
-      human-centered safety assessment.
-    </p>
-    <h3>VHP4Safety: The project behind VHP</h3>
-    <p>
-      VHP was developed through the VHP4Safety project, funded by the Dutch
-      Research Council (NWO). The project ran from June 1, 2021, for five years,
-      paving the way for a future of safety assessments based entirely on human
-      data.
-    </p>
-  </div>
-  <span class="read-more-btn" onclick="toggleReadMore()">Read more.</span>
-</section>
-<!-- Partners section: carousel of partner logos -->
-<section class="partners-section" id="partners-section">
-  <div class="content">
-    <h2>Project Partners</h2>
-    <p>Collaboration and support in innovation.</p>
-    <div class="carousel-container">
-      <button class="carousel-arrow left" onclick="scrollCarousel('left')">
-        &#8249;
-      </button>
-      <div class="carousel">
-        <!-- Partner logos, clickable -->
-        <div class="carousel-item">
-          <img
-            src="/static/images/partners/AUMC.png"
-            alt="AUMC Logo"
-            class="partner-logo"
-            data-link="https://www.amsterdamumc.org/nl.htm"
-          />
-        </div>
-        <div class="carousel-item">
-          <img
-            src="/static/images/partners/HU.png"
-            alt="HU Logo"
-            class="partner-logo"
-            data-link="https://www.hu.nl/"
-          />
-        </div>
-        <div class="carousel-item">
-          <img
-            src="/static/images/partners/RIVM.jpg"
-            alt="RIVM Logo"
-            class="partner-logo"
-            data-link="https://www.rivm.nl/"
-          />
-        </div>
-        <div class="carousel-item">
-          <img
-            src="/static/images/partners/UM.png"
-            alt="UM Logo"
-            class="partner-logo"
-            data-link="https://www.maastrichtuniversity.nl/"
-          />
-        </div>
-        <div class="carousel-item">
-          <img
-            src="/static/images/partners/UU.png"
-            alt="UU Logo"
-            class="partner-logo"
-            data-link="https://www.uu.nl/en"
-          />
+  <h2 class="mb-4">About VHP4Safety</h2>
+  <div class="accordion accordion-flush" id="aboutAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="about-headingOne">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#about-collapseOne" aria-expanded="true" aria-controls="about-collapseOne">
+          What is the Virtual Human Platform?
+        </button>
+      </h2>
+      <div id="about-collapseOne" class="accordion-collapse collapse show" aria-labelledby="about-headingOne">
+        <div class="accordion-body">
+          <p>
+            The Virtual Human Platform (VHP) was developed through the VHP4Safety project to support chemical and pharmaceutical safety testing. By developing in silico tools and in vitro models, we provided a platform for precision safety testing that aims to eliminate the need for laboratory animals. VHP helps risk assessors evaluate the safety of chemicals for human use, focusing on vulnerable groups like infants, the elderly, and individuals with health conditions.
+          </p>
+          <h3>Our Mission</h3>
+          <p>
+            VHP aims to facilitate the prediction of harmful effects of chemicals and pharmaceuticals by integrating human physiology, chemical properties, and biological pathway disturbances. The platform supports:
+          </p>
+          <ul>
+            <li>Human-relevant scenarios, such as age, gender, disease states, and exposure timing;</li>
+            <li>Chemicals from pharmaceuticals, consumer products, and the chemical industry;</li>
+            <li>The needs of regulators and stakeholders.</li>
+          </ul>
+          <p>
+            VHP represents a major step forward in moving away from animal testing by providing tools based on human data.
+          </p>
         </div>
       </div>
-      <button class="carousel-arrow right" onclick="scrollCarousel('right')">
-        &#8250;
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="about-headingTwo">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#about-collapseTwo" aria-expanded="false" aria-controls="about-collapseTwo">
+          Moving Beyond Animal Testing
+        </button>
+      </h2>
+      <div id="about-collapseTwo" class="accordion-collapse collapse" aria-labelledby="about-headingTwo">
+        <div class="accordion-body">
+          <p>
+            Traditional animal studies often fail to predict toxicity in humans. VHP aims to overcome this by focusing on human-relevant data and providing the needed services and workflows to translate this data into new insights. The platform has been developed within three research lines:
+          </p>
+          <ol>
+            <li>Building the platform</li>
+            <li>Generating and integrating human-relevant data</li>
+            <li>Ensuring stakeholder acceptance and sustainability</li>
+          </ol>
+          <p>
+            With global efforts to reduce animal testing, VHP accelerates the shift to human-centered safety assessment.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="about-headingThree">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#about-collapseThree" aria-expanded="false" aria-controls="about-collapseThree">
+          VHP4Safety: The project behind VHP
+        </button>
+      </h2>
+      <div id="about-collapseThree" class="accordion-collapse collapse" aria-labelledby="about-headingThree">
+        <div class="accordion-body">
+          <p>
+            VHP was developed through the VHP4Safety project, funded by the Dutch Research Council (NWO). The project ran from June 1, 2021, for five years, paving the way for a future of safety assessments based entirely on human data.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="partners-section" id="partners-section">
+  <div class="container py-5">
+    <h2 class="text-center mb-4">Project Partners</h2>
+    <p class="text-center text-muted mb-5">Collaboration and support in innovation.</p>
+
+    <!-- Show all logos at once on md and up -->
+    <div class="d-none d-md-flex justify-content-center flex-wrap gap-4">
+      <a href="https://www.amsterdamumc.org/nl.htm" target="_blank" rel="noopener">
+        <img src="/static/images/partners/AUMC.png" class="partner-logo cursor-pointer" alt="AUMC Logo">
+      </a>
+      <a href="https://www.hu.nl/" target="_blank" rel="noopener">
+        <img src="/static/images/partners/HU.png" class="partner-logo cursor-pointer" alt="HU Logo">
+      </a>
+      <a href="https://www.rivm.nl/" target="_blank" rel="noopener">
+        <img src="/static/images/partners/RIVM.jpg" class="partner-logo cursor-pointer" alt="RIVM Logo">
+      </a>
+      <a href="https://www.maastrichtuniversity.nl/" target="_blank" rel="noopener">
+        <img src="/static/images/partners/UM.png" class="partner-logo cursor-pointer" alt="UM Logo">
+      </a>
+      <a href="https://www.uu.nl/en" target="_blank" rel="noopener">
+        <img src="/static/images/partners/UU.png" class="partner-logo cursor-pointer" alt="UU Logo">
+      </a>
+    </div>
+
+    <!-- Carousel only on small screens -->
+    <div id="partnerCarousel" class="carousel slide d-md-none" data-bs-ride="carousel" data-bs-interval="3000">
+      <div class="carousel-inner text-center">
+        <div class="carousel-item active">
+          <a href="https://www.amsterdamumc.org/nl.htm" target="_blank" rel="noopener">
+            <img src="/static/images/partners/AUMC.png" class="partner-logo cursor-pointer" alt="AUMC Logo">
+          </a>
+        </div>
+        <div class="carousel-item">
+          <a href="https://www.hu.nl/" target="_blank" rel="noopener">
+            <img src="/static/images/partners/HU.png" class="partner-logo cursor-pointer" alt="HU Logo">
+          </a>
+        </div>
+        <div class="carousel-item">
+          <a href="https://www.rivm.nl/" target="_blank" rel="noopener">
+            <img src="/static/images/partners/RIVM.jpg" class="partner-logo cursor-pointer" alt="RIVM Logo">
+          </a>
+        </div>
+        <div class="carousel-item">
+          <a href="https://www.maastrichtuniversity.nl/" target="_blank" rel="noopener">
+            <img src="/static/images/partners/UM.png" class="partner-logo cursor-pointer" alt="UM Logo">
+          </a>
+        </div>
+        <div class="carousel-item">
+          <a href="https://www.uu.nl/en" target="_blank" rel="noopener">
+            <img src="/static/images/partners/UU.png" class="partner-logo cursor-pointer" alt="UU Logo">
+          </a>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#partnerCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#partnerCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
       </button>
     </div>
   </div>
 </section>
 <!-- Contact section: contact info and form -->
-<section class="contact-section" id="contact-section">
-  <div class="content">
-    <h2>Let’s chat!</h2>
-    <p>
-      We’d love to hear from you! Fill out the form or use our contact info down
-      below, and we’ll get back to you as soon as possible.
-    </p>
-    <a href="mailto:vhp4safety@uu.nl" class="contact-icon">
-      <i class="fas fa-envelope"></i>
-    </a>
-    <a
-      href="https://www.linkedin.com/company/vhp4safety/posts/?feedView=all"
-      class="contact-icon"
-    >
-      <i class="fab fa-linkedin"></i>
-    </a>
-    <a href="https://github.com/VHP4Safety" class="contact-icon">
-      <i class="fab fa-github"></i>
-    </a>
-  </div>
-  <div class="contact-form">
-    <!-- Contact form: sends email via mailto -->
-    <form
-      action="mailto:mirthe.klaassen@maastrichtuniversity.nl"
-      method="post"
-      enctype="text/plain"
-    >
-      <input type="text" name="name" placeholder="Name *" required />
-      <input type="email" name="email" placeholder="Email *" required />
-      <input type="text" name="organization" placeholder="Organization" />
-      <input type="tel" name="phone" placeholder="Phone" />
-      <textarea name="message" placeholder="Message *" required></textarea>
-      <button type="submit">Send</button>
-    </form>
+<section class="contact-section py-5" id="contact-section">
+  <div>
+    <div class="row">
+      
+      <!-- Left column: text and icons -->
+      <div class="col-md-5">
+        <div class="content">
+          <h2 class="mb-3">Let’s chat!</h2>
+          <p class="mb-4">
+            We’d love to hear from you! Fill out the form or use our contact info below,
+            and we’ll get back to you as soon as possible.
+          </p>
+
+          <div class="d-flex gap-3">
+            <a href="mailto:vhp4safety@uu.nl" class="contact-icon fs-3 text-dark">
+              <i class="fas fa-envelope"></i>
+            </a>
+            <a href="https://www.linkedin.com/company/vhp4safety/posts/?feedView=all" class="contact-icon fs-3 text-dark">
+              <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="https://github.com/VHP4Safety" class="contact-icon fs-3 text-dark">
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column: contact form -->
+      <div class="col-md-5 offset-md-1">
+        <form
+          action="mailto:mirthe.klaassen@maastrichtuniversity.nl"
+          method="post"
+          enctype="text/plain"
+          class="p-3 border rounded-3 shadow-sm"
+        >
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="name" name="name" placeholder="Your full name" required>
+            <label for="name">Name *</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="email" name="email" placeholder="example@domain.com" required>
+            <label for="email">Email *</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="organization" name="organization" placeholder="Organization name">
+            <label for="organization">Organization</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="tel" class="form-control" id="phone" name="phone" placeholder="+31 6 12345678">
+            <label for="phone">Phone</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <textarea class="form-control" placeholder="Type your message here..." id="message" name="message" rows="5" required></textarea>
+            <label for="message">Message *</label>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-vhppink">Send</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </section>
+
+
+</section>
 <!-- Scroll down arrow for navigation -->
-<div class="scroll-down-arrow" onclick="scrollToNextSection()"></div>
+<div class="scroll-down-arrow" style="border-top: 20px solid var(--vhppink);" onclick="scrollToNextSection()"></div>
 {% endblock %}
