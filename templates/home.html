@@ -13,7 +13,7 @@
 />
 
 <!-- Hero section: main title and image -->
-<section class="">
+<section class="container py-5">
   <div class="row align-items-center">
     <div class="col-md-6">
       <h1 class="display-3 fw-bold text-uppercase mb-4" style="color: #29235c;">
@@ -34,9 +34,9 @@
   </div>
 </section>
 <!-- Tab section: navigation to Tools, Case Studies, Data -->
-<section class="tab-section">
-  <div class="hexagram-container">
-    <div class="container py-4">
+<section class="bg-vhplight-blue img-fluid py-5">
+  <div class="container">
+    <div class="py-4">
       <div class="row gy-4">
 
         <!-- Tools card -->
@@ -86,7 +86,7 @@
                 workflows as efficiently as possible.
             </div>
             <div class="card-footer text-body-secondary">
-              <span class="badge rounded-pill bg-vhpteal text-white">{{num_datasets}}</span> data sets 
+              <span class="badge rounded-pill bg-vhpteal text-white">{{num_datasets}}</span> datasets 
             </div>
           </div>
         </div>
@@ -96,8 +96,8 @@
   </div>
 </section>
 <!-- About section: project description and mission -->
-<section class="about-section" id="about-section">
-  <h2 class="mb-4">About VHP4Safety</h2>
+<section class="container py-5" id="about-section">
+  <h2 class="mb-4"><strong>About VHP4Safety</strong></h2>
   <div class="accordion accordion-flush" id="aboutAccordion">
     <div class="accordion-item">
       <h2 class="accordion-header" id="about-headingOne">
@@ -110,7 +110,7 @@
           <p>
             The Virtual Human Platform (VHP) was developed through the VHP4Safety project to support chemical and pharmaceutical safety testing. By developing in silico tools and in vitro models, we provided a platform for precision safety testing that aims to eliminate the need for laboratory animals. VHP helps risk assessors evaluate the safety of chemicals for human use, focusing on vulnerable groups like infants, the elderly, and individuals with health conditions.
           </p>
-          <h3>Our Mission</h3>
+          <h3><strong>Our Mission</strong></h3>
           <p>
             VHP aims to facilitate the prediction of harmful effects of chemicals and pharmaceuticals by integrating human physiology, chemical properties, and biological pathway disturbances. The platform supports:
           </p>
@@ -165,13 +165,13 @@
     </div>
   </div>
 </section>
-<section class="partners-section" id="partners-section">
+<section class="bg-vhplight-blue img-fluid" id="partners-section">
   <div class="container py-5">
-    <h2 class="text-center mb-4">Project Partners</h2>
-    <p class="text-center text-muted mb-5">Collaboration and support in innovation.</p>
+    <h2 class="mb-4"><strong>Project Partners</strong></h2>
+    <p class="text-muted mb-5">Collaboration and support in innovation.</p>
 
     <!-- Show all logos at once on md and up -->
-    <div class="d-none d-md-flex justify-content-center flex-wrap gap-4">
+    <div class="d-none d-xxl-flex justify-content-center flex-wrap gap-4">
       <a href="https://www.amsterdamumc.org/nl.htm" target="_blank" rel="noopener">
         <img src="/static/images/partners/AUMC.png" class="partner-logo cursor-pointer" alt="AUMC Logo">
       </a>
@@ -190,7 +190,7 @@
     </div>
 
     <!-- Carousel only on small screens -->
-    <div id="partnerCarousel" class="carousel slide d-md-none" data-bs-ride="carousel" data-bs-interval="3000">
+    <div id="partnerCarousel" class="carousel slide d-xxl-none" data-bs-ride="carousel" data-bs-interval="3000">
       <div class="carousel-inner text-center">
         <div class="carousel-item active">
           <a href="https://www.amsterdamumc.org/nl.htm" target="_blank" rel="noopener">
@@ -229,28 +229,29 @@
     </div>
   </div>
 </section>
+
 <!-- Contact section: contact info and form -->
-<section class="contact-section py-5" id="contact-section">
+<section class="container py-5" id="contact-section">
   <div>
     <div class="row">
       
       <!-- Left column: text and icons -->
       <div class="col-md-5">
         <div class="content">
-          <h2 class="mb-3">Let’s chat!</h2>
+          <h2 class="mb-3"><strong>Let’s chat!</strong></h2>
           <p class="mb-4">
             We’d love to hear from you! Fill out the form or use our contact info below,
             and we’ll get back to you as soon as possible.
           </p>
 
           <div class="d-flex gap-3">
-            <a href="mailto:vhp4safety@uu.nl" class="contact-icon fs-3 text-dark">
+            <a href="mailto:vhp4safety@uu.nl" class="contact-icon fs-3 text-vhppink">
               <i class="fas fa-envelope"></i>
             </a>
-            <a href="https://www.linkedin.com/company/vhp4safety/posts/?feedView=all" class="contact-icon fs-3 text-dark">
+            <a href="https://www.linkedin.com/company/vhp4safety/posts/?feedView=all" class="contact-icon fs-3 text-vhppink">
               <i class="fab fa-linkedin"></i>
             </a>
-            <a href="https://github.com/VHP4Safety" class="contact-icon fs-3 text-dark">
+            <a href="https://github.com/VHP4Safety" class="contact-icon fs-3 text-vhppink">
               <i class="fab fa-github"></i>
             </a>
           </div>
@@ -302,5 +303,5 @@
 
 </section>
 <!-- Scroll down arrow for navigation -->
-<div class="scroll-down-arrow" style="border-top: 20px solid var(--vhppink);" onclick="scrollToNextSection()"></div>
+<div class="scroll-down-arrow" style="border-top: 20px solid var(--bs-vhppink);" onclick="scrollToNextSection()"></div>
 {% endblock %}
