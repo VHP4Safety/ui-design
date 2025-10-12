@@ -26,6 +26,21 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+#node
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log*
+.pnp.*
+.pnp.json
+package-lock.json
+package.json
+
+#SASS
+.sass-cache
+*.css.map
+
+
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
@@ -172,3 +187,5 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+.gitignore
+bootstrap-custom/bootstrap-custom.css.map
