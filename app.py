@@ -20,6 +20,7 @@ from biostudies.search import BioStudiesExtractor
 # Change these variables to switch between collections
 BIOSTUDIES_COLLECTION = "EU-ToxRisk"  # Current: "EU-ToxRisk", Future: "vhp4safety"
 BIOSTUDIES_COLLECTION_NAME = "EU-ToxRisk"  # Display name for the page
+CASESTUDIES = ["thyroid", "kidney", "parkinson"]  # List of valid case studies
 
 
 ################################################################################
@@ -46,7 +47,31 @@ app = Flask(__name__)
 ### The landing page
 @app.route("/")
 def home():
-    return render_template("home.html")
+    # get number of tools:
+    url = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/service_index.json"
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        return f"Error fetching service list: {response.status_code}", 503
+
+    try:
+        tools = (
+            response.json()
+        )  # Geting the service_list.json in the dictionary format.
+        tools = list(tools.values())  # Converting the dictionary to a list object.
+    except Exception as e:
+        return f"Error processing service data: {e}", 500
+    num_tools = len(tools)
+    num_case_studies = len(CASESTUDIES)
+    num_datasets = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION).list_studies(
+        page=1, page_size=1
+    )["total"]
+    return render_template(
+        "home.html",
+        num_tools=num_tools,
+        num_case_studies=num_case_studies,
+        num_datasets=num_datasets,
+    )
 
 
 ################################################################################
@@ -57,12 +82,14 @@ def data():
     page = request.args.get("page", 1, type=int)
     page_size = request.args.get("page_size", 18, type=int)
     search_query = request.args.get("query", "", type=str)
-    
+
     # Get filter parameters
     filter_case_study = request.args.get("filter_case_study", "", type=str)
-    filter_regulatory_question = request.args.get("filter_regulatory_question", "", type=str)
+    filter_regulatory_question = request.args.get(
+        "filter_regulatory_question", "", type=str
+    )
     filter_flow_step = request.args.get("filter_flow_step", "", type=str)
-    
+
     # Build filter list (only include non-empty filters)
     filters = []
     if filter_case_study:
@@ -78,24 +105,18 @@ def data():
     # Fetch data based on search query or list all
     if search_query:
         results = extractor.search_studies(
-            search_query, 
-            page=page, 
-            page_size=page_size,
-            filter=filters
+            search_query, page=page, page_size=page_size, filter=filters
         )
     else:
         results = extractor.list_studies(
-            page=page, 
-            page_size=page_size, 
-            include_urls=True,
-            filter=filters
+            page=page, page_size=page_size, include_urls=True, filter=filters
         )
 
     # Extract studies and metadata
     studies = results.get("hits", [])
     total = results.get("total", 0)
     error = results.get("error", None)
-    
+
     # Get filtering metadata (if filters were applied)
     filters_applied = results.get("filters_applied", False)
     hits_returned = results.get("hits_returned", len(studies))
@@ -127,6 +148,7 @@ def data():
         pages_fetched=pages_fetched,
         page_size_met=page_size_met,
     )
+
 
 ################################################################################
 ### Pages under 'Tools'
@@ -398,7 +420,7 @@ def workflows():
 @app.route("/casestudies/<case>")
 def casestudy_main(case):
     # Only allow known case studies
-    if case not in ["thyroid", "kidney", "parkinson"]:
+    if case not in CASESTUDIES:
         abort(404)
     return render_template(f"case_studies/casestudy.html", case=case)
 

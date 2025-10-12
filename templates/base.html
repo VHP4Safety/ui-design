@@ -7,7 +7,7 @@
     <title>VHP4Safety</title>
     
     <!-- Bootstrap 5.3.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="/static/css/bootstrap-custom.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <!-- Custom CSS (color scheme and overrides) -->
     <link rel="stylesheet" href="/static/css/base.css" />
@@ -39,44 +39,25 @@
         button.textContent = isHidden ? "Read less." : "Read more...";
       }
 
-      // Make partner logos clickable
-      document.addEventListener("DOMContentLoaded", () => {
-        document.querySelectorAll(".partner-logo").forEach((logo) => {
-          logo.addEventListener("click", () => {
-            window.open(logo.getAttribute("data-link"), "_blank");
-          });
-        });
+
+      // Hide the scroll-down arrow when user nears bottom
+      document.addEventListener("scroll", () => {
+        const arrow = document.querySelector(".scroll-down-arrow");
+        if (!arrow) return;
+
+        const bottomOffset = 100; // px tolerance before actual bottom
+        const isAtBottom =
+          window.innerHeight + window.scrollY >= document.body.offsetHeight - bottomOffset;
+
+        arrow.classList.toggle("d-none", isAtBottom);
       });
 
-      // Scroll partner logo carousel
-      function scrollCarousel(direction) {
-        const carousel = document.querySelector(".carousel");
-        const logoWidth = 250; // Width of each logo including padding and gap
-        const scrollAmount = logoWidth * 2; // Scroll by 2 logos
-        carousel.scrollBy({
-          left: direction === "left" ? -scrollAmount : scrollAmount,
-          behavior: "smooth",
-        });
-      }
-
+     
       // Scroll to next section (used for navigation)
       function scrollToNextSection() {
         window.scrollBy({ top: window.innerHeight / 1.5, behavior: "smooth" });
       }
 
-      // Accordion functionality for expandable sections
-      document.addEventListener("DOMContentLoaded", function () {
-        var acc = document.querySelectorAll(".accordion");
-
-        acc.forEach(function (button) {
-          button.addEventListener("click", function () {
-            this.classList.toggle("active");
-            var panel = this.nextElementSibling;
-            panel.style.display =
-              panel.style.display === "block" ? "none" : "block";
-          });
-        });
-      });
     </script>
   </head>
 
@@ -95,9 +76,9 @@
         
         <!-- Main navigation buttons (visible on large screens) -->
         <div class="d-none d-lg-flex gap-2 me-3">
-          <button class="btn btn-pink" onclick="location.href='/tools'">Tools</button>
-          <button class="btn btn-blue" onclick="location.href='/casestudies'">Case Studies</button>
-          <button class="btn btn-orange" onclick="location.href='/data'">Data</button>
+          <button class="btn btn-vhppink flex-fill text-nowrap" style="min-width: 120px;" onclick="location.href='/tools'">Tools</button>
+          <button class="btn btn-vhpblue text-white flex-fill text-nowrap" style="min-width: 120px;" onclick="location.href='/casestudies'">Case Studies</button>
+          <button class="btn btn-vhpteal flex-fill text-nowrap" style="min-width: 120px;" onclick="location.href='/data'">Data</button>
         </div>
         
         <!-- Hamburger toggle button for offcanvas menu -->
@@ -108,7 +89,7 @@
     </nav>
 
     <!-- Offcanvas menu (slides in from right) -->
-    <div class="offcanvas offcanvas-end bg-light-blue" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+    <div class="offcanvas offcanvas-end bg-light-vhpblue" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -132,7 +113,7 @@
     <main class="">{% block content %} {% endblock %}</main>
 
     <!-- Footer Section: site links, resources, legal, connect -->
-    <footer class="bg-light-blue py-4">
+    <footer class="bg-vhplight-blue py-4">
       <div class="container" style="max-width: 55%;">
         <div class="row g-4">
           <div class="col-md-3">

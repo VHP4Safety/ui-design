@@ -6,9 +6,10 @@
   --blue: #307bbf;
   --purple: #29235c;
   --orange: #eb5b25;
+  --teal: #0b5a6c; 
   --light-blue: #c1e5f5;
   --white: #ffffff;
-  --black: #000000;
+  --black: #000000;         
   --grey: #e0e0e0;
   
   /* Bootstrap Theme Color Mapping */
@@ -29,7 +30,35 @@ body {
   scroll-behavior: smooth;
 }
 
-/* Custom Button Color Classes */
+
+/* Default accordion button (collapsed) stays standard */
+.accordion-button {
+  background-color: var(--bs-white);
+  color: var(--bs-body-color);
+  border: none;
+}
+
+/* When the accordion is open (NOT collapsed) */
+.accordion-button:not(.collapsed) {
+  background-color: var(--light-blue);
+  color: var(--bs-body-color);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.125);
+}
+
+/* Remove Bootstrap’s dark gradient focus ring */
+.accordion-button:focus {
+  box-shadow: none;
+  border-color: transparent;
+}
+
+/* Optional: make arrow icon darker on light blue */
+.accordion-button:not(.collapsed)::after {
+  filter: brightness(0.6);
+}
+
+/* ===== Custom Button Colors (Bootstrap-style) ===== */
+
+/* --- Pink --- */
 .btn-pink {
   background-color: var(--pink);
   border-color: var(--pink);
@@ -37,7 +66,6 @@ body {
   font-size: 19px;
   width: 150px;
 }
-
 .btn-pink:hover,
 .btn-pink:focus {
   background-color: var(--pink);
@@ -45,7 +73,26 @@ body {
   opacity: 0.8;
   color: var(--white);
 }
+.btn-outline-pink {
+  color: var(--pink);
+  border-color: var(--pink);
+  background-color: transparent;
+}
+.btn-outline-pink:hover,
+.btn-outline-pink:focus {
+  color: var(--white);
+  background-color: var(--pink);
+  border-color: var(--pink);
+}
+.btn-outline-pink:disabled,
+.btn-pink:disabled {
+  opacity: 0.65;
+  background-color: var(--pink);
+  color: var(--white);
+  border-color: var(--pink);
+}
 
+/* --- Blue --- */
 .btn-blue {
   background-color: var(--blue);
   border-color: var(--blue);
@@ -53,7 +100,6 @@ body {
   font-size: 19px;
   width: 150px;
 }
-
 .btn-blue:hover,
 .btn-blue:focus {
   background-color: var(--blue);
@@ -61,7 +107,75 @@ body {
   opacity: 0.8;
   color: var(--white);
 }
+.btn-outline-blue {
+  color: var(--blue);
+  border-color: var(--blue);
+  background-color: transparent;
+}
+.btn-outline-blue:hover,
+.btn-outline-blue:focus {
+  color: var(--white);
+  background-color: var(--blue);
+  border-color: var(--blue);
+}
+.btn-outline-blue:disabled,
+.btn-blue:disabled {
+  opacity: 0.65;
+  background-color: var(--blue);
+  color: var(--white);
+  border-color: var(--blue);
+}
 
+/* --- Teal --- */
+.btn-teal {
+  background-color: var(--teal);
+  border-color: var(--teal);
+  color: var(--white);
+  font-size: 19px;
+  width: 150px;
+}
+
+.btn-teal:hover,
+.btn-teal:focus {
+  background-color: var(--teal);
+  border-color: var(--teal);
+  opacity: 0.8;
+  color: var(--white);
+}
+
+.btn-outline-teal {
+  color: var(--teal);
+  border-color: var(--teal);
+  background-color: transparent;
+}
+
+.btn-outline-teal:hover,
+.btn-outline-teal:focus {
+  color: var(--white);
+  background-color: var(--teal);
+  border-color: var(--teal);
+}
+
+.btn-outline-teal:disabled,
+.btn-teal:disabled {
+  opacity: 0.65;
+  background-color: var(--teal);
+  color: var(--white);
+  border-color: var(--teal);
+}
+
+/* --- Optional matching utilities --- */
+.text-teal {
+  color: var(--teal) !important;
+}
+.bg-teal {
+  background-color: var(--teal) !important;
+}
+.border-teal {
+  border-color: var(--teal) !important;
+}
+
+/* --- Orange --- */
 .btn-orange {
   background-color: var(--orange);
   border-color: var(--orange);
@@ -69,13 +183,102 @@ body {
   font-size: 19px;
   width: 150px;
 }
-
 .btn-orange:hover,
 .btn-orange:focus {
   background-color: var(--orange);
   border-color: var(--orange);
   opacity: 0.8;
   color: var(--white);
+}
+.btn-outline-orange {
+  color: var(--orange);
+  border-color: var(--orange);
+  background-color: transparent;
+}
+.btn-outline-orange:hover,
+.btn-outline-orange:focus {
+  color: var(--white);
+  background-color: var(--orange);
+  border-color: var(--orange);
+}
+.btn-outline-orange:disabled,
+.btn-orange:disabled {
+  opacity: 0.65;
+  background-color: var(--orange);
+  color: var(--white);
+  border-color: var(--orange);
+}
+
+/* ===== Custom Theme Colors (Bootstrap-style utilities) ===== */
+
+/* --- Pink --- */
+.text-pink {
+  color: var(--pink) !important;
+}
+.bg-pink {
+  background-color: var(--pink) !important;
+}
+.border-pink {
+  border-color: var(--pink) !important;
+}
+.btn-outline-pink {
+  color: var(--pink);
+  border-color: var(--pink);
+}
+.btn-outline-pink:hover,
+.btn-outline-pink:focus {
+  background-color: var(--pink);
+  border-color: var(--pink);
+  color: var(--white);
+}
+
+/* --- Blue --- */
+.text-blue {
+  color: var(--blue) !important;
+}
+.bg-blue {
+  background-color: var(--blue) !important;
+}
+.border-blue {
+  border-color: var(--blue) !important;
+}
+.btn-outline-blue {
+  color: var(--blue);
+  border-color: var(--blue);
+}
+.btn-outline-blue:hover,
+.btn-outline-blue:focus {
+  background-color: var(--blue);
+  border-color: var(--blue);
+  color: var(--white);
+}
+
+/* --- Orange --- */
+.text-orange {
+  color: var(--orange) !important;
+}
+.bg-orange {
+  background-color: var(--orange) !important;
+}
+.border-orange {
+  border-color: var(--orange) !important;
+}
+.btn-outline-orange {
+  color: var(--orange);
+  border-color: var(--orange);
+}
+.btn-outline-orange:hover,
+.btn-outline-orange:focus {
+  background-color: var(--orange);
+  border-color: var(--orange);
+  color: var(--white);
+}
+
+/* --- Optional background contrast helpers --- */
+.bg-pink.text-white,
+.bg-blue.text-white,
+.bg-orange.text-white {
+  color: var(--white) !important;
 }
 
 /* Custom Background Colors */

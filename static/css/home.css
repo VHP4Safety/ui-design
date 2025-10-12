@@ -1,33 +1,5 @@
 /* This CSS file is used for home.html, it builds upon base.css */
 
-/* Hero Section */
-.hero {
-  /* Main hero section of the page */
-  display: flex;
-  align-items: center; /* Centering items vertically */
-  max-width: 70%; /* Adjusted for better responsiveness */
-  margin-top: 70px;
-}
-
-.hero-text {
-  flex: 1; /* Takes up remaining space in the flex container */
-}
-
-.hero-text h1 {
-  /* Main heading in the hero section */
-  font-size: 4em; /* Large font size for the main heading */
-}
-
-.hero-text p {
-  font-size: 1.5em;
-  font-weight: 300; /* Lighter font weight for the subtitle */
-}
-
-.hero-image {
-  flex: 1; /* Takes up remaining space in the flex container */
-  display: flex;
-  justify-content: center; /* Centering the image horizontally */
-}
 
 /* Tab section */
 .tab-section {
@@ -36,51 +8,28 @@
   max-width: 100%; /* Full width instead of standard 55% */
 }
 
-.hexagram-container {
-  /* Container for all hexagrams */
-  display: flex;
-  flex-wrap: wrap; /* Allows wrapping of hexagrams on smaller screens */
-  justify-content: center; /* Centering hexagrams horizontally */
-  gap: 40px; /* Space between hexagrams */
-  margin-top: 20px; /* Space above the hexagram container */
+.card-button:hover, .card-button:focus{
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
-.hexagram-wrapper {
-  /* Individual hexagram wrapper with button and arrow */
-  position: relative; /* Positioned relative to allow absolute positioning of child elements */
-  width: 210px;
-  height: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 15px; /* Padding between the hexagrams */
+.card-button-pink:hover, .card-button-pink:focus{
+      color: var(--pink);
+      border-color: var(--pink);
 }
+.card-button-blue:hover, .card-button-blue:focus{
+      color: var(--blue);
+      border-color: var(--blue);
+}
+.card-button-orange:hover,  .card-button-orange:focus{
+      color: var(--orange);
+      border-color: var(--orange);
+}   
 
-.hexagram {
-  /* Individual hexagram styling */
-  width: 100%; /* Full width of the wrapper */
-  height: 210px;
-  background-color: var(--white);
-  clip-path: polygon(
-    50% 0%,
-    100% 25%,
-    100% 75%,
-    50% 100%,
-    0% 75%,
-    0% 25%
-  ); /* Hexagon shape */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px; /* Padding inside the hexagram */
-}
-
-.hexagram p {
-  /* Text inside the hexagram */
-  font-size: 15px;
-  text-align: center;
-}
+.card-button-teal:hover,  .card-button-teal:focus{
+      color: var(--teal);
+      border-color: var(--teal);
+}  
 
 .tab-button {
   /* Tab button on top of the hexagram */

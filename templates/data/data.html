@@ -6,7 +6,7 @@
 
 <section class="container">
     <div class="mt-3">
-        <h1><span class="text-primary text-center d-flex" id="collection-name">{{ collection_name or 'Data catalog' }}</span></h1>
+        <h1><span class="text-teal text-center d-flex" id="collection-name">{{ collection_name or 'Data catalog' }}</span></h1>
         <p class="text-secondary fs-5">Explore datasets generated or used in <span id="collection-name-sub">{{ collection_name }} and hosted on BioStudies archive.</span></p>
     </div>
 
@@ -18,7 +18,7 @@
             <input type="hidden" name="filter_regulatory_question" id="filter_regulatory_question" value="{{ filter_regulatory_question or '' }}" />
             <input type="hidden" name="filter_flow_step" id="filter_flow_step" value="{{ filter_flow_step or '' }}" />
             <div class="btn-group" role="group" aria-label="Search and filter buttons">
-                <button type="submit" class="btn btn-outline-primary">Search</button>
+                <button type="submit" class="btn btn-outline-teal">Search</button>
                 <a href="{{ url_for('data') }}" class="btn btn-outline-danger text-nowrap">Clear</a>
                 <button type="button" id="filter-toggle-btn" class="btn btn-outline-secondary">Filters</button>
             </div>
@@ -85,7 +85,7 @@
 
             
             <div class="">
-                <button id="apply-filter-btn" class="btn btn-sm btn-primary mt-2">Apply</button>
+                <button id="apply-filter-btn" class="btn btn-sm btn-vhpteal mt-2">Apply</button>
                 <button id="clear-filter-btn" class="btn btn-sm btn-outline-danger mt-2">Clear</button>
             </div>
         </div>
@@ -99,9 +99,9 @@
         <strong>Filters Active:</strong> Showing {{ hits_returned }} results
         {% if not page_size_met %}(fetched {{ pages_fetched }} page(s), timeout reached){% endif %}
         | 
-        {% if filter_case_study %}<span class="badge bg-primary">Case Study: {{ filter_case_study }}</span> {% endif %}
-        {% if filter_flow_step %}<span class="badge bg-primary">Flow Step: {{ filter_flow_step }}</span> {% endif %}
-        {% if filter_regulatory_question %}<span class="badge bg-primary">Regulatory Question: {{ filter_regulatory_question }}</span> {% endif %}
+        {% if filter_case_study %}<span class="badge bg-vhpteal">Case Study: {{ filter_case_study }}</span> {% endif %}
+        {% if filter_flow_step %}<span class="badge bg-vhpteal">Flow Step: {{ filter_flow_step }}</span> {% endif %}
+        {% if filter_regulatory_question %}<span class="badge bg-vhpteal">Regulatory Question: {{ filter_regulatory_question }}</span> {% endif %}
     </div>
     {% endif %}
 
@@ -127,7 +127,7 @@
                 <div class="card p-0 mb-0" data-accession="{{ study.accession or study.accno }}">
                     <div class="card-header justify-content-between d-flex">
                         <span class="result-accession">{{ study.accession or study.accno }}</span>
-                        <span class="badge bg-primary-subtle text-secondary rounded-pill align-content-center">{{ study.type or 'unknown' }}</span>
+                        <span class="badge bg-vhplight-blue text-secondary rounded-pill align-content-center">{{ study.type or 'unknown' }}</span>
                     </div>
                     <div class="card-body">
                         <h5 class="card-title" style="word-break: break-word;">
@@ -138,7 +138,7 @@
                         </div>
                     </div>
                     <div class="card-footer bg-white border-0 py-3">
-                            <a href="{{ study.url or '#' }}" class="btn btn-outline-primary d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View in BioStudies</a>
+                            <a href="{{ study.url or '#' }}" class="btn btn-outline-teal d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View in BioStudies</a>
                             <a href="#" class="btn btn-outline-secondary d-inline view-details-btn"><i class="bi bi-box-fill pe-1"></i> RO-Crate</a>
                     </div>
                 </div>
@@ -239,7 +239,7 @@
         // Create tags for each active filter
         if (selectedFilters['case-study']) {
             const tag = document.createElement('span');
-            tag.className = 'badge rounded-pill text-bg-primary d-inline-flex align-items-center';
+            tag.className = 'badge rounded-pill text-bg-vhpteal d-inline-flex align-items-center';
             tag.innerHTML = `
                 Case Study: ${selectedFilters['case-study']}
                 <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('case-study')">×</button>
@@ -249,7 +249,7 @@
         
         if (selectedFilters['flow-step']) {
             const tag = document.createElement('span');
-            tag.className = 'badge rounded-pill text-bg-primary d-inline-flex align-items-center';
+            tag.className = 'badge rounded-pill text-bg-vhpteal d-inline-flex align-items-center';
             tag.innerHTML = `
                 Flow Step: ${selectedFilters['flow-step']}
                 <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('flow-step')">×</button>
@@ -259,7 +259,7 @@
         
         if (selectedFilters['reg-question']) {
             const tag = document.createElement('span');
-            tag.className = 'badge rounded-pill text-bg-primary d-inline-flex align-items-center';
+            tag.className = 'badge rounded-pill text-bg-vhpteal d-inline-flex align-items-center';
             tag.innerHTML = `
                 Reg. Question: ${selectedFilters['reg-question']}
                 <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('reg-question')">×</button>
