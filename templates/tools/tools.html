@@ -34,7 +34,10 @@
                     </button>
                     <ul class="dropdown-menu">
                         {% for stage in stages %}
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="{{ stage }}">{{ stage }}</a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="{{ stage }}">
+                            {{ stage }}
+                            <span class="tooltip-icon" data-tooltip="{{ stage_explanations[stage] }}"><i class="text-vhppink bi bi-question-circle"></i></span>
+                        </a></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -46,7 +49,10 @@
                     </button>
                     <ul class="dropdown-menu">
                         {% for question in reg_questions.keys() %}
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="{{ question }}">{{ question }}</a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="{{ question }}">
+                            {{ question }}
+                            <span class="tooltip-icon" data-tooltip="{{ reg_question_explanations[question] }}"><i class="text-vhppink bi bi-question-circle"></i></span>
+                        </a></li>
                         {% endfor %}
                     </ul>
                 </div>
