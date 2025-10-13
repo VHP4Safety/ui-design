@@ -110,7 +110,7 @@
         
         <a href="{{ url_for('data', page=page-1, page_size=page_size, query=search_query, filter_case_study=filter_case_study, filter_regulatory_question=filter_regulatory_question, filter_flow_step=filter_flow_step) }}" class="btn btn-sm btn-secondary {% if not has_prev %} disabled {% endif %}">Previous</a>
         
-        <span class="d-inline">Page {{ page }} | Showing {{ (page - 1) * page_size + 1 }} - {{ (page - 1) * page_size + studies|length }} of {{ total }} studies{% if filters_applied %} (filtered){% endif %}</span>
+        <span class="d-inline">Page {{ page }} <span class="d-none d-sm-inline"> | Showing {{ (page - 1) * page_size + 1 }} - {{ (page - 1) * page_size + studies|length }} of {{ total }} studies{% if filters_applied %} (filtered){% endif %}</span></span>
         
         {% if has_next %}
             <a href="{{ url_for('data', page=page+1, page_size=page_size, query=search_query, filter_case_study=filter_case_study, filter_regulatory_question=filter_regulatory_question, filter_flow_step=filter_flow_step) }}" class="btn btn-sm btn-secondary">Next</a>
