@@ -8,6 +8,32 @@ body {
   padding-top: 100px; /* Adjust if navbar height changes */
 }
 
+/* Cards as a button */
+
+.card-button:hover, .card-button:focus{
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.card-button-vhppink:hover, .card-button-vhppink:focus{
+      color: var(--bs-vhppink);
+      border-color: var(--bs-vhppink);
+}
+.card-button-vhpblue:hover, .card-button-vhpblue:focus{
+      color: var(--bs-vhpblue);
+      border-color: var(--bs-vhpblue);
+}
+.card-button-vhporange:hover,  .card-button-vhporange:focus{
+      color: var(--bs-vhporange);
+      border-color: var(--bs-vhporange);
+}   
+
+.card-button-vhpteal:hover,  .card-button-vhpteal:focus{
+      color: var(--bs-vphteal);
+      border-color: var(--bs-vhpteal);
+}  
+
+
 
 /* Default accordion button (collapsed) stays standard */
 .accordion-button {
@@ -51,6 +77,8 @@ a:hover {
 html {
   scrollbar-color: var(--grey) var(--white);
 }
+
+
 
 
 

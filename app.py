@@ -18,8 +18,8 @@ from biostudies.search import BioStudiesExtractor
 ################################################################################
 ### Configuration for BioStudies Integration
 # Change these variables to switch between collections
-BIOSTUDIES_COLLECTION = "EU-ToxRisk"  # Current: "EU-ToxRisk", Future: "vhp4safety"
-BIOSTUDIES_COLLECTION_NAME = "EU-ToxRisk"  # Display name for the page
+BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
+BIOSTUDIES_COLLECTION_NAME = "VHP4Safety"  # Display name for the page
 CASESTUDIES = ["thyroid", "kidney", "parkinson"]  # List of valid case studies
 
 ###Shared explanation dictionaries for filters (used in both tools and data page)

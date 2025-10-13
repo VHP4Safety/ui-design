@@ -30,16 +30,7 @@
 
     <!-- Main JavaScript functions for UI interactions -->
     <script>
-      // Toggle read more/less content
-      function toggleReadMore() {
-        const content = document.querySelector(".read-more-content");
-        const button = document.querySelector(".read-more-btn");
-        const isHidden = content.style.display === "none";
-        content.style.display = isHidden ? "block" : "none";
-        button.textContent = isHidden ? "Read less." : "Read more...";
-      }
-
-
+   
       // Hide the scroll-down arrow when user nears bottom
       document.addEventListener("scroll", () => {
         const arrow = document.querySelector(".scroll-down-arrow");
@@ -113,7 +104,7 @@
     <main class="">{% block content %} {% endblock %}</main>
 
     <!-- Footer Section: site links, resources, legal, connect -->
-    <footer class="bg-vhplight-blue py-4">
+    <footer class="bg-vhplight-blue py-4 mt-auto">
       <div class="container" style="max-width: 55%;">
         <div class="row g-4">
           <div class="col-md-3">

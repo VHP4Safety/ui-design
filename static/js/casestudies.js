@@ -16,15 +16,21 @@ let contentLoaded = false;
 // Helper to render step buttons from array
 function renderStepButtons(steps, btnClass, onClickFn) {
   return (
-    `<div class="step-buttons">` +
+    `<div class="row py-3">` +
     steps
       .map(
         (step) =>
-          `<button class="btn ${btnClass}" onclick="${onClickFn}('${
+        `
+        <div class="col-md pb-2">
+        <div class="card card-button card-button-vhpblue">
+        <div class="card-body text-center" onclick="${onClickFn}('${
             step.value
           }')"><b>${step.label}</b>${
             step.description ? "<br />" + step.description : ""
-          }</button>`
+          }</div>
+          </div>
+          </div>
+          `
       )
       .join("") +
     `</div>`
@@ -33,37 +39,41 @@ function renderStepButtons(steps, btnClass, onClickFn) {
 
 function renderToolButtons(tools) {
   return (
-    `<div class="step-buttons">` +
+    `<div class="row py-3">` +
     tools
       .map(
         (tool) =>
-          `<button class="btn stepTool"><b>${tool.label}</b>${
+        `
+        <div class="col-md pb-2">
+        <div class="card card-button card-button-vhpblue">
+          <div class="card-body text-center"><b>${tool.label}</b>${
             tool.description ? "<br />" + tool.description : ""
           }${
             tool.id ? "<br /><a href=\"https://cloud.vhp4safety.nl/service/" + tool.id + ".html\">more info</a>" : ""
-          }</button>`
+          }</div>
+          </div>
+          </div>`
       )
       .join("") +
     `</div>`
   );
 }
-
 // --- Content update functions ---
 function updateStep1Content() {
   if (!contentLoaded) return;
   document.getElementById("step1-content").innerHTML =
-    `<h1>${step1Contents.navTitle}</h1><p>${step1Contents.navDescription}</p>` +
+    `<h1 class="text-vhpblue">${step1Contents.navTitle}</h1><p>${step1Contents.navDescription}</p>` +
     renderStepButtons(step1Contents.questions, "step1", "selectQuestion");
   document.getElementById("step1-bottom-content").innerHTML =
-    step1Contents.content;
+    buildAccordionHTML(step1Contents.content);
 }
 function updateStep2Content() {
   if (!contentLoaded) return;
   const nav = step2Contents[currentQuestion];
   document.getElementById("step2-content").innerHTML =
-    `<h1>${nav.navTitle}</h1><p>${nav.navDescription}</p>` +
+    `<h1 class="text-vhpblue">${nav.navTitle}</h1><p>${nav.navDescription}</p>` +
     renderStepButtons(nav.steps, "step2", "selectProcessStep");
-  document.getElementById("step2-bottom-content").innerHTML = nav.content;
+  document.getElementById("step2-bottom-content").innerHTML = buildAccordionHTML(nav.content);
 }
 function updateStep3Content() {
   if (!contentLoaded) return;
@@ -71,14 +81,14 @@ function updateStep3Content() {
   const step = step3Contents[currentQuestion][currentProcessStep];
   if (step.steps) {
     document.getElementById("step3-content").innerHTML =
-      `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
       renderStepButtons(step.steps, "step3", "selectCaseStudyStep");
   } else if (step.tools) {
     document.getElementById("step3-content").innerHTML =
-      `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
       renderToolButtons(step.tools);
   }
-  document.getElementById("step3-bottom-content").innerHTML = step.content;
+  document.getElementById("step3-bottom-content").innerHTML = buildAccordionHTML(step.content);
 }
 function updateStep4Content() {
   if (!contentLoaded) return;
@@ -89,17 +99,17 @@ function updateStep4Content() {
   const step = step4Contents[currentQuestion][currentProcessStep][currentCaseStudyStep];
   if (step.tools) {
     document.getElementById("step4-content").innerHTML =
-      `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
       renderToolButtons(step.tools);
   } else if (step.steps) {
     document.getElementById("step4-content").innerHTML =
-      `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
       renderStepButtons(step.steps);
   } else {
     document.getElementById("step4-content").innerHTML =
-      `<h1><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
   }
-  document.getElementById("step4-bottom-content").innerHTML = step.content;
+  document.getElementById("step4-bottom-content").innerHTML = buildAccordionHTML(step.content);
 }
 
 // --- Navigation logic ---
@@ -159,7 +169,9 @@ function getCaseStudyVersionFromUrl() {
 function loadCaseStudyContent() {
   const caseStudy = getCaseStudyNameFromUrl();
   const caseStudyBranch = getCaseStudyVersionFromUrl();
-  fetch(`https://raw.githubusercontent.com/VHP4Safety/ui-casestudy-config/${caseStudyBranch}/${caseStudy}_content.json`)
+  var data_url = `https://raw.githubusercontent.com/VHP4Safety/ui-casestudy-config/${caseStudyBranch}/${caseStudy}_content.json`;
+  var data_url_test = `https://raw.githubusercontent.com/johannehouweling/ui-casestudy-config/refs/heads/jh-content-structure/${caseStudy}_content.json`
+  fetch(data_url_test)
     .then((res) => res.json())
     .then((content) => {
       step1Contents = content.step1Contents;
@@ -188,19 +200,97 @@ function getCaseStudyDisplayName() {
 function updateBreadcrumb(step) {
   const el = document.getElementById("breadcrumbs");
   const caseStudyName = getCaseStudyDisplayName();
-  if (step === 2) {
-    el.innerHTML = `<a href="#" onclick="goToStep(1); return false;">${caseStudyName}</a> <span> &rarr; </span> <span>Regulatory Question ${currentQuestion}</span>`;
-    el.classList.add("visible");
-  } else if (step === 3) {
-    el.innerHTML = `<a href=\"#\" onclick=\"goToStep(1); return false;\">${caseStudyName}</a> <span>&rarr;</span> <a href=\"#\" onclick=\"goToStep(2); return false;\">Regulatory Question ${currentQuestion}</a> <span>&rarr;</span> <span>${currentProcessStep}</span>`;
-    el.classList.add("visible");
-  } else if (step === 4) {
-    el.innerHTML = `<a href=\"#\" onclick=\"goToStep(1); return false;\">${caseStudyName}</a> <span>&rarr;</span> <a href=\"#\" onclick=\"goToStep(2); return false;\">Regulatory Question ${currentQuestion}</a> <span>&rarr;</span> <span>${currentProcessStep}</span>&rarr;</span> <span>${currentCaseStudyStep}</span>`;
-    el.classList.add("visible");
-  } else {
-    el.innerHTML = "";
-    el.classList.remove("visible");
+
+  // Reset breadcrumb
+  el.innerHTML = "";
+
+  // Helper to create items
+  function addCrumb(label, onclick, isActive = false) {
+    const li = document.createElement("li");
+    li.classList.add("breadcrumb-item");
+
+    if (isActive) {
+      li.classList.add("active");
+      li.classList.add("text-vhpblue")
+      li.setAttribute("aria-current", "page");
+      li.textContent = label;
+    } else {
+      const a = document.createElement("a");
+      a.href = "#";
+      a.textContent = label;
+      a.onclick = function (e) {
+        e.preventDefault();
+        onclick();
+      };
+      li.appendChild(a);
+    }
+
+    el.appendChild(li);
   }
+
+  // Build breadcrumb depending on step
+  addCrumb("Case Studies", () => (window.location.href = "/casestudies"));
+  if (step === 1) {
+    addCrumb(caseStudyName, null, true);
+  } else if (step === 2) {
+    addCrumb(caseStudyName, () => goToStep(1));
+    addCrumb(`Regulatory Question ${currentQuestion}`, null, true);
+  } else if (step === 3) {
+    addCrumb(caseStudyName, () => goToStep(1));
+    addCrumb(`Regulatory Question ${currentQuestion}`, () => goToStep(2));
+    addCrumb(currentProcessStep, null, true);
+  } else if (step === 4) {
+    addCrumb(caseStudyName, () => goToStep(1));
+    addCrumb(`Regulatory Question ${currentQuestion}`, () => goToStep(2));
+    addCrumb(currentProcessStep, () => goToStep(3));
+    addCrumb(currentCaseStudyStep, null, true);
+  }
+
+  // Show/hide breadcrumb container
+  const nav = el.closest("nav");
+  if (step >= 2) {
+    nav.classList.add("visible");
+  } else {
+    nav.classList.remove("visible");
+  }
+}
+
+// Build Accordion HTML from JSON
+function buildAccordionHTML(content) {
+  if (!content || !Array.isArray(content)) return "";
+
+  let html = `<div class="accordion" id="accordionMain">`;
+
+  content.forEach((item, idx) => {
+    const itemId = `accordionItem${idx}`;
+    const isFirst = idx === 0;
+    html += `
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading${idx}">
+          <button
+            class="accordion-button ${!isFirst ? "collapsed" : ""}"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#${itemId}"
+            aria-expanded="${isFirst}"
+            aria-controls="${itemId}">
+            ${item.section || `Section ${idx + 1}`}
+          </button>
+        </h2>
+        <div
+          id="${itemId}"
+          class="accordion-collapse collapse ${isFirst ? "show" : ""}"
+          aria-labelledby="heading${idx}"
+          data-bs-parent="#accordionMain">
+          <div class="accordion-body">
+            ${item.description || ""}
+          </div>
+        </div>
+      </div>`;
+  });
+
+  html += `</div>`;
+  return html;
 }
 
 // Horizontal scroll navigation (snap to step)
@@ -226,6 +316,7 @@ function goToStep(step) {
   }
   requestAnimationFrame(animateScroll);
   updateBreadcrumb(step);
+  if (step === 1) updateStep1Content();
   if (step === 2) updateStep2Content();
   if (step === 3) updateStep3Content();
   if (step === 4) updateStep4Content();
