@@ -1,14 +1,17 @@
-{% extends "base.html" %}{% block content %}
+{% extends "base.html" %}
+{% block content %}
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tools.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/data.css') }}">
 
 
 <section class="container py-5">
-
+    <!-- Page Title and Description -->
     <div class="">
-        <h1><span class="text-vhppink text-center d-flex" id="collection-name">Tools</span></h1>
-        <p class="text-secondary fs-5">Here you can find the tools in the catalog. You can search for a tool that you know using the search box below. Alternatively, you can filter the tools with respect to the <a href="{{ url_for('workflows') }}#about-section">flow step</a> (i.e., blue box) that they belong to and/or the regulatory question that they are associated with. Use the "Filters" button to show filter options, then "Apply Filter" to see results, and click "Clear Filter" to reset the filters.</p>
+        <h1><span class="text-vhppink" id="collection-name">Tools</span></h1>
+        <p class="text-secondary fs-5"> Explore tools developed by and/or used in VHP4Safety. </p>
+        <p>You can search for a tool that you know using the search box below. Alternatively, you can filter the tools with respect to the <a class="link-vhpblue text-decoration-none" href="{{ url_for('workflows') }}#about-section">case study flow step</a> that they belong to and/or the regulatory question that they are associated with. Use the "Filters" button to show filter options, then "Apply Filter" to see results, and click "Clear Filter" to reset the filters.</p>
+
     </div>
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3 d-inline">
@@ -34,9 +37,8 @@
                     </button>
                     <ul class="dropdown-menu">
                         {% for stage in stages %}
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="{{ stage }}">
-                            {{ stage }}
-                            <span class="tooltip-icon" data-tooltip="{{ stage_explanations[stage] }}"><i class="text-vhppink bi bi-question-circle"></i></span>
+                        <li><a class="dropdown-item " href="#" data-filter-type="flow-step" data-filter-value="{{ stage }}"{% if stage in stage_explanations %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations[stage] }}"{% endif %}>
+                            {{ stage }}{% if stage in stage_explanations %} <i class="text-vhppink bi bi-question-circle"></i>{% endif %}
                         </a></li>
                         {% endfor %}
                     </ul>
@@ -49,9 +51,8 @@
                     </button>
                     <ul class="dropdown-menu">
                         {% for question in reg_questions.keys() %}
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="{{ question }}">
-                            {{ question }}
-                            <span class="tooltip-icon" data-tooltip="{{ reg_question_explanations[question] }}"><i class="text-vhppink bi bi-question-circle"></i></span>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="{{ question }}"{% if question in reg_question_explanations %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations[question] }}"{% endif %}>
+                            {{ question }}{% if question in reg_question_explanations %} <i class="text-vhppink bi bi-question-circle"></i>{% endif %}
                         </a></li>
                         {% endfor %}
                     </ul>
@@ -141,6 +142,10 @@
 
     // Initialize when DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Bootstrap tooltips
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        
         // Show filter panel if filters are active
         {% if selected_stages or selected_questions %}
         filterPanel.style.display = 'block';
@@ -159,11 +164,9 @@
             item.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation(); // Prevent dropdown from closing
-                const filterType = e.target.dataset.filterType;
-                const filterValue = e.target.dataset.filterValue;
+                const filterType = e.currentTarget.dataset.filterType;
+                const filterValue = e.currentTarget.dataset.filterValue;
                 toggleFilter(filterType, filterValue);
-                // Toggle active class for visual feedback
-                e.target.classList.toggle('active');
             });
         });
         

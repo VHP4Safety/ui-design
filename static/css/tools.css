@@ -1,12 +1,10 @@
 
-
-
 /* Settings for the tooltips */
 
 .tooltip-icon {
     display: inline-block;
     margin-left: 5px;
-    color: #007bff;
+    color: var(--vhp-pink);
     cursor: pointer;
     position: relative;
     font-weight: bold;
@@ -48,3 +46,4 @@
   filter: grayscale(0%);
   opacity: 1;
 }
+
