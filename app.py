@@ -22,6 +22,47 @@ BIOSTUDIES_COLLECTION = "EU-ToxRisk"  # Current: "EU-ToxRisk", Future: "vhp4safe
 BIOSTUDIES_COLLECTION_NAME = "EU-ToxRisk"  # Display name for the page
 CASESTUDIES = ["thyroid", "kidney", "parkinson"]  # List of valid case studies
 
+###Shared explanation dictionaries for filters (used in both tools and data page)
+STAGE_EXPLANATIONS = {
+    "ADME": "Absorption, distribution, metabolism, and excretion of a substance (toxic or not) in a living organism, following exposure to this substance.",
+    "Hazard Assessment": "The process of assessing the intrinsic hazard a substance poses to human health and/or the environment.",
+    "Chemical Information": "Information about chemical properties and identity.",
+    "General": "General tools not specific to a flow step.",
+    "External exposure": "External exposure assessment.",
+    "Generic": "Generic or general category.",
+    "Other": "Other or unknown category.",
+}
+
+REG_QUESTIONS = {
+    "reg_q_1a": {
+        "label": "Kidney Case Study (a)",
+        "explanation": "What is the safe cisplatin dose in cancer patients?",
+    },
+    "reg_q_1b": {
+        "label": "Kidney Case Study (b)",
+        "explanation": "What is the intrinsic hazard of tacrolimus for nephrotoxicity?",
+    },
+    "reg_q_2a": {
+        "label": "Parkinson Case Study (a)",
+        "explanation": "Can compound X cause Parkinson's Disease?",
+    },
+    "reg_q_2b": {
+        "label": "Parkinson Case Study (b)",
+        "explanation": "What level of exposure to compound X leads to risk for developing Parkinsons disease?",
+    },
+    "reg_q_3a": {
+        "label": "Thyroid Case Study (a)",
+        "explanation": "What information about silychristin do we need to give an advice to women in their early pregnancy to decide whether the substance can be used?",
+    },
+    "reg_q_3b": {
+        "label": "Thyroid Case Study (b)",
+        "explanation": "Does silychristin influence the thyroid-mediated brain development in the fetus resulting in cognitive impairment in children?",
+    },
+}
+
+# Derived: keep the old structure available for templates expecting {label: explanation}
+REG_QUESTION_EXPLANATIONS = {v["label"]: v["explanation"] for v in REG_QUESTIONS.values()}
+
 
 ################################################################################
 class RegexConverter(BaseConverter):
@@ -147,6 +188,8 @@ def data():
         hits_returned=hits_returned,
         pages_fetched=pages_fetched,
         page_size_met=page_size_met,
+        stage_explanations=STAGE_EXPLANATIONS,
+        reg_question_explanations=REG_QUESTION_EXPLANATIONS,
     )
 
 
@@ -272,25 +315,6 @@ def tools():
             "https://vhp4safety.github.io/glossary#VHP0000149": "General",
         }
 
-        # Explanations for stages
-        stage_explanations = {
-            "ADME": "Absorption, distribution, metabolism, and excretion of a substance (toxic or not) in a living organism, following exposure to this substance.",
-            "Hazard Assessment": "The process of assessing the intrinsic hazard a substance poses to human health and/or the environment.",
-            "Chemical Information": "Information about chemical properties and identity.",
-            "General": "General tools not specific to a flow step.",
-            "Other": "Other or unknown category.",
-        }
-
-        # Explanations for regulatory questions
-        reg_question_explanations = {
-            "Kidney Case Study (a)": "What is the safe cisplatin dose in cancer patients?",
-            "Kidney Case Study (b)": "What is the intrinsic hazard of tacrolimus for nephrotoxicity?",
-            "Parkinson Case Study (a)": "Can compound X cause Parkinson’s Disease?",
-            "Parkinson Case Study (b)": "What level of exposure to compound X leads to risk for developing Parkinsons disease?",
-            "Thyroid Case Study (a)": "What information about silychristin do we need to give an advice to women in their early pregnancy to decide whether the substance can be used?",
-            "Thyroid Case Study (b)": "Does silychristin influence the thyroid-mediated brain development in the fetus resulting in cognitive impairment in children?",
-        }
-
         for tool in tools:
             full_stage_url = tool.get("stage", "")
 
@@ -349,14 +373,7 @@ def tools():
             stages.append("Other")
 
         # Filtering over the regulatory questions.
-        reg_questions = {
-            "Kidney Case Study (a)": "reg_q_1a",
-            "Kidney Case Study (b)": "reg_q_1b",
-            "Parkinson Case Study (a)": "reg_q_2a",
-            "Parkinson Case Study (b)": "reg_q_2b",
-            "Thyroid Case Study (a)": "reg_q_3a",
-            "Thyroid Case Study (b)": "reg_q_3b",
-        }
+        reg_questions = { v["label"]: k for k, v in REG_QUESTIONS.items() }
 
         selected_questions = request.args.getlist("reg_q")
 
@@ -385,8 +402,8 @@ def tools():
             selected_stages=selected_stages,
             reg_questions=reg_questions,
             selected_questions=selected_questions,
-            stage_explanations=stage_explanations,
-            reg_question_explanations=reg_question_explanations,
+            stage_explanations=STAGE_EXPLANATIONS,
+            reg_question_explanations=REG_QUESTION_EXPLANATIONS,
         )
 
     except Exception as e:

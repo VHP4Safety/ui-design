@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <link rel="stylesheet" href="/static/css/data.css" />
-<!-- Bootstrap 5 CSS (only for data page) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
 <section class="container py-5">
+    <!-- Page Title and Description -->
     <div class="">
-        <h1><span class="text-vhpteal text-center d-flex" id="collection-name">{{ collection_name or 'Data catalog' }} Data</span></h1>
+        <h1><span class="text-vhpteal" id="collection-name">{{ collection_name or 'Data catalog' }} Data</span></h1>
         <p class="text-secondary fs-5">Explore datasets generated or used in <span id="collection-name-sub">{{ collection_name }} and hosted on BioStudies archive.</span></p>
     </div>
 
@@ -45,13 +44,13 @@
                         Flow Step
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="ADME">ADME</a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Chemical Information">Chemical Information</a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="General">General</a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Hazard Assessment">Hazard Assessment</a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="external exposure">External exposure</a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="generic">Generic</a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Other">Other</a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="ADME" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['ADME'] }}">ADME <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Chemical Information" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Chemical Information'] }}">Chemical Information <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="General" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['General'] }}">General <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Hazard Assessment" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Hazard Assessment'] }}">Hazard Assessment <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="External exposure" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['External exposure'] }}">External exposure <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Generic" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Generic'] }}">Generic <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Other" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Other'] }}">Other <i class="bi bi-question-circle text-vhpteal"></i></a></li>
                     </ul>
                 </div>
                 
@@ -61,12 +60,12 @@
                         Regulatory Question
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Kidney Case Study (a)">Kidney Case Study (a)</a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Kidney Case Study (b)">Kidney Case Study (b)</a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Parkinson Case Study (a)">Parkinson Case Study (a)</a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Parkinson Case Study (b)">Parkinson Case Study (b)</a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Thyroid Case Study (a)">Thyroid Case Study (a)</a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Thyroid Case Study (b)">Thyroid Case Study (b)</a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Kidney Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Kidney Case Study (a)'] }}">Kidney Case Study (a) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Kidney Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Kidney Case Study (b)'] }}">Kidney Case Study (b) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Parkinson Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Parkinson Case Study (a)'] }}">Parkinson Case Study (a) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Parkinson Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Parkinson Case Study (b)'] }}">Parkinson Case Study (b) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Thyroid Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Thyroid Case Study (a)'] }}">Thyroid Case Study (a) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Thyroid Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Thyroid Case Study (b)'] }}">Thyroid Case Study (b) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
                     </ul>
                 </div>
             </div>
@@ -184,6 +183,10 @@
 
     // Initialize when DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Bootstrap tooltips
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        
         // Show filter panel if filters are active
         {% if filter_case_study or filter_flow_step or filter_regulatory_question %}
         filterPanel.style.display = 'inline';
