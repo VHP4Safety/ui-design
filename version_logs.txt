@@ -1,8 +1,9 @@
 
-Version 0.5-0 (2025-10-15)
+Version 0.5-1 (2025-10-15)
 --------------------------------------------------------------------------------
-- Adding the data section to the platform. 
+- Adding the data section to the application. 
 - General update on the visual style of the application. 
+- Adding a script to enable webpage statistics. 
 
 Version 0.4-3 (2025-09-30)
 --------------------------------------------------------------------------------
