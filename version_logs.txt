@@ -1,5 +1,5 @@
 
-Version 0.5-1 (2025-10-15)
+Version 0.5-2 (2025-10-15)
 --------------------------------------------------------------------------------
 - Adding the data section to the application. 
 - General update on the visual style of the application. 
