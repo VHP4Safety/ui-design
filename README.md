@@ -130,7 +130,7 @@ Run the following command in your terminal:
 python app.py
 ```
 
-The application will be available at [http://localhost:5000/](http://localhost:5000/).
+The application will be available at [http://localhost:5050/](http://localhost:5050/).
 
 ### Deployment with Docker
 
@@ -138,7 +138,7 @@ Build and run the Docker container:
 
 ```
 docker build -t vhp4safety_ui .
-docker run -d -p 5001:5000 vhp4safety_ui
+docker run -d -p 5000:5050 vhp4safety_ui
 ```
 
 The application will be available at [http://localhost:5001/](http://localhost:5001/).

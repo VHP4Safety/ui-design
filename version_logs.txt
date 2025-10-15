@@ -1,3 +1,9 @@
+
+Version 0.5-0 (2025-10-15)
+--------------------------------------------------------------------------------
+- Adding the data section to the platform. 
+- General update on the visual style of the application. 
+
 Version 0.4-3 (2025-09-30)
 --------------------------------------------------------------------------------
 - Adding icons and descriptions to the case studies in the case studies page.
