@@ -30,6 +30,7 @@
     {% if tool_details.screenshot %}<span style="float: right"><img src="https://cloud.vhp4safety.nl/service/{{ tool_details.screenshot }}" width="300" />{% endif %}
   </div>
   <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
+    {% if tool_details.ELIXIR %}
     {% if tool_details.ELIXIR.tess %}
     <h2>ELIXIR TeSS</h2>
 <link rel="stylesheet" property="stylesheet" href="https://elixirtess.github.io/TeSS_widgets/css/tess-widget.css"/>
@@ -54,6 +55,7 @@ function initTeSSWidgets() {
 </script>
 <script async="" defer="" src="https://elixirtess.github.io/TeSS_widgets/js/tess-widget-standalone.js" onload="initTeSSWidgets()"></script>
   {% endif %}
+  {% endif %}
   </div>
   <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">
     ...
@@ -61,17 +63,19 @@ function initTeSSWidgets() {
   <div class="tab-pane" id="simple-tabpanel-3" role="tabpanel" aria-labelledby="simple-tab-3">
     <h2>Contact</h2>
     <ul>
-      {% if tool_details.provider.contact.name %}<li>Foo</li>{% endif %}
+      {% if tool_details.provider %}{% if tool_details.provider.contact %}{% if tool_details.provider.contact.name %}<li>Foo</li>{% endif %}{% endif %}{% endif %}
     </ul>    
   </div>
   <div class="tab-pane" id="simple-tabpanel-4" role="tabpanel" aria-labelledby="simple-tab-4">
+    {% if tool_details.instance %}
     <h2>Technical details</h2>
     <ul>
       {% if tool_details.instance.version %}<li>Version: {{ tool_details.instance.version }}</li>{% endif %}
       {% if tool_details.instance.license %}<li>License: {{ tool_details.instance.license }}</li>{% endif %}
       {% if tool_details.instance.source %}<li>Source code: <a href="{{ tool_details.instance.source }}">{{ tool_details.instance.source }}</a></li>{% endif %}
       {% if tool_details.instance.docker %}<li>Docker: <a href="{{ tool_details.instance.docker }}">{{ tool_details.instance.docker }}</a></li>{% endif %}
-    </ul>    
+    </ul>
+    {% endif %}
   </div>
 </div>
 
