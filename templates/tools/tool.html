@@ -18,13 +18,61 @@
     <a class="nav-link" id="simple-tab-2" data-bs-toggle="tab" href="#simple-tabpanel-2" role="tab" aria-controls="simple-tabpanel-2" aria-selected="false">Documentation</a>
   </li>
   <li class="nav-item" role="presentation">
-    <a class="nav-link" id="simple-tab-2" data-bs-toggle="tab" href="#simple-tabpanel-2" role="tab" aria-controls="simple-tabpanel-2" aria-selected="false">FAQ &amp; Support</a>
+    <a class="nav-link" id="simple-tab-3" data-bs-toggle="tab" href="#simple-tabpanel-3" role="tab" aria-controls="simple-tabpanel-3" aria-selected="false">FAQ &amp; Support</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="simple-tab-4" data-bs-toggle="tab" href="#simple-tabpanel-4" role="tab" aria-controls="simple-tabpanel-4" aria-selected="false">Technical</a>
   </li>
 </ul>
 <div class="tab-content pt-5" id="tab-content">
-  <div class="tab-pane active" id="simple-tabpanel-0" role="tabpanel" aria-labelledby="simple-tab-0">{{ tool_json.description }}</div>
-  <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">...</div>
-  <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">...</div>
+  <div class="tab-pane active" id="simple-tabpanel-0" role="tabpanel" aria-labelledby="simple-tab-0">
+    {{ tool_json.description }}
+    {% if tool_details.screenshot %}<span style="float: right"><img src="https://cloud.vhp4safety.nl/service/{{ tool_details.screenshot }}" width="300" />{% endif %}
+  </div>
+  <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
+    {% if tool_details.ELIXIR.tess %}
+    <h2>ELIXIR TeSS</h2>
+<link rel="stylesheet" property="stylesheet" href="https://elixirtess.github.io/TeSS_widgets/css/tess-widget.css"/>
+<div id="tess-widget-materials-table" class="tess-widget tess-widget-faceted-table"></div>
+<script>
+function initTeSSWidgets() {
+    TessWidget.Materials(document.getElementById('tess-widget-materials-table'),
+        'FacetedTable',
+        {
+            opts: {
+                columns: [{name: 'Name', field: 'title'},
+                    {name: 'Description', field: 'description'}],
+                allowedFacets: ['scientific-topics', 'target-audience'],
+                facetOptionLimit: 5
+            },
+            params: {
+                pageSize: 5,
+                q: '{{ tool_details.ELIXIR.tess }}'
+            }
+        });
+}
+</script>
+<script async="" defer="" src="https://elixirtess.github.io/TeSS_widgets/js/tess-widget-standalone.js" onload="initTeSSWidgets()"></script>
+  {% endif %}
+  </div>
+  <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">
+    ...
+  </div>
+  <div class="tab-pane" id="simple-tabpanel-3" role="tabpanel" aria-labelledby="simple-tab-3">
+    <h2>Contact</h2>
+    <ul>
+      {% if tool_details.provider.contact.name %}<li>Foo</li>{% endif %}
+    </ul>    
+  </div>
+  <div class="tab-pane" id="simple-tabpanel-4" role="tabpanel" aria-labelledby="simple-tab-4">
+    <h2>Technical details</h2>
+    <ul>
+      {% if tool_details.instance.version %}<li>Version: {{ tool_details.instance.version }}</li>{% endif %}
+      {% if tool_details.instance.license %}<li>License: {{ tool_details.instance.license }}</li>{% endif %}
+      {% if tool_details.instance.source %}<li>Source code: <a href="{{ tool_details.instance.source }}">{{ tool_details.instance.source }}</a></li>{% endif %}
+      {% if tool_details.instance.docker %}<li>Docker: <a href="{{ tool_details.instance.docker }}">{{ tool_details.instance.docker }}</a></li>{% endif %}
+    </ul>    
+  </div>
 </div>
 
 </section>
