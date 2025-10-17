@@ -412,15 +412,28 @@ def tools():
 
 @app.route("/tools/<toolname>")
 def tool_page(toolname):
+    # get the tools metadata:
+    url = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/service_index.json"
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        return f"Error fetching service list: {response.status_code}", 503
+
+    try:
+        tools = response.json()
+        tools = dict(tools)
+        # Geting the service_list.json in the dictionary format.
+        # Converting the dictionary to a list object.
+    except Exception as e:
+        return f"Error processing service data: {e}", 500
+
     # Map toolname to the correct JSON file in the new tool folder
-    tool_json_map = {
-        "qsprpred": "tool/qsprpred_content.json",
-        "qaopapp": "tool/qaopapp_content.json",
-    }
-    if toolname not in tool_json_map:
+    print("tool: " + toolname)
+    print("tool: " + str(tools[toolname]))
+    if toolname not in tools:
         abort(404)
     # Pass the json filename to the template (for JS to pick up)
-    return render_template("tools/tool.html", tool_json=tool_json_map[toolname])
+    return render_template("tools/tool.html", tool_json=tools[toolname])
 
 
 ################################################################################
