@@ -26,7 +26,10 @@
     <a class="nav-link" id="simple-tab-2" data-bs-toggle="tab" href="#simple-tabpanel-2" role="tab" aria-controls="simple-tabpanel-2" aria-selected="false">Experimental data</a>
   </li>
   <li class="nav-item" role="presentation">
-    <a class="nav-link" id="simple-tab-3" data-bs-toggle="tab" href="#simple-tabpanel-3" role="tab" aria-controls="simple-tabpanel-3" aria-selected="false">Toxicology</a>
+    <a class="nav-link" id="simple-tab-3" data-bs-toggle="tab" href="#simple-tabpanel-3" role="tab" aria-controls="simple-tabpanel-3" aria-selected="false">Metabolism</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="simple-tab-4" data-bs-toggle="tab" href="#simple-tabpanel-4" role="tab" aria-controls="simple-tabpanel-4" aria-selected="false">Toxicology</a>
   </li>
 </ul>
 <div class="tab-content pt-5" id="tab-content">
@@ -91,6 +94,20 @@
     </table>
   </div>
   <div class="tab-pane" id="simple-tabpanel-3" role="tabpanel" aria-labelledby="simple-tab-3">
+    <div id="metabolism_div">
+      No metabolism is found.
+    </div>
+  </div>
+  <div class="tab-pane" id="simple-tabpanel-4" role="tabpanel" aria-labelledby="simple-tab-4">
+    <table class="table table-bordered table-striped" id="tox_table">
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 </div>
 
@@ -154,6 +171,24 @@
                     <td>${option.doi}</td>
                 </tr>
             `);
+        });
+    });
+      
+    $.getJSON("/get_compound_toxicology/{{ cwid }}", function (data) {
+        console.log("Toxicology")
+        console.log(data)
+        const toxBody = $("#tox_table tbody");
+        toxBody.empty();
+        const metabolism_div = $("#metabolism_div");
+        metabolism_div.empty();
+        data.forEach((option) => {
+          console.log(option)
+          if (option.propertyLabel == "ToxBank Wiki" &&
+              option.value != "")
+            toxBody.append(`<tr><td>${option.propertyLabel}</td><td><a href="https://web.archive.org/web/20230415165239/${option.value}">${option.value}</a></td></tr>`);
+          if (option.propertyLabel == "xenobiotic metabolism pathway" &&
+              option.value != "")
+            metabolism_div.append(`<iframe src ="https://pathway-viewer.toolforge.org/?id=${option.value}" width="900px" height="600px" style="overflow:hidden;"></iframe>`);
         });
     });
       

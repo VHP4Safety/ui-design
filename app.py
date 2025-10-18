@@ -568,6 +568,51 @@ def show_compounds_identifiers_as_json(cwid):
     return jsonify(compound_list), 200
 
 
+@app.route("/get_compound_toxicology/<cwid>")
+def show_compounds_toxicology_as_json(cwid):
+    if not is_valid_qid(cwid):
+        return jsonify({"error": "Invalid compound identifier"}), 400
+    compoundwikiEP = "https://compoundcloud.wikibase.cloud/query/sparql"
+    sparqlquery = (
+        "PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>\n"
+        "PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>\n\n"
+        "SELECT DISTINCT ?propertyLabel ?value ?formatterURL\n"
+        "WHERE {\n"
+        "  VALUES ?property { wd:P17 wd:P19 wd:P4 }\n"
+        "  ?property wikibase:directClaim ?valueProp .\n"
+        "  OPTIONAL { wd:" + cwid + " ?valueProp ?value }\n"
+        "  OPTIONAL { ?property wdt:P6 ?formatterURL }\n"
+        '  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }\n'
+        "}"
+    )
+    try:
+        compound_dat = wbi_helpers.execute_sparql_query(
+            sparqlquery, endpoint=compoundwikiEP
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    if len(compound_dat["results"]["bindings"]) == 0:
+        return jsonify({"error": "No data found"}), 404
+    compound_dat = compound_dat["results"]["bindings"]
+    # return jsonify(compound_dat)
+
+    compound_list = []
+    for expProp in compound_dat:
+        print(expProp)
+        if "value" in expProp:
+            compound_list.append(
+                {
+                    "propertyLabel": expProp["propertyLabel"]["value"],
+                    "value": expProp["value"]["value"]
+                }
+            )
+        else:
+            compound_list.append(
+                {"propertyLabel": expProp["propertyLabel"]["value"], "value": ""}
+            )
+    return jsonify(compound_list), 200
+
+
 @app.route("/get_compound_expdata/<cwid>")
 def show_compounds_expdata_as_json(cwid):
     if not is_valid_qid(cwid):
