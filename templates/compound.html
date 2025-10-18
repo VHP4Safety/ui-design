@@ -20,10 +20,13 @@
     <a class="nav-link active" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab" aria-controls="simple-tabpanel-0" aria-selected="true">Overview</a>
   </li>
   <li class="nav-item" role="presentation">
-    <a class="nav-link" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-1" role="tab" aria-controls="simple-tabpanel-1" aria-selected="false">Experimental data</a>
+    <a class="nav-link" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-1" role="tab" aria-controls="simple-tabpanel-1" aria-selected="false">Identifiers</a>
   </li>
   <li class="nav-item" role="presentation">
-    <a class="nav-link" id="simple-tab-2" data-bs-toggle="tab" href="#simple-tabpanel-2" role="tab" aria-controls="simple-tabpanel-2" aria-selected="false">Toxicology</a>
+    <a class="nav-link" id="simple-tab-2" data-bs-toggle="tab" href="#simple-tabpanel-2" role="tab" aria-controls="simple-tabpanel-2" aria-selected="false">Experimental data</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="simple-tab-3" data-bs-toggle="tab" href="#simple-tabpanel-3" role="tab" aria-controls="simple-tabpanel-3" aria-selected="false">Toxicology</a>
   </li>
 </ul>
 <div class="tab-content pt-5" id="tab-content">
@@ -66,7 +69,7 @@
   <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
     <p>Based on data in Wikidata.</p>
 
-    <table class="table table-bordered table-striped" id="expdata_table">
+    <table class="table table-bordered table-striped" id="id_table">
       <thead>
         <tr>
           <th>Property</th>
@@ -77,6 +80,17 @@
     </table>
   </div>
   <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">
+    <table class="table table-bordered table-striped" id="expdata_table">
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="tab-pane" id="simple-tabpanel-3" role="tabpanel" aria-labelledby="simple-tab-3">
   </div>
 </div>
 
@@ -95,7 +109,7 @@
       
       $.getJSON("/get_compound_identifiers/{{ cwid }}", function (data) {
         console.log(data)
-        const tableBody = $("#info_table tbody");
+        const tableBody = $("#id_table tbody");
         tableBody.empty();
         data.forEach((option) => {
             tableBody.append(`
