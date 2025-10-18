@@ -7,12 +7,27 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<div style="max-width: 75%; margin: 0 auto; padding: 100px;">
 
-<h1 id="title">{{ cwid }}</h1>
+<section class="container py-5">
+    <div class="">
+        <h1><span id="title" class="text-vhppink" id="collection-name">{{ cwid }}</span></h1>
 
-<h2>Basic info</h2>
-
+    </div>
+    
+<link rel="stylesheet" href="/static/css/casestudies.css" />
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <a class="nav-link active" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab" aria-controls="simple-tabpanel-0" aria-selected="true">Overview</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-1" role="tab" aria-controls="simple-tabpanel-1" aria-selected="false">Experimental data</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="simple-tab-2" data-bs-toggle="tab" href="#simple-tabpanel-2" role="tab" aria-controls="simple-tabpanel-2" aria-selected="false">Toxicology</a>
+  </li>
+</ul>
+<div class="tab-content pt-5" id="tab-content">
+  <div class="tab-pane active" id="simple-tabpanel-0" role="tabpanel" aria-labelledby="simple-tab-0">
 <p>As given in the VHP4Safety Compound Wiki.</p>
 
         <table class="table table-bordered table-striped" id="info_table"> 
@@ -31,23 +46,6 @@
 <p>Based on the SMILES in the VHP4Safety Compound Wiki.</p>
 
 <span id="mydiv"></span>
-
-<h2>Experimental data</h2>
-
-<p>Based on data in Wikidata.</p>
-
-        <table class="table table-bordered table-striped" id="expdata_table">
-            <thead>
-                <tr>
-                    <th>Property</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
-</div>
-
 <script>
   var jmolApplet0; // set up in HTML table, below
   jmol_isReady = function(applet) {
@@ -62,7 +60,27 @@
 	readyFunction: jmol_isReady,
   }
   jmolApplet0 = Jmol.getApplet("jmolApplet0", Info)
+</script>
 
+  </div>
+  <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
+    <p>Based on data in Wikidata.</p>
+
+    <table class="table table-bordered table-striped" id="expdata_table">
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">
+  </div>
+</div>
+
+<script>
   $(document).ready(function () {
       // Fetch and populate the compound table
       $.getJSON("/get_compound_properties/{{ cwid }}", function (data) {
