@@ -524,7 +524,7 @@ def show_compounds_identifiers_as_json(cwid):
     sparqlquery = (
         "PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>\n"
         "PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>\n\n"
-        "SELECT ?propertyLabel ?value\n"
+        "SELECT DISTINCT ?propertyLabel ?value\n"
         "WHERE {\n"
         "  VALUES ?property { wd:P3 wd:P2 wd:P32 }\n"
         "  ?property wikibase:directClaim ?valueProp .\n"
@@ -598,7 +598,7 @@ def show_compounds_expdata_as_json(cwid):
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
         "PREFIX pr: <http://www.wikidata.org/prop/reference/>\n"
         "PREFIX wikibase: <http://wikiba.se/ontology#>\n\n"
-        "SELECT ?propEntityLabel ?value ?unitsLabel ?source ?doi ?statement\n"
+        "SELECT DISTINCT ?propEntityLabel ?value ?unitsLabel ?source ?doi ?statement\n"
         "WHERE {\n"
         "    <" + qid + "> ?propp ?statement .\n"
         "    ?statement a wikibase:BestRank ;\n"
