@@ -67,7 +67,7 @@
 
   </div>
   <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
-    <p>Based on data in Wikidata.</p>
+    <p>Based on data in the VHP4Safety Compound Wiki.</p>
 
     <table class="table table-bordered table-striped" id="id_table">
       <thead>
@@ -119,12 +119,14 @@
         const tableBody = $("#id_table tbody");
         tableBody.empty();
         data.forEach((option) => {
+          if (option.value != "") {
             tableBody.append(`
                 <tr>
                     <td>${option.propertyLabel}</td>
                     <td>${option.value}</td>
                 </tr>
             `);
+          }
         });
     });
 
