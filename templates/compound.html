@@ -103,7 +103,10 @@
         document.getElementById("title").innerHTML = data[0].label
         const tableBody = $("#info_table tbody");
         tableBody.empty();
+        tableBody.append(`<tr><td>Chemical formula</td><td>${data[0].formula}</td></tr>`);
+        tableBody.append(`<tr><td>mass</td><td>${data[0].mass}</td></tr>`);
         tableBody.append(`<tr><td>SMILES</td><td>${data[0].SMILES}</td></tr>`);
+        tableBody.append(`<tr><td>InChI</td><td>${data[0].inchi}</td></tr>`);
         tableBody.append(`<tr><td>InChIKey</td><td>${data[0].inchikey}</td></tr>`);
 
         // add a JmolJS applet

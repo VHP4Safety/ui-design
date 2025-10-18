@@ -486,9 +486,12 @@ def show_compounds_properties_as_json(cwid):
     sparqlquery = (
         "PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>\n"
         "PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>\n\n"
-        "SELECT ?cmp ?cmpLabel ?inchiKey ?SMILES WHERE {\n"
+        "SELECT ?cmp ?cmpLabel ?formula ?mass ?inchi ?inchiKey ?SMILES WHERE {\n"
         "  VALUES ?cmp { wd:" + cwid + " }\n"
-        "  ?cmp wdt:P10 ?inchiKey .\n"
+        "  ?cmp wdt:P9 ?inchi ;\n"
+        "       wdt:P10 ?inchiKey .\n"
+        "  OPTIONAL { ?cmp wdt:P2 ?mass }\n"
+        "  OPTIONAL { ?cmp wdt:P3 ?formula }\n"
         "  OPTIONAL { ?cmp wdt:P7 ?chiralSMILES }\n"
         "  OPTIONAL { ?cmp wdt:P12 ?nonchiralSMILES }\n"
         '  BIND (COALESCE(IF(BOUND(?chiralSMILES), ?chiralSMILES, 1/0), IF(BOUND(?nonchiralSMILES), ?nonchiralSMILES, 1/0), "") AS ?SMILES)\n'
@@ -509,8 +512,11 @@ def show_compounds_properties_as_json(cwid):
         {
             "wcid": compound_dat["cmp"]["value"],
             "label": compound_dat["cmpLabel"]["value"],
+            "inchi": compound_dat["inchi"]["value"],
             "inchikey": compound_dat["inchiKey"]["value"],
             "SMILES": compound_dat["SMILES"]["value"],
+            "formula": compound_dat["formula"]["value"],
+            "mass": compound_dat["mass"]["value"],
         }
     ]
     return jsonify(compound_list), 200
