@@ -101,6 +101,10 @@
         console.log(data[0])
         // replace the Compound Wiki ID with the label
         document.getElementById("title").innerHTML = data[0].label
+        const tableBody = $("#info_table tbody");
+        tableBody.empty();
+        tableBody.append(`<tr><td>SMILES</td><td>${data[0].SMILES}</td></tr>`);
+        tableBody.append(`<tr><td>InChIKey</td><td>${data[0].inchikey}</td></tr>`);
 
         // add a JmolJS applet
         $("#mydiv").html(Jmol.getAppletHtml("jmolApplet0"))
