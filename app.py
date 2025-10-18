@@ -530,11 +530,12 @@ def show_compounds_identifiers_as_json(cwid):
     sparqlquery = (
         "PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>\n"
         "PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>\n\n"
-        "SELECT DISTINCT ?propertyLabel ?value\n"
+        "SELECT DISTINCT ?propertyLabel ?value ?formatterURL\n"
         "WHERE {\n"
         "  VALUES ?property { wd:P13 wd:P22 wd:P23 wd:P26 wd:P27 wd:P28 wd:P36 wd:P41 wd:P43 wd:P44 wd:P45 }\n"
         "  ?property wikibase:directClaim ?valueProp .\n"
         "  OPTIONAL { wd:" + cwid + " ?valueProp ?value }\n"
+        "  OPTIONAL { ?property wdt:P6 ?formatterURL }\n"
         '  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }\n'
         "}"
     )
@@ -557,11 +558,12 @@ def show_compounds_identifiers_as_json(cwid):
                 {
                     "propertyLabel": expProp["propertyLabel"]["value"],
                     "value": expProp["value"]["value"],
+                    "formatterURL": expProp["formatterURL"]["value"],
                 }
             )
         else:
             compound_list.append(
-                {"propertyLabel": expProp["propertyLabel"]["value"], "value": ""}
+                {"propertyLabel": expProp["propertyLabel"]["value"], "value": "", "formatterURL": ""}
             )
     return jsonify(compound_list), 200
 

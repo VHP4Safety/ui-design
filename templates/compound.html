@@ -120,12 +120,22 @@
         tableBody.empty();
         data.forEach((option) => {
           if (option.value != "") {
-            tableBody.append(`
+            formatterURL = option.formatterURL.replace("$1", option.value)
+            if (option.formatterURL != "") {
+              tableBody.append(`
+                <tr>
+                    <td>${option.propertyLabel}</td>
+                    <td><a href="${formatterURL}">${option.value}</a></td>
+                </tr>
+              `);
+            } else {
+              tableBody.append(`
                 <tr>
                     <td>${option.propertyLabel}</td>
                     <td>${option.value}</td>
                 </tr>
-            `);
+              `);
+            }
           }
         });
     });
