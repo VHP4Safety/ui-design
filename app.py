@@ -431,11 +431,8 @@ def tool_page(toolname):
     if toolname not in tools:
         abort(404)
 
-    print("tool: " + toolname)
-
     # get the tools metadata:
     url = "https://cloud.vhp4safety.nl/service/" + toolname+ ".json"
-    print("url: " + url)
     response = requests.get(url)
 
     if response.status_code != 200:
@@ -575,7 +572,6 @@ def show_compounds_identifiers_as_json(cwid):
 
     compound_list = []
     for expProp in compound_dat:
-        print(expProp)
         if "value" in expProp:
             compound_list.append(
                 {
@@ -619,7 +615,6 @@ def show_compounds_expdata_as_json(cwid):
         return jsonify({"error": "No data found"}), 404
     compound_dat = compound_dat["results"]["bindings"][0]
     qid = compound_dat["qid"]["value"]
-    print(qid)
     # the next query may be affected by https://github.com/ad-freiburg/qlever-control/issues/187
     sparqlquery = (
         "PREFIX wd: <http://www.wikidata.org/entity/>\n"
