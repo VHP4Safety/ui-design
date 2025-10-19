@@ -2,7 +2,7 @@
 {% block content %}
 <link rel="stylesheet" href="/static/css/data.css" />
 
-<section class="container py-5">
+<section class="container py-md-5 py-3">
     <!-- Page Title and Description -->
     <div class="">
         <h1><span class="text-vhpteal" id="collection-name">{{ collection_name or 'Data catalog' }} Data</span></h1>
@@ -25,9 +25,9 @@
         
         <!-- Filter Panel -->
         <div id="filter-panel" class="card bg-secondary-subtle p-3 mt-2" style="display: none;">
-            <div class="gap-2 pb-2">
+            <div class="gap-2 pb-1">
                 <!-- Case Study Dropdown -->
-                <div class="btn-group">
+                <div class="btn-group mb-1">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
                         Case Study
                     </button>
@@ -39,7 +39,7 @@
                 </div>
                 
                 <!-- Flow Step Dropdown -->
-                <div class="btn-group">
+                <div class="btn-group mb-1">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
                         Flow Step
                     </button>
@@ -55,7 +55,7 @@
                 </div>
                 
                 <!-- Regulatory Questions Dropdown -->
-                <div class="btn-group">
+                <div class="btn-group mb-1">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
                         Regulatory Question
                     </button>
@@ -242,7 +242,7 @@
         // Create tags for each active filter
         if (selectedFilters['case-study']) {
             const tag = document.createElement('span');
-            tag.className = 'badge rounded-pill text-bg-vhpteal d-inline-flex align-items-center';
+            tag.className = 'badge rounded-pill text-bg-vhpteal d-inline-flex align-items-center text-wrap';
             tag.innerHTML = `
                 Case Study: ${selectedFilters['case-study']}
                 <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('case-study')">×</button>
@@ -252,7 +252,7 @@
         
         if (selectedFilters['flow-step']) {
             const tag = document.createElement('span');
-            tag.className = 'badge rounded-pill text-bg-vhpteal d-inline-flex align-items-center';
+            tag.className = 'badge rounded-pill text-bg-vhpteal d-inline-flex align-items-center text-wrap';
             tag.innerHTML = `
                 Flow Step: ${selectedFilters['flow-step']}
                 <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('flow-step')">×</button>
@@ -262,7 +262,7 @@
         
         if (selectedFilters['reg-question']) {
             const tag = document.createElement('span');
-            tag.className = 'badge rounded-pill text-bg-vhpteal d-inline-flex align-items-center';
+            tag.className = 'badge rounded-pill text-bg-vhpteal d-inline-flex align-items-center text-wrap';
             tag.innerHTML = `
                 Reg. Question: ${selectedFilters['reg-question']}
                 <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('reg-question')">×</button>

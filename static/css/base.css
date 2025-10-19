@@ -80,5 +80,16 @@ html {
 
 
 
+/* Grid layout for Search/Filter Results */
+.results-section {
+    min-height: 400px;
+}
+
+.results-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
 
 

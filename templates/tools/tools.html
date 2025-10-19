@@ -4,8 +4,11 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tools.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/data.css') }}">
 
+<!-- Marked.js for Markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-<section class="container py-5">
+
+<section class="container py-md-5 py-3">
     <!-- Page Title and Description -->
     <div class="">
         <h1><span class="text-vhppink" id="collection-name">Tools</span></h1>
@@ -29,9 +32,9 @@
         
         <!-- Filter Panel -->
         <div id="filter-panel" class="card bg-secondary-subtle p-3 mt-2" style="display: none;">
-            <div class="gap-2 pb-2">
+            <div class="gap-2 pb-1">
                 <!-- Flow Step Dropdown -->
-                <div class="btn-group">
+                <div class="btn-group mb-1">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
                         Flow Step
                     </button>
@@ -45,7 +48,7 @@
                 </div>
                 
                 <!-- Regulatory Questions Dropdown -->
-                <div class="btn-group">
+                <div class="btn-group mb-1">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
                         Regulatory Question
                     </button>
@@ -77,8 +80,8 @@
     </nav>
 
     <!-- Tools List -->
-    <div class="results-section py-5">
-        <ul class="results-list">
+    <div class="results-section mt-2 pt-3">
+        <ul class="results-list p-0">
             {% for item in tools %}
                 <div class="card">
                     <div class="card-img-top overflow-hidden" style="aspect-ratio: 21/9;">
@@ -92,28 +95,30 @@
                     </div>
                     <div class="card-footer bg-white border-0 py-3">
 
-                        <div class="btn-group" role="group" aria-label="Tool example">
+                        <div class="btn-group d-flex" role="group" aria-label="Tool example">
                             <!-- Tool Webpage -->
                             {% if item.main_url == "no_url" %}
-                                <a type="button" class="btn btn-outline-secondary disabled">No Available Webpage</a> 
+                                <a type="button" class="btn btn-outline-secondary disabled" data-bs-toggle="tooltip" data-bs-title="No webpage available"><i class="bi bi-box-arrow-up-right"></i>
+</a> 
                             {% else %}
-                                <a type="button" href="{{ item.main_url }}" class="btn btn-outline-secondary" target="_blank">Main Webpage</a>
+                                <a type="button" href="{{ item.main_url }}" class="btn btn-outline-secondary" target="_blank" data-bs-toggle="tooltip" data-bs-title="Visit main webpage"><i class="bi bi-box-arrow-up-right"></i>
+</a>
                             {% endif %}
 
 
                             <!-- Instance Page -->
                             {% if item.inst_url == "no_url" %}
-                                <a type="button" class="btn btn-outline-vhppink disabled">No VHP Instance</a> 
+                                <a type="button" class="btn btn-outline-vhppink disabled" data-bs-toggle="tooltip" data-bs-title="No VHP instance available">No VHP Instance</a> 
                             {% else %}
-                                <a type="button" href="{{ item.inst_url }}" class="btn btn-outline-vhppink" target="_blank">VHP Instance</a>
+                                <a type="button" href="{{ item.inst_url }}" class="btn btn-vhppink flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Try VHP-hosted instance">VHP Instance</a>
                             {% endif %}                   
 
 
                             <!-- Catalog Page -->
-                            <a href="{{ item.url }}" class="btn btn-outline-secondary">Catalog Page</a>
+                            <a href="{{ url_for('tools') }}/{{ item.id }}" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-title="View tool details"><i class="bi bi-info-circle"></i></a>
 
                             <!-- Meta-Data -->
-                            <a href="{{ item.meta_data }}" class="btn btn-outline-vhpteal">Meta-Data</a>
+                            <button type="button" class="btn btn-outline-vhpteal" data-bs-toggle="tooltip" data-bs-title="View metadata (.md)" onclick="showMetadata('{{ item.meta_data }}', '{{ item.service }}')"><i class="bi bi-list-ul"></i></button>
                         </div>
                     </div>
                 </div>
@@ -226,7 +231,7 @@
         // Create tags for flow-step filters
         selectedFilters['flow-step'].forEach(value => {
             const tag = document.createElement('span');
-            tag.className = 'badge rounded-pill text-bg-vhppink d-inline-flex align-items-center';
+            tag.className = 'badge rounded-pill text-bg-vhppink d-inline-flex align-items-center text-wrap';
             tag.innerHTML = `
                 Flow Step: ${value}
                 <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('flow-step', '${value.replace(/'/g, "\\'")}')">×</button>
@@ -237,7 +242,7 @@
         // Create tags for reg-question filters
         selectedFilters['reg-question'].forEach(value => {
             const tag = document.createElement('span');
-            tag.className = 'badge rounded-pill text-bg-vhppink d-inline-flex align-items-center';
+            tag.className = 'badge rounded-pill text-bg-vhppink d-inline-flex align-items-center text-wrap';
             tag.innerHTML = `
                 Reg. Q: ${value}
                 <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('reg-question', '${value.replace(/'/g, "\\'")}')">×</button>
@@ -304,6 +309,90 @@
         updateFilterDisplay();
         updateDropdownVisuals();
     });
+
+    // Metadata modal functionality
+    let currentMetadataUrl = '';
+    
+    async function showMetadata(url, toolName) {
+        currentMetadataUrl = url;
+        const modal = new bootstrap.Modal(document.getElementById('metadataModal'));
+        const modalTitle = document.getElementById('metadataModalLabel');
+        const metadataContent = document.getElementById('metadata-content');
+        const loadingSpinner = document.getElementById('metadata-loading');
+        const errorMessage = document.getElementById('metadata-error');
+        
+        // Update modal title
+        modalTitle.textContent = `Metadata - ${toolName}`;
+        
+        // Show loading, hide content and error
+        loadingSpinner.style.display = 'block';
+        metadataContent.style.display = 'none';
+        errorMessage.style.display = 'none';
+        
+        // Open modal
+        modal.show();
+        
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed to fetch metadata');
+            
+            // Get the markdown text
+            const markdownText = await response.text();
+            
+            // Parse markdown to HTML using marked.js
+            const htmlContent = marked.parse(markdownText);
+            
+            // Display rendered HTML
+            metadataContent.innerHTML = htmlContent;
+            
+            // Add Bootstrap img-fluid class to all images for responsive sizing
+            metadataContent.querySelectorAll('img').forEach(img => {
+                img.classList.add('img-fluid');
+            });
+            
+            loadingSpinner.style.display = 'none';
+            metadataContent.style.display = 'block';
+        } catch (error) {
+            console.error('Error fetching metadata:', error);
+            loadingSpinner.style.display = 'none';
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = 'Failed to load metadata. Please try downloading instead.';
+        }
+    }
+    
+    function downloadMetadata() {
+        if (currentMetadataUrl) {
+            window.open(currentMetadataUrl, '_blank');
+        }
+    }
 </script>
+
+<!-- Metadata Modal -->
+<div class="modal fade" id="metadataModal" tabindex="-1" aria-labelledby="metadataModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="metadataModalLabel">Metadata</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="metadata-loading" class="text-center py-4">
+          <div class="spinner-border text-vhpteal" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-2">Loading metadata...</p>
+        </div>
+        <div id="metadata-error" class="alert alert-warning" style="display: none;" role="alert"></div>
+        <div id="metadata-content" class="bg-light p-3 rounded" style="display: none; max-height: 500px; overflow-y: auto;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-vhpteal" onclick="downloadMetadata()">
+          <i class="bi bi-download me-1"></i>Download MD file
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
