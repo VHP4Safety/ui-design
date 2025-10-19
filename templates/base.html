@@ -89,17 +89,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        <ul class="nav flex-column fs-5 fw-bold">
-          <li class="nav-item mb-3">
-            <a class="nav-link text-dark" href="{{ url_for('home') }}#about-section" data-bs-dismiss="offcanvas">About</a>
-          </li>
-          <li class="nav-item mb-3">
-            <a class="nav-link text-dark" href="{{ url_for('home') }}#partners-section" data-bs-dismiss="offcanvas">Partners</a>
-          </li>
-          <li class="nav-item mb-3">
-            <a class="nav-link text-dark" href="{{ url_for('home') }}#contact-section" data-bs-dismiss="offcanvas">Contact</a>
-          </li>
-        </ul>
+        <div class="d-flex flex-column gap-3">
+          <button class="btn btn-vhppink text-nowrap" onclick="location.href='/tools'" data-bs-dismiss="offcanvas">Tools</button>
+          <button class="btn btn-vhpblue text-white text-nowrap" onclick="location.href='/casestudies'" data-bs-dismiss="offcanvas">Case Studies</button>
+          <button class="btn btn-vhpteal text-nowrap" onclick="location.href='/data'" data-bs-dismiss="offcanvas">Data</button>
+        </div>
       </div>
     </div>
 
