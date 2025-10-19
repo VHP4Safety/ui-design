@@ -1,40 +1,79 @@
 {% extends "base.html" %}
 {% block content %}
+<link rel="stylesheet" href="/static/css/casestudies.css" />
+<link rel="stylesheet" property="stylesheet" href="https://elixirtess.github.io/TeSS_widgets/css/tess-widget.css"/>
+
 <section class="container py-5">
-    <div class="">
+    <div class="pb-2">
         <h1><span class="text-vhppink" id="collection-name">{{ tool_json.service }}</span></h1>
 
     </div>
     
-<link rel="stylesheet" href="/static/css/casestudies.css" />
-<ul class="nav nav-tabs" role="tablist">
-  <li class="nav-item" role="presentation">
-    <a class="nav-link active" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab" aria-controls="simple-tabpanel-0" aria-selected="true">Overview</a>
-  </li>
-  <li class="nav-item" role="presentation">
-    <a class="nav-link" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-1" role="tab" aria-controls="simple-tabpanel-1" aria-selected="false">Tutorial</a>
-  </li>
-  <li class="nav-item" role="presentation">
-    <a class="nav-link" id="simple-tab-2" data-bs-toggle="tab" href="#simple-tabpanel-2" role="tab" aria-controls="simple-tabpanel-2" aria-selected="false">Documentation</a>
-  </li>
-  <li class="nav-item" role="presentation">
-    <a class="nav-link" id="simple-tab-3" data-bs-toggle="tab" href="#simple-tabpanel-3" role="tab" aria-controls="simple-tabpanel-3" aria-selected="false">FAQ &amp; Support</a>
-  </li>
-  <li class="nav-item" role="presentation">
-    <a class="nav-link" id="simple-tab-4" data-bs-toggle="tab" href="#simple-tabpanel-4" role="tab" aria-controls="simple-tabpanel-4" aria-selected="false">Technical</a>
-  </li>
-</ul>
-<div class="tab-content pt-5" id="tab-content">
-  <div class="tab-pane active" id="simple-tabpanel-0" role="tabpanel" aria-labelledby="simple-tab-0">
-    {{ tool_json.description }}
-    {% if tool_details.screenshot %}<span style="float: right"><img src="https://cloud.vhp4safety.nl/service/{{ tool_details.screenshot }}" width="300" />{% endif %}
+<div class="card">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link text-vhppink active" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab" aria-controls="simple-tabpanel-0" aria-selected="true">Overview</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link text-vhppink" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-1" role="tab" aria-controls="simple-tabpanel-1" aria-selected="false">Tutorial</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link text-vhppink" id="simple-tab-2" data-bs-toggle="tab" href="#simple-tabpanel-2" role="tab" aria-controls="simple-tabpanel-2" aria-selected="false">Documentation</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link text-vhppink" id="simple-tab-3" data-bs-toggle="tab" href="#simple-tabpanel-3" role="tab" aria-controls="simple-tabpanel-3" aria-selected="false">FAQ &amp; Support</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link text-vhppink" id="simple-tab-4" data-bs-toggle="tab" href="#simple-tabpanel-4" role="tab" aria-controls="simple-tabpanel-4" aria-selected="false">Technical Details</a>
+      </li>
+    </ul>
   </div>
-  <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
-    {% if tool_details.ELIXIR %}
-    {% if tool_details.ELIXIR.tess %}
-    <h2>ELIXIR TeSS</h2>
-<link rel="stylesheet" property="stylesheet" href="https://elixirtess.github.io/TeSS_widgets/css/tess-widget.css"/>
-<div id="tess-widget-materials-table" class="tess-widget tess-widget-faceted-table"></div>
+  <div class="card-body">
+    <div class="tab-content" id="tab-content">
+      <div class="tab-pane active" id="simple-tabpanel-0" role="tabpanel" aria-labelledby="simple-tab-0">
+        {% if tool_details.screenshot %}
+        <div class="row">
+          <div class="col-md-6">
+            {{ tool_json.description }}
+          </div>
+          <div class="col-md-6 pt-md-0 pt-2 mt-md-0 mt-1">
+            <img src="https://cloud.vhp4safety.nl/service/{{ tool_details.screenshot }}" class="card-img-bottom" alt="...">
+          </div>
+        </div>
+        {%else%}
+          {{ tool_json.description }}
+        {% endif %}
+      </div>
+      <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
+        {% if tool_details.get('ELIXIR') and tool_details.ELIXIR.get('tess') %}
+        <h2 class="pt-2">ELIXIR TeSS</h2>
+        <div id="tess-widget-materials-table" class="tess-widget tess-widget-faceted-table"></div>
+        {% endif %}
+      </div>
+      <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">
+        ...
+      </div>
+      <div class="tab-pane" id="simple-tabpanel-3" role="tabpanel" aria-labelledby="simple-tab-3">
+        <h2 class="pt-2">Contact</h2>
+        <ul>
+          {% if tool_details.provider %}{% if tool_details.provider.contact %}{% if tool_details.provider.contact.name %}<li>Foo</li>{% endif %}{% endif %}{% endif %}
+        </ul>    
+      </div>
+      <div class="tab-pane" id="simple-tabpanel-4" role="tabpanel" aria-labelledby="simple-tab-4">
+        {% if tool_details.instance %}
+        <ul>
+          {% if tool_details.instance.version %}<li>Version: {{ tool_details.instance.version }}</li>{% endif %}
+          {% if tool_details.instance.license %}<li>License: {{ tool_details.instance.license }}</li>{% endif %}
+          {% if tool_details.instance.source %}<li>Source code: <a href="{{ tool_details.instance.source }}">{{ tool_details.instance.source }}</a></li>{% endif %}
+          {% if tool_details.instance.docker %}<li>Docker: <a href="{{ tool_details.instance.docker }}">{{ tool_details.instance.docker }}</a></li>{% endif %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 function initTeSSWidgets() {
     TessWidget.Materials(document.getElementById('tess-widget-materials-table'),
@@ -48,36 +87,12 @@ function initTeSSWidgets() {
             },
             params: {
                 pageSize: 5,
-                q: '{{ tool_details.ELIXIR.tess }}'
+                q: '{{ tool_details.get("ELIXIR", {}).get("tess", "") }}'
             }
         });
 }
 </script>
 <script async="" defer="" src="https://elixirtess.github.io/TeSS_widgets/js/tess-widget-standalone.js" onload="initTeSSWidgets()"></script>
-  {% endif %}
-  {% endif %}
-  </div>
-  <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">
-    ...
-  </div>
-  <div class="tab-pane" id="simple-tabpanel-3" role="tabpanel" aria-labelledby="simple-tab-3">
-    <h2>Contact</h2>
-    <ul>
-      {% if tool_details.provider %}{% if tool_details.provider.contact %}{% if tool_details.provider.contact.name %}<li>Foo</li>{% endif %}{% endif %}{% endif %}
-    </ul>    
-  </div>
-  <div class="tab-pane" id="simple-tabpanel-4" role="tabpanel" aria-labelledby="simple-tab-4">
-    {% if tool_details.instance %}
-    <h2>Technical details</h2>
-    <ul>
-      {% if tool_details.instance.version %}<li>Version: {{ tool_details.instance.version }}</li>{% endif %}
-      {% if tool_details.instance.license %}<li>License: {{ tool_details.instance.license }}</li>{% endif %}
-      {% if tool_details.instance.source %}<li>Source code: <a href="{{ tool_details.instance.source }}">{{ tool_details.instance.source }}</a></li>{% endif %}
-      {% if tool_details.instance.docker %}<li>Docker: <a href="{{ tool_details.instance.docker }}">{{ tool_details.instance.docker }}</a></li>{% endif %}
-    </ul>
-    {% endif %}
-  </div>
-</div>
 
 </section>
 {% endblock %}
