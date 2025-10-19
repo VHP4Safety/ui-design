@@ -76,23 +76,37 @@
 
 <script>
 function initTeSSWidgets() {
-    TessWidget.Materials(document.getElementById('tess-widget-materials-table'),
-        'FacetedTable',
-        {
-            opts: {
-                columns: [{name: 'Name', field: 'title'},
-                    {name: 'Description', field: 'description'}],
-                allowedFacets: ['scientific-topics', 'target-audience'],
-                facetOptionLimit: 5
-            },
-            params: {
-                pageSize: 5,
-                q: '{{ tool_details.get("ELIXIR", {}).get("tess", "") }}'
-            }
-        });
+    if (typeof TessWidget === 'undefined' || !TessWidget.Materials) {
+        console.warn('TeSS widget library not available, skipping initialization.');
+        return;
+    }
+
+    const tessContainer = document.getElementById('tess-widget-materials-table');
+    if (!tessContainer) {
+        console.warn('No TeSS widget container found.');
+        return;
+    }
+
+    TessWidget.Materials(tessContainer, 'FacetedTable', {
+        opts: {
+            columns: [
+                { name: 'Name', field: 'title' },
+                { name: 'Description', field: 'description' }
+            ],
+            allowedFacets: ['scientific-topics', 'target-audience'],
+            facetOptionLimit: 5
+        },
+        params: {
+            pageSize: 5,
+            q: '{{ tool_details.get("ELIXIR", {}).get("tess", "") }}'
+        }
+    });
 }
 </script>
-<script async="" defer="" src="https://elixirtess.github.io/TeSS_widgets/js/tess-widget-standalone.js" onload="initTeSSWidgets()"></script>
+
+<script async defer src="https://elixirtess.github.io/TeSS_widgets/js/tess-widget-standalone.js"
+        onload="if (typeof initTeSSWidgets === 'function') initTeSSWidgets();">
+</script>
 
 </section>
 {% endblock %}
