@@ -513,9 +513,12 @@ def show_compounds_properties_as_json(cwid):
     sparqlquery = (
         "PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>\n"
         "PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>\n\n"
-        "SELECT ?cmp ?cmpLabel ?inchiKey ?SMILES WHERE {\n"
+        "SELECT ?cmp ?cmpLabel ?formula ?mass ?inchi ?inchiKey ?SMILES WHERE {\n"
         "  VALUES ?cmp { wd:" + cwid + " }\n"
-        "  ?cmp wdt:P10 ?inchiKey .\n"
+        "  ?cmp wdt:P9 ?inchi ;\n"
+        "       wdt:P10 ?inchiKey .\n"
+        "  OPTIONAL { ?cmp wdt:P2 ?mass }\n"
+        "  OPTIONAL { ?cmp wdt:P3 ?formula }\n"
         "  OPTIONAL { ?cmp wdt:P7 ?chiralSMILES }\n"
         "  OPTIONAL { ?cmp wdt:P12 ?nonchiralSMILES }\n"
         '  BIND (COALESCE(IF(BOUND(?chiralSMILES), ?chiralSMILES, 1/0), IF(BOUND(?nonchiralSMILES), ?nonchiralSMILES, 1/0), "") AS ?SMILES)\n'
@@ -536,8 +539,11 @@ def show_compounds_properties_as_json(cwid):
         {
             "wcid": compound_dat["cmp"]["value"],
             "label": compound_dat["cmpLabel"]["value"],
+            "inchi": compound_dat["inchi"]["value"],
             "inchikey": compound_dat["inchiKey"]["value"],
             "SMILES": compound_dat["SMILES"]["value"],
+            "formula": compound_dat["formula"]["value"],
+            "mass": compound_dat["mass"]["value"],
         }
     ]
     return jsonify(compound_list), 200
@@ -551,11 +557,12 @@ def show_compounds_identifiers_as_json(cwid):
     sparqlquery = (
         "PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>\n"
         "PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>\n\n"
-        "SELECT ?propertyLabel ?value\n"
+        "SELECT DISTINCT ?propertyLabel ?value ?formatterURL\n"
         "WHERE {\n"
-        "  VALUES ?property { wd:P3 wd:P2 wd:P32 }\n"
+        "  VALUES ?property { wd:P13 wd:P22 wd:P23 wd:P26 wd:P27 wd:P28 wd:P36 wd:P41 wd:P43 wd:P44 wd:P45 }\n"
         "  ?property wikibase:directClaim ?valueProp .\n"
         "  OPTIONAL { wd:" + cwid + " ?valueProp ?value }\n"
+        "  OPTIONAL { ?property wdt:P6 ?formatterURL }\n"
         '  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }\n'
         "}"
     )
@@ -577,6 +584,52 @@ def show_compounds_identifiers_as_json(cwid):
                 {
                     "propertyLabel": expProp["propertyLabel"]["value"],
                     "value": expProp["value"]["value"],
+                    "formatterURL": expProp["formatterURL"]["value"],
+                }
+            )
+        else:
+            compound_list.append(
+                {"propertyLabel": expProp["propertyLabel"]["value"], "value": "", "formatterURL": ""}
+            )
+    return jsonify(compound_list), 200
+
+
+@app.route("/get_compound_toxicology/<cwid>")
+def show_compounds_toxicology_as_json(cwid):
+    if not is_valid_qid(cwid):
+        return jsonify({"error": "Invalid compound identifier"}), 400
+    compoundwikiEP = "https://compoundcloud.wikibase.cloud/query/sparql"
+    sparqlquery = (
+        "PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>\n"
+        "PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>\n\n"
+        "SELECT DISTINCT ?propertyLabel ?value ?formatterURL\n"
+        "WHERE {\n"
+        "  VALUES ?property { wd:P17 wd:P19 wd:P4 }\n"
+        "  ?property wikibase:directClaim ?valueProp .\n"
+        "  OPTIONAL { wd:" + cwid + " ?valueProp ?value }\n"
+        "  OPTIONAL { ?property wdt:P6 ?formatterURL }\n"
+        '  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }\n'
+        "}"
+    )
+    try:
+        compound_dat = wbi_helpers.execute_sparql_query(
+            sparqlquery, endpoint=compoundwikiEP
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    if len(compound_dat["results"]["bindings"]) == 0:
+        return jsonify({"error": "No data found"}), 404
+    compound_dat = compound_dat["results"]["bindings"]
+    # return jsonify(compound_dat)
+
+    compound_list = []
+    for expProp in compound_dat:
+        print(expProp)
+        if "value" in expProp:
+            compound_list.append(
+                {
+                    "propertyLabel": expProp["propertyLabel"]["value"],
+                    "value": expProp["value"]["value"]
                 }
             )
         else:
@@ -623,7 +676,7 @@ def show_compounds_expdata_as_json(cwid):
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
         "PREFIX pr: <http://www.wikidata.org/prop/reference/>\n"
         "PREFIX wikibase: <http://wikiba.se/ontology#>\n\n"
-        "SELECT ?propEntityLabel ?value ?unitsLabel ?source ?doi ?statement\n"
+        "SELECT DISTINCT ?propEntityLabel ?value ?unitsLabel ?source ?doi ?statement\n"
         "WHERE {\n"
         "    <" + qid + "> ?propp ?statement .\n"
         "    ?statement a wikibase:BestRank ;\n"
