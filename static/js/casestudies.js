@@ -170,8 +170,8 @@ function loadCaseStudyContent() {
   const caseStudy = getCaseStudyNameFromUrl();
   const caseStudyBranch = getCaseStudyVersionFromUrl();
   var data_url = `https://raw.githubusercontent.com/VHP4Safety/ui-casestudy-config/${caseStudyBranch}/${caseStudy}_content.json`;
-  var data_url_test = `https://raw.githubusercontent.com/johannehouweling/ui-casestudy-config/refs/heads/jh-content-structure/${caseStudy}_content.json`
-  fetch(data_url_test)
+  //var data_url_test = `https://raw.githubusercontent.com/johannehouweling/ui-casestudy-config/refs/heads/jh-content-structure/${caseStudy}_content.json`
+  fetch(data_url)
     .then((res) => res.json())
     .then((content) => {
       step1Contents = content.step1Contents;
