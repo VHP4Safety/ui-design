@@ -90,7 +90,7 @@ function renderToolButtons(tools) {
           <div class="card-body text-center"><b>${tool.label}</b>${
             tool.description ? "<br />" + tool.description : ""
           }${
-            tool.id ? "<br /><a href=\"https://platform.vhp4safety.nl/tools/" + tool.id + ".html\">more info</a>" : ""
+            tool.id ? "<br /><a href=\"https://platform.vhp4safety.nl/tools/" + tool.id + "\" target=\"_blank\">more info</a>" : ""
           }</div>
           </div>
           </div>`
