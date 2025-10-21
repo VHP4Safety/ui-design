@@ -11,6 +11,8 @@ let step1Contents = {};
 let step2Contents = {};
 let step3Contents = {};
 let step4Contents = {};
+let step5Contents = {};
+let step6Contents = {};
 let contentLoaded = false;
 
 // Helper to render step buttons from array
@@ -110,6 +112,48 @@ function updateStep4Content() {
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
   }
   document.getElementById("step4-bottom-content").innerHTML = buildAccordionHTML(step.content);
+}
+function updateStep5Content() {
+  if (!contentLoaded) return;
+  if (!step5Contents) return;
+  if (!step5Contents[currentQuestion]) return;
+  if (!step5Contents[currentQuestion][currentProcessStep]) return;
+  if (!step5Contents[currentQuestion][currentProcessStep][currentCaseStudyStep]) return;
+  const step = step5Contents[currentQuestion][currentProcessStep][currentCaseStudyStep];
+  if (step.tools) {
+    document.getElementById("step5-content").innerHTML =
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      renderToolButtons(step.tools);
+  } else if (step.steps) {
+    document.getElementById("step5-content").innerHTML =
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      renderStepButtons(step.steps);
+  } else {
+    document.getElementById("step5-content").innerHTML =
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
+  }
+  document.getElementById("step5-bottom-content").innerHTML = buildAccordionHTML(step.content);
+}
+function updateStep6Content() {
+  if (!contentLoaded) return;
+  if (!step6Contents) return;
+  if (!step6Contents[currentQuestion]) return;
+  if (!step6Contents[currentQuestion][currentProcessStep]) return;
+  if (!step6Contents[currentQuestion][currentProcessStep][currentCaseStudyStep]) return;
+  const step = step6Contents[currentQuestion][currentProcessStep][currentCaseStudyStep];
+  if (step.tools) {
+    document.getElementById("step6-content").innerHTML =
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      renderToolButtons(step.tools);
+  } else if (step.steps) {
+    document.getElementById("step6-content").innerHTML =
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      renderStepButtons(step.steps);
+  } else {
+    document.getElementById("step6-content").innerHTML =
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
+  }
+  document.getElementById("step6-bottom-content").innerHTML = buildAccordionHTML(step.content);
 }
 
 // --- Navigation logic ---
@@ -320,6 +364,8 @@ function goToStep(step) {
   if (step === 2) updateStep2Content();
   if (step === 3) updateStep3Content();
   if (step === 4) updateStep4Content();
+  if (step === 5) updateStep5Content();
+  if (step === 6) updateStep6Content();
 }
 
 // --- Load content from JSON and initialize ---
