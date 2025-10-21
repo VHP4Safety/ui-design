@@ -38,9 +38,6 @@ function stepTypeToColor(type) {
 }
 
 function stepAction(step, onClickFn) {
-  console.log("action, id: " + step.id)
-  console.log("action, value: " + step.value)
-  console.log("action, onClickFn: " + onClickFn)
   if (step.type && step.type == "tool") {
     if (step.id) {
       url = "https://platform.vhp4safety.nl/tools/" + step.id
@@ -120,10 +117,8 @@ function updateStep2Content() {
   document.getElementById("step2-bottom-content").innerHTML = buildAccordionHTML(nav.content);
 }
 function updateStep3Content() {
-  console.log("updateStep3Content")
   if (!contentLoaded) return;
   if (!step3Contents[currentStep1Value]) return;
-  console.log(" .. all content defined")
   const step = step3Contents[currentStep1Value][currentStep2Value];
   if (step.steps) {
     document.getElementById("step3-content").innerHTML =
@@ -137,50 +132,39 @@ function updateStep3Content() {
   document.getElementById("step3-bottom-content").innerHTML = buildAccordionHTML(step.content);
 }
 function updateStep4Content() {
-  console.log("updateStep4Content")
   if (!contentLoaded) return;
   if (!step4Contents) return;
   if (!step4Contents[currentStep1Value]) return;
   if (!step4Contents[currentStep1Value][currentStep2Value]) return;
   if (!step4Contents[currentStep1Value][currentStep2Value][currentStep3Value]) return;
-  console.log(" .. all content defined")
   const step = step4Contents[currentStep1Value][currentStep2Value][currentStep3Value];
-  console.log(" .. navTitle: " + step.navTitle)
   if (step.tools) {
-    console.log("step 4 tools")
     document.getElementById("step4-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
       renderToolButtons(step.tools);
   } else if (step.steps) {
-    console.log("step 4 steps")
     document.getElementById("step4-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
       renderStepButtons(step.steps, "step4", "selectStep4");
   } else {
-    console.log("step 4 else")
     document.getElementById("step4-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
   }
   document.getElementById("step4-bottom-content").innerHTML = buildAccordionHTML(step.content);
 }
 function updateStep5Content() {
-  console.log("updateStep5Content")
   if (!contentLoaded) return;
   if (!step5Contents) return;
   if (!step5Contents[currentStep1Value]) return;
   if (!step5Contents[currentStep1Value][currentStep2Value]) return;
   if (!step5Contents[currentStep1Value][currentStep2Value][currentStep3Value]) return;
   if (!step5Contents[currentStep1Value][currentStep2Value][currentStep3Value][currentStep4Value]) return;
-  console.log(" .. all content defined")
   const step = step5Contents[currentStep1Value][currentStep2Value][currentStep3Value][currentStep4Value];
-  console.log(" .. navTitle: " + step.navTitle)
   if (step.tools) {
-    console.log("step 5 tools")
     document.getElementById("step5-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
       renderToolButtons(step.tools);
   } else if (step.steps) {
-    console.log("step 5 steps")
     document.getElementById("step5-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
       renderStepButtons(step.steps, "step5", "selectStep5");
@@ -191,7 +175,6 @@ function updateStep5Content() {
   document.getElementById("step5-bottom-content").innerHTML = buildAccordionHTML(step.content);
 }
 function updateStep6Content() {
-  console.log("updateStep6Content")
   if (!contentLoaded) return;
   if (!step6Contents) return;
   if (!step6Contents[currentStep1Value]) return;
@@ -199,16 +182,12 @@ function updateStep6Content() {
   if (!step6Contents[currentStep1Value][currentStep2Value][currentStep3Value]) return;
   if (!step6Contents[currentStep1Value][currentStep2Value][currentStep3Value][currentStep4Value]) return;
   if (!step6Contents[currentStep1Value][currentStep2Value][currentStep3Value][currentStep4Value][currentStep5Value]) return;
-  console.log(" .. all content defined")
   const step = step6Contents[currentStep1Value][currentStep2Value][currentStep3Value][currentStep4Value][currentStep5Value];
-  console.log(" .. navTitle: " + step.navTitle)
   if (step.tools) {
-    console.log("step 6 tools")
     document.getElementById("step6-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
       renderToolButtons(step.tools);
   } else if (step.steps) {
-    console.log("step 6 steps")
     document.getElementById("step6-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
       renderStepButtons(step.steps);
@@ -232,25 +211,21 @@ function selectStep1(q) {
   goToStep(2);
 }
 function selectStep2(step) {
-  console.log("step2: " + step)
   currentStep2Value = step;
   updateStep3Content();
   goToStep(3);
 }
 function selectStep3(step) {
-  console.log("step3: " + step)
   currentStep3Value = step;
   updateStep4Content();
   goToStep(4);
 }
 function selectStep4(step) {
-  console.log("step4: " + step)
   currentStep4Value = step;
   updateStep5Content();
   goToStep(5);
 }
 function selectStep5(step) {
-  console.log("step5: " + step)
   currentStep5Value = step;
   updateStep6Content();
   goToStep(6);
