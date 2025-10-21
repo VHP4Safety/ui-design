@@ -28,8 +28,12 @@ function renderStepButtons(steps, btnClass, onClickFn) {
         (step) =>
         `
         <div class="col-md pb-2">
-        <div class="card card-button card-button-vhpblue">
-        <div class="card-body text-center" onclick="${onClickFn}('${
+        <div class="card card-button card-button-vhpblue${
+            step.state && step.state == "disabled" ? " opacity-25" : ""
+          }">
+        <div class="card-body text-center${
+            step.state && step.state == "disabled" ? " nav-link disabled" : ""
+          }" onclick="${onClickFn}('${
             step.value
           }')"><b>${step.label}</b>${
             step.description ? "<br />" + step.description : ""
