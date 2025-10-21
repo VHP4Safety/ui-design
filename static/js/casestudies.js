@@ -2,16 +2,54 @@
 // JavaScript for Individual Case Study pages
 
 // --- State management ---
-let currentQuestion = "Q1"; // Default to question Q1
-let currentProcessStep = "Kinetics"; // Default process step
-let currentCaseStudyStep = "Oral"; // Default process step
+let currentStep1Value = "Q1";
+let currentStep2Value = "Kinetics";
+let currentStep3Value = "Oral";
+let currentStep4Value = "";
+let currentStep5Value = "";
+let currentStep6Value = "";
 
 // --- Content storage ---
 let step1Contents = {};
 let step2Contents = {};
 let step3Contents = {};
 let step4Contents = {};
+let step5Contents = {};
+let step6Contents = {};
+
 let contentLoaded = false;
+
+function stepTypeToColor(type) {
+  color = "card-button-vhpblue"
+  if (type == "workflow step" || type == "workflow-step") {
+    color = "card-button-vhplight-green"
+  } else if (type == "workflow substep" || type == "workflow-substep") {
+    color = "card-button-vhplight-purple"
+  } else if (type == "process flow step" || type == "process-flow-step") {
+    color = "card-button-vhpblue"
+  } else if (type == "regulatory question" || type == "regulatory-question") {
+    color = "card-button-vhppink"
+  } else if (type == "tool") {
+    color = "card-button-vhplight-blue"
+  } else {
+    console.log("UNKNOWN STEP TYPE: " + type)
+  }
+  return color
+}
+
+function stepAction(step, onClickFn) {
+  if (step.type && step.type == "tool") {
+    if (step.id) {
+      url = "https://platform.vhp4safety.nl/tools/" + step.id
+      return "onclick=\"window.open('" + url + "');\""
+    } else { // nothing to link to
+      return ""
+    }
+  }
+  if (onClickFn) return "onclick=\"" + onClickFn + "('" +  step.value + "')\""
+
+  return ""
+}
 
 // Helper to render step buttons from array
 function renderStepButtons(steps, btnClass, onClickFn) {
@@ -22,10 +60,12 @@ function renderStepButtons(steps, btnClass, onClickFn) {
         (step) =>
         `
         <div class="col-md pb-2">
-        <div class="card card-button card-button-vhpblue">
-        <div class="card-body text-center" onclick="${onClickFn}('${
-            step.value
-          }')"><b>${step.label}</b>${
+        <div class="card card-button ${ stepTypeToColor(step.type) }${
+            step.state && step.state == "disabled" ? " opacity-25" : ""
+          }">
+        <div class="card-body text-center${
+            step.state && step.state == "disabled" ? " nav-link disabled" : ""
+          }"${ stepAction(step, onClickFn) }><b>${step.label}</b>${
             step.description ? "<br />" + step.description : ""
           }</div>
           </div>
@@ -38,6 +78,7 @@ function renderStepButtons(steps, btnClass, onClickFn) {
 }
 
 function renderToolButtons(tools) {
+  console.log("ERROR: renderToolButtons() should not be used anymore")
   return (
     `<div class="row py-3">` +
     tools
@@ -45,11 +86,11 @@ function renderToolButtons(tools) {
         (tool) =>
         `
         <div class="col-md pb-2">
-        <div class="card card-button card-button-vhpblue">
+        <div class="card card-button ${ stepTypeToColor(tool.type) }">
           <div class="card-body text-center"><b>${tool.label}</b>${
             tool.description ? "<br />" + tool.description : ""
           }${
-            tool.id ? "<br /><a href=\"https://cloud.vhp4safety.nl/service/" + tool.id + ".html\">more info</a>" : ""
+            tool.id ? "<br /><a href=\"https://platform.vhp4safety.nl/tools/" + tool.id + "\" target=\"_blank\">more info</a>" : ""
           }</div>
           </div>
           </div>`
@@ -63,26 +104,26 @@ function updateStep1Content() {
   if (!contentLoaded) return;
   document.getElementById("step1-content").innerHTML =
     `<h1 class="text-vhpblue">${step1Contents.navTitle}</h1><p>${step1Contents.navDescription}</p>` +
-    renderStepButtons(step1Contents.questions, "step1", "selectQuestion");
+    renderStepButtons(step1Contents.questions, "step1", "selectStep1");
   document.getElementById("step1-bottom-content").innerHTML =
     buildAccordionHTML(step1Contents.content);
 }
 function updateStep2Content() {
   if (!contentLoaded) return;
-  const nav = step2Contents[currentQuestion];
+  const nav = step2Contents[currentStep1Value];
   document.getElementById("step2-content").innerHTML =
     `<h1 class="text-vhpblue">${nav.navTitle}</h1><p>${nav.navDescription}</p>` +
-    renderStepButtons(nav.steps, "step2", "selectProcessStep");
+    renderStepButtons(nav.steps, "step2", "selectStep2");
   document.getElementById("step2-bottom-content").innerHTML = buildAccordionHTML(nav.content);
 }
 function updateStep3Content() {
   if (!contentLoaded) return;
-  if (!step3Contents[currentQuestion]) return;
-  const step = step3Contents[currentQuestion][currentProcessStep];
+  if (!step3Contents[currentStep1Value]) return;
+  const step = step3Contents[currentStep1Value][currentStep2Value];
   if (step.steps) {
     document.getElementById("step3-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
-      renderStepButtons(step.steps, "step3", "selectCaseStudyStep");
+      renderStepButtons(step.steps, "step3", "selectStep3");
   } else if (step.tools) {
     document.getElementById("step3-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
@@ -93,10 +134,10 @@ function updateStep3Content() {
 function updateStep4Content() {
   if (!contentLoaded) return;
   if (!step4Contents) return;
-  if (!step4Contents[currentQuestion]) return;
-  if (!step4Contents[currentQuestion][currentProcessStep]) return;
-  if (!step4Contents[currentQuestion][currentProcessStep][currentCaseStudyStep]) return;
-  const step = step4Contents[currentQuestion][currentProcessStep][currentCaseStudyStep];
+  if (!step4Contents[currentStep1Value]) return;
+  if (!step4Contents[currentStep1Value][currentStep2Value]) return;
+  if (!step4Contents[currentStep1Value][currentStep2Value][currentStep3Value]) return;
+  const step = step4Contents[currentStep1Value][currentStep2Value][currentStep3Value];
   if (step.tools) {
     document.getElementById("step4-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
@@ -104,33 +145,90 @@ function updateStep4Content() {
   } else if (step.steps) {
     document.getElementById("step4-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
-      renderStepButtons(step.steps);
+      renderStepButtons(step.steps, "step4", "selectStep4");
   } else {
     document.getElementById("step4-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
   }
   document.getElementById("step4-bottom-content").innerHTML = buildAccordionHTML(step.content);
 }
+function updateStep5Content() {
+  if (!contentLoaded) return;
+  if (!step5Contents) return;
+  if (!step5Contents[currentStep1Value]) return;
+  if (!step5Contents[currentStep1Value][currentStep2Value]) return;
+  if (!step5Contents[currentStep1Value][currentStep2Value][currentStep3Value]) return;
+  if (!step5Contents[currentStep1Value][currentStep2Value][currentStep3Value][currentStep4Value]) return;
+  const step = step5Contents[currentStep1Value][currentStep2Value][currentStep3Value][currentStep4Value];
+  if (step.tools) {
+    document.getElementById("step5-content").innerHTML =
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      renderToolButtons(step.tools);
+  } else if (step.steps) {
+    document.getElementById("step5-content").innerHTML =
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      renderStepButtons(step.steps, "step5", "selectStep5");
+  } else {
+    document.getElementById("step5-content").innerHTML =
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
+  }
+  document.getElementById("step5-bottom-content").innerHTML = buildAccordionHTML(step.content);
+}
+function updateStep6Content() {
+  if (!contentLoaded) return;
+  if (!step6Contents) return;
+  if (!step6Contents[currentStep1Value]) return;
+  if (!step6Contents[currentStep1Value][currentStep2Value]) return;
+  if (!step6Contents[currentStep1Value][currentStep2Value][currentStep3Value]) return;
+  if (!step6Contents[currentStep1Value][currentStep2Value][currentStep3Value][currentStep4Value]) return;
+  if (!step6Contents[currentStep1Value][currentStep2Value][currentStep3Value][currentStep4Value][currentStep5Value]) return;
+  const step = step6Contents[currentStep1Value][currentStep2Value][currentStep3Value][currentStep4Value][currentStep5Value];
+  if (step.tools) {
+    document.getElementById("step6-content").innerHTML =
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      renderToolButtons(step.tools);
+  } else if (step.steps) {
+    document.getElementById("step6-content").innerHTML =
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      renderStepButtons(step.steps);
+  } else {
+    document.getElementById("step6-content").innerHTML =
+      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
+  }
+  document.getElementById("step6-bottom-content").innerHTML = buildAccordionHTML(step.content);
+}
 
 // --- Navigation logic ---
-function selectQuestion(q) {
-  currentQuestion = q;
-  currentProcessStep = "Kinetics";
-  currentCaseStudyStep = "Oral";
+function selectStep1(q) {
+  currentStep1Value = q;
+  currentStep2Value = "Kinetics";
+  currentStep3Value = "Oral";
   updateStep2Content();
   updateStep3Content();
   updateStep4Content();
+  updateStep5Content();
+  updateStep6Content();
   goToStep(2);
 }
-function selectProcessStep(step) {
-  currentProcessStep = step;
+function selectStep2(step) {
+  currentStep2Value = step;
   updateStep3Content();
   goToStep(3);
 }
-function selectCaseStudyStep(step) {
-  currentCaseStudyStep = step;
+function selectStep3(step) {
+  currentStep3Value = step;
   updateStep4Content();
   goToStep(4);
+}
+function selectStep4(step) {
+  currentStep4Value = step;
+  updateStep5Content();
+  goToStep(5);
+}
+function selectStep5(step) {
+  currentStep5Value = step;
+  updateStep6Content();
+  goToStep(6);
 }
 
 // Breadcrumb logic
@@ -178,13 +276,17 @@ function loadCaseStudyContent() {
       step2Contents = content.step2Contents;
       step3Contents = content.step3Contents;
       step4Contents = content.step4Contents;
+      step5Contents = content.step5Contents;
+      step6Contents = content.step6Contents;
       contentLoaded = true;
-      currentQuestion = "Q1";
+      currentStep1Value = "Q1";
       updateStep1Content();
       updateBreadcrumb(1);
       updateStep2Content();
       updateStep3Content();
       updateStep4Content();
+      updateStep5Content();
+      updateStep6Content();
     });
 }
 
@@ -234,16 +336,29 @@ function updateBreadcrumb(step) {
     addCrumb(caseStudyName, null, true);
   } else if (step === 2) {
     addCrumb(caseStudyName, () => goToStep(1));
-    addCrumb(`Regulatory Question ${currentQuestion}`, null, true);
+    addCrumb(`Regulatory Question ${currentStep1Value}`, null, true);
   } else if (step === 3) {
     addCrumb(caseStudyName, () => goToStep(1));
-    addCrumb(`Regulatory Question ${currentQuestion}`, () => goToStep(2));
-    addCrumb(currentProcessStep, null, true);
+    addCrumb(`Regulatory Question ${currentStep1Value}`, () => goToStep(2));
+    addCrumb(currentStep2Value, null, true);
   } else if (step === 4) {
     addCrumb(caseStudyName, () => goToStep(1));
-    addCrumb(`Regulatory Question ${currentQuestion}`, () => goToStep(2));
-    addCrumb(currentProcessStep, () => goToStep(3));
-    addCrumb(currentCaseStudyStep, null, true);
+    addCrumb(`Regulatory Question ${currentStep1Value}`, () => goToStep(2));
+    addCrumb(currentStep2Value, () => goToStep(3));
+    addCrumb(currentStep3Value, null, true);
+  } else if (step === 5) {
+    addCrumb(caseStudyName, () => goToStep(1));
+    addCrumb(`Regulatory Question ${currentStep1Value}`, () => goToStep(2));
+    addCrumb(currentStep2Value, () => goToStep(3));
+    addCrumb(currentStep3Value, () => goToStep(4));
+    addCrumb(currentStep4Value, null, true);
+  } else if (step === 6) {
+    addCrumb(caseStudyName, () => goToStep(1));
+    addCrumb(`Regulatory Question ${currentStep1Value}`, () => goToStep(2));
+    addCrumb(currentStep2Value, () => goToStep(3));
+    addCrumb(currentStep3Value, () => goToStep(4));
+    addCrumb(currentStep4Value, () => goToStep(5));
+    addCrumb(currentStep5Value, null, true);
   }
 
   // Show/hide breadcrumb container
@@ -320,6 +435,8 @@ function goToStep(step) {
   if (step === 2) updateStep2Content();
   if (step === 3) updateStep3Content();
   if (step === 4) updateStep4Content();
+  if (step === 5) updateStep5Content();
+  if (step === 6) updateStep6Content();
 }
 
 // --- Load content from JSON and initialize ---
