@@ -19,6 +19,29 @@ let step6Contents = {};
 
 let contentLoaded = false;
 
+function stepTypeToColor(type) {
+  color = "card-button-vhpblue"
+  if (type == "workflow step" || type == "workflow-step") {
+    color = "card-button-vhplight-green"
+    console.log(type + " -> " + color)
+  } else if (type == "workflow substep" || type == "workflow-substep") {
+    color = "card-button-vhplight-purple"
+    console.log(type + " -> " + color)
+  } else if (type == "process flow step" || type == "process-flow-step") {
+    color = "card-button-vhpblue"
+    console.log(type + " -> " + color)
+  } else if (type == "regulatory question" || type == "regulatory-question") {
+    color = "card-button-vhppink"
+    console.log(type + " -> " + color)
+  } else if (type == "tool") {
+    color = "card-button-vhplight-blue"
+    console.log(type + " -> " + color)
+  } else {
+    console.log("UNKNOWN STEP TYPE: " + type)
+  }
+  return color
+}
+
 // Helper to render step buttons from array
 function renderStepButtons(steps, btnClass, onClickFn) {
   return (
@@ -28,7 +51,7 @@ function renderStepButtons(steps, btnClass, onClickFn) {
         (step) =>
         `
         <div class="col-md pb-2">
-        <div class="card card-button card-button-vhpblue${
+        <div class="card card-button ${ stepTypeToColor(step.type) }${
             step.state && step.state == "disabled" ? " opacity-25" : ""
           }">
         <div class="card-body text-center${
@@ -55,7 +78,7 @@ function renderToolButtons(tools) {
         (tool) =>
         `
         <div class="col-md pb-2">
-        <div class="card card-button card-button-vhpblue">
+        <div class="card card-button ${ stepTypeToColor(tool.type) }">
           <div class="card-body text-center"><b>${tool.label}</b>${
             tool.description ? "<br />" + tool.description : ""
           }${

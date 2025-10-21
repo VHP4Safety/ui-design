@@ -30,11 +30,25 @@ body {
       background-color: var(--bs-vhporange);
       border-color: var(--bs-vhporange);
 }   
-
 .card-button-vhpteal:hover,  .card-button-vhpteal:focus{
       color: white;
       background-color: var(--bs-vphteal);
       border-color: var(--bs-vhpteal);
+}  
+.card-button-vhplight-green:hover,  .card-button-vhplight-green:focus{
+      color: white;
+      background-color: var(--bs-vhplight-green);
+      border-color: var(--bs-vhplight-green);
+}  
+.card-button-vhplight-purple:hover,  .card-button-vhplight-purple:focus{
+      color: white;
+      background-color: var(--bs-vhplight-purple);
+      border-color: var(--bs-vhplight-purple);
+}  
+.card-button-vhplight-blue:hover,  .card-button-vhplight-blue:focus{
+      color: white;
+      background-color: var(--bs-vhplight-blue);
+      border-color: var(--bs-vhplight-blue);
 }  
 
 
