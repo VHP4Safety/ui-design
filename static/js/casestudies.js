@@ -23,19 +23,14 @@ function stepTypeToColor(type) {
   color = "card-button-vhpblue"
   if (type == "workflow step" || type == "workflow-step") {
     color = "card-button-vhplight-green"
-    console.log(type + " -> " + color)
   } else if (type == "workflow substep" || type == "workflow-substep") {
     color = "card-button-vhplight-purple"
-    console.log(type + " -> " + color)
   } else if (type == "process flow step" || type == "process-flow-step") {
     color = "card-button-vhpblue"
-    console.log(type + " -> " + color)
   } else if (type == "regulatory question" || type == "regulatory-question") {
     color = "card-button-vhppink"
-    console.log(type + " -> " + color)
   } else if (type == "tool") {
     color = "card-button-vhplight-blue"
-    console.log(type + " -> " + color)
   } else {
     console.log("UNKNOWN STEP TYPE: " + type)
   }
