@@ -2,9 +2,12 @@
 // JavaScript for Individual Case Study pages
 
 // --- State management ---
-let currentQuestion = "Q1"; // Default to question Q1
-let currentProcessStep = "Kinetics"; // Default process step
-let currentCaseStudyStep = "Oral"; // Default process step
+let currentStep1Value = "Q1";
+let currentStep2Value = "Kinetics";
+let currentStep3Value = "Oral";
+let currentStep4Value = "";
+let currentStep5Value = "";
+let currentStep6Value = "";
 
 // --- Content storage ---
 let step1Contents = {};
@@ -13,6 +16,7 @@ let step3Contents = {};
 let step4Contents = {};
 let step5Contents = {};
 let step6Contents = {};
+
 let contentLoaded = false;
 
 // Helper to render step buttons from array
@@ -71,7 +75,7 @@ function updateStep1Content() {
 }
 function updateStep2Content() {
   if (!contentLoaded) return;
-  const nav = step2Contents[currentQuestion];
+  const nav = step2Contents[currentStep1Value];
   document.getElementById("step2-content").innerHTML =
     `<h1 class="text-vhpblue">${nav.navTitle}</h1><p>${nav.navDescription}</p>` +
     renderStepButtons(nav.steps, "step2", "selectProcessStep");
@@ -79,8 +83,8 @@ function updateStep2Content() {
 }
 function updateStep3Content() {
   if (!contentLoaded) return;
-  if (!step3Contents[currentQuestion]) return;
-  const step = step3Contents[currentQuestion][currentProcessStep];
+  if (!step3Contents[currentStep1Value]) return;
+  const step = step3Contents[currentStep1Value][currentStep2Value];
   if (step.steps) {
     document.getElementById("step3-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
@@ -95,10 +99,10 @@ function updateStep3Content() {
 function updateStep4Content() {
   if (!contentLoaded) return;
   if (!step4Contents) return;
-  if (!step4Contents[currentQuestion]) return;
-  if (!step4Contents[currentQuestion][currentProcessStep]) return;
-  if (!step4Contents[currentQuestion][currentProcessStep][currentCaseStudyStep]) return;
-  const step = step4Contents[currentQuestion][currentProcessStep][currentCaseStudyStep];
+  if (!step4Contents[currentStep1Value]) return;
+  if (!step4Contents[currentStep1Value][currentStep2Value]) return;
+  if (!step4Contents[currentStep1Value][currentStep2Value][currentStep3Value]) return;
+  const step = step4Contents[currentStep1Value][currentStep2Value][currentStep3Value];
   if (step.tools) {
     document.getElementById("step4-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
@@ -158,21 +162,21 @@ function updateStep6Content() {
 
 // --- Navigation logic ---
 function selectQuestion(q) {
-  currentQuestion = q;
-  currentProcessStep = "Kinetics";
-  currentCaseStudyStep = "Oral";
+  currentStep1Value = q;
+  currentStep2Value = "Kinetics";
+  currentStep3Value = "Oral";
   updateStep2Content();
   updateStep3Content();
   updateStep4Content();
   goToStep(2);
 }
 function selectProcessStep(step) {
-  currentProcessStep = step;
+  currentStep2Value = step;
   updateStep3Content();
   goToStep(3);
 }
 function selectCaseStudyStep(step) {
-  currentCaseStudyStep = step;
+  currentStep3Value = step;
   updateStep4Content();
   goToStep(4);
 }
@@ -223,7 +227,7 @@ function loadCaseStudyContent() {
       step3Contents = content.step3Contents;
       step4Contents = content.step4Contents;
       contentLoaded = true;
-      currentQuestion = "Q1";
+      currentStep1Value = "Q1";
       updateStep1Content();
       updateBreadcrumb(1);
       updateStep2Content();
@@ -278,16 +282,16 @@ function updateBreadcrumb(step) {
     addCrumb(caseStudyName, null, true);
   } else if (step === 2) {
     addCrumb(caseStudyName, () => goToStep(1));
-    addCrumb(`Regulatory Question ${currentQuestion}`, null, true);
+    addCrumb(`Regulatory Question ${currentStep1Value}`, null, true);
   } else if (step === 3) {
     addCrumb(caseStudyName, () => goToStep(1));
-    addCrumb(`Regulatory Question ${currentQuestion}`, () => goToStep(2));
-    addCrumb(currentProcessStep, null, true);
+    addCrumb(`Regulatory Question ${currentStep1Value}`, () => goToStep(2));
+    addCrumb(currentStep2Value, null, true);
   } else if (step === 4) {
     addCrumb(caseStudyName, () => goToStep(1));
-    addCrumb(`Regulatory Question ${currentQuestion}`, () => goToStep(2));
-    addCrumb(currentProcessStep, () => goToStep(3));
-    addCrumb(currentCaseStudyStep, null, true);
+    addCrumb(`Regulatory Question ${currentStep1Value}`, () => goToStep(2));
+    addCrumb(currentStep2Value, () => goToStep(3));
+    addCrumb(currentStep3Value, null, true);
   }
 
   // Show/hide breadcrumb container
