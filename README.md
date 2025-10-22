@@ -84,8 +84,8 @@ npm install bootstrap sass --save-dev
 
 Customize `custom.scss` for example with additional colors or padding specs etc. 
 Then compile to css with
-```
-bootstrap-custom % npx sass --load-path=node_modules custom.scss bootstrap-custom.css
+```bash
+npx sass --load-path=node_modules custom.scss bootstrap-custom.css
 ```
 Move bootstrap-custom.css to `static/css`. 
 
