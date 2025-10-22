@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap");
 // 1️⃣ Import Bootstrap's functions first
 @import "node_modules/bootstrap/scss/functions";
 
@@ -17,5 +18,73 @@ $custom-colors: (
 @import "node_modules/bootstrap/scss/variables";
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
-// 4️⃣ Import the rest of Bootstrap (it now uses your colors)
+// 4️⃣ Override Bootstrap link defaults BEFORE importing Bootstrap
+$link-color: $black;                      // Default link color
+$link-hover-color: map-get($theme-colors, "vhpblue");  // Hover color to your blue
+$link-decoration: none; 
+
+// 5️⃣ Import the rest of Bootstrap (it now uses your colors)
 @import "node_modules/bootstrap/scss/bootstrap";
+
+/* Grid layout for Search/Filter Results */
+.results-section {
+  min-height: 400px;
+}
+
+.results-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+/* Custom Scrollbar */
+html {
+  scrollbar-color: var(--bs-vhppink) var(--white);
+}
+
+/* Apply Open Sans globally */
+body {
+  font-family: "Open Sans", Arial, sans-serif;
+  scroll-behavior: smooth;
+  padding-top: 100px; /* Adjust if navbar height changes */
+}
+
+/* Default accordion button (collapsed) stays standard */
+.accordion-button {
+  background-color: var(--bs-white);
+  color: var(--bs-body-color);
+  border: none;
+}
+
+/* When the accordion is open (NOT collapsed) */
+.accordion-button:not(.collapsed) {
+  background-color: var(--bs-vhplight-blue);
+  color: var(--bs-body-color);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.125);
+}
+
+/* Remove Bootstrap’s dark gradient focus ring */
+.accordion-button:focus {
+  box-shadow: none;
+  border-color: transparent;
+}
+
+/* Optional: make arrow icon darker on light blue */
+.accordion-button:not(.collapsed)::after {
+  filter: brightness(0.6);
+}
+
+/* Cards as a button */
+.card-button:hover, .card-button:focus {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+// Generate hover/focus styles for each color in your custom palette
+@each $name, $value in $custom-colors {
+  .card-button-#{$name}:hover,
+  .card-button-#{$name}:focus {
+    color: var(--bs-#{$name});
+    border-color: var(--bs-#{$name});
+  }
+}
+
