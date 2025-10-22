@@ -20,21 +20,22 @@ let step6Contents = {};
 let contentLoaded = false;
 
 function stepTypeToColor(type) {
-  color = "btn-vhpblue text-white"
+  baseclass = "btn text-white"
+  color = "btn-vhpblue" 
   if (type == "workflow step" || type == "workflow-step") {
-    color = "btn-vhppurple text-white"
+    color = "btn-vhppurple"
   } else if (type == "workflow substep" || type == "workflow-substep") {
-    color = "btn-vhpmaroon text-white"
+    color = "btn-vhpmaroon"
   } else if (type == "process flow step" || type == "process-flow-step") {
-    color = "btn-vhporange text-white"
+    color = "btn-vhporange"
   } else if (type == "regulatory question" || type == "regulatory-question") {
-    color = "btn-vhpblue text-white"
+    color = "btn-vhpblue"
   } else if (type == "tool") {
-    color = "btn-vhppink text-white"
+    color = "btn-vhppink"
   } else {
     console.log("UNKNOWN STEP TYPE: " + type)
   }
-  return color
+  return baseclass + " " + color
 }
 
 function stepAction(step, onClickFn) {
@@ -59,7 +60,7 @@ function renderStepButtons(steps, btnClass, onClickFn) {
       .map(
         (step) =>
         `
-        <div class="col-md pb-2">
+        <div class="col-md pb-2 d-flex align-items-stretch">
           <button class="btn w-100 text-white ${ stepTypeToColor(step.type) }${
             step.state && step.state == "disabled" ? " disabled opacity-25" : ""
           }"${ stepAction(step, onClickFn) }${
