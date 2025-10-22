@@ -3,6 +3,26 @@
 <link rel="stylesheet" href="/static/css/casestudies.css" />
 <link rel="stylesheet" property="stylesheet" href="https://elixirtess.github.io/TeSS_widgets/css/tess-widget.css"/>
 
+<!-- Bioschemas / schema.org annotation -->
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org/",
+    "@type": "SoftwareApplication",
+    "http://purl.org/dc/terms/conformsTo": {
+      "@type": "CreativeWork", "@id": "https://bioschemas.org/profiles/ComputationalTool/1.0-RELEASE"
+    },
+    "@id" : "https://vhp4safety.github.io/cloud/service/{{ tool_details.id }}",
+    "description": "{{ tool_details.description }}",
+    {% if tool_details.instance and tool_details.instance.url %}
+    "url": "{{ tool_details.instance.url }}",
+    {% else %}
+    "url": "{{ tool_details.url}}",
+    {% endif %}
+    "name": "{{ tool_details.service }}"
+  }
+</script>
+
+
 <section class="container py-5">
     <div class="pb-2">
         <h1><span class="text-vhppink" id="collection-name">{{ tool_json.service }}</span></h1>
