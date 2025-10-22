@@ -41,8 +41,8 @@ function stepTypeToColor(type) {
 function stepAction(step, onClickFn) {
   if (step.type && step.type == "tool") {
     if (step.id) {
-      url = "https://platform.vhp4safety.nl/tools/" + step.id
-      return "onclick=\"window.open('" + url + "');\""
+      url = "/tools/" + step.id
+      return "onclick=\"location.href='" + url + "';\""
     } else { // nothing to link to
       return ""
     }
