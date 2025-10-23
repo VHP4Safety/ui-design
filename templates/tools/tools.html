@@ -32,11 +32,40 @@
         
         <!-- Filter Panel -->
         <div id="filter-panel" class="card bg-secondary-subtle p-3 mt-2" style="display: none;">
+  <!-- explanation of the generic risk-assessment process flow -->
+  <div class="">
+    <h3><span class="text-vhpblue" id="collection-name">Process Flow Steps</span></h3>
+    <p class="mb-4">The Virtual Human Platform imeplemnts the generic
+      risk assessment workflow as a process flow comprising six steps.
+    </p>
+  </div>
+  <div class="row row-cols-1 row-cols-md-4 gap-2 mx-auto">
+    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
+      data-bs-toggle="tooltip" data-bs-placement="top" title="This step ...">
+      Hazard / Chemical Characteristics</button>
+    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
+      data-bs-toggle="tooltip" data-bs-placement="top" title="This step ...">
+      (External) Exposure</button>
+    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
+      data-bs-toggle="tooltip" data-bs-placement="top" title="This step ...">
+      (Toxicology) Kinetics</button>
+    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
+      data-bs-toggle="tooltip" data-bs-placement="top" title="This step ...">
+      (Internal) Exposure</button>
+    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
+      data-bs-toggle="tooltip" data-bs-placement="top" title="This step ...">
+      Toxicodynamics / AOP</button>
+    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
+      data-bs-toggle="tooltip" data-bs-placement="top" title="This step ...">
+      Adverse Outcome</button>
+  </div>
+  <div class=""><p>&nbsp;</p></div> <!-- how to do this properly?? -->
+
             <div class="gap-2 pb-1">
                 <!-- Flow Step Dropdown -->
                 <div class="btn-group mb-1">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
-                        Flow Step
+                        Process Flow Step
                     </button>
                     <ul class="dropdown-menu">
                         {% for stage in stages %}
