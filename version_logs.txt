@@ -1,4 +1,12 @@
 
+Version 0.5-6 (2025-10-27)
+--------------------------------------------------------------------------------
+- More updates in the visual style of the application.
+- Adding the blue boxes (process flow steps) in the case studies and tools sections. 
+- Integrating the individual tool pages. 
+- Adding ELIXR TeSS and Taxila.nl integrations in the indidivual tool pages.
+
+
 Version 0.5-2 (2025-10-15)
 --------------------------------------------------------------------------------
 - Adding the data section to the application. 
