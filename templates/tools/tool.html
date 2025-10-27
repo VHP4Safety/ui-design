@@ -67,6 +67,8 @@
       </div>
       <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
         {% if tool_details.get('ELIXIR') and tool_details.ELIXIR.get('tess') %}
+        <h2 class="pt-2">Taxila.nl</h2>
+        <div id="taxila-widget-materials-table" class="tess-widget tess-widget-faceted-table"></div>
         <h2 class="pt-2">ELIXIR TeSS</h2>
         <div id="tess-widget-materials-table" class="tess-widget tess-widget-faceted-table"></div>
         {% endif %}
@@ -101,6 +103,28 @@ function initTeSSWidgets() {
         return;
     }
 
+    const taxilaContainer = document.getElementById('taxila-widget-materials-table');
+    if (!taxilaContainer) {
+        console.warn('No Taxila widget container found.');
+        return;
+    }
+
+    TessWidget.Materials(taxilaContainer, 'FacetedTable', {
+        opts: {
+            columns: [
+                { name: 'Name', field: 'title' },
+                { name: 'Description', field: 'description' }
+            ],
+            allowedFacets: ['scientific-topics', 'target-audience'],
+            facetOptionLimit: 5
+        },
+        params: {
+            pageSize: 5,
+            q: '{{ tool_details.get("ELIXIR", {}).get("tess", "") }}'
+        },
+        baseUrl: 'https://taxila.nl'
+    });
+
     const tessContainer = document.getElementById('tess-widget-materials-table');
     if (!tessContainer) {
         console.warn('No TeSS widget container found.');
@@ -123,6 +147,7 @@ function initTeSSWidgets() {
     });
 }
 </script>
+
 
 <script async defer src="https://elixirtess.github.io/TeSS_widgets/js/tess-widget-standalone.js"
         onload="if (typeof initTeSSWidgets === 'function') initTeSSWidgets();">
