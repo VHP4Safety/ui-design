@@ -21,8 +21,10 @@
     <!-- Jmol for molecular visualization -->
     <script src="/static/js/JSmol.min.js"></script>
 
+    {% if not config.DEBUG %}
     <!-- Goatcounter.com, the GDPR-compliant page visit counter -->
     <script data-goatcounter="https://vhp4safety.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+    {% endif %}
 
     <!-- Favicon -->
     <link
