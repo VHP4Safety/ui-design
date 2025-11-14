@@ -48,7 +48,7 @@ REG_QUESTIONS = {
     },
     "reg_q_2b": {
         "label": "Parkinson Case Study (b)",
-        "explanation": "What level of exposure to compound Dinoseb leads to risk for developing Parkinsons disease?",
+        "explanation": "What level of exposure to compound Dinoseb leads to risk for developing Parkinson’s disease?",
     },
     "reg_q_3a": {
         "label": "Thyroid Case Study (a)",
