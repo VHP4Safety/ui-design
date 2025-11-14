@@ -25,11 +25,11 @@ CASESTUDIES = ["thyroid", "kidney", "parkinson"]  # List of valid case studies
 ###Shared explanation dictionaries for filters (used in both tools and data page)
 STAGE_EXPLANATIONS = {
     "ADME": "Absorption, distribution, metabolism, and excretion of a substance (toxic or not) in a living organism, following exposure to this substance.",
-    "Hazard Assessment": "The process of assessing the intrinsic hazard a substance poses to human health and/or the environment.",
+    "Hazard Assessment": "The process of assessing the intrinsic hazard a substance poses to human health and/or the environment",
     "Chemical Information": "Information about chemical properties and identity.",
-    "General": "General tools not specific to a flow step.",
-    "External exposure": "External exposure assessment.",
-    "Generic": "Generic or general category.",
+    "General": "Not specific to a flow step.",
+    "(External) exposure": "External exposure assessment.",
+    "Generic": "Generic category.",
     "Other": "Other or unknown category.",
 }
 
@@ -44,11 +44,11 @@ REG_QUESTIONS = {
     },
     "reg_q_2a": {
         "label": "Parkinson Case Study (a)",
-        "explanation": "Can compound X cause Parkinson's Disease?",
+        "explanation": "Can compound Dinoseb cause Parkinson's Disease?",
     },
     "reg_q_2b": {
         "label": "Parkinson Case Study (b)",
-        "explanation": "What level of exposure to compound X leads to risk for developing Parkinsons disease?",
+        "explanation": "What level of exposure to compound Dinoseb leads to risk for developing Parkinsons disease?",
     },
     "reg_q_3a": {
         "label": "Thyroid Case Study (a)",
