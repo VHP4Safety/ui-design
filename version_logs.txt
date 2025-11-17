@@ -1,4 +1,9 @@
 
+Version 0.5-7 (2025-11-17)
+--------------------------------------------------------------------------------
+- Adding tooltip texts to the blue boxes on Case Studies and Tools pages. 
+
+
 Version 0.5-6 (2025-10-27)
 --------------------------------------------------------------------------------
 - More updates in the visual style of the application.
