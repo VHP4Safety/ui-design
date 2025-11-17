@@ -1,5 +1,5 @@
 
-Version 0.5-7 (2025-11-17)
+Version 0.5-8 (2025-11-17)
 --------------------------------------------------------------------------------
 - Adding tooltip texts to the blue boxes on Case Studies and Tools pages. 
 
