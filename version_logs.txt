@@ -1,4 +1,9 @@
 
+Version 0.5-11 (2025-11-18)
+--------------------------------------------------------------------------------
+- Text edits and corrections.
+
+
 Version 0.5-10 (2025-11-17)
 --------------------------------------------------------------------------------
 - Adding tooltip texts to the blue boxes on Case Studies and Tools pages. 
