@@ -122,6 +122,18 @@
                     <div class="card-footer bg-white border-0 py-3">
 
                         <div class="btn-group d-flex" role="group" aria-label="Tool example">
+
+                             <!-- Catalog Page -->
+                            <a href="{{ url_for('tools') }}/{{ item.id }}" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-title="View tool details"><i class="bi bi-info-circle"></i></a>
+
+                             <!-- Instance Page -->
+                            {% if item.inst_url == "no_url" %}
+                                <a type="button" class="btn btn-outline-vhppink disabled" data-bs-toggle="tooltip" data-bs-title="No VHP instance available">No VHP Instance</a> 
+                            {% else %}
+                                <a type="button" href="{{ item.inst_url }}" class="btn btn-vhppink flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Try VHP-hosted instance">Run the tool</a>
+                            {% endif %}                   
+
+
                             <!-- Tool Webpage -->
                             {% if item.main_url == "no_url" %}
                                 <a type="button" class="btn btn-outline-secondary disabled" data-bs-toggle="tooltip" data-bs-title="No webpage available"><i class="bi bi-box-arrow-up-right"></i>
@@ -130,18 +142,6 @@
                                 <a type="button" href="{{ item.main_url }}" class="btn btn-outline-secondary" target="_blank" data-bs-toggle="tooltip" data-bs-title="Visit main webpage"><i class="bi bi-box-arrow-up-right"></i>
 </a>
                             {% endif %}
-
-
-                            <!-- Instance Page -->
-                            {% if item.inst_url == "no_url" %}
-                                <a type="button" class="btn btn-outline-vhppink disabled" data-bs-toggle="tooltip" data-bs-title="No VHP instance available">No VHP Instance</a> 
-                            {% else %}
-                                <a type="button" href="{{ item.inst_url }}" class="btn btn-vhppink flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Try VHP-hosted instance">VHP Instance</a>
-                            {% endif %}                   
-
-
-                            <!-- Catalog Page -->
-                            <a href="{{ url_for('tools') }}/{{ item.id }}" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-title="View tool details"><i class="bi bi-info-circle"></i></a>
 
                             <!-- Meta-Data -->
                             <button type="button" class="btn btn-outline-vhpteal" data-bs-toggle="tooltip" data-bs-title="View metadata (.md)" onclick="showMetadata('{{ item.meta_data }}', '{{ item.service }}')"><i class="bi bi-list-ul"></i></button>
