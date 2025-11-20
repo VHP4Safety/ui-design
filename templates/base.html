@@ -57,52 +57,261 @@
     </script>
   </head>
 
-  <body class="d-flex flex-column min-vh-100">
-    <!-- Navigation Bar: Logo, main links, hamburger menu -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top">
-      <div class="container-fluid">
-        <a class="navbar-brand ms-3" href="/">
-          <img
-            src="/static/images/logos/logo/PNG/300ppi/VHP_Logo_Long_02_300.png"
-            alt="VHP4Safety Logo"
-            height="70"
-            class="d-inline-block align-text-top"
-          />
-        </a>
-        
-        <!-- Main navigation buttons (visible on large screens) -->
-        <div class="d-none d-lg-flex gap-2 me-3">
-          <button class="btn btn-vhppink flex-fill text-nowrap" style="min-width: 120px;" onclick="location.href='/tools'">Tools</button>
-          <button class="btn btn-vhpblue text-white flex-fill text-nowrap" style="min-width: 120px;" onclick="location.href='/casestudies'">Case Studies</button>
-          <button class="btn btn-vhpteal flex-fill text-nowrap" style="min-width: 120px;" onclick="location.href='/data'">Data</button>
-        </div>
-        
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+
+    <!-- Logo -->
+    <a class="navbar-brand ms-3" href="/">
+      <img
+        src="/static/images/logos/logo/PNG/300ppi/VHP_Logo_Long_02_300.png"
+        alt="VHP4Safety Logo"
+        height="70"
+        class="d-inline-block align-text-top"
+      />
+    </a>
+
+    <!-- new search bar (Issac's feedback) -->
+    <div class="flex-grow-1 d-flex justify-content-center ms-5 me-3" style="max-width: 250px ;">
+      <form class="d-flex w-100" role="search" onsubmit="runSearch(); return false;">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Search site..."
+          id="searchInput"
+          aria-label="Search"
+        />
+        <button class="btn btn-vhppurple" type="submit">Search</button>
+      </form>
+    </div>
+
+    <!-- Buttons position group -->
+    <div class="d-none d-lg-flex align-items-center gap-3 me-3">
+
+    <!-- Tools Button Group -->
+    <div class="btn-group" role="group">
+      <button
+        class="btn btn-vhppink text-nowrap"
+        style="min-width: 120px;"
+        onclick="location.href='/tools'"
+        type="button"
+      >
+        Tools
+      </button>
+      <button
+        type="button"
+        class="btn btn-vhppink dropdown-toggle dropdown-toggle-split"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <span class="visually-hidden">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu dropdown-scroll">
+        <li><a class="dropdown-item" href="/tools/aop-builder">AOP-builder</a></li>
+        <li><a class="dropdown-item" href="/tools/aopsuite">AOP-Suite</a></li>
+        <li><a class="dropdown-item" href="/tools/aopwikiapi">AOP-Wiki API</a></li>
+        <li><a class="dropdown-item" href="/tools/aopwiki">AOP-Wiki Snorql UI</a></li>
+        <li><a class="dropdown-item" href="/tools/arrayanalysis">ArrayAnalysis</a></li>
+        <li><a class="dropdown-item" href="/tools/biomodels">BioModels</a></li>
+        <li><a class="dropdown-item" href="/tools/biotransformer">BioTransformer</a></li>
+        <li><a class="dropdown-item" href="/tools/bmdexpress_3">BMDExpress-3</a></li>
+        <li><a class="dropdown-item" href="/tools/bridgedb">BridgeDB</a></li>
+        <li><a class="dropdown-item" href="/tools/cdkdepict">CDK Depict</a></li>
+        <li><a class="dropdown-item" href="/tools/celldesigner">CellDesigner</a></li>
+        <li><a class="dropdown-item" href="/tools/comptox"></a>CompTox</a></li>
+        <li><a class="dropdown-item" href="/tools/copasi">COPASI</a></li>
+        <li><a class="dropdown-item" href="/tools/cplogd">cpLogD</a></li>
+        <li><a class="dropdown-item" href="/tools/decimer">DECIMER</a></li>
+        <li><a class="dropdown-item" href="/tools/ema_documents">EMA Documents</a></li>
+        <li><a class="dropdown-item" href="/tools/fairdomhub">FAIRDOMHub</a></li>
+        <li><a class="dropdown-item" href="/tools/fairspace">Fairspace</a></li>
+        <li><a class="dropdown-item" href="/tools/farmacokompas">Farmatherapeutisch Kompas</a></li>
+        <li><a class="dropdown-item" href="/tools/flame">Flame</a></li>
+        <li><a class="dropdown-item" href="/tools/gscholar">Google scholar</a></li>
+        <li><a class="dropdown-item" href="/tools/google">Google Search</a></li>
+        <li><a class="dropdown-item" href="/tools/jrc_data_catalogue">JRC data catalogue</a></li>
+        <li><a class="dropdown-item" href="/tools/llemy">Llemy</a></li>
+        <li><a class="dropdown-item" href="/tools/mct8-dock">MCT8 docking for MIE discovery</a></li>
+        <li><a class="dropdown-item" href="/tools/MolAOP analyser">MolAOP analyser</a></li>
+        <li><a class="dropdown-item" href="/tools/dsld">NIH Dietary Supplement Label Database</a></li>
+        <li><a class="dropdown-item" href="/tools/oqt_assistant">O-QT-OECD QSAR Toolbox AL assistant</a></li>
+        <li><a class="dropdown-item" href="/tools/ontox_physiological_maps">ONTOX Physiological Maps</a></li>
+        <li><a class="dropdown-item" href="/tools/oppbk_model">OP PBK Model</a></li>
+        <li><a class="dropdown-item" href="/tools/opsin">OPSIN</a></li>
+        <li><a class="dropdown-item" href="/tools/qaop_app">qAOP-App</a></li>
+        <li><a class="dropdown-item" href="/tools/qspred">QSPRpred</a></li>
+        <li><a class="dropdown-item" href="/tools/sombie">SOM Prediction</a></li>
+        <li><a class="dropdown-item" href="/tools/sysrev">SysRev</a></li>
+        <li><a class="dropdown-item" href="/tools/oecd_qsar_toolbox">OECD QSAR Toolbox</a></li>
+        <li><a class="dropdown-item" href="/tools/toxtemp_assistant">ToxTempAssistant</a></li>
+        <li><a class="dropdown-item" href="/tools/txg_mapr">TXG-MAPr</a></li>
+        <li><a class="dropdown-item" href="/tools/vhp_glossary">VHP4Safety Glossary</a></li>
+        <li><a class="dropdown-item" href="/tools/wikibase">VHP4Safety Wikibase</a></li>
+        <li><a class="dropdown-item" href="/tools/kb">VHP4Safety Wikibase User Interface</a></li>
+        <li><a class="dropdown-item" href="/tools/wikipathways_aop">WikiPathways-AOP Portal</a></li>
+        <li><a class="dropdown-item" href="/tools/xploreaop">xploreaop</a></li>
+
+      </ul>
+    </div>
+
+    <!-- Case Studies Button Group -->
+    <div class="btn-group" role="group">
+      <button
+        class="btn btn-vhpblue text-white text-nowrap"
+        style="min-width: 120px;"
+        onclick="location.href='/casestudies'"
+        type="button"
+      >
+        Case Studies
+      </button>
+      <button
+        type="button"
+        class="btn btn-vhpblue text-white dropdown-toggle dropdown-toggle-split"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <span class="visually-hidden">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="/casestudies/kidney">Kidney case study</a></li>
+        <li><a class="dropdown-item" href="/casestudies/parkinson">Parkinson case study</a></li>
+        <li><a class="dropdown-item" href="/casestudies/thyroid">Thyroid case study</a></li>
+      </ul>
+    </div>
+
+    <!-- Data Button -->
+    <button
+      class="btn btn-vhpteal text-nowrap"
+      style="min-width: 120px;"
+      onclick="location.href='/data'"
+      type="button"
+    >
+      Data
+    </button>
+
+  </div>
+ 
+
         <!-- Hamburger toggle button for offcanvas menu -->
         <button class="navbar-toggler me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
       </div>
     </nav>
+    
+      <!-- Offcanvas menu (slides in from right) -->
+      <div class="offcanvas offcanvas-end bg-light-vhpblue" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <div class="d-flex flex-column gap-3">
 
-    <!-- Offcanvas menu (slides in from right) -->
-    <div class="offcanvas offcanvas-end bg-light-vhpblue" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <!-- Tools Button Group -->
+      <div class="d-flex w-100 mt-2">
+        <button
+          class="btn btn-vhppink text-nowrap flex-grow-1"
+          style="min-width: 120px; padding-left: 0; padding-right: 0;"
+          onclick="location.href='/tools'"
+          type="button"
+        >
+          Tools
+        </button>
+        <button
+          class="btn btn-vhppink"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseTools"
+          aria-expanded="false"
+          aria-controls="collapseTools"
+          style="width: 40px; padding-left: 0; padding-right: 0;"
+        >
+          ▼
+        </button>
       </div>
-      <div class="offcanvas-body">
-        <div class="d-flex flex-column gap-3">
-          <button class="btn btn-vhppink text-nowrap" onclick="location.href='/tools'" data-bs-dismiss="offcanvas">Tools</button>
-          <button class="btn btn-vhpblue text-white text-nowrap" onclick="location.href='/casestudies'" data-bs-dismiss="offcanvas">Case Studies</button>
-          <button class="btn btn-vhpteal text-nowrap" onclick="location.href='/data'" data-bs-dismiss="offcanvas">Data</button>
+
+      <div class="collapse" id="collapseTools">
+        <div class="d-flex flex-column gap-2 ps-3">
+          <button class="btn btn-light text-start" onclick="location.href='/tools/aop-builder'" data-bs-dismiss="offcanvas">AOP-builder</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/aopsuite'" data-bs-dismiss="offcanvas">AOP-Suite</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/aopwikiapi'" data-bs-dismiss="offcanvas">AOP-Wiki API</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/aopwiki'" data-bs-dismiss="offcanvas">AOP-Wiki Snorql UI</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/arrayanalysis'" data-bs-dismiss="offcanvas">ArrayAnalysis</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/biomodels'" data-bs-dismiss="offcanvas">BioModels</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/biotransformer'" data-bs-dismiss="offcanvas">BioTransformer</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/bmdexpress_3'" data-bs-dismiss="offcanvas">BMDExpress-3</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/bridgedb'" data-bs-dismiss="offcanvas">BridgeDB</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/cdkdepict'" data-bs-dismiss="offcanvas">CDK Depict</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/celldesigner'" data-bs-dismiss="offcanvas">CellDesigner</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/comptox'" data-bs-dismiss="offcanvas">CompTox</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/copasi'" data-bs-dismiss="offcanvas">COPASI</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/cplogd'" data-bs-dismiss="offcanvas">cpLogD</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/decimer'" data-bs-dismiss="offcanvas">DECIMER</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/ema_documents'" data-bs-dismiss="offcanvas">EMA Documents</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/fairdomhub'" data-bs-dismiss="offcanvas">FAIRDOMHub</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/fairspace'" data-bs-dismiss="offcanvas">Fairspace</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/farmacokompas'" data-bs-dismiss="offcanvas">Farmatherapeutisch Kompas</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/flame'" data-bs-dismiss="offcanvas">Flame</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/gscholar'" data-bs-dismiss="offcanvas">Google scholar</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/google'" data-bs-dismiss="offcanvas">Google Search</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/jrc_data_catalogue'" data-bs-dismiss="offcanvas">JRC data catalogue</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/llemy'" data-bs-dismiss="offcanvas">Llemy</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/mct8-dock'" data-bs-dismiss="offcanvas">MCT8 docking for MIE discovery</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/MolAOP analyser'" data-bs-dismiss="offcanvas">MolAOP analyser</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/dsld'" data-bs-dismiss="offcanvas">NIH Database</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/oqt_assistant'" data-bs-dismiss="offcanvas">O-QT-OECD QSAR TAL assistant</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/ontox_physiological_maps'" data-bs-dismiss="offcanvas">ONTOX Physiological Maps</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/oppbk_model'" data-bs-dismiss="offcanvas">OP PBK Model</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/opsin'" data-bs-dismiss="offcanvas">OPSIN</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/qaop_app'" data-bs-dismiss="offcanvas">qAOP-App</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/qspred'" data-bs-dismiss="offcanvas">QSPRpred</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/sombie'" data-bs-dismiss="offcanvas">SOM Prediction</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/sysrev'" data-bs-dismiss="offcanvas">SysRev</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/oecd_qsar_toolbox'" data-bs-dismiss="offcanvas">OECD QSAR Toolbox</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/toxtemp_assistant'" data-bs-dismiss="offcanvas">ToxTempAssistant</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/txg_mapr'" data-bs-dismiss="offcanvas">TXG-MAPr</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/vhp_glossary'" data-bs-dismiss="offcanvas">VHP4Safety Glossary</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/wikibase'" data-bs-dismiss="offcanvas">VHP4Safety Wikibase</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/kb'" data-bs-dismiss="offcanvas">VHP4Safety Wikibase UI</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/wikipathways_aop'" data-bs-dismiss="offcanvas">WikiPathways-AOP Portal</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/xploreaop'" data-bs-dismiss="offcanvas">xploreaop</button>
         </div>
       </div>
-    </div>
 
-    <!-- Main Content Section: replaced by child templates -->
+      <!-- Case Studies Button Group -->
+      <div class="d-flex w-100 mt-2">
+        <button class="btn btn-vhpblue text-white text-nowrap flex-grow-1" 
+                onclick="location.href='/casestudies'" data-bs-dismiss="offcanvas">
+          Case Studies
+        </button>
+        <button class="btn btn-vhpblue text-white" 
+                type="button" data-bs-toggle="collapse" data-bs-target="#collapseCaseStudies" 
+                aria-expanded="false" aria-controls="collapseCaseStudies"
+                style="width: 40px; padding-left: 0; padding-right: 0;">
+          ▼
+        </button>
+      </div>
+
+      <div class="collapse" id="collapseCaseStudies">
+        <div class="d-flex flex-column gap-2 ps-3">
+          <button class="btn btn-light text-start" onclick="location.href='/casestudies/thyroid'" data-bs-dismiss="offcanvas">Kidney case study</button>
+          <button class="btn btn-light text-start" onclick="location.href='/casestudies/parkinson'" data-bs-dismiss="offcanvas">Parkinson case study</button>
+          <button class="btn btn-light text-start" onclick="location.href='/casestudies/kidney'" data-bs-dismiss="offcanvas">Thyroid case study</button>
+        </div>
+      </div>
+
+      <!-- Data Button -->
+      <button class="btn btn-vhpteal text-nowrap mt-2" onclick="location.href='/data'" data-bs-dismiss="offcanvas">Data</button>
+        
+    </div>
+  </div>
+</div>
+
+f
+  <!-- Main Content Section: replaced by child templates -->
     <main class="">{% block content %} {% endblock %}</main>
 
-    <!-- Footer Section: site links, resources, legal, connect -->
+  <!-- Footer Section: site links, resources, legal, connect -->
     <footer class="bg-vhplight-blue py-5 mt-auto">
       <div class="container" style="max-width: 55%;">
         <div class="row g-4">
@@ -147,5 +356,87 @@
 
     <!-- Bootstrap 5.3.3 JS Bundle (includes Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+
+
+    <!-- script for search bar's functionality -->
+    <script>
+      function runSearch() {
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+
+        if (!query) {
+          alert('Please enter a search term.');
+          return;
+        }
+
+       const pages = {
+        // Tools we have
+        tools: '/tools',
+        'aop-builder': '/tools/aop-builder',
+        aopsuite: '/tools/aopsuite',
+        'aopwikiapi': '/tools/aopwikiapi',
+        'aopwiki': '/tools/aopwiki',
+        arrayanalysis: '/tools/arrayanalysis',
+        biomodels: '/tools/biomodels',
+        biotransformer: '/tools/biotransformer',
+        bmdexpress_3: '/tools/bmdexpress_3',
+        bridgedb: '/tools/bridgedb',
+        cdkdepict: '/tools/cdkdepict',
+        celldesigner: '/tools/celldesigner',
+        comptox: '/tools/comptox',
+        copasi: '/tools/copasi',
+        cplogd: '/tools/cplogd',
+        decimer: '/tools/decimer',
+        ema_documents: '/tools/ema_documents',
+        fairdomhub: '/tools/fairdomhub',
+        fairspace: '/tools/fairspace',
+        farmacokompas: '/tools/farmacokompas',
+        flame: '/tools/flame',
+        gscholar: '/tools/gscholar',
+        google: '/tools/google',
+        jrc_data_catalogue: '/tools/jrc_data_catalogue',
+        llemy: '/tools/llemy',
+        'mct8-dock': '/tools/mct8-dock',
+        'MolAOP analyser': '/tools/MolAOP analyser',
+        dsld: '/tools/dsld',
+        oqt_assistant: '/tools/oqt_assistant',
+        ontox_physiological_maps: '/tools/ontox_physiological_maps',
+        oppbk_model: '/tools/oppbk_model',
+        opsin: '/tools/opsin',
+        qaop_app: '/tools/qaop_app',
+        qspred: '/tools/qspred',
+        sombie: '/tools/sombie',
+        sysrev: '/tools/sysrev',
+        oecd_qsar_toolbox: '/tools/oecd_qsar_toolbox',
+        toxtemp_assistant: '/tools/toxtemp_assistant',
+        txg_mapr: '/tools/txg_mapr',
+        vhp_glossary: '/tools/vhp_glossary',
+        wikibase: '/tools/wikibase',
+        kb: '/tools/kb',
+        wikipathways_aop: '/tools/wikipathways_aop',
+        xploreaop: '/tools/xploreaop',
+
+        // Case studies
+        casestudies: '/casestudies',
+        thyroid: '/casestudies/thyroid',
+        parkinson: '/casestudies/parkinson',
+        kidney: '/casestudies/kidney',
+
+        // Data
+        data: '/data',
+        home: '/'
+      };
+
+        for (const key in pages) {
+          if (query.includes(key)) {
+            window.location.href = pages[key];
+            return;
+          }
+        }
+
+        alert('No results found for "' + query + '".');
+      }
+    </script>
+
   </body>
 </html>

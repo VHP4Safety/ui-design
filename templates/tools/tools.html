@@ -122,26 +122,26 @@
                     <div class="card-footer bg-white border-0 py-3">
 
                         <div class="btn-group d-flex" role="group" aria-label="Tool example">
-                            <!-- Tool Webpage -->
-                            {% if item.main_url == "no_url" %}
-                                <a type="button" class="btn btn-outline-secondary disabled" data-bs-toggle="tooltip" data-bs-title="No webpage available"><i class="bi bi-house"></i>
-</a> 
-                            {% else %}
-                                <a type="button" href="{{ item.main_url }}" class="btn btn-outline-secondary" target="_blank" data-bs-toggle="tooltip" data-bs-title="Visit main webpage"><i class="bi bi-house"></i>
-</a>
-                            {% endif %}
 
+                             <!-- Catalog Page -->
+                            <a href="{{ url_for('tools') }}/{{ item.id }}" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-title="View tool details"><i class="bi bi-info-circle"></i></a>
 
-                            <!-- Instance Page -->
+                             <!-- Instance Page -->
                             {% if item.inst_url == "no_url" %}
                                 <a type="button" class="btn btn-outline-vhppink disabled" data-bs-toggle="tooltip" data-bs-title="There is no interactive tools available at the moment">Not Available Tool</a> 
                             {% else %}
-                                <a type="button" href="{{ item.inst_url }}" class="btn btn-vhppink flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Try VHP-hosted instance">Run the Tool</a>
+                                <a type="button" href="{{ item.inst_url }}" class="btn btn-vhppink flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Try VHP-hosted instance">Run the tool</a>
                             {% endif %}                   
 
 
-                            <!-- Catalog Page -->
-                            <a href="{{ url_for('tools') }}/{{ item.id }}" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-title="View tool details"><i class="bi bi-info-circle"></i></a>
+                            <!-- Tool Webpage -->
+                            {% if item.main_url == "no_url" %}
+                                <a type="button" class="btn btn-outline-secondary disabled" data-bs-toggle="tooltip" data-bs-title="No webpage available"><i class="bi bi-box-arrow-up-right"></i>
+</a> 
+                            {% else %}
+                                <a type="button" href="{{ item.main_url }}" class="btn btn-outline-secondary" target="_blank" data-bs-toggle="tooltip" data-bs-title="Visit main webpage"><i class="bi bi-box-arrow-up-right"></i>
+</a>
+                            {% endif %}
 
                             <!-- Meta-Data -->
                             <button type="button" class="btn btn-outline-vhpteal" data-bs-toggle="tooltip" data-bs-title="View metadata (.md)" onclick="showMetadata('{{ item.meta_data }}', '{{ item.service }}')"><i class="bi bi-list-ul"></i></button>
