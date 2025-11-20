@@ -20,28 +20,29 @@ let step6Contents = {};
 let contentLoaded = false;
 
 function stepTypeToColor(type) {
-  color = "card-button-vhpblue"
+  baseclass = "btn text-white"
+  color = "btn-vhpblue" 
   if (type == "workflow step" || type == "workflow-step") {
-    color = "card-button-vhplight-green"
+    color = "btn-vhppurple"
   } else if (type == "workflow substep" || type == "workflow-substep") {
-    color = "card-button-vhplight-purple"
+    color = "btn-vhpmaroon"
   } else if (type == "process flow step" || type == "process-flow-step") {
-    color = "card-button-vhpblue"
+    color = "btn-vhporange"
   } else if (type == "regulatory question" || type == "regulatory-question") {
-    color = "card-button-vhppink"
+    color = "btn-vhpblue"
   } else if (type == "tool") {
-    color = "card-button-vhplight-blue"
+    color = "btn-vhppink"
   } else {
     console.log("UNKNOWN STEP TYPE: " + type)
   }
-  return color
+  return baseclass + " " + color
 }
 
 function stepAction(step, onClickFn) {
   if (step.type && step.type == "tool") {
     if (step.id) {
-      url = "https://platform.vhp4safety.nl/tools/" + step.id
-      return "onclick=\"window.open('" + url + "');\""
+      url = "/tools/" + step.id
+      return "onclick=\"location.href='" + url + "';\""
     } else { // nothing to link to
       return ""
     }
@@ -59,16 +60,14 @@ function renderStepButtons(steps, btnClass, onClickFn) {
       .map(
         (step) =>
         `
-        <div class="col-md pb-2">
-        <div class="card card-button ${ stepTypeToColor(step.type) }${
-            step.state && step.state == "disabled" ? " opacity-25" : ""
-          }">
-        <div class="card-body text-center${
-            step.state && step.state == "disabled" ? " nav-link disabled" : ""
-          }"${ stepAction(step, onClickFn) }><b>${step.label}</b>${
+        <div class="col-md pb-2 d-flex align-items-stretch">
+          <button class="btn w-100 text-white ${ stepTypeToColor(step.type) }${
+            step.state && step.state == "disabled" ? " disabled opacity-25" : ""
+          }"${ stepAction(step, onClickFn) }${
+            step.state && step.state == "disabled" ? " disabled" : ""
+          }><b>${step.label}</b>${
             step.description ? "<br />" + step.description : ""
-          }</div>
-          </div>
+          }</button>
           </div>
           `
       )
@@ -77,28 +76,6 @@ function renderStepButtons(steps, btnClass, onClickFn) {
   );
 }
 
-function renderToolButtons(tools) {
-  console.log("ERROR: renderToolButtons() should not be used anymore")
-  return (
-    `<div class="row py-3">` +
-    tools
-      .map(
-        (tool) =>
-        `
-        <div class="col-md pb-2">
-        <div class="card card-button ${ stepTypeToColor(tool.type) }">
-          <div class="card-body text-center"><b>${tool.label}</b>${
-            tool.description ? "<br />" + tool.description : ""
-          }${
-            tool.id ? "<br /><a href=\"https://platform.vhp4safety.nl/tools/" + tool.id + "\" target=\"_blank\">more info</a>" : ""
-          }</div>
-          </div>
-          </div>`
-      )
-      .join("") +
-    `</div>`
-  );
-}
 // --- Content update functions ---
 function updateStep1Content() {
   if (!contentLoaded) return;
@@ -127,7 +104,7 @@ function updateStep3Content() {
   } else if (step.tools) {
     document.getElementById("step3-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
-      renderToolButtons(step.tools);
+      renderStepButtons(step.tools, "step3", null);
   }
   document.getElementById("step3-bottom-content").innerHTML = buildAccordionHTML(step.content);
 }
@@ -141,7 +118,7 @@ function updateStep4Content() {
   if (step.tools) {
     document.getElementById("step4-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
-      renderToolButtons(step.tools);
+      renderStepButtons(step.tools, "step4", null);
   } else if (step.steps) {
     document.getElementById("step4-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
@@ -163,7 +140,7 @@ function updateStep5Content() {
   if (step.tools) {
     document.getElementById("step5-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
-      renderToolButtons(step.tools);
+      renderStepButtons(step.tools, "step5", null);
   } else if (step.steps) {
     document.getElementById("step5-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
@@ -186,7 +163,7 @@ function updateStep6Content() {
   if (step.tools) {
     document.getElementById("step6-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
-      renderToolButtons(step.tools);
+      renderStepButtons(step.tools, "step6", null);
   } else if (step.steps) {
     document.getElementById("step6-content").innerHTML =
       `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +

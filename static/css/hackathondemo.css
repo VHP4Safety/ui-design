@@ -1,4 +1,4 @@
-/* This CSS file is used for thyroid_hackathon_demo_workflow.html, it builds upon base.css */
+/* This CSS file is used for thyroid_hackathon_demo_workflow.html, it builds upon custom_bootstrap.css */
 #service_selection { /* Container for the service selection section */
     display: flex;
     gap: 20px;
