@@ -23,15 +23,15 @@ function stepTypeToColor(type) {
   baseclass = "btn text-white"
   color = "btn-vhpblue" 
   if (type == "workflow step" || type == "workflow-step") {
-    color = "btn-vhppurple"
+    color = "btn-vhplight-green"
   } else if (type == "workflow substep" || type == "workflow-substep") {
-    color = "btn-vhpmaroon"
+    color = "btn-vhplight-purple"
   } else if (type == "process flow step" || type == "process-flow-step") {
-    color = "btn-vhporange"
-  } else if (type == "regulatory question" || type == "regulatory-question") {
     color = "btn-vhpblue"
-  } else if (type == "tool") {
+  } else if (type == "regulatory question" || type == "regulatory-question") {
     color = "btn-vhppink"
+  } else if (type == "tool") {
+    color = "btn-vhplight-blue"
   } else {
     console.log("UNKNOWN STEP TYPE: " + type)
   }
