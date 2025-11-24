@@ -1,9 +1,9 @@
 
-Version 0.5-12 (2025-11-20)
+Version 0.5-13 (2025-11-24)
 --------------------------------------------------------------------------------
 - Adding the search bar prototype. 
 - Adding the slide-bar prototypes to the Tools and Case Studies buttons. 
-- Updating logos in "Project Partners". 
+- Updating logos in Project Partners. 
 - Text edits and corrections.
 
 
