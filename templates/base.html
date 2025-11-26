@@ -68,39 +68,25 @@
       />
     </a>
 
-    <!-- new search bar (Issac's feedback) -->
-    <div class="flex-grow-1 d-flex justify-content-center ms-5 me-3" style="max-width: 250px ;">
-      <form class="d-flex w-100" role="search" onsubmit="runSearch(); return false;">
-        <input
-          class="form-control me-2"
-          type="search"
-          placeholder="Search site..."
-          id="searchInput"
-          aria-label="Search"
-        />
-        <button class="btn btn-vhppurple" type="submit">Search</button>
-      </form>
-    </div>
+     <!-- Search bar -->
+  <div class="flex-grow-1 d-flex justify-content-center me-3" style="max-width: 250px;">
+    <form class="d-flex w-100" role="search" onsubmit="runSearch(); return false;">
+      <input class="form-control me-2" type="search" placeholder="Search site..." id="searchInput" aria-label="Search">
+      <button class="btn btn-vhppurple" type="submit">Search</button>
+    </form>
+  </div>
 
-    <!-- Buttons position group -->
-    <div class="d-none d-lg-flex align-items-center gap-3 me-3">
+  <!-- Hamburger toggler for mobile -->
+  <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
 
+  <!-- Desktop buttons (hidden on mobile) -->
+  <div class="d-none d-lg-flex align-items-center gap-3">
     <!-- Tools Button Group -->
     <div class="btn-group" role="group">
-      <button
-        class="btn btn-vhppink text-nowrap"
-        style="min-width: 120px;"
-        onclick="location.href='/tools'"
-        type="button"
-      >
-        Tools
-      </button>
-      <button
-        type="button"
-        class="btn btn-vhppink dropdown-toggle dropdown-toggle-split"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
+      <button class="btn btn-vhppink text-nowrap" style="min-width: 120px;" onclick="location.href='/tools'" type="button">Tools</button>
+      <button type="button" class="btn btn-vhppink dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu dropdown-scroll">
@@ -115,7 +101,7 @@
         <li><a class="dropdown-item" href="/tools/bridgedb">BridgeDB</a></li>
         <li><a class="dropdown-item" href="/tools/cdkdepict">CDK Depict</a></li>
         <li><a class="dropdown-item" href="/tools/celldesigner">CellDesigner</a></li>
-        <li><a class="dropdown-item" href="/tools/comptox"></a>CompTox</a></li>
+        <li><a class="dropdown-item" href="/tools/comptox">CompTox</a></li>
         <li><a class="dropdown-item" href="/tools/copasi">COPASI</a></li>
         <li><a class="dropdown-item" href="/tools/cplogd">cpLogD</a></li>
         <li><a class="dropdown-item" href="/tools/decimer">DECIMER</a></li>
@@ -144,92 +130,46 @@
         <li><a class="dropdown-item" href="/tools/txg_mapr">TXG-MAPr</a></li>
         <li><a class="dropdown-item" href="/tools/vhp_glossary">VHP4Safety Glossary</a></li>
         <li><a class="dropdown-item" href="/tools/wikibase">VHP4Safety Wikibase</a></li>
-        <li><a class="dropdown-item" href="/tools/kb">VHP4Safety Wikibase User Interface</a></li>
+        <li><a class="dropdown-item" href="/tools/kb">VHP4Safety Wikibase UI</a></li>
         <li><a class="dropdown-item" href="/tools/wikipathways_aop">WikiPathways-AOP Portal</a></li>
         <li><a class="dropdown-item" href="/tools/xploreaop">xploreaop</a></li>
-
       </ul>
     </div>
 
     <!-- Case Studies Button Group -->
     <div class="btn-group" role="group">
-      <button
-        class="btn btn-vhpblue text-white text-nowrap"
-        style="min-width: 120px;"
-        onclick="location.href='/casestudies'"
-        type="button"
-      >
-        Case Studies
-      </button>
-      <button
-        type="button"
-        class="btn btn-vhpblue text-white dropdown-toggle dropdown-toggle-split"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
+      <button class="btn btn-vhpblue text-white text-nowrap" style="min-width: 120px;" onclick="location.href='/casestudies'" type="button">Case Studies</button>
+      <button type="button" class="btn btn-vhpblue text-white dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="/casestudies/kidney">Kidney case study</a></li>
-        <li><a class="dropdown-item" href="/casestudies/parkinson">Parkinson case study</a></li>
-        <li><a class="dropdown-item" href="/casestudies/thyroid">Thyroid case study</a></li>
+      <ul class="dropdown-menu dropdown-scroll">
+        <li><a class="dropdown-item" href="/casestudies/kidney">Kidney</a></li>
+        <li><a class="dropdown-item" href="/casestudies/parkinson">Parkinson’s disease</a></li>
+        <li><a class="dropdown-item" href="/casestudies/thyroid">Thyroid</a></li>
       </ul>
     </div>
 
     <!-- Data Button -->
-    <button
-      class="btn btn-vhpteal text-nowrap"
-      style="min-width: 120px;"
-      onclick="location.href='/data'"
-      type="button"
-    >
-      Data
-    </button>
-
+    <button class="btn btn-vhpteal text-nowrap" style="min-width: 120px;" onclick="location.href='/data'" type="button">Data</button>
   </div>
- 
+</nav>
 
-        <!-- Hamburger toggle button for offcanvas menu -->
-        <button class="navbar-toggler me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+<!-- Offcanvas Menu for Mobile -->
+<div class="offcanvas offcanvas-end bg-light-vhpblue" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="d-flex flex-column gap-2">
+      <!-- Tools collapse menu -->
+      <div class="d-flex w-100">
+        <button class="btn btn-vhppink flex-grow-1 text-nowrap" onclick="location.href='/tools'" data-bs-dismiss="offcanvas">Tools</button>
+        <button class="btn btn-vhppink" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTools" aria-expanded="false" aria-controls="collapseTools" style="width: 40px;">▼</button>
       </div>
-    </nav>
-    
-      <!-- Offcanvas menu (slides in from right) -->
-      <div class="offcanvas offcanvas-end bg-light-vhpblue" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-          <div class="d-flex flex-column gap-3">
-
-      <!-- Tools Button Group -->
-      <div class="d-flex w-100 mt-2">
-        <button
-          class="btn btn-vhppink text-nowrap flex-grow-1"
-          style="min-width: 120px; padding-left: 0; padding-right: 0;"
-          onclick="location.href='/tools'"
-          type="button"
-        >
-          Tools
-        </button>
-        <button
-          class="btn btn-vhppink"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#collapseTools"
-          aria-expanded="false"
-          aria-controls="collapseTools"
-          style="width: 40px; padding-left: 0; padding-right: 0;"
-        >
-          ▼
-        </button>
-      </div>
-
       <div class="collapse" id="collapseTools">
-        <div class="d-flex flex-column gap-2 ps-3">
+        <div class="d-flex flex-column ps-3 gap-2">
+          <!-- Tools links -->
           <button class="btn btn-light text-start" onclick="location.href='/tools/aop-builder'" data-bs-dismiss="offcanvas">AOP-builder</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/aopsuite'" data-bs-dismiss="offcanvas">AOP-Suite</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/aopwikiapi'" data-bs-dismiss="offcanvas">AOP-Wiki API</button>
@@ -257,7 +197,7 @@
           <button class="btn btn-light text-start" onclick="location.href='/tools/mct8-dock'" data-bs-dismiss="offcanvas">MCT8 docking for MIE discovery</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/MolAOP analyser'" data-bs-dismiss="offcanvas">MolAOP analyser</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/dsld'" data-bs-dismiss="offcanvas">NIH Database</button>
-          <button class="btn btn-light text-start" onclick="location.href='/tools/oqt_assistant'" data-bs-dismiss="offcanvas">O-QT-OECD QSAR TAL assistant</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/oqt_assistant'" data-bs-dismiss="offcanvas">O-QT-OECD QSAR Toolbox AL assistant</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/ontox_physiological_maps'" data-bs-dismiss="offcanvas">ONTOX Physiological Maps</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/oppbk_model'" data-bs-dismiss="offcanvas">OP PBK Model</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/opsin'" data-bs-dismiss="offcanvas">OPSIN</button>
@@ -276,31 +216,21 @@
         </div>
       </div>
 
-      <!-- Case Studies Button Group -->
+      <!-- Case Studies collapse menu -->
       <div class="d-flex w-100 mt-2">
-        <button class="btn btn-vhpblue text-white text-nowrap flex-grow-1" 
-                onclick="location.href='/casestudies'" data-bs-dismiss="offcanvas">
-          Case Studies
-        </button>
-        <button class="btn btn-vhpblue text-white" 
-                type="button" data-bs-toggle="collapse" data-bs-target="#collapseCaseStudies" 
-                aria-expanded="false" aria-controls="collapseCaseStudies"
-                style="width: 40px; padding-left: 0; padding-right: 0;">
-          ▼
-        </button>
+        <button class="btn btn-vhpblue text-white flex-grow-1" onclick="location.href='/casestudies'" data-bs-dismiss="offcanvas">Case Studies</button>
+        <button class="btn btn-vhpblue text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCaseStudies" aria-expanded="false" aria-controls="collapseCaseStudies" style="width: 40px;">▼</button>
       </div>
-
       <div class="collapse" id="collapseCaseStudies">
-        <div class="d-flex flex-column gap-2 ps-3">
-          <button class="btn btn-light text-start" onclick="location.href='/casestudies/thyroid'" data-bs-dismiss="offcanvas">Kidney case study</button>
-          <button class="btn btn-light text-start" onclick="location.href='/casestudies/parkinson'" data-bs-dismiss="offcanvas">Parkinson case study</button>
-          <button class="btn btn-light text-start" onclick="location.href='/casestudies/kidney'" data-bs-dismiss="offcanvas">Thyroid case study</button>
+        <div class="d-flex flex-column ps-3 gap-2">
+          <button class="btn btn-light text-start" onclick="location.href='/casestudies/kidney'" data-bs-dismiss="offcanvas">Kidney</button>
+          <button class="btn btn-light text-start" onclick="location.href='/casestudies/parkinson'" data-bs-dismiss="offcanvas">Parkinson’s disease</button>
+          <button class="btn btn-light text-start" onclick="location.href='/casestudies/thyroid'" data-bs-dismiss="offcanvas">Thyroid</button>
         </div>
       </div>
 
       <!-- Data Button -->
-      <button class="btn btn-vhpteal text-nowrap mt-2" onclick="location.href='/data'" data-bs-dismiss="offcanvas">Data</button>
-        
+      <button class="btn btn-vhpteal mt-2" onclick="location.href='/data'" data-bs-dismiss="offcanvas">Data</button>
     </div>
   </div>
 </div>

@@ -201,9 +201,25 @@
             });
         });
         
-        // Mark already selected items as active
-        updateDropdownVisuals();
-    });
+        // This is adapted to enable navigation from the main tool page to an individual case study page
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const filterType = item.dataset.filterType;
+                    const filterValue = item.dataset.filterValue;
+
+                    if (filterType && filterValue) {
+                        e.preventDefault(); // Prevent default only for Tools filter items
+                        e.stopPropagation();
+                        toggleFilter(filterType, filterValue);
+                    }
+                    // Case Studies items have no dataset → normal navigation works
+                });
+            });
+            
+            // Mark already selected items as active
+            updateDropdownVisuals();
+        });
 
     function toggleFilter(type, value) {
         const index = selectedFilters[type].indexOf(value);
