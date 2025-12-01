@@ -1,5 +1,5 @@
 
-Version 0.5-15 (2025-12-01)
+Version 0.5-17 (2025-12-01)
 --------------------------------------------------------------------------------
 - Adding the search bar prototype. 
 - Adding the slide-bar prototypes to the Tools and Case Studies buttons. 
