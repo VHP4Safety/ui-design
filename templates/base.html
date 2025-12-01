@@ -5,6 +5,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VHP4Safety</title>
+
+    {% if config.DEBUG %}
+    <!-- we are running in DEBUG mode -->
+    {% else %}
+    <!-- we are NOT running in DEBUG mode -->
+    {% endif %}
     
     <!-- Bootstrap 5.3.8 CSS -->
     <link href="/static/css/bootstrap-custom.css" rel="stylesheet">
