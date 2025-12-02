@@ -100,6 +100,12 @@
           {% if tool_details.instance.docker %}<li>Docker: <a href="{{ tool_details.instance.docker }}">{{ tool_details.instance.docker }}</a></li>{% endif %}
         </ul>
         {% endif %}
+        {% if tool_details.get('ELIXIR') and tool_details.ELIXIR.get('biotools') %}
+        <h2 class="pt-2">Technical documentation</h2>
+        <ul>
+          <li><a href="https://bio.tools/{{ tool_details.ELIXIR.get('biotools') }}">bio.tools</a></li>
+        </ul>
+        {% endif %}
       </div>
     </div>
   </div>
