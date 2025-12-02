@@ -77,7 +77,17 @@
         {% endif %}
       </div>
       <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">
-        ...
+        <ul style="list-style-type:disc">
+        {% if tool_details.intro %}
+          <li>Intro: <a href={{ tool_details.intro.url }}>{{ tool_details.intro.title }}</a></li>
+        {% endif %}
+        {% if tool_details.demo %}
+          <li>Demo: <a href={{ tool_details.demo.url }}>{{ tool_details.demo.title }}</a></li>
+        {% endif %}
+        {% if tool_details.workflow %}
+          <li>Workflow: <a href={{ tool_details.workflow.url }}>{{ tool_details.workflow.title }}</a></li>
+        {% endif %}
+      </ul>
       </div>
       <div class="tab-pane" id="simple-tabpanel-3" role="tabpanel" aria-labelledby="simple-tab-3">
         <h2 class="pt-2">Contact</h2>
