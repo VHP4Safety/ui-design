@@ -82,7 +82,13 @@
       <div class="tab-pane" id="simple-tabpanel-3" role="tabpanel" aria-labelledby="simple-tab-3">
         <h2 class="pt-2">Contact</h2>
         <ul>
-          {% if tool_details.provider %}{% if tool_details.provider.contact %}{% if tool_details.provider.contact.name %}<li>Foo</li>{% endif %}{% endif %}{% endif %}
+          {% if tool_details.provider %}{% if tool_details.provider.contact %}
+            {% if tool_details.provider.contact.name %}
+              <li>{{ tool_details.provider.contact.name }}{% if tool_details.provider.name %} ({{ tool_details.provider.name }}){% endif%}</li>
+            {% else %}
+              {% if tool_details.provider.name %}<li>{{ tool_details.provider.name }}</li>{% endif%}
+            {% endif %}
+          {% endif %}{% endif %}
         </ul>    
       </div>
       <div class="tab-pane" id="simple-tabpanel-4" role="tabpanel" aria-labelledby="simple-tab-4">
