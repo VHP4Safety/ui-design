@@ -56,13 +56,59 @@
         <div class="row">
           <div class="col-md-6">
             {{ tool_json.description }}
+        {% if tool_details.get("regulatory-question") %}
+        <div style="margin-top: 5px">
+          {% if tool_details.get("regulatory-question").get("1a") == "true" or
+                tool_details.get("regulatory-question").get("1b") == "true" %}
+          <span data-bs-toggle="tooltip" title="Used in the Kidney Case Study"><img src="/static/images/image43_hexagon.svg" alt="Kidney case study" style="max-width: 40px; margin: 0 auto; align: left"></span>
+          {% endif %}
+          {% if tool_details.get("regulatory-question").get("2a") == "true" or
+                tool_details.get("regulatory-question").get("2b") == "true" %}
+          <span data-bs-toggle="tooltip" title="Used in the Parkinson Case Study"><img src="/static/images/image45_hexagon.svg" alt="Parkinson case study" style="max-width: 40px; margin: 0 auto; align: left"></span>
+          {% endif %}
+          {% if tool_details.get("regulatory-question").get("3a") == "true" or
+                tool_details.get("regulatory-question").get("3b") == "true" %}
+          <span data-bs-toggle="tooltip" title="Used in the Thyroid Hormone Case Study"><img src="/static/images/image47_hexagon.svg" alt="Thyroid hormone case study" style="max-width: 40px; margin: 0 auto; align: left"></span>
+          {% endif %}
+        </div>
+        {% endif %}
           </div>
           <div class="col-md-6 pt-md-0 pt-2 mt-md-0 mt-1">
             <img src="https://cloud.vhp4safety.nl/service/{{ tool_details.screenshot }}" class="card-img-bottom" alt="...">
           </div>
         </div>
         {%else%}
+        <div class="row">
           {{ tool_json.description }}
+        {% if tool_details.get("regulatory-question") %}
+        <div style="margin-top: 5px">
+          {% if tool_details.get("regulatory-question").get("1a") == "true" or
+                tool_details.get("regulatory-question").get("1b") == "true" %}
+          <span data-bs-toggle="tooltip" title="Used in the Kidney Case Study"><img src="/static/images/image43_hexagon.svg" alt="Kidney case study" style="max-width: 40px; margin: 0 auto; align: left"></span>
+          {% endif %}
+          {% if tool_details.get("regulatory-question").get("2a") == "true" or
+                tool_details.get("regulatory-question").get("2b") == "true" %}
+          <span data-bs-toggle="tooltip" title="Used in the Parkinson Case Study"><img src="/static/images/image45_hexagon.svg" alt="Parkinson case study" style="max-width: 40px; margin: 0 auto; align: left"></span>
+          {% endif %}
+          {% if tool_details.get("regulatory-question").get("3a") == "true" or
+                tool_details.get("regulatory-question").get("3b") == "true" %}
+          <span data-bs-toggle="tooltip" title="Used in the Thyroid Hormone Case Study"><img src="/static/images/image47_hexagon.svg" alt="Thyroid hormone case study" style="max-width: 40px; margin: 0 auto; align: left"></span>
+          {% endif %}
+        </div>
+        {% endif %}
+        </div>
+        {% endif %}
+        <!-- Instance Page -->
+        {% if tool_details.instance %}
+          {% if tool_details.instance.url %}
+          <div style="margin-top: 5px">
+            <a type="button" href="{{ tool_details.instance.url }}" class="btn btn-vhppink flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Try VHP-hosted instance">Run the tool</a>
+          </div>
+          {% endif %}
+        {% elif tool_details.url %}
+          <div style="margin-top: 5px">
+            <a type="button" href="{{ tool_details.url}}" class="btn btn-outline-vhppink flex-grow-1" data-bs-toggle="tooltip" data-bs-title="Try non-VHP instance">Run the tool</a>
+          </div>
         {% endif %}
       </div>
       <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
