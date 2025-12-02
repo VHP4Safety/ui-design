@@ -57,7 +57,7 @@
           <div class="col-md-6">
             {{ tool_json.description }}
         {% if tool_details.get("regulatory-question") %}
-        <div>
+        <div style="margin-top: 5px">
           {% if tool_details.get("regulatory-question").get("1a") == "true" or
                 tool_details.get("regulatory-question").get("1b") == "true" %}
           <span data-bs-toggle="tooltip" title="Used in the Kidney Case Study"><img src="/static/images/image43_hexagon.svg" alt="Kidney case study" style="max-width: 40px; margin: 0 auto; align: left"></span>
@@ -81,7 +81,7 @@
         <div class="row">
           {{ tool_json.description }}
         {% if tool_details.get("regulatory-question") %}
-        <div>
+        <div style="margin-top: 5px">
           {% if tool_details.get("regulatory-question").get("1a") == "true" or
                 tool_details.get("regulatory-question").get("1b") == "true" %}
           <span data-bs-toggle="tooltip" title="Used in the Kidney Case Study"><img src="/static/images/image43_hexagon.svg" alt="Kidney case study" style="max-width: 40px; margin: 0 auto; align: left"></span>
@@ -101,12 +101,12 @@
         <!-- Instance Page -->
         {% if tool_details.instance %}
           {% if tool_details.instance.url %}
-          <div>
+          <div style="margin-top: 5px">
             <a type="button" href="{{ tool_details.instance.url }}" class="btn btn-vhppink flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Try VHP-hosted instance">Run the tool</a>
           </div>
           {% endif %}
         {% elif tool_details.url %}
-          <div>
+          <div style="margin-top: 5px">
             <a type="button" href="{{ tool_details.url}}" class="btn btn-outline-vhppink flex-grow-1" data-bs-toggle="tooltip" data-bs-title="Try non-VHP instance">Run the tool</a>
           </div>
         {% endif %}
