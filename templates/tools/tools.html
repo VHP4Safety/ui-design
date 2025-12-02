@@ -128,7 +128,7 @@
 
                              <!-- Instance Page -->
                             {% if item.inst_url == "no_url" %}
-                                <a type="button" class="btn btn-outline-vhppink disabled" data-bs-toggle="tooltip" data-bs-title="There is no interactive tools available at the moment">Not Available Tool</a> 
+                                <a type="button" class="btn btn-outline-vhppink disabled" data-bs-toggle="tooltip" data-bs-title="There is no interactive tools available at the moment">External Tool</a> 
                             {% else %}
                                 <a type="button" href="{{ item.inst_url }}" class="btn btn-vhppink flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Try VHP-hosted instance">Run the tool</a>
                             {% endif %}                   
