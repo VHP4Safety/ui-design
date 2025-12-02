@@ -194,42 +194,115 @@ html {
 
 }
 
-/* Glossary Term Highlighting */
+/* ============================================================================
+   VHP4Safety Glossary Term Highlighting
+   Note: Can be overridden by glossary_highlighter.js CONFIG.css if configured
+   ============================================================================ */
+
+/* Base styles for all glossary terms */
 .glossary-term {
-  background-color: rgba(48, 123, 191, 0.15); /* VHP blue with transparency */
-  border-bottom: 2px dotted var(--bs-vhpblue);
-  cursor: pointer;
-  padding: 1px 2px;
-  transition: all 0.2s ease;
-  text-decoration: none;
+  cursor: help;
+  padding: 2px 4px;
+  border-radius: 3px;
+  display: inline;
+}
+
+/* Subtle variant - light blue with dotted underline */
+.glossary-term-subtle {
+  background-color: rgba(48, 123, 191, 0.2);
+  border-bottom: 2px dotted #307bbf;
   color: inherit;
 }
 
-.glossary-term:hover {
-  background-color: rgba(48, 123, 191, 0.25);
-  color: var(--bs-vhpblue);
-  text-decoration: none;
+.glossary-term-subtle:hover {
+  background-color: rgba(48, 123, 191, 0.35);
+  border-bottom: 2px solid #307bbf;
 }
 
-.glossary-term:focus {
-  outline: 2px solid var(--bs-vhpblue);
-  outline-offset: 2px;
+/* Bold variant - bold text only */
+.glossary-term-bold {
+  background-color: transparent;
+  font-weight: 700;
+  color: inherit;
+  border-bottom: none;
 }
 
-/* Custom tooltip styling to match VHP theme */
+.glossary-term-bold:hover {
+  background-color: rgba(48, 123, 191, 0.1);
+}
+
+/* Custom tooltip styling with animations */
 .tooltip {
   font-size: 0.875rem;
+  opacity: 0 !important;
+  transition: opacity 0.2s ease-in-out;
+  will-change: transform, opacity; /* Optimize for animation performance */
+  backface-visibility: hidden; /* Prevent flickering */
+  -webkit-font-smoothing: antialiased; /* Smooth text rendering */
+}
+
+/* Fixed position tooltip at bottom-left corner */
+.tooltip.vhp-glossary-tooltip-fixed {
+  position: fixed !important;
+  bottom: 2px !important;
+  left: 2px !important;
+  top: auto !important;
+  right: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+}
+
+.tooltip.vhp-glossary-tooltip-fixed .tooltip-arrow {
+  display: none !important; /* Hide arrow for fixed position */
+}
+
+.tooltip.show {
+  opacity: 1 !important;
+  animation: tooltipFadeIn 0.25s ease-out forwards;
+}
+
+.tooltip.hiding {
+  animation: tooltipFadeOut 0.2s ease-in forwards;
 }
 
 .tooltip-inner {
   max-width: 300px;
   text-align: left;
-  background-color: var(--bs-vhpblue);
+  background-color: var(--bs-vhpteal);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  opacity: 1 !important;
+  transform-origin: top left;
 }
 
 .tooltip-arrow::before {
-  border-top-color: var(--bs-vhpblue) !important;
+  border-bottom-color: var(--bs-vhpteal) !important;
+}
+
+/* Tooltip animations - scale from bottom-left corner (fixed position) */
+@keyframes tooltipFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+    transform-origin: bottom left;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    transform-origin: bottom left;
+  }
+}
+
+@keyframes tooltipFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    transform-origin: bottom left;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.85);
+    transform-origin: bottom left;
+  }
 }
 
 
