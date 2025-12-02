@@ -62,7 +62,21 @@
           </div>
         </div>
         {%else%}
+        <div class="row">
           {{ tool_json.description }}
+        </div>
+        {% endif %}
+        <!-- Instance Page -->
+        {% if tool_details.instance %}
+          {% if tool_details.instance.url %}
+          <div>
+            <a type="button" href="{{ tool_details.instance.url }}" class="btn btn-vhppink flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Try VHP-hosted instance">Run the tool</a>
+          </div>
+          {% endif %}
+        {% elif tool_details.url %}
+          <div>
+            <a type="button" href="{{ tool_details.url}}" class="btn btn-outline-vhppink flex-grow-1" data-bs-toggle="tooltip" data-bs-title="Try non-VHP instance">Run the tool</a>
+          </div>
         {% endif %}
       </div>
       <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
