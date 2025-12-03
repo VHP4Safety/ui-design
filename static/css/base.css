@@ -235,10 +235,21 @@ html {
 .tooltip {
   font-size: 0.875rem;
   opacity: 0 !important;
-  transition: opacity 0.2s ease-in-out;
+  transition: opacity 1s ease-in-out;
   will-change: transform, opacity; /* Optimize for animation performance */
   backface-visibility: hidden; /* Prevent flickering */
   -webkit-font-smoothing: antialiased; /* Smooth text rendering */
+  padding-bottom: 25px;
+  padding-left: 15px;
+}
+
+/* Non-fixed tooltip variant used for top placement */
+.tooltip.vhp-glossary-tooltip {
+  position: absolute !important;
+  bottom: auto !important;
+  left: auto !important;
+  top: auto !important;
+  right: auto !important;
 }
 
 /* Fixed position tooltip at bottom-left corner */
@@ -268,9 +279,9 @@ html {
 .tooltip-inner {
   max-width: 300px;
   text-align: left;
-  background-color: var(--bs-vhpteal);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  opacity: 1 !important;
+  background-color: rgb(0, 0, 0);
+  box-shadow: 0 2px 8px rgb(0, 0, 0);
+  opacity: 0.7 !important;
   transform-origin: top left;
 }
 

@@ -13,8 +13,11 @@
     // Source
     glossaryUrl: 'https://raw.githubusercontent.com/VHP4Safety/glossary/refs/heads/main/glossary.owl',
     glossaryWebsiteUrl: 'https://glossary.vhp4safety.nl/',
-    
+    loadLast: true,               // Load glossary after other scripts have run
     // Tooltip behavior
+    // tooltipPlacement: 'top' will show tooltips above the highlighted word.
+    // Set to 'bottom-left' to keep the current bottom-left behavior but add 7px vertical spacing below the tooltip.
+    tooltipPlacement: 'bottom-left',      // 'top' | 'bottom-left'
     tooltipShowDelay: 0,           // ms before showing tooltip
     tooltipHideDelay: 2000,        // ms before hiding tooltip after unhover
     singleTooltipOnly: true,       // Only show one tooltip at a time
@@ -70,7 +73,7 @@
     // },
     
     // Logging
-    debug: true
+    debug: false
   };
 
   // ============================================================================
@@ -195,16 +198,18 @@
       
       const label = extractProperty(props, /rdfs:label\s+"([^"]+)"(?:@[a-zA-Z-]+)?/);
       if (!label || label === 'nan' || label.length < 2) continue;
-      
+      const smiles = extractProperty(props, /chebi:smiles\s+"([^"]+)"(?:@[a-zA-Z-]+)?/);
       const definition = extractProperty(props, /dc:description\s+"([^"]+)"(?:@[a-zA-Z-]+)?/);
       const synonym = extractProperty(props, /ncit:C42610\s+"([^"]+)"(?:@[a-zA-Z-]+)?/);
       
-      terms.push({
+      const termObj = {
         uri,
         label,
         definition,
         synonyms: synonym ? [synonym] : []
-      });
+      };
+      if (smiles) termObj.smiles = smiles;
+      terms.push(termObj);
     }
     
     log(`Parsed ${terms.length} glossary terms`);
@@ -223,7 +228,7 @@
     }
     
     if (term.synonyms?.length) {
-      parts.push(`<br><small class="text-muted">Synonyms: ${escapeHtml(term.synonyms.join(', '))}</small>`);
+      parts.push(`<br><small class="text">Synonyms: ${escapeHtml(term.synonyms.join(', '))}</small>`);
     }
     
     const url = getGlossaryUrl(term.uri);
@@ -316,10 +321,12 @@
     span.textContent = match.text;
     span.setAttribute('data-bs-toggle', 'tooltip');
     span.setAttribute('data-bs-html', 'true');
-    span.setAttribute('data-bs-placement', 'top');
+    // Respect CONFIG.tooltipPlacement: support 'top' or 'bottom-left' (renders as 'bottom' with offset)
+    const placementAttr = (CONFIG.tooltipPlacement === 'bottom-left') ? 'bottom' : (CONFIG.tooltipPlacement || 'top');
+    span.setAttribute('data-bs-placement', placementAttr);
     span.setAttribute('title', createTooltipContent(match.term));
     span.setAttribute('data-vhp-uri', match.term.uri);
-    
+
     log(`Created highlight span with classes: ${span.className} for term: ${match.term.label}`);
     return span;
   }
@@ -364,14 +371,27 @@
     log(`Initializing ${elements.length} tooltips`);
     
     elements.forEach(el => {
+      // Configure popper offset to add 7px distance below the tooltip when using bottom-left placement.
+      const useBottomLeft = CONFIG.tooltipPlacement === 'bottom-left';
+      const skidding = useBottomLeft ? -10 : 0; // negative skidding moves tooltip to the left
+      const distance = useBottomLeft ? 7 : 0; // vertical spacing in pixels (7px when bottom-left)
+
       const tooltip = new bootstrap.Tooltip(el, {
         trigger: 'manual',
         delay: { show: CONFIG.tooltipShowDelay, hide: 0 },
         container: 'body',
-        placement: 'bottom',
-        customClass: 'vhp-glossary-tooltip-fixed'
+        placement: (useBottomLeft ? 'bottom' : (CONFIG.tooltipPlacement || 'top')),
+        customClass: 'vhp-glossary-tooltip-fixed',
+        popperConfig: (defaultPopper) => ({
+          ...defaultPopper,
+          modifiers: [
+            ...(defaultPopper && defaultPopper.modifiers ? defaultPopper.modifiers : []),
+            { name: 'offset', options: { offset: [skidding, distance] } },
+            { name: 'preventOverflow', options: { padding: 5 } }
+          ]
+        })
       });
-      
+
       const hideWithAnimation = (tooltipInstance) => {
         const tooltipEl = document.querySelector('.tooltip.show');
         if (tooltipEl) {
@@ -481,6 +501,9 @@
   }
   
   if (document.readyState === 'loading') {
+    if (CONFIG.loadLast) {
+      setTimeout(initialize, 500);
+    }
     document.addEventListener('DOMContentLoaded', initialize);
   } else {
     initialize();

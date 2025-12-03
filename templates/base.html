@@ -90,6 +90,24 @@
   <div class="d-none d-lg-flex align-items-center gap-3">
     <!-- Tools Button Group -->
     <div class="btn-group" role="group">
+      <button class="btn btn-vhplight-green text-nowrap" style="min-width: 120px;" onclick="location.href='/methods'"
+        type="button">Methods</button>
+      <button type="button" class="btn btn-vhplight-green dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+        aria-expanded="false">
+        <span class="visually-hidden">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu dropdown-scroll">
+        {% if methods_menu %}
+          {% for m in methods_menu %}
+            <li><a class="dropdown-item" href="/methods/{{ m.id }}">{{ m.title }}</a></li>
+          {% endfor %}
+        {% else %}
+          <li><span class="dropdown-item-text text-muted">No methods available</span></li>
+        {% endif %}
+      </ul>
+    </div>
+    <!-- Tools Button Group -->
+    <div class="btn-group" role="group">
       <button class="btn btn-vhppink text-nowrap" style="min-width: 120px;" onclick="location.href='/tools'" type="button">Tools</button>
       <button type="button" class="btn btn-vhppink dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="visually-hidden">Toggle Dropdown</span>

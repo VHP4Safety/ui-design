@@ -84,6 +84,29 @@ class RegexConverter(BaseConverter):
 app = Flask(__name__)
 
 
+# Provide methods list to all templates for the Methods dropdown in the navbar
+@app.context_processor
+def inject_methods_menu():
+    """Fetch methods_index.json and expose a simple list of {id, title} to templates.
+    Return an empty list on any error to avoid breaking pages.
+    """
+    try:
+        url = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/methods_index.json"
+        resp = requests.get(url, timeout=5)
+        if resp.status_code != 200:
+            return {"methods_menu": []}
+        data = resp.json()
+        items = []
+        for key, val in (data.items() if isinstance(data, dict) else []):
+            title = val.get("method") or val.get("method_name_content") or val.get("method_name") or key
+            items.append({"id": key, "title": title})
+        # sort by title
+        items = sorted(items, key=lambda x: x["title"].lower())
+        return {"methods_menu": items}
+    except Exception:
+        return {"methods_menu": []}
+
+
 ################################################################################
 ### The landing page
 @app.route("/")
@@ -408,6 +431,149 @@ def tools():
 
     except Exception as e:
         return f"Error processing service data: {e}", 500
+
+
+### New route to list methods (similar to the tools page)
+@app.route("/methods")
+@app.route("/methods/")
+def methods():
+    """Fetch methods_index.json from the cloud repo, normalize fields and render a methods list page."""
+    url = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/methods_index.json"
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        return f"Error fetching methods list: {response.status_code}", 503
+
+    try:
+        methods = response.json()
+        methods = list(methods.values())  # convert dict to list
+
+        # Normalize fields for the template and collect stages
+        stages_set = set()
+        normalized = []
+        for m in methods:
+            norm = {}
+            norm["id"] = m.get("id", "")
+            # template expects 'service' and 'description'
+            norm["service"] = (
+                m.get("method")
+                or m.get("method_name_content")
+                or m.get("method_name")
+                or ""
+            )
+            norm["description"] = (
+                m.get("method_description_content")
+                or m.get("method_description")
+                or ""
+            )
+            # main_url used for method webpage (catalog page)
+            norm["main_url"] = m.get("catalog_webpage_url") or "no_url"
+            # interactive instance not present in methods index
+            norm["inst_url"] = m.get("inst_url") or "no_url"
+            # metadata md file not available in index; keep empty string
+            norm["meta_data"] = m.get("meta_data") or ""
+            # placeholder/no png
+            norm["png"] = None
+            # keep original raw data for potential details page
+            norm["raw"] = m
+
+            # collect stages (split comma-separated values)
+            stage_field = (m.get("vhp4safety_workflow_stage_content") or "").strip()
+            if stage_field:
+                for part in [s.strip() for s in stage_field.split(",")]:
+                    if part:
+                        stages_set.add(part)
+
+            normalized.append(norm)
+
+        # Apply search and filters similar to /tools
+        selected_stages = request.args.getlist("stage")
+        selected_questions = request.args.getlist("reg_q")
+        search_query = request.args.get("search", "").strip().lower()
+
+        methods_filtered = normalized
+
+        if selected_stages:
+            methods_filtered = [m for m in methods_filtered if any(s in ((m["raw"].get("vhp4safety_workflow_stage_content") or "").split(",")) for s in selected_stages)]
+
+        # Filter by regulatory questions if provided (REG_QUESTIONS keys map to internal fields)
+        reg_questions = { v["label"]: k for k, v in REG_QUESTIONS.items() }
+        if selected_questions:
+            for question in selected_questions:
+                field = reg_questions.get(question)
+                if field:
+                    methods_filtered = [m for m in methods_filtered if str(m["raw"].get(field, "")).lower() == "true"]
+
+        if search_query:
+            methods_filtered = [m for m in methods_filtered if search_query in m.get("service", "").lower()]
+
+        stages = sorted(stages_set)
+        if "Other" in stages:
+            stages.remove("Other")
+            stages.append("Other")
+
+        # Pass everything the template expects
+        return render_template(
+            "methods/methods.html",
+            methods=methods_filtered,
+            stages=stages,
+            selected_stages=selected_stages,
+            reg_questions=reg_questions,
+            selected_questions=selected_questions,
+            stage_explanations=STAGE_EXPLANATIONS,
+            reg_question_explanations=REG_QUESTION_EXPLANATIONS,
+        )
+
+    except Exception as e:
+        return f"Error processing methods data: {e}", 500
+
+
+@app.route("/methods/<methodid>")
+def method_page(methodid):
+    """Render a single method page using templates/methods/method.html
+    Method details are taken from methods_index.json (keyed by method id).
+    """
+    url = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/methods_index.json"
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        return f"Error fetching methods list: {response.status_code}", 503
+
+    try:
+        methods = response.json()
+        # methods_index.json is a dict keyed by method id
+        if methodid not in methods:
+            abort(404)
+        method_details = methods[methodid]
+    except Exception as e:
+        return f"Error processing methods data: {e}", 500
+
+    # Try to load the full method JSON from the docs/methods folder (raw github)
+    method_json = None
+    # URL-encode the filename part to be safe
+    encoded = urllib.parse.quote(methodid, safe='')
+    raw_url = (
+        "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/docs/methods/"
+        + f"{encoded}.json"
+    )
+    try:
+        r = requests.get(raw_url, timeout=5)
+        if r.status_code == 200:
+            method_json = r.json()
+        else:
+            # fall back to using the index entry as minimal data
+            method_json = method_details
+    except Exception as exc:
+        # on any error, fall back to index entry
+        method_json = method_details
+
+    # Pass both to the template: some templates expect method_json, others method_details
+    return render_template(
+        "methods/method.html",
+        method=method_details,
+        method_details=method_details,
+        method_json=method_json,
+    )
 
 
 @app.route("/tools/<toolname>")

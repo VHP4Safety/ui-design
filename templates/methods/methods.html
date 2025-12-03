@@ -1,0 +1,438 @@
+{% extends "base.html" %}
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/methods.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/data.css') }}">
+
+<!-- Marked.js for Markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+
+<section class="container py-md-5 py-3">
+    <!-- Page Title and Description -->
+    <div class="">
+        <h1><span class="text-vhppink" id="collection-name">Methods</span></h1>
+        <p class="text-secondary fs-5"> Explore methods developed by and/or used in VHP4Safety. </p>
+        <p>You can search for a method that you know using the search box below. Alternatively, you can filter the methods with respect to the <a class="link-vhppink text-decoration-none" href="{{ url_for('workflows') }}#about-section">case studies' flow step</a> that they belong to and/or the regulatory question that they are associated with. Use the "Filters" button to show filter options, then "Apply Filter" to see results, and click "Clear Filter" to reset the filters.</p>
+
+    </div>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3 d-inline">
+        <form method="GET" action="{{ url_for('methods') }}" class="d-flex" role="search" id="search-form">
+            <input type="text" class="form-control me-2" name="search" id="search-input" value="{{ request.args.get('search', '') }}" placeholder="Search by method name..." />
+            <!-- Hidden inputs for filters -->
+            <input type="hidden" name="stage" id="filter_stage" value="{{ request.args.get('stage', '') }}" />
+            <input type="hidden" name="reg_q" id="filter_reg_q" value="{{ request.args.get('reg_q', '') }}" />
+            <div class="btn-group" role="group" aria-label="Search and filter buttons">
+                <button type="submit" class="btn btn-outline-vhppink">Search</button>
+                <a href="{{ url_for('methods') }}" class="btn btn-outline-danger text-nowrap">Clear</a>
+                <button type="button" id="filter-toggle-btn" class="btn btn-outline-secondary">Filters</button>
+            </div>
+        </form>
+        
+        <!-- Filter Panel -->
+        <div id="filter-panel" class="card bg-secondary-subtle p-3 mt-2" style="display: none;">
+  <!-- explanation of the generic risk-assessment process flow -->
+  <div class="">
+    <h3><span class="text-vhpblue" id="collection-name">Process Flow Steps</span></h3>
+    <p class="mb-4">The Virtual Human Platform implements the generic
+      risk assessment workflow as a process flow comprising of five steps.
+    </p>
+  </div>
+  <div class="row row-cols-1 row-cols-md-4 gap-2 mx-auto">
+    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
+      data-bs-toggle="methodtip" data-bs-placement="top" title="Hazard/chemical characteristics is a Process Flow Step that categorizes services that use molecular structures, chemical descriptors, and databases to predict or analyze the properties, behavior, and potential risks of chemical substances.">
+      Hazard / Chemical Characteristics</button>
+    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
+      data-bs-toggle="methodtip" data-bs-placement="top" title="External exposure is a Process Flow Step which categorizes services that evaluate and analyze the route, duration, magnitude and frequency of exposure of an organism or (sub)population to one or multiple chemicals.">
+      (External) Exposure</button>
+    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
+      data-bs-toggle="methodtip" data-bs-placement="top" title="Toxicokinetics/ADME is a Process Flow Step which categorizes services that analyze the kinetics (absorption, distribution, metabolism and excretion) of chemicals and how these processes influence the internal dose.">
+      Toxicokinetics / ADME</button>
+    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
+      data-bs-toggle="methodtip" data-bs-placement="top" title="Toxicodynamics/AOP is a Process Flow Step which categorizes services that use or extend the (quantitative) AOP framework to analyze and assess the interaction of chemicals with biological targets.">
+      Toxicodynamics / AOP</button>
+    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
+      data-bs-toggle="methodtip" data-bs-placement="top" title="Adverse Outcome is a Process Flow Step which specifically refers to clinical and epidemiological effects. It categorizes services that provide information on the toxicological endpoints and adverse outcomes at a clinical or epidemiological level of chemical exposures.">
+      Adverse Outcome</button>
+  </div>
+  <div class=""><p>&nbsp;</p></div> <!-- how to do this properly?? -->
+
+            <div class="gap-2 pb-1">
+                <!-- Flow Step Dropdown -->
+                <div class="btn-group mb-1">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                        Process Flow Step
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% for stage in stages %}
+                        <li><a class="dropdown-item " href="#" data-filter-type="flow-step" data-filter-value="{{ stage }}"{% if stage in stage_explanations %} data-bs-toggle="methodtip" data-bs-placement="right" data-bs-title="{{ stage_explanations[stage] }}"{% endif %}>
+                            {{ stage }}{% if stage in stage_explanations %} <i class="text-vhppink bi bi-question-circle"></i>{% endif %}
+                        </a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <!-- Regulatory Questions Dropdown -->
+                <div class="btn-group mb-1">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                        Regulatory Question
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% for question in reg_questions.keys() %}
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="{{ question }}"{% if question in reg_question_explanations %} data-bs-toggle="methodtip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations[question] }}"{% endif %}>
+                            {{ question }}{% if question in reg_question_explanations %} <i class="text-vhppink bi bi-question-circle"></i>{% endif %}
+                        </a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Selected Filters Display -->
+            <div id="selected-filters" class="input-group">
+                <span class="input-group-text" id="filters_label">Selected Filters:</span>
+                <div id="filter-tags"
+                    class="form-control d-flex flex-wrap align-items-center gap-2"
+                    aria-describedby="filters_label"
+                    role="group">
+                </div>
+            </div>
+            
+            <div class="">
+                <button id="apply-filter-btn" class="btn btn-sm btn-vhppink mt-2">Apply</button>
+                <button id="clear-filter-btn" class="btn btn-sm btn-outline-danger mt-2">Clear</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Methods List -->
+    <div class="results-section mt-2 pt-3">
+        <ul class="results-list p-0">
+            {% for item in methods %}
+                <div class="card">
+                    <div class="card-img-top overflow-hidden" style="aspect-ratio: 21/9;">
+                    {% if item.png %}
+                        <img src="{{ item.png }}" alt="Method logo" class="w-100 h-100 d-block" style="object-fit: cover; object-position: left;">
+                    {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h2 class="card-title">{{ item.service }}</h2>
+                        <p id="desc" class="card-text">{{ item.description }}</p>
+                    </div>
+                    <div class="card-footer bg-white border-0 py-3">
+
+                        <div class="btn-group d-flex" role="group" aria-label="Method example">
+
+                             <!-- Catalog Page -->
+                            <a href="{{ url_for('methods') }}/{{ item.id }}" class="btn btn-outline-secondary" data-bs-toggle="methodtip" data-bs-title="View method details"><i class="bi bi-info-circle"></i></a>
+                 
+
+
+                            <!-- Method Webpage -->
+                            {% if item.main_url == "no_url" %}
+                                <a type="button" class="btn btn-outline-secondary disabled" data-bs-toggle="methodtip" data-bs-title="No webpage available"><i class="bi bi-box-arrow-up-right"></i>
+</a> 
+                            {% else %}
+                                <a type="button" href="{{ item.main_url }}" class="btn btn-outline-secondary" target="_blank" data-bs-toggle="methodtip" data-bs-title="Visit main webpage"><i class="bi bi-box-arrow-up-right"></i>
+</a>
+                            {% endif %}
+
+                            <!-- Meta-Data 
+                            <button type="button" class="btn btn-outline-vhpteal" data-bs-toggle="methodtip" data-bs-title="View metadata (.md)" onclick="showMetadata('{{ item.meta_data }}', '{{ item.service }}')"><i class="bi bi-list-ul"></i></button>-->
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <li>No methods found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+
+<script>
+    // Filter functionality - MULTIPLE selections supported
+    const filterToggleBtn = document.getElementById('filter-toggle-btn');
+    const filterPanel = document.getElementById('filter-panel');
+    const applyFilterBtn = document.getElementById('apply-filter-btn');
+    const clearFilterBtn = document.getElementById('clear-filter-btn');
+    const selectedFiltersContainer = document.getElementById('selected-filters');
+    const filterTagsContainer = document.getElementById('filter-tags');
+    const searchForm = document.getElementById('search-form');
+    
+    // Track selected filters (arrays for multiple selections)
+    let selectedFilters = {
+        'flow-step': [{% for stage in selected_stages %}'{{ stage }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+        'reg-question': [{% for question in selected_questions %}'{{ question }}'{% if not loop.last %}, {% endif %}{% endfor %}]
+    };
+
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Bootstrap tooltips for elements using the custom 'methodtip' toggle
+        const methodtipTriggerList = document.querySelectorAll('[data-bs-toggle="methodtip"]');
+        const methodtipList = [...methodtipTriggerList].map(methodtipTriggerEl => new bootstrap.Tooltip(methodtipTriggerEl));
+        
+        // Show filter panel if filters are active
+        {% if selected_stages or selected_questions %}
+        filterPanel.style.display = 'block';
+        {% endif %}
+        
+        // Initialize filter display
+        updateFilterDisplay();
+        
+        filterToggleBtn.addEventListener('click', () => {
+            const isVisible = filterPanel.style.display !== 'none';
+            filterPanel.style.display = isVisible ? 'none' : 'block';
+        });
+
+        // Add click handlers for dropdown items - toggle selection
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation(); // Prevent dropdown from closing
+                const filterType = e.currentTarget.dataset.filterType;
+                const filterValue = e.currentTarget.dataset.filterValue;
+                toggleFilter(filterType, filterValue);
+            });
+        });
+        
+        // This is adapted to enable navigation from the main method page to an individual case study page
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const filterType = item.dataset.filterType;
+                    const filterValue = item.dataset.filterValue;
+
+                    if (filterType && filterValue) {
+                        e.preventDefault(); // Prevent default only for Methods filter items
+                        e.stopPropagation();
+                        toggleFilter(filterType, filterValue);
+                    }
+                    // Case Studies items have no dataset → normal navigation works
+                });
+            });
+            
+            // Mark already selected items as active
+            updateDropdownVisuals();
+        });
+
+    function toggleFilter(type, value) {
+        // Guard against undefined filter type
+        if (!type || !selectedFilters[type]) return;
+         const index = selectedFilters[type].indexOf(value);
+         if (index > -1) {
+             // Remove if already selected
+             selectedFilters[type].splice(index, 1);
+         } else {
+             // Add if not selected
+             selectedFilters[type].push(value);
+         }
+         updateFilterDisplay();
+     }
+
+    function removeFilter(type, value) {
+        const index = selectedFilters[type].indexOf(value);
+        if (index > -1) {
+            selectedFilters[type].splice(index, 1);
+        }
+        updateFilterDisplay();
+        updateDropdownVisuals();
+    }
+
+    function updateDropdownVisuals() {
+        // Update active class on dropdown items
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            const filterType = item.dataset.filterType;
+            const filterValue = item.dataset.filterValue;
+            if (selectedFilters[filterType] && selectedFilters[filterType].includes(filterValue)) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    function updateFilterDisplay() {
+        // Clear current tags
+        filterTagsContainer.innerHTML = '';
+        
+        // Count total filters
+        const totalFilters = selectedFilters['flow-step'].length + selectedFilters['reg-question'].length;
+        
+        // Show/hide container
+        if (totalFilters === 0) {
+            selectedFiltersContainer.style.display = 'none';
+            return;
+        }
+        
+        selectedFiltersContainer.style.display = 'flex';
+        
+        // Create tags for flow-step filters
+        selectedFilters['flow-step'].forEach(value => {
+            const tag = document.createElement('span');
+            tag.className = 'badge rounded-pill text-bg-vhppink d-inline-flex align-items-center text-wrap';
+            tag.innerHTML = `
+                Flow Step: ${value}
+                <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('flow-step', '${value.replace(/'/g, "\\'")}')">×</button>
+            `;
+            filterTagsContainer.appendChild(tag);
+        });
+        
+        // Create tags for reg-question filters
+        selectedFilters['reg-question'].forEach(value => {
+            const tag = document.createElement('span');
+            tag.className = 'badge rounded-pill text-bg-vhppink d-inline-flex align-items-center text-wrap';
+            tag.innerHTML = `
+                Reg. Q: ${value}
+                <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('reg-question', '${value.replace(/'/g, "\\'")}')">×</button>
+            `;
+            filterTagsContainer.appendChild(tag);
+        });
+    }
+
+    // Make removeFilter accessible globally
+    window.removeFilterTag = function(type, value) {
+        removeFilter(type, value);
+    };
+
+    // Apply filters by creating multiple hidden inputs
+    applyFilterBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        applyFiltersAndSubmit();
+    });
+    
+    // Also handle form submission (for Search button)
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        applyFiltersAndSubmit();
+    });
+    
+    function applyFiltersAndSubmit() {
+        // Remove any existing stage/reg_q hidden inputs (except the template ones)
+        document.querySelectorAll('input[name="stage"]:not(#filter_stage), input[name="reg_q"]:not(#filter_reg_q)').forEach(input => {
+            input.remove();
+        });
+        
+        // Remove the template hidden inputs to avoid empty values
+        document.getElementById('filter_stage').remove();
+        document.getElementById('filter_reg_q').remove();
+        
+        // Add hidden input for each selected flow-step
+        selectedFilters['flow-step'].forEach(value => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'stage';
+            input.value = value;
+            searchForm.appendChild(input);
+        });
+        
+        // Add hidden input for each selected reg-question
+        selectedFilters['reg-question'].forEach(value => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'reg_q';
+            input.value = value;
+            searchForm.appendChild(input);
+        });
+        
+        // Submit the form
+        searchForm.submit();
+    }
+
+    // Clear all filters
+    clearFilterBtn.addEventListener('click', () => {
+        selectedFilters = {
+            'flow-step': [],
+            'reg-question': []
+        };
+        updateFilterDisplay();
+        updateDropdownVisuals();
+    });
+
+    });
+    
+    // Metadata modal functionality
+    let currentMetadataUrl = '';
+    
+    async function showMetadata(url, methodName) {
+        currentMetadataUrl = url;
+        const modal = new bootstrap.Modal(document.getElementById('metadataModal'));
+        const modalTitle = document.getElementById('metadataModalLabel');
+        const metadataContent = document.getElementById('metadata-content');
+        const loadingSpinner = document.getElementById('metadata-loading');
+        const errorMessage = document.getElementById('metadata-error');
+        
+        // Update modal title
+        modalTitle.textContent = `Metadata - ${methodName}`;
+        
+        // Show loading, hide content and error
+        loadingSpinner.style.display = 'block';
+        metadataContent.style.display = 'none';
+        errorMessage.style.display = 'none';
+        
+        // Open modal
+        modal.show();
+        
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed to fetch metadata');
+            
+            // Get the markdown text
+            const markdownText = await response.text();
+            
+            // Parse markdown to HTML using marked.js
+            const htmlContent = marked.parse(markdownText);
+            
+            // Display rendered HTML
+            metadataContent.innerHTML = htmlContent;
+            
+            // Add Bootstrap img-fluid class to all images for responsive sizing
+            metadataContent.querySelectorAll('img').forEach(img => {
+                img.classList.add('img-fluid');
+            });
+            
+            loadingSpinner.style.display = 'none';
+            metadataContent.style.display = 'block';
+        } catch (error) {
+            console.error('Error fetching metadata:', error);
+            loadingSpinner.style.display = 'none';
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = 'Failed to load metadata. Please try downloading instead.';
+        }
+    }
+    
+    function downloadMetadata() {
+        if (currentMetadataUrl) {
+            window.open(currentMetadataUrl, '_blank');
+        }
+    }
+</script>
+
+<!-- Metadata Modal -->
+<div class="modal fade" id="metadataModal" tabindex="-1" aria-labelledby="metadataModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="metadataModalLabel">Metadata</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="metadata-loading" class="text-center py-4">
+          <div class="spinner-border text-vhpteal" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-2">Loading metadata...</p>
+        </div>
+        <div id="metadata-error" class="alert alert-warning" style="display: none;" role="alert"></div>
+        <div id="metadata-content" class="bg-light p-3 rounded" style="display: none; max-height: 500px; overflow-y: auto;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-vhpteal" onclick="downloadMetadata()">
+          <i class="bi bi-download me-1"></i>Download MD file
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
