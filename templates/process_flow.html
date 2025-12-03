@@ -1,0 +1,50 @@
+{% extends "base.html" %} {% block content %}
+
+<!-- Page-specific CSS for home page -->
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/home.css') }}"
+/>
+
+<!-- Font Awesome Icons for social/contact icons -->
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+  rel="stylesheet"
+/>
+<!-- Tab section: navigation to Tools, Case Studies, Data -->
+<section class="bg-vhpblue img-fluid py-5">
+  <div class="container">
+    <div class="py-4">
+      <div class="row gy-4">
+</section> 
+<!-- Process flow description -->
+<section class="container py-5" id="about-section">
+  <h2 class="mb-4"><strong>The Process Flow</strong></h2>
+  <p>
+    The Process Flow is a combination of tools and data selected and integrated to perform generic risk assessment.
+    The Flow consists of five Steps.
+  </p>
+<h2 class="mb-4"><strong>The five Process Flow Steps</strong></h2>
+  <p>
+    Each step is one of the components of the Process Flow and categorizes processes that users can perform with the Virtual Human Platform.
+    Each step is named after a term from the VHP4Safety Glossary.
+    The five Process Flow Steps are not sequential.
+</p>
+  <div class="accordion accordion-flush" id="process-flow-accordion">
+    <!-- Process flow steps will be dynamically loaded here -->
+    <div class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Scroll down arrow for navigation -->
+<div class="scroll-down-arrow" style="border-top: 20px solid var(--bs-vhppink);" onclick="scrollToNextSection()"></div>
+
+<!-- TTL Parser and Process Flow Scripts -->
+<script src="{{ url_for('static', filename='js/ttl_parser.js') }}"></script>
+<script src="{{ url_for('static', filename='js/process_flow.js') }}"></script>
+
+{% endblock %}
+
