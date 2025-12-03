@@ -449,6 +449,15 @@ def tool_page(toolname):
     # Pass the json filename to the template (for JS to pick up)
     return render_template("tools/tool.html", tool_json=tools[toolname], tool_details=tool_details)
 
+################################################################################
+### Pages under 'Process Flow'
+
+
+# General Process Flow page
+@app.route("/process_flow")
+def workflows():
+    return render_template("process_flow.html")
+
 
 ################################################################################
 ### Pages under 'Case Studies'
