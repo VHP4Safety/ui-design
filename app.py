@@ -455,7 +455,7 @@ def tool_page(toolname):
 
 # General Process Flow page
 @app.route("/process_flow")
-def workflows():
+def processflow():
     return render_template("process_flow.html")
 
 
