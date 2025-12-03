@@ -1,9 +1,10 @@
 
-Version 0.6-4 (2025-12-03)
+Version 0.6-5 (2025-12-03)
 --------------------------------------------------------------------------------
 - Integration of the terms from the glossary repository. 
 - Links to case studies and the tool instance in individual tool pages.
 - Adding the publication tab to the individual tool pages and links to the process flow steps. 
+- Adding prototype methods and proces flow steps pages. 
 
 
 Version 0.5-18 (2025-12-02)
