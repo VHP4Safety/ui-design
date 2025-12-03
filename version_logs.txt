@@ -1,8 +1,9 @@
 
-Version 0.6-2 (2025-12-02)
+Version 0.6-3 (2025-12-03)
 --------------------------------------------------------------------------------
 - Integration of the terms from the glossary repository. 
 - Links to case studies and the tool instance in individual tool pages.
+- Adding the publication tab to the individual tool pages. 
 
 
 Version 0.5-18 (2025-12-02)
@@ -36,9 +37,11 @@ Version 0.5-2 (2025-10-15)
 - General update on the visual style of the application. 
 - Adding a script to enable webpage statistics. 
 
+
 Version 0.4-3 (2025-09-30)
 --------------------------------------------------------------------------------
 - Adding icons and descriptions to the case studies in the case studies page.
+
 
 Version 0.4-1 (2025-09-29)
 --------------------------------------------------------------------------------
@@ -46,18 +49,22 @@ Version 0.4-1 (2025-09-29)
 - Removing the placeholder logo in the tools page for the tools that do not have a logo. 
 - Adding tooltip icons and explanations to the filtering items in the tools page.  
 
+
 Version 0.3-7 (2025-09-29)
 --------------------------------------------------------------------------------
 - Minor changes in the application to fix the compound page. 
+
 
 Version 0.3-4 (2025-09-11)
 --------------------------------------------------------------------------------
 - Case Study config is now in a separate ontology
 
+
 Version 0.3-3 (2025-09-05)
 --------------------------------------------------------------------------------
 - Case Study step 3 can now also have a fourth step (see Kidney case study)
 - Kidney case study content from Hackathon 6A
+
 
 Version 0.3-2 (2025-09-03)
 --------------------------------------------------------------------------------
