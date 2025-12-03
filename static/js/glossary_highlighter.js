@@ -183,6 +183,19 @@
   // ============================================================================
   
   function parseOWLGlossary(turtleText) {
+    // Use shared TTLParser if available, otherwise use embedded parser
+    if (window.TTLParser) {
+      log('Using shared TTLParser module');
+      return window.TTLParser.parseGlossary(turtleText, {
+        requireLabel: true,
+        requireClass: true,
+        minLabelLength: 2,
+        extractRelations: false
+      });
+    }
+    
+    // Fallback: embedded parser (for backwards compatibility)
+    log('Using embedded parser (TTLParser not loaded)');
     const termBlockRegex = /<([^>]+)>\s*\n([\s\S]*?)(?=\n<|$)/g;
     const terms = [];
     let match;

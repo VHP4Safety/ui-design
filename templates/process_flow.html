@@ -30,80 +30,21 @@
     Each step is named after a term from the VHP4Safety Glossary.
     The five Process Flow Steps are not sequential.
 </p>
-<div class="accordion accordion-flush" id="aboutAccordion">
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="about-headingOne">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#about-collapseOne" aria-expanded="true" aria-controls="about-collapseOne">
-          Hazard / Chemical Characteristics
-        </button>
-      </h2>
-      <div id="about-collapseOne" class="accordion-collapse collapse show" aria-labelledby="about-headingOne">
-        <div class="accordion-body"  style="text-align: justify;">
-          <p>
-            This step is named after hazard assessment and considered to be cheminformatics-based. It categorizes tools and data that use molecular structures, chemical descriptors, and databases to predict or analyze the properties, behavior, and potential risks of chemical substances.
-          </p>
-        </div>
-      </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="about-headingTwo">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#about-collapseTwo" aria-expanded="false" aria-controls="about-collapseTwo">
-          (External) Exposure
-        </button>
-      </h2>
-      <div id="about-collapseTwo" class="accordion-collapse collapse" aria-labelledby="about-headingTwo">
-        <div class="accordion-body"  style="text-align: justify;";>
-          <p>
-            This step is named after exposure assessment and categorizes tools and data that evaluate and analyze the route, duration, magnitude and frequency of exposure of an organism or (sub)population to one or multiple chemicals.
-          </p>
-        </div>
-      </div>
-    </div>
-  <div class="accordion-item">
-      <h2 class="accordion-header" id="about-headingThree">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#about-collapseThree" aria-expanded="false" aria-controls="about-collapseThree">
-          Toxicokinetics / ADME
-        </button>
-      </h2>
-      <div id="about-collapseThree" class="accordion-collapse collapse" aria-labelledby="about-headingThree">
-        <div class="accordion-body">
-          <p>
-            This step is named after toxicokinetics and categorizes tools and data that analyze the kinetics (absorption, distribution, metabolism and excretion) of chemicals and how these processes influence the internal dose. The kinetics step contains four physiological processes substeps: Absorption, Distribution, Metabolism, and Excretion which can be captured in PBK models.
-          </p>
-        </div>
-      </div>
-    </div>
-  <div class="accordion-item">
-      <h2 class="accordion-header" id="about-headingFour">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#about-collapseFour" aria-expanded="false" aria-controls="about-collapseFour">
-          Toxicodynamics / AOP
-        </button>
-      </h2>
-      <div id="about-collapseFour" class="accordion-collapse collapse" aria-labelledby="about-headingFour">
-        <div class="accordion-body"  style="text-align: justify;";>
-          <p>
-          This step is named after Toxicodynamics and categorizes tools and data that use or extend the (quantitative) AOP framework to analyze and assess the interaction of chemicals with biological targets.
-          </p>
-        </div>
-      </div>
-    </div>
-  <div class="accordion-item">
-      <h2 class="accordion-header" id="about-headingFive">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#about-collapseFive" aria-expanded="false" aria-controls="about-collapseFive">
-          Adverse Outcome 
-        </button>
-      </h2>
-      <div id="about-collapseFive" class="accordion-collapse collapse" aria-labelledby="about-headingFive">
-        <div class="accordion-body"  style="text-align: justify;";>
-          <p>
-          This step is named after Toxicodynamics and categorizes tools and data that use or extend the (quantitative) AOP framework to analyze and assess the interaction of chemicals with biological targets.
-          </p>
-        </div>
+  <div class="accordion accordion-flush" id="process-flow-accordion">
+    <!-- Process flow steps will be dynamically loaded here -->
+    <div class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
       </div>
     </div>
   </div>
 </section>
 <!-- Scroll down arrow for navigation -->
 <div class="scroll-down-arrow" style="border-top: 20px solid var(--bs-vhppink);" onclick="scrollToNextSection()"></div>
+
+<!-- TTL Parser and Process Flow Scripts -->
+<script src="{{ url_for('static', filename='js/ttl_parser.js') }}"></script>
+<script src="{{ url_for('static', filename='js/process_flow.js') }}"></script>
+
 {% endblock %}
 
