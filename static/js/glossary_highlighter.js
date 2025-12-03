@@ -3,7 +3,7 @@
  * Automatically highlights glossary terms in page content with interactive tooltips
  */
 
-(function() {
+(function () {
   'use strict';
 
   // ============================================================================
@@ -13,30 +13,27 @@
     // Source
     glossaryUrl: 'https://raw.githubusercontent.com/VHP4Safety/glossary/refs/heads/main/glossary.owl',
     glossaryWebsiteUrl: 'https://glossary.vhp4safety.nl/',
-    loadLast: true,               // Load glossary after other scripts have run
+
     // Tooltip behavior
-    // tooltipPlacement: 'top' will show tooltips above the highlighted word.
-    // Set to 'bottom-left' to keep the current bottom-left behavior but add 7px vertical spacing below the tooltip.
-    tooltipPlacement: 'bottom-left',      // 'top' | 'bottom-left'
     tooltipShowDelay: 0,           // ms before showing tooltip
     tooltipHideDelay: 2000,        // ms before hiding tooltip after unhover
     singleTooltipOnly: true,       // Only show one tooltip at a time
-    
+
     // Highlighting
     caseSensitive: false,          // Match terms case-insensitively
     matchWholeWords: true,         // Only match whole words (use word boundaries, keep true, not working well otherwise)
     highlightClass: 'glossary-term',
     highlightType: 'bold',         // 'subtle' = dotted underline, 'bold' = bold text
-    
+
     // Exclusions
     excludeTags: ['script', 'style', 'noscript', 'iframe', 'object'],
     excludeAttributes: ['data-no-vhp-glossary', 'data-vhp-glossary-skip'],
     excludeClassSubstrings: ['vhp-highlight', 'highlighted'],
-    
+
     // CSS Styling - Leave null to use base.css styles, or customize here to override
     // Set these values to override the default CSS styles in base.css
     css: null,  // Set to object with custom styles to override, or null to use base.css
-    
+
     // Example custom CSS configuration (uncomment and modify to override base.css):
     // css: {
     //   // Subtle highlight style
@@ -71,9 +68,9 @@
     //     opacity: '1'
     //   }
     // },
-    
+
     // Logging
-    debug: false
+    debug: true
   };
 
   // ============================================================================
@@ -89,16 +86,16 @@
   // ============================================================================
   // UTILITY FUNCTIONS
   // ============================================================================
-  
+
   const log = (...args) => CONFIG.debug && console.log('[VHP Glossary]', ...args);
   const escapeHtml = text => { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; };
   const escapeRegex = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  
+
   const extractProperty = (props, pattern) => {
     const match = props.match(pattern);
     return match ? match[1].trim() : '';
   };
-  
+
   const getGlossaryUrl = uri => {
     if (uri?.includes('#')) {
       return `${CONFIG.glossaryWebsiteUrl}#${uri.split('#')[1]}`;
@@ -109,23 +106,23 @@
   // ============================================================================
   // DYNAMIC STYLING
   // ============================================================================
-  
+
   function injectCustomStyles() {
     // If CONFIG.css is null or undefined, use base.css styles instead
     if (!CONFIG.css) {
       log('Using base.css styles (CONFIG.css is null)');
       return;
     }
-    
+
     // Remove any existing style element
     const existingStyle = document.getElementById('vhp-glossary-styles');
     if (existingStyle) existingStyle.remove();
-    
+
     const style = document.createElement('style');
     style.id = 'vhp-glossary-styles';
-    
+
     const { base, subtle, bold, tooltip } = CONFIG.css;
-    
+
     style.textContent = `
       /* Base glossary term styles */
       .${CONFIG.highlightClass} {
@@ -176,7 +173,7 @@
         border-top-color: ${tooltip.backgroundColor} !important;
       }
     `;
-    
+
     document.head.appendChild(style);
     log('Custom styles injected');
   }
@@ -184,34 +181,45 @@
   // ============================================================================
   // PARSING
   // ============================================================================
-  
+
   function parseOWLGlossary(turtleText) {
+    // Use shared TTLParser if available, otherwise use embedded parser
+    if (window.TTLParser) {
+      log('Using shared TTLParser module');
+      return window.TTLParser.parseGlossary(turtleText, {
+        requireLabel: true,
+        requireClass: true,
+        minLabelLength: 2,
+        extractRelations: false
+      });
+    }
+
+    // Fallback: embedded parser (for backwards compatibility)
+    log('Using embedded parser (TTLParser not loaded)');
     const termBlockRegex = /<([^>]+)>\s*\n([\s\S]*?)(?=\n<|$)/g;
     const terms = [];
     let match;
-    
+
     while ((match = termBlockRegex.exec(turtleText)) !== null) {
       const [, uri, props] = match;
-      
+
       // Must be an owl:Class with a label
       if (!props.includes('rdf:type') || !props.includes('owl:Class')) continue;
-      
+
       const label = extractProperty(props, /rdfs:label\s+"([^"]+)"(?:@[a-zA-Z-]+)?/);
       if (!label || label === 'nan' || label.length < 2) continue;
-      const smiles = extractProperty(props, /chebi:smiles\s+"([^"]+)"(?:@[a-zA-Z-]+)?/);
+
       const definition = extractProperty(props, /dc:description\s+"([^"]+)"(?:@[a-zA-Z-]+)?/);
       const synonym = extractProperty(props, /ncit:C42610\s+"([^"]+)"(?:@[a-zA-Z-]+)?/);
-      
-      const termObj = {
+
+      terms.push({
         uri,
         label,
         definition,
         synonyms: synonym ? [synonym] : []
-      };
-      if (smiles) termObj.smiles = smiles;
-      terms.push(termObj);
+      });
     }
-    
+
     log(`Parsed ${terms.length} glossary terms`);
     return terms;
   }
@@ -219,52 +227,52 @@
   // ============================================================================
   // TOOLTIP CONTENT
   // ============================================================================
-  
+
   function createTooltipContent(term) {
     const parts = [`<strong>${escapeHtml(term.label)}</strong>`];
-    
+
     if (term.definition) {
       parts.push(`<br><small>${escapeHtml(term.definition)}</small>`);
     }
-    
+
     if (term.synonyms?.length) {
-      parts.push(`<br><small class="text">Synonyms: ${escapeHtml(term.synonyms.join(', '))}</small>`);
+      parts.push(`<br><small class="text-muted">Synonyms: ${escapeHtml(term.synonyms.join(', '))}</small>`);
     }
-    
+
     const url = getGlossaryUrl(term.uri);
     parts.push(`<div class="mt-1"><a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-underline"><i class="bi bi-box-arrow-up-right"></i> View full definition</a></div>`);
-    
+
     return parts.join('');
   }
 
   // ============================================================================
   // NODE FILTERING
   // ============================================================================
-  
+
   function shouldProcessNode(node) {
     if (node.nodeType !== Node.TEXT_NODE || !node.textContent.trim()) return false;
-    
+
     let parent = node.parentElement;
     while (parent) {
       // Check tag exclusions
       if (CONFIG.excludeTags.includes(parent.tagName.toLowerCase())) return false;
-      
+
       // Check attribute exclusions
       if (CONFIG.excludeAttributes.some(attr => parent.hasAttribute(attr))) return false;
-      
+
       // Check class exclusions
       if (parent.classList.contains(CONFIG.highlightClass)) return false;
       const classList = Array.from(parent.classList);
-      if (CONFIG.excludeClassSubstrings.some(substr => 
+      if (CONFIG.excludeClassSubstrings.some(substr =>
         classList.some(cls => cls.toLowerCase().includes(substr))
       )) return false;
-      
+
       parent = parent.parentElement;
     }
-    
+
     return true;
   }
-  
+
   function walkTextNodes(node, callback) {
     if (node.nodeType === Node.TEXT_NODE) {
       callback(node);
@@ -276,12 +284,12 @@
   // ============================================================================
   // HIGHLIGHTING
   // ============================================================================
-  
+
   function findMatches(text, terms) {
     const matches = [];
     const flags = CONFIG.caseSensitive ? 'g' : 'gi';
     const boundary = CONFIG.matchWholeWords ? '\\b' : '';
-    
+
     let totalAttempts = 0;
     terms.forEach(term => {
       [term.label, ...term.synonyms].forEach(label => {
@@ -289,7 +297,7 @@
         const pattern = `${boundary}${escapeRegex(label)}${boundary}`;
         const regex = new RegExp(pattern, flags);
         let match;
-        
+
         while ((match = regex.exec(text)) !== null) {
           log(`MATCH FOUND: "${label}" in text`);
           matches.push({
@@ -301,18 +309,18 @@
         }
       });
     });
-    
+
     if (matches.length === 0 && totalAttempts > 0) {
       log(`No matches found after trying ${totalAttempts} patterns in text: "${text.substring(0, 100)}..."`);
     }
-    
+
     // Sort and remove overlaps (keep first match)
     matches.sort((a, b) => a.start - b.start);
-    return matches.filter((match, i) => 
+    return matches.filter((match, i) =>
       i === 0 || match.start >= matches[i - 1].end
     );
   }
-  
+
   function createHighlightSpan(match) {
     const span = document.createElement('span');
     // Apply both base class and type-specific class
@@ -321,30 +329,28 @@
     span.textContent = match.text;
     span.setAttribute('data-bs-toggle', 'tooltip');
     span.setAttribute('data-bs-html', 'true');
-    // Respect CONFIG.tooltipPlacement: support 'top' or 'bottom-left' (renders as 'bottom' with offset)
-    const placementAttr = (CONFIG.tooltipPlacement === 'bottom-left') ? 'bottom' : (CONFIG.tooltipPlacement || 'top');
-    span.setAttribute('data-bs-placement', placementAttr);
+    span.setAttribute('data-bs-placement', 'top');
     span.setAttribute('title', createTooltipContent(match.term));
     span.setAttribute('data-vhp-uri', match.term.uri);
 
     log(`Created highlight span with classes: ${span.className} for term: ${match.term.label}`);
     return span;
   }
-  
+
   function highlightNode(node, terms) {
     if (!shouldProcessNode(node)) {
       log(`Skipping node: ${node.textContent.substring(0, 50)}...`);
       return;
     }
-    
+
     const text = node.textContent;
     log(`Processing node with text: "${text.substring(0, 100)}..."`);
     const matches = findMatches(text, terms);
     if (!matches.length) return;
-    
+
     const fragment = document.createDocumentFragment();
     let lastIndex = 0;
-    
+
     matches.forEach(match => {
       if (match.start > lastIndex) {
         fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.start)));
@@ -352,44 +358,31 @@
       fragment.appendChild(createHighlightSpan(match));
       lastIndex = match.end;
     });
-    
+
     if (lastIndex < text.length) {
       fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
     }
-    
+
     node.parentNode.replaceChild(fragment, node);
   }
 
   // ============================================================================
   // TOOLTIP MANAGEMENT
   // ============================================================================
-  
+
   function initTooltips() {
     if (typeof bootstrap === 'undefined' || !bootstrap.Tooltip) return;
-    
+
     const elements = document.querySelectorAll(`[data-bs-toggle="tooltip"]`);
     log(`Initializing ${elements.length} tooltips`);
-    
-    elements.forEach(el => {
-      // Configure popper offset to add 7px distance below the tooltip when using bottom-left placement.
-      const useBottomLeft = CONFIG.tooltipPlacement === 'bottom-left';
-      const skidding = useBottomLeft ? -10 : 0; // negative skidding moves tooltip to the left
-      const distance = useBottomLeft ? 7 : 0; // vertical spacing in pixels (7px when bottom-left)
 
+    elements.forEach(el => {
       const tooltip = new bootstrap.Tooltip(el, {
         trigger: 'manual',
         delay: { show: CONFIG.tooltipShowDelay, hide: 0 },
         container: 'body',
-        placement: (useBottomLeft ? 'bottom' : (CONFIG.tooltipPlacement || 'top')),
-        customClass: 'vhp-glossary-tooltip-fixed',
-        popperConfig: (defaultPopper) => ({
-          ...defaultPopper,
-          modifiers: [
-            ...(defaultPopper && defaultPopper.modifiers ? defaultPopper.modifiers : []),
-            { name: 'offset', options: { offset: [skidding, distance] } },
-            { name: 'preventOverflow', options: { padding: 5 } }
-          ]
-        })
+        placement: 'bottom',
+        customClass: 'vhp-glossary-tooltip-fixed'
       });
 
       const hideWithAnimation = (tooltipInstance) => {
@@ -406,7 +399,7 @@
           tooltipInstance.hide();
         }
       };
-      
+
       const show = () => {
         if (CONFIG.singleTooltipOnly && tooltipManager.activeTooltip) {
           hideWithAnimation(tooltipManager.activeTooltip);
@@ -415,7 +408,7 @@
         tooltipManager.activeTooltip = tooltip;
         tooltip.show();
       };
-      
+
       const scheduleHide = () => {
         clearTimeout(tooltipManager.hideTimer);
         tooltipManager.hideTimer = setTimeout(() => {
@@ -425,10 +418,10 @@
           }
         }, CONFIG.tooltipHideDelay);
       };
-      
+
       el.addEventListener('mouseenter', show);
       el.addEventListener('mouseleave', scheduleHide);
-      
+
       el.addEventListener('shown.bs.tooltip', () => {
         const tooltipEl = document.querySelector('.tooltip.show');
         if (tooltipEl) {
@@ -442,20 +435,20 @@
   // ============================================================================
   // MAIN PROCESS
   // ============================================================================
-  
+
   function processDocument() {
     if (isProcessing || !glossaryTerms.length) return;
-    
+
     isProcessing = true;
     log('Processing document for glossary terms...');
-    
+
     const textNodes = [];
     walkTextNodes(document.body, node => {
       if (shouldProcessNode(node)) textNodes.push(node);
     });
-    
+
     log(`Found ${textNodes.length} text nodes to process`);
-    
+
     textNodes.forEach(node => {
       try {
         highlightNode(node, glossaryTerms);
@@ -463,24 +456,24 @@
         console.error('[VHP Glossary] Error highlighting node:', error);
       }
     });
-    
+
     initTooltips();
     isProcessing = false;
     log('Document processing complete');
   }
-  
+
   async function fetchAndProcess() {
     try {
       log(`Fetching glossary from ${CONFIG.glossaryUrl}`);
       const response = await fetch(CONFIG.glossaryUrl);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       const text = await response.text();
       glossaryTerms = parseOWLGlossary(text);
-      
+
       if (glossaryTerms.length) {
         processDocument();
       } else {
@@ -490,20 +483,17 @@
       console.error('[VHP Glossary] Fetch error:', error);
     }
   }
-  
+
   // ============================================================================
   // INITIALIZATION
   // ============================================================================
-  
+
   function initialize() {
     injectCustomStyles();
     fetchAndProcess();
   }
-  
+
   if (document.readyState === 'loading') {
-    if (CONFIG.loadLast) {
-      setTimeout(initialize, 500);
-    }
     document.addEventListener('DOMContentLoaded', initialize);
   } else {
     initialize();
