@@ -74,7 +74,11 @@
         {% endif %}
           </div>
           <div class="col-md-6 pt-md-0 pt-2 mt-md-0 mt-1">
-            <img src="https://cloud.vhp4safety.nl/service/{{ tool_details.screenshot }}" class="card-img-bottom" alt="...">
+            {% if tool_details.instance and tool_details.instance.url %}
+            <a href="{{ tool_details.instance.url }}" target="_blank"><img src="https://cloud.vhp4safety.nl/service/{{ tool_details.screenshot }}" class="card-img-bottom" alt="Image showing the logo or screenshot of the project."></a>
+            {% else %}
+            <img src="https://cloud.vhp4safety.nl/service/{{ tool_details.screenshot }}" class="card-img-bottom" alt="Image showing the logo or screenshot of the project.">
+            {% endif %}
           </div>
         </div>
         {%else%}
