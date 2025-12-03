@@ -59,6 +59,37 @@
         <div class="row">
           <div class="col-md-6">
             {{ tool_json.description }}
+        {% if tool_details.stage %}
+        <div style="margin-top: 5px">
+          {% if tool_details.stage == "https://vhp4safety.github.io/glossary#VHP0000102" or
+                tool_details.stage == "https://vhp4safety.github.io/glossary#VHP0000153"%}
+          <span data-bs-toggle="tooltip" title="xxx">
+            <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit">Hazard / Chemical Characteristics</button>
+          </span>
+          {% endif %}
+          {% if tool_details.stage == "https://vhp4safety.github.io/glossary#VHP0000154" %}
+          <span data-bs-toggle="tooltip" title="xxx">
+            <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit">External Exposure</button>
+          </span>
+          {% endif %}
+          {% if tool_details.stage == "https://vhp4safety.github.io/glossary#VHP0000056" or
+                tool_details.stage == "https://vhp4safety.github.io/glossary#VHP0000155" %}
+          <span data-bs-toggle="tooltip" title="xxx">
+            <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit">Toxicokinetics / ADME</button>
+          </span>
+          {% endif %}
+          {% if tool_details.stage == "https://vhp4safety.github.io/glossary#VHP0000156" %}
+          <span data-bs-toggle="tooltip" title="xxx">
+            <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit">Toxicodynamics / AOP</button>
+          </span>
+          {% endif %}
+          {% if tool_details.stage == "https://vhp4safety.github.io/glossary#VHP0000158" %}
+          <span data-bs-toggle="tooltip" title="xxx">
+            <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit">Adverse Outcome</button>
+          </span>
+          {% endif %}
+        </div>
+        {% endif %}
         {% if tool_details.get("regulatory-question") %}
         <div style="margin-top: 5px">
           {% if tool_details.get("regulatory-question").get("1a") == "true" or
