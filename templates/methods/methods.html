@@ -174,65 +174,9 @@
             showFilterPanel: {% if selected_stages or selected_questions %}true{% else %}false{% endif %}
         });
     });
-    
-    // Metadata modal functionality
-    let currentMetadataUrl = '';
-    
-    async function showMetadata(url, methodName) {
-        currentMetadataUrl = url;
-        const modal = new bootstrap.Modal(document.getElementById('metadataModal'));
-        const modalTitle = document.getElementById('metadataModalLabel');
-        const metadataContent = document.getElementById('metadata-content');
-        const loadingSpinner = document.getElementById('metadata-loading');
-        const errorMessage = document.getElementById('metadata-error');
-        
-        // Update modal title
-        modalTitle.textContent = `Metadata - ${methodName}`;
-        
-        // Show loading, hide content and error
-        loadingSpinner.style.display = 'block';
-        metadataContent.style.display = 'none';
-        errorMessage.style.display = 'none';
-        
-        // Open modal
-        modal.show();
-        
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Failed to fetch metadata');
-            
-            // Get the markdown text
-            const markdownText = await response.text();
-            
-            // Parse markdown to HTML using marked.js
-            const htmlContent = marked.parse(markdownText);
-            
-            // Display rendered HTML
-            metadataContent.innerHTML = htmlContent;
-            
-            // Add Bootstrap img-fluid class to all images for responsive sizing
-            metadataContent.querySelectorAll('img').forEach(img => {
-                img.classList.add('img-fluid');
-            });
-            
-            loadingSpinner.style.display = 'none';
-            metadataContent.style.display = 'block';
-        } catch (error) {
-            console.error('Error fetching metadata:', error);
-            loadingSpinner.style.display = 'none';
-            errorMessage.style.display = 'block';
-            errorMessage.textContent = 'Failed to load metadata. Please try downloading instead.';
-        }
-    }
-    
-    function downloadMetadata() {
-        if (currentMetadataUrl) {
-            window.open(currentMetadataUrl, '_blank');
-        }
-    }
 </script>
 
-<!-- Metadata Modal -->
+<script src="/static/js/metadata_modal.js"></script><!-- Metadata Modal -->
 <div class="modal fade" id="metadataModal" tabindex="-1" aria-labelledby="metadataModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
