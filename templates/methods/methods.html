@@ -149,205 +149,30 @@
     </div>
 </section>
 
+<script src="/static/js/search_filter.js"></script>
 <script>
-    // Filter functionality - MULTIPLE selections supported
-    const filterToggleBtn = document.getElementById('filter-toggle-btn');
-    const filterPanel = document.getElementById('filter-panel');
-    const applyFilterBtn = document.getElementById('apply-filter-btn');
-    const clearFilterBtn = document.getElementById('clear-filter-btn');
-    const selectedFiltersContainer = document.getElementById('selected-filters');
-    const filterTagsContainer = document.getElementById('filter-tags');
-    const searchForm = document.getElementById('search-form');
-    
-    // Track selected filters (arrays for multiple selections)
-    let selectedFilters = {
-        'flow-step': [{% for stage in selected_stages %}'{{ stage }}'{% if not loop.last %}, {% endif %}{% endfor %}],
-        'reg-question': [{% for question in selected_questions %}'{{ question }}'{% if not loop.last %}, {% endif %}{% endfor %}]
-    };
-
-    // Initialize when DOM is ready
+    // Initialize search and filter functionality for methods catalog
     document.addEventListener('DOMContentLoaded', () => {
-        // Initialize Bootstrap tooltips for elements using the custom 'methodtip' toggle
-        const methodtipTriggerList = document.querySelectorAll('[data-bs-toggle="methodtip"]');
-        const methodtipList = [...methodtipTriggerList].map(methodtipTriggerEl => new bootstrap.Tooltip(methodtipTriggerEl));
-        
-        // Show filter panel if filters are active
-        {% if selected_stages or selected_questions %}
-        filterPanel.style.display = 'block';
-        {% endif %}
-        
-        // Initialize filter display
-        updateFilterDisplay();
-        
-        filterToggleBtn.addEventListener('click', () => {
-            const isVisible = filterPanel.style.display !== 'none';
-            filterPanel.style.display = isVisible ? 'none' : 'block';
+        SearchFilter.init({
+            filterTypes: ['flow-step', 'reg-question'],
+            multiSelect: true, // Multiple selections per category
+            multipleInputs: true, // Create separate hidden input for each value
+            initialFilters: {
+                'flow-step': [{% for stage in selected_stages %}'{{ stage }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                'reg-question': [{% for question in selected_questions %}'{{ question }}'{% if not loop.last %}, {% endif %}{% endfor %}]
+            },
+            filterFieldMap: {
+                'flow-step': 'stage',
+                'reg-question': 'reg_q'
+            },
+            filterLabels: {
+                'flow-step': 'Flow Step',
+                'reg-question': 'Reg. Q'
+            },
+            badgeClass: 'badge rounded-pill text-bg-vhppink',
+            tooltipSelector: '[data-bs-toggle="methodtip"]',
+            showFilterPanel: {% if selected_stages or selected_questions %}true{% else %}false{% endif %}
         });
-
-        // Add click handlers for dropdown items - toggle selection
-        document.querySelectorAll('.dropdown-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation(); // Prevent dropdown from closing
-                const filterType = e.currentTarget.dataset.filterType;
-                const filterValue = e.currentTarget.dataset.filterValue;
-                toggleFilter(filterType, filterValue);
-            });
-        });
-        
-        // This is adapted to enable navigation from the main method page to an individual case study page
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.dropdown-item').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    const filterType = item.dataset.filterType;
-                    const filterValue = item.dataset.filterValue;
-
-                    if (filterType && filterValue) {
-                        e.preventDefault(); // Prevent default only for Methods filter items
-                        e.stopPropagation();
-                        toggleFilter(filterType, filterValue);
-                    }
-                    // Case Studies items have no dataset → normal navigation works
-                });
-            });
-            
-            // Mark already selected items as active
-            updateDropdownVisuals();
-        });
-
-    function toggleFilter(type, value) {
-        // Guard against undefined filter type
-        if (!type || !selectedFilters[type]) return;
-         const index = selectedFilters[type].indexOf(value);
-         if (index > -1) {
-             // Remove if already selected
-             selectedFilters[type].splice(index, 1);
-         } else {
-             // Add if not selected
-             selectedFilters[type].push(value);
-         }
-         updateFilterDisplay();
-     }
-
-    function removeFilter(type, value) {
-        const index = selectedFilters[type].indexOf(value);
-        if (index > -1) {
-            selectedFilters[type].splice(index, 1);
-        }
-        updateFilterDisplay();
-        updateDropdownVisuals();
-    }
-
-    function updateDropdownVisuals() {
-        // Update active class on dropdown items
-        document.querySelectorAll('.dropdown-item').forEach(item => {
-            const filterType = item.dataset.filterType;
-            const filterValue = item.dataset.filterValue;
-            if (selectedFilters[filterType] && selectedFilters[filterType].includes(filterValue)) {
-                item.classList.add('active');
-            } else {
-                item.classList.remove('active');
-            }
-        });
-    }
-
-    function updateFilterDisplay() {
-        // Clear current tags
-        filterTagsContainer.innerHTML = '';
-        
-        // Count total filters
-        const totalFilters = selectedFilters['flow-step'].length + selectedFilters['reg-question'].length;
-        
-        // Show/hide container
-        if (totalFilters === 0) {
-            selectedFiltersContainer.style.display = 'none';
-            return;
-        }
-        
-        selectedFiltersContainer.style.display = 'flex';
-        
-        // Create tags for flow-step filters
-        selectedFilters['flow-step'].forEach(value => {
-            const tag = document.createElement('span');
-            tag.className = 'badge rounded-pill text-bg-vhppink d-inline-flex align-items-center text-wrap';
-            tag.innerHTML = `
-                Flow Step: ${value}
-                <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('flow-step', '${value.replace(/'/g, "\\'")}')">×</button>
-            `;
-            filterTagsContainer.appendChild(tag);
-        });
-        
-        // Create tags for reg-question filters
-        selectedFilters['reg-question'].forEach(value => {
-            const tag = document.createElement('span');
-            tag.className = 'badge rounded-pill text-bg-vhppink d-inline-flex align-items-center text-wrap';
-            tag.innerHTML = `
-                Reg. Q: ${value}
-                <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('reg-question', '${value.replace(/'/g, "\\'")}')">×</button>
-            `;
-            filterTagsContainer.appendChild(tag);
-        });
-    }
-
-    // Make removeFilter accessible globally
-    window.removeFilterTag = function(type, value) {
-        removeFilter(type, value);
-    };
-
-    // Apply filters by creating multiple hidden inputs
-    applyFilterBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        applyFiltersAndSubmit();
-    });
-    
-    // Also handle form submission (for Search button)
-    searchForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        applyFiltersAndSubmit();
-    });
-    
-    function applyFiltersAndSubmit() {
-        // Remove any existing stage/reg_q hidden inputs (except the template ones)
-        document.querySelectorAll('input[name="stage"]:not(#filter_stage), input[name="reg_q"]:not(#filter_reg_q)').forEach(input => {
-            input.remove();
-        });
-        
-        // Remove the template hidden inputs to avoid empty values
-        document.getElementById('filter_stage').remove();
-        document.getElementById('filter_reg_q').remove();
-        
-        // Add hidden input for each selected flow-step
-        selectedFilters['flow-step'].forEach(value => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'stage';
-            input.value = value;
-            searchForm.appendChild(input);
-        });
-        
-        // Add hidden input for each selected reg-question
-        selectedFilters['reg-question'].forEach(value => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'reg_q';
-            input.value = value;
-            searchForm.appendChild(input);
-        });
-        
-        // Submit the form
-        searchForm.submit();
-    }
-
-    // Clear all filters
-    clearFilterBtn.addEventListener('click', () => {
-        selectedFilters = {
-            'flow-step': [],
-            'reg-question': []
-        };
-        updateFilterDisplay();
-        updateDropdownVisuals();
-    });
-
     });
     
     // Metadata modal functionality

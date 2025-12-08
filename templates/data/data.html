@@ -164,137 +164,31 @@
     </div>
 </section>
 
+<script src="/static/js/search_filter.js"></script>
 <script>
-    // Filter functionality - Server-side filtering
-    const filterToggleBtn = document.getElementById('filter-toggle-btn');
-    const filterPanel = document.getElementById('filter-panel');
-    const applyFilterBtn = document.getElementById('apply-filter-btn');
-    const clearFilterBtn = document.getElementById('clear-filter-btn');
-    const selectedFiltersContainer = document.getElementById('selected-filters');
-    const filterTagsContainer = document.getElementById('filter-tags');
-    const searchForm = document.getElementById('search-form');
-    
-    // Track selected filters (only one per category for server-side implementation)
-    let selectedFilters = {
-        'case-study': '{{ filter_case_study or "" }}',
-        'flow-step': '{{ filter_flow_step or "" }}',
-        'reg-question': '{{ filter_regulatory_question or "" }}'
-    };
-
-    // Initialize when DOM is ready
+    // Initialize search and filter functionality for data catalog
     document.addEventListener('DOMContentLoaded', () => {
-        // Initialize Bootstrap tooltips
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-        
-        // Show filter panel if filters are active
-        {% if filter_case_study or filter_flow_step or filter_regulatory_question %}
-        filterPanel.style.display = 'inline';
-        {% endif %}
-        
-        // Initialize filter display
-        updateFilterDisplay();
-        
-        filterToggleBtn.addEventListener('click', () => {
-            const isVisible = filterPanel.style.display !== 'none';
-            filterPanel.style.display = isVisible ? 'none' : 'block';
+        SearchFilter.init({
+            filterTypes: ['case-study', 'flow-step', 'reg-question'],
+            multiSelect: false, // Single selection per category
+            initialFilters: {
+                'case-study': '{{ filter_case_study or "" }}',
+                'flow-step': '{{ filter_flow_step or "" }}',
+                'reg-question': '{{ filter_regulatory_question or "" }}'
+            },
+            filterFieldMap: {
+                'case-study': 'filter_case_study',
+                'flow-step': 'filter_flow_step',
+                'reg-question': 'filter_regulatory_question'
+            },
+            filterLabels: {
+                'case-study': 'Case Study',
+                'flow-step': 'Flow Step',
+                'reg-question': 'Reg. Question'
+            },
+            badgeClass: 'badge rounded-pill text-bg-vhpteal',
+            showFilterPanel: {% if filter_case_study or filter_flow_step or filter_regulatory_question %}true{% else %}false{% endif %}
         });
-
-        // Add click handlers for dropdown items
-        document.querySelectorAll('.dropdown-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const filterType = e.target.dataset.filterType;
-                const filterValue = e.target.dataset.filterValue;
-                setFilter(filterType, filterValue);
-            });
-        });
-    });
-
-    function setFilter(type, value) {
-        // For server-side filtering, we only support one value per filter type
-        selectedFilters[type] = value;
-        updateFilterDisplay();
-    }
-
-    function removeFilter(type) {
-        selectedFilters[type] = '';
-        updateFilterDisplay();
-    }
-
-    function updateFilterDisplay() {
-        // Clear current tags
-        filterTagsContainer.innerHTML = '';
-        
-        // Count total filters
-        const totalFilters = (selectedFilters['case-study'] ? 1 : 0) + 
-                           (selectedFilters['flow-step'] ? 1 : 0) + 
-                           (selectedFilters['reg-question'] ? 1 : 0);
-        
-        // Show/hide container
-        if (totalFilters === 0) {
-            selectedFiltersContainer.style.display = 'none';
-            return;
-        }
-        
-        selectedFiltersContainer.style.display = 'flex';
-        
-        // Create tags for each active filter
-        if (selectedFilters['case-study']) {
-            const tag = document.createElement('span');
-            tag.className = 'badge rounded-pill text-bg-vhpteal d-inline-flex align-items-center text-wrap';
-            tag.innerHTML = `
-                Case Study: ${selectedFilters['case-study']}
-                <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('case-study')">×</button>
-            `;
-            filterTagsContainer.appendChild(tag);
-        }
-        
-        if (selectedFilters['flow-step']) {
-            const tag = document.createElement('span');
-            tag.className = 'badge rounded-pill text-bg-vhpteal d-inline-flex align-items-center text-wrap';
-            tag.innerHTML = `
-                Flow Step: ${selectedFilters['flow-step']}
-                <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('flow-step')">×</button>
-            `;
-            filterTagsContainer.appendChild(tag);
-        }
-        
-        if (selectedFilters['reg-question']) {
-            const tag = document.createElement('span');
-            tag.className = 'badge rounded-pill text-bg-vhpteal d-inline-flex align-items-center text-wrap';
-            tag.innerHTML = `
-                Reg. Question: ${selectedFilters['reg-question']}
-                <button class="btn-close btn-close-white ms-2" onclick="removeFilterTag('reg-question')">×</button>
-            `;
-            filterTagsContainer.appendChild(tag);
-        }
-    }
-
-    // Make removeFilter accessible globally for onclick handler
-    window.removeFilterTag = function(type) {
-        removeFilter(type);
-    };
-
-    // Apply filters by updating hidden form fields and submitting
-    applyFilterBtn.addEventListener('click', () => {
-        // Update hidden form fields
-        document.getElementById('filter_case_study').value = selectedFilters['case-study'];
-        document.getElementById('filter_regulatory_question').value = selectedFilters['reg-question'];
-        document.getElementById('filter_flow_step').value = selectedFilters['flow-step'];
-        
-        // Submit the form
-        searchForm.submit();
-    });
-
-    // Clear filters
-    clearFilterBtn.addEventListener('click', () => {
-        selectedFilters = {
-            'case-study': '',
-            'flow-step': '',
-            'reg-question': ''
-        };
-        updateFilterDisplay();
     });
 </script>
 
