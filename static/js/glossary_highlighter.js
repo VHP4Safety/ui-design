@@ -384,6 +384,13 @@
     log(`Initializing ${elements.length} tooltips`);
     
     elements.forEach(el => {
+      // Validate that the element has a valid title attribute
+      const title = el.getAttribute('title');
+      if (!title || title.trim() === '' || title === 'null' || title === 'undefined') {
+        log(`Skipping tooltip for element without valid title:`, el);
+        return;
+      }
+      
       // Configure popper offset to add 7px distance below the tooltip when using bottom-left placement.
       const useBottomLeft = CONFIG.tooltipPlacement === 'bottom-left';
       const skidding = useBottomLeft ? -10 : 0; // negative skidding moves tooltip to the left
