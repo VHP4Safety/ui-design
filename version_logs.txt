@@ -1,4 +1,9 @@
 
+Version 0.6-6 (2025-12-10)
+--------------------------------------------------------------------------------
+- Adding license information in the footer. 
+
+
 Version 0.6-5 (2025-12-03)
 --------------------------------------------------------------------------------
 - Integration of the terms from the glossary repository. 
