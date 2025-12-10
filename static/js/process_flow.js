@@ -29,7 +29,6 @@
    * Create accordion item HTML
    */
   function createAccordionItem(term, index) {
-    const isFirst = index === 0;
     const collapseId = `about-collapse${index === 0 ? 'One' : index === 1 ? 'Two' : index === 2 ? 'Three' : index === 3 ? 'Four' : index === 4 ? 'Five' : index + 1}`;
     const headingId = `about-heading${index === 0 ? 'One' : index === 1 ? 'Two' : index === 2 ? 'Three' : index === 3 ? 'Four' : index === 4 ? 'Five' : index + 1}`;
     
@@ -39,11 +38,11 @@
     return `
   <div class="accordion-item">
     <h2 class="accordion-header" id="${headingId}">
-        <button class="accordion-button${isFirst ? '' : ' collapsed'}" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="${isFirst ? 'true' : 'false'}" aria-controls="${collapseId}">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="false" aria-controls="${collapseId}">
           ${cleanLabel}
         </button>
       </h2>
-      <div id="${collapseId}" class="accordion-collapse collapse${isFirst ? ' show' : ''}" aria-labelledby="${headingId}">
+      <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headingId}">
         <div class="accordion-body"  style="text-align: justify;">
           <p>
             ${term.definition || 'No definition available.'}
