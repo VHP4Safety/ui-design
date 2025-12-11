@@ -45,6 +45,7 @@
   --bs-vhpmaroon: rgb(143, 45, 87);
   --bs-vhpteal: #0b5a6c;
   --bs-vhplight-blue: #c1e5f5;
+  --bs-vhplight-purple: #ac9cc4; /*== I added this one as==*/
   --bs-vhplight-green: #ebf1df;
   --bs-primary-rgb: 13, 110, 253;
   --bs-secondary-rgb: 108, 117, 125;
@@ -62,6 +63,7 @@
   --bs-vhpteal-rgb: 11, 90, 108;
   --bs-vhplight-blue-rgb: 193, 229, 245;
   --bs-vhplight-green-rgb: 235, 241, 223;
+  --bs-vhplight-purple-rgb: 172, 156, 196;
   --bs-primary-text-emphasis: rgb(5.2, 44, 101.2);
   --bs-secondary-text-emphasis: rgb(43.2, 46.8, 50);
   --bs-success-text-emphasis: rgb(10, 54, 33.6);
@@ -3252,7 +3254,7 @@ textarea.form-control-lg {
   --bs-btn-active-border-color: rgb(237, 242.4, 226.2);
   --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   --bs-btn-disabled-color: #000;
-  --bs-btn-disabled-bg: #ebf1df;
+  --btn-disabled-bg: #ebf1df;
   --bs-btn-disabled-border-color: #ebf1df;
 }
 
