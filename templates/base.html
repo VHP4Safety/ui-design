@@ -73,13 +73,21 @@
       />
     </a>
 
-     <!-- Search bar -->
-  <div class="flex-grow-1 d-flex justify-content-center me-3" style="max-width: 250px;">
-    <form class="d-flex w-100" role="search" onsubmit="runSearch(); return false;">
+    <!-- Search bar -->
+  <div class="flex-grow-1 d-flex justify-content-center me-3 position-relative" style="max-width: 250px;">
+    <form class="d-flex w-100" role="search" onsubmit="return false;">
       <input class="form-control me-2" type="search" placeholder="Search site..." id="searchInput" aria-label="Search">
-      <button class="btn btn-vhppurple" type="submit">Search</button>
+      <button class="btn btn-vhppurple" type="submit" id="searchBtn">Search</button>
     </form>
+
+    <!-- Live results dropdown -->
+    <ul id="results" class="search-results list-group position-absolute w-100"></ul>
   </div>
+
+  <!-- Include Fuse.js -->
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+  <!-- Your search JS -->
+  <script src="/static/js/Searchbar.js"></script>
 
   <!-- Hamburger toggler for mobile -->
   <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu" aria-label="Toggle navigation">
