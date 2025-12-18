@@ -41,13 +41,17 @@ function stepTypeToColor(type) {
 function stepAction(step, onClickFn) {
   if (step.type && step.type == "tool") {
     if (step.id) {
-      url = "/tools/" + step.id
+      const route = step.route || "tools"; // updated so that assays in methods can be linked too
+      const url = "/" + route + "/" + step.id;
       return "onclick=\"location.href='" + url + "';\""
-    } else { // nothing to link to
+    } else { 
       return ""
     }
   }
-  if (onClickFn) return "onclick=\"" + onClickFn + "('" +  step.value + "')\""
+
+  if (onClickFn) {
+    return "onclick=\"" + onClickFn + "('" + step.value + "')\""
+  }
 
   return ""
 }
