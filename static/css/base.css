@@ -8,7 +8,6 @@ body {
   padding-top: 100px; 
 }
 
-
 /* Cards as a button */
 
 .card-button:hover, .card-button:focus{
@@ -194,6 +193,12 @@ html {
   }
 
 }
+
+.footer-text {
+  font-size: 0.75rem;   /* I set this specifically to add the NWO text in a smaller font in the footer*/
+  line-height: 1.3;
+}
+
 
 /* ============================================================================
    VHP4Safety Glossary Term Highlighting
