@@ -1,4 +1,12 @@
 
+Version 0.6-8 (2026-01-05)
+--------------------------------------------------------------------------------
+- Updating the partner logos.
+- Editing the text for the NWO partner. 
+- Linking the assays from Methods section to the case studies. 
+- Creating a page for the process flow steps. 
+
+
 Version 0.6-7 (2025-12-11)
 --------------------------------------------------------------------------------
 - Adding a progress bar to the individual case study pages. 
