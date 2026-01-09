@@ -73,16 +73,34 @@
       />
     </a>
     
-    <!-- Search bar -->
-  <div class="flex-grow-1 d-flex justify-content-center me-3 position-relative" style="max-width: 250px;">
-    <form class="d-flex w-100" role="search" onsubmit="return false;">
-      <input class="form-control me-2" type="search" placeholder="Search site..." id="searchInput" aria-label="Search">
-      <button class="btn btn-vhppurple" type="submit" id="searchBtn">Search</button>
-    </form>
+  <div class="flex-grow-1 d-flex justify-content-center me-3" style="max-width: 250px;">
+  <form class="d-flex w-100 position-relative" role="search" onsubmit="return false;">
 
-    <!-- Live results dropdown -->
-    <ul id="results" class="search-results list-group position-absolute w-100"></ul>
-  </div>
+    <!-- Wrapper for searchbar -->
+    <div class="position-relative">
+      <input
+        class="form-control"
+        type="search"
+        placeholder="Search site "
+        id="searchInput"
+        aria-label="Search"
+      >
+
+      <!-- Live result dropdown -->
+      <ul
+        id="results"
+        class="search-results list-group position-absolute w-100"
+        style="top: 100%; z-index: 1000;"
+      ></ul>
+    </div>
+
+    <button class="btn btn-vhppurple ms-2" type="submit" id="searchBtn">
+      Search
+    </button>
+
+  </form>
+</div>
+
 
   <!-- Hamburger toggler for mobile -->
   <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu" aria-label="Toggle navigation">
@@ -127,6 +145,7 @@
         <li><a class="dropdown-item" href="/tools/bridgedb">BridgeDB</a></li>
         <li><a class="dropdown-item" href="/tools/cdkdepict">CDK Depict</a></li>
         <li><a class="dropdown-item" href="/tools/celldesigner">CellDesigner</a></li>
+        <li><a class="dropdown-item" href="/tools/cdk">Chemistry Development Kit</a></li>
         <li><a class="dropdown-item" href="/tools/comptox">CompTox</a></li>
         <li><a class="dropdown-item" href="/tools/copasi">COPASI</a></li>
         <li><a class="dropdown-item" href="/tools/cplogd">cpLogD</a></li>
@@ -149,6 +168,7 @@
         <li><a class="dropdown-item" href="/tools/opsin">OPSIN</a></li>
         <li><a class="dropdown-item" href="/tools/qaop_app">qAOP-App</a></li>
         <li><a class="dropdown-item" href="/tools/qspred">QSPRpred</a></li>
+        <li><a class="dropdown-item" href="/tools/r_odaf">R-ODAF Shiny</a></li>
         <li><a class="dropdown-item" href="/tools/sombie">SOM Prediction</a></li>
         <li><a class="dropdown-item" href="/tools/sysrev">SysRev</a></li>
         <li><a class="dropdown-item" href="/tools/oecd_qsar_toolbox">OECD QSAR Toolbox</a></li>
@@ -207,6 +227,7 @@
           <button class="btn btn-light text-start" onclick="location.href='/tools/bridgedb'" data-bs-dismiss="offcanvas">BridgeDB</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/cdkdepict'" data-bs-dismiss="offcanvas">CDK Depict</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/celldesigner'" data-bs-dismiss="offcanvas">CellDesigner</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/cdk'" data-bs-dismiss="offcanvas">Chemistry Development Kit</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/comptox'" data-bs-dismiss="offcanvas">CompTox</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/copasi'" data-bs-dismiss="offcanvas">COPASI</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/cplogd'" data-bs-dismiss="offcanvas">cpLogD</button>
@@ -229,6 +250,7 @@
           <button class="btn btn-light text-start" onclick="location.href='/tools/opsin'" data-bs-dismiss="offcanvas">OPSIN</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/qaop_app'" data-bs-dismiss="offcanvas">qAOP-App</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/qspred'" data-bs-dismiss="offcanvas">QSPRpred</button>
+          <button class="btn btn-light text-start" onclick="location.href='/tools/r_odaf'" data-bs-dismiss="offcanvas">R-ODAF Shiny</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/sombie'" data-bs-dismiss="offcanvas">SOM Prediction</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/sysrev'" data-bs-dismiss="offcanvas">SysRev</button>
           <button class="btn btn-light text-start" onclick="location.href='/tools/oecd_qsar_toolbox'" data-bs-dismiss="offcanvas">OECD QSAR Toolbox</button>
@@ -314,6 +336,7 @@
     <script src="/static/js/glossary_highlighter.js"></script>
 
     <!-- script for search bar's functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
     <script src="/static/js/search_bar.js"></script>
 
   </body>
