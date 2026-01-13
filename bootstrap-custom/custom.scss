@@ -5,13 +5,16 @@
 // 2️⃣ Define your custom colors
 $custom-colors: (
   "vhppink": #e6007e, //Colour for tools
-  "vhpblue": #307bbf, //Colour for case studies & regulatory questions
+  "vhppink_distinct": #c3007a, //Colour for regulatory question
+  "vhpblue": #307bbf, //Default color
   "vhporange": #eb5b25, // Colour for flow steps
-  "vhppurple": #29235c, // Colour for workflow step
-  "vhpmaroon": rgb(143 45	87)	, // Colour for workflow substeps
-  "vhpteal": #0b5a6c, // Colour for data
+  "vhppurple": #29235c,
+  "vhpteal": #0b5a6c, // Colour for workflow step
   "vhplight-blue": #c1e5f5,  // Colour for accents
-  "vhplight-green": #ebf1df 
+  "vhpdarkblue": #5079BB,    // Colour for tools/models/data
+  "vhpdarkpurple": #593887, // Colour for process flow
+  "vhplightteal": #6ba3b0 // Colour for workflow substep
+
 );  
 
 // 3️⃣ Import Bootstrap’s variables and merge
