@@ -23,7 +23,7 @@ function stepTypeToColor(type) {
   baseclass = "btn text-white"
   color = "btn-vhpblue" 
   if (type == "workflow step" || type == "workflow-step") {
-    color = "btn-vhpteal"
+    color = "btn-vhpdarkteal"
   } else if (type == "workflow substep" || type == "workflow-substep") {
     color = "btn-vhplightteal"
   } else if (type == "process flow step" || type == "process-flow-step") {
@@ -31,7 +31,7 @@ function stepTypeToColor(type) {
   } else if (type == "regulatory question" || type == "regulatory-question") {
     color = "btn-vhppink_distinct"
   } else if (type == "tool") {
-    color = "btn-vhpdarkblue"
+    color = "btn-vhpblue"
   } else {
     console.log("UNKNOWN STEP TYPE: " + type)
   }

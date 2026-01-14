@@ -113,8 +113,8 @@
 
      <!-- Case Studies Button Group -->
     <div class="btn-group" role="group">
-      <button class="btn btn-vhpblue text-white text-nowrap" style="min-width: 120px;" onclick="location.href='/casestudies'" type="button">Case Studies</button>
-      <button type="button" class="btn btn-vhpblue text-white dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="btn btn-vhppink_distinct text-white text-nowrap" style="min-width: 120px;" onclick="location.href='/casestudies'" type="button">Case Studies</button>
+      <button type="button" class="btn btn-vhppink_distinct text-white dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu dropdown-scroll">
@@ -127,8 +127,8 @@
 
     <!-- Tools Button Group -->
     <div class="btn-group" role="group">
-      <button class="btn btn-vhppink text-nowrap" style="min-width: 120px;" onclick="location.href='/tools'" type="button">Tools</button>
-      <button type="button" class="btn btn-vhppink dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="btn btn-vhpblue text-nowrap" style="min-width: 120px;" onclick="location.href='/tools'" type="button">Tools</button>
+      <button type="button" class="btn btn-vhpblue dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu dropdown-scroll">
@@ -215,8 +215,8 @@
 
       <!-- Case Studies collapse menu -->
       <div class="d-flex w-100 mt-2">
-        <button class="btn btn-vhpblue text-white flex-grow-1" onclick="location.href='/casestudies'" data-bs-dismiss="offcanvas">Case Studies</button>
-        <button class="btn btn-vhpblue text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCaseStudies" aria-expanded="false" aria-controls="collapseCaseStudies" style="width: 40px;">▼</button>
+        <button class="btn btn-vhppink_distinct text-white flex-grow-1" onclick="location.href='/casestudies'" data-bs-dismiss="offcanvas">Case Studies</button>
+        <button class="btn btn-vhppink_distinct text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCaseStudies" aria-expanded="false" aria-controls="collapseCaseStudies" style="width: 40px;">▼</button>
       </div>
       <div class="collapse" id="collapseCaseStudies">
         <div class="d-flex flex-column ps-3 gap-2">
@@ -228,8 +228,8 @@
 
       <!-- Tools collapse menu -->
       <div class="d-flex w-100 mt-2">
-        <button class="btn btn-vhppink flex-grow-1 text-nowrap" onclick="location.href='/tools'" data-bs-dismiss="offcanvas">Tools</button>
-        <button class="btn btn-vhppink" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTools" aria-expanded="false" aria-controls="collapseTools" style="width: 40px;">▼</button>
+        <button class="btn btn-vhpblue flex-grow-1 text-nowrap" onclick="location.href='/tools'" data-bs-dismiss="offcanvas">Tools</button>
+        <button class="btn btn-vhpblue" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTools" aria-expanded="false" aria-controls="collapseTools" style="width: 40px;">▼</button>
       </div>
       <div class="collapse" id="collapseTools">
         <div class="d-flex flex-column ps-3 gap-2">
@@ -282,7 +282,45 @@
         </div>
       </div>
 
-      <!-- Data Button -->
+      <!-- Methods button -->
+      <div class="d-flex w-100 mt-2">
+        <button
+          class="btn btn-vhplight-green flex-grow-1"
+          onclick="location.href='/methods'"
+          data-bs-dismiss="offcanvas">
+          Methods
+        </button>
+
+        <!-- Collapse toggle -->
+        <button
+          class="btn btn-vhplight-green"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseMethods"
+          aria-expanded="false"
+          aria-controls="collapseMethods"
+          style="width: 40px;">
+          ▼
+        </button>
+      </div>
+
+      <!-- dropdownitems with Javier's logic-->
+      <div class="collapse" id="collapseMethods">
+        <div class="d-flex flex-column ps-3 gap-2 mt-1">
+          {% for m in methods_menu %}
+            <button
+              class="btn btn-light text-start"
+              onclick="location.href='/methods/{{ m.id }}'"
+              data-bs-dismiss="offcanvas">
+              {{ m.title }}
+            </button>
+          {% else %}
+            <span class="text-muted ps-2">No methods available</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Data button -->
       <button class="btn btn-vhpteal mt-2" onclick="location.href='/data'" data-bs-dismiss="offcanvas">Data</button>
     </div>
   </div>

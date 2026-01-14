@@ -117,9 +117,9 @@ nav.navbar {
 /* Coloring of the steps of the workflow diagram */
 .step-item[data-step="1"] .step-icon { background-color: var(--bs-vhppink_distinct); border-color: var(--bs-vhppink_distinct); }
 .step-item[data-step="2"] .step-icon { background-color: var(--bs-vhpdarkpurple);  border-color: var(--bs-vhpdarkpurple);}
-.step-item[data-step="3"] .step-icon { background-color: var(--bs-vhpteal); border-color: var(--bs-vhpteal); }
+.step-item[data-step="3"] .step-icon { background-color: var(--bs-vhpdarkteal); border-color: var(--bs-vhpdarkteal); }
 .step-item[data-step="4"] .step-icon { background-color: var(--bs-vhplightteal); border-color: var(--bs-vhplightteal); } /*== I added this bootstrap color, since the bs-version of the vhplight purple did not exist==*/
-.step-item[data-step="5"] .step-icon { background-color: var(--bs-vhpdarkblue) ; border-color: var(--bs-vhpdarkblue); }
+.step-item[data-step="5"] .step-icon { background-color: var(--bs-vhpblue) ; border-color: var(--bs-vhpblue); }
 
 /* === Case study sections === */
 .case-section {
