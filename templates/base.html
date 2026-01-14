@@ -110,27 +110,25 @@
   <!-- Desktop buttons (hidden on mobile) -->
   <div class="d-none d-lg-flex align-items-center gap-3">
     <!-- Tools Button Group -->
+
+     <!-- Case Studies Button Group -->
     <div class="btn-group" role="group">
-      <button class="btn btn-vhplight-green text-nowrap" style="min-width: 120px;" onclick="location.href='/methods'"
-        type="button">Methods</button>
-      <button type="button" class="btn btn-vhplight-green dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
-        aria-expanded="false">
+      <button class="btn btn-vhppink_distinct text-white text-nowrap" style="min-width: 120px;" onclick="location.href='/casestudies'" type="button">Case Studies</button>
+      <button type="button" class="btn btn-vhppink_distinct text-white dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu dropdown-scroll">
-        {% if methods_menu %}
-          {% for m in methods_menu %}
-            <li><a class="dropdown-item" href="/methods/{{ m.id }}">{{ m.title }}</a></li>
-          {% endfor %}
-        {% else %}
-          <li><span class="dropdown-item-text text-muted">No methods available</span></li>
-        {% endif %}
+        <li><a class="dropdown-item" href="/casestudies/kidney">Kidney</a></li>
+        <li><a class="dropdown-item" href="/casestudies/parkinson">Parkinson’s disease</a></li>
+        <li><a class="dropdown-item" href="/casestudies/thyroid">Thyroid</a></li>
       </ul>
     </div>
+
+
     <!-- Tools Button Group -->
     <div class="btn-group" role="group">
-      <button class="btn btn-vhppink text-nowrap" style="min-width: 120px;" onclick="location.href='/tools'" type="button">Tools</button>
-      <button type="button" class="btn btn-vhppink dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="btn btn-vhpblue text-nowrap" style="min-width: 120px;" onclick="location.href='/tools'" type="button">Tools</button>
+      <button type="button" class="btn btn-vhpblue dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu dropdown-scroll">
@@ -182,18 +180,24 @@
       </ul>
     </div>
 
-    <!-- Case Studies Button Group -->
     <div class="btn-group" role="group">
-      <button class="btn btn-vhpblue text-white text-nowrap" style="min-width: 120px;" onclick="location.href='/casestudies'" type="button">Case Studies</button>
-      <button type="button" class="btn btn-vhpblue text-white dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="btn btn-vhplight-green text-nowrap" style="min-width: 120px;" onclick="location.href='/methods'"
+        type="button">Methods</button>
+      <button type="button" class="btn btn-vhplight-green dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+        aria-expanded="false">
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu dropdown-scroll">
-        <li><a class="dropdown-item" href="/casestudies/kidney">Kidney</a></li>
-        <li><a class="dropdown-item" href="/casestudies/parkinson">Parkinson’s disease</a></li>
-        <li><a class="dropdown-item" href="/casestudies/thyroid">Thyroid</a></li>
+        {% if methods_menu %}
+          {% for m in methods_menu %}
+            <li><a class="dropdown-item" href="/methods/{{ m.id }}">{{ m.title }}</a></li>
+          {% endfor %}
+        {% else %}
+          <li><span class="dropdown-item-text text-muted">No methods available</span></li>
+        {% endif %}
       </ul>
     </div>
+
 
     <!-- Data Button -->
     <button class="btn btn-vhpteal text-nowrap" style="min-width: 120px;" onclick="location.href='/data'" type="button">Data</button>
@@ -208,10 +212,24 @@
   </div>
   <div class="offcanvas-body">
     <div class="d-flex flex-column gap-2">
+
+      <!-- Case Studies collapse menu -->
+      <div class="d-flex w-100 mt-2">
+        <button class="btn btn-vhppink_distinct text-white flex-grow-1" onclick="location.href='/casestudies'" data-bs-dismiss="offcanvas">Case Studies</button>
+        <button class="btn btn-vhppink_distinct text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCaseStudies" aria-expanded="false" aria-controls="collapseCaseStudies" style="width: 40px;">▼</button>
+      </div>
+      <div class="collapse" id="collapseCaseStudies">
+        <div class="d-flex flex-column ps-3 gap-2">
+          <button class="btn btn-light text-start" onclick="location.href='/casestudies/kidney'" data-bs-dismiss="offcanvas">Kidney</button>
+          <button class="btn btn-light text-start" onclick="location.href='/casestudies/parkinson'" data-bs-dismiss="offcanvas">Parkinson’s disease</button>
+          <button class="btn btn-light text-start" onclick="location.href='/casestudies/thyroid'" data-bs-dismiss="offcanvas">Thyroid</button>
+        </div>
+      </div>
+
       <!-- Tools collapse menu -->
-      <div class="d-flex w-100">
-        <button class="btn btn-vhppink flex-grow-1 text-nowrap" onclick="location.href='/tools'" data-bs-dismiss="offcanvas">Tools</button>
-        <button class="btn btn-vhppink" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTools" aria-expanded="false" aria-controls="collapseTools" style="width: 40px;">▼</button>
+      <div class="d-flex w-100 mt-2">
+        <button class="btn btn-vhpblue flex-grow-1 text-nowrap" onclick="location.href='/tools'" data-bs-dismiss="offcanvas">Tools</button>
+        <button class="btn btn-vhpblue" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTools" aria-expanded="false" aria-controls="collapseTools" style="width: 40px;">▼</button>
       </div>
       <div class="collapse" id="collapseTools">
         <div class="d-flex flex-column ps-3 gap-2">
@@ -264,20 +282,45 @@
         </div>
       </div>
 
-      <!-- Case Studies collapse menu -->
+      <!-- Methods button -->
       <div class="d-flex w-100 mt-2">
-        <button class="btn btn-vhpblue text-white flex-grow-1" onclick="location.href='/casestudies'" data-bs-dismiss="offcanvas">Case Studies</button>
-        <button class="btn btn-vhpblue text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCaseStudies" aria-expanded="false" aria-controls="collapseCaseStudies" style="width: 40px;">▼</button>
+        <button
+          class="btn btn-vhplight-green flex-grow-1"
+          onclick="location.href='/methods'"
+          data-bs-dismiss="offcanvas">
+          Methods
+        </button>
+
+        <!-- Collapse toggle -->
+        <button
+          class="btn btn-vhplight-green"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseMethods"
+          aria-expanded="false"
+          aria-controls="collapseMethods"
+          style="width: 40px;">
+          ▼
+        </button>
       </div>
-      <div class="collapse" id="collapseCaseStudies">
-        <div class="d-flex flex-column ps-3 gap-2">
-          <button class="btn btn-light text-start" onclick="location.href='/casestudies/kidney'" data-bs-dismiss="offcanvas">Kidney</button>
-          <button class="btn btn-light text-start" onclick="location.href='/casestudies/parkinson'" data-bs-dismiss="offcanvas">Parkinson’s disease</button>
-          <button class="btn btn-light text-start" onclick="location.href='/casestudies/thyroid'" data-bs-dismiss="offcanvas">Thyroid</button>
+
+      <!-- dropdownitems with Javier's logic-->
+      <div class="collapse" id="collapseMethods">
+        <div class="d-flex flex-column ps-3 gap-2 mt-1">
+          {% for m in methods_menu %}
+            <button
+              class="btn btn-light text-start"
+              onclick="location.href='/methods/{{ m.id }}'"
+              data-bs-dismiss="offcanvas">
+              {{ m.title }}
+            </button>
+          {% else %}
+            <span class="text-muted ps-2">No methods available</span>
+          {% endfor %}
         </div>
       </div>
 
-      <!-- Data Button -->
+      <!-- Data button -->
       <button class="btn btn-vhpteal mt-2" onclick="location.href='/data'" data-bs-dismiss="offcanvas">Data</button>
     </div>
   </div>
