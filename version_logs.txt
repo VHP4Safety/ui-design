@@ -1,5 +1,5 @@
 
-Version 0.6-9 (2026-01-15)
+Version 0.6-10 (2026-01-15)
 --------------------------------------------------------------------------------
 - Updating the partner logos.
 - Editing the text for the NWO partner. 
