@@ -644,16 +644,6 @@ def casestudy_main(case):
     return render_template(f"case_studies/casestudy.html", case=case)
 
 
-@app.route("/case_studies/parkinson/workflows/parkinson_qAOP")
-def parkinson_qaop():
-    return render_template("case_studies/parkinson/workflows/parkinson_qAOP.html")
-
-
-@app.route("/case_studies/thyroid/workflows/thyroid_qAOP")
-def thyroid_qaop():
-    return render_template("case_studies/thyroid/workflows/thyroid_qAOP.html")
-
-
 @app.route("/workflow/<workflow>")
 def show(workflow):
     try:
@@ -906,16 +896,6 @@ def terms_of_service():
 def privacy_policy():
     return render_template("legal/privacypolicy.html")
 
-
-################################################################################
-
-# Import the new blueprint
-# from routes.aop_app import aop_app
-
-# Register the blueprint
-# app.register_blueprint(aop_app)
-
-################################################################################
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5050, debug=True)
