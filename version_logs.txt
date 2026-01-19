@@ -1,6 +1,7 @@
 
-Version 0.6-10 (2026-01-15)
+Version 0.6-11 (2026-01-19)
 --------------------------------------------------------------------------------
+- Adding Wikipedia and Surf RSD links to tools when the information is available.
 - Updating the partner logos.
 - Editing the text for the NWO partner. 
 - Linking the assays from Methods section to the case studies. 
