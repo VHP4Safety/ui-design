@@ -237,16 +237,14 @@ html {
 /* Base styles for all glossary terms */
 .glossary-term {
   cursor: help;
-  padding: 2px 4px;
-  border-radius: 3px;
   display: inline;
+  padding: 0 !important;
 }
 
 /* Subtle variant - light blue with dotted underline */
 .glossary-term-subtle {
   background-color: rgba(48, 123, 191, 0.2);
   border-bottom: 2px dotted #307bbf;
-  color: inherit;
 }
 
 .glossary-term-subtle:hover {
@@ -256,14 +254,11 @@ html {
 
 /* Bold variant - bold text only */
 .glossary-term-bold {
-  background-color: transparent;
-  font-weight: 700;
-  color: inherit;
-  border-bottom: none;
+  background-color: rgba(48, 123, 191, 0.05);
 }
 
 .glossary-term-bold:hover {
-  background-color: rgba(48, 123, 191, 0.1);
+  background-color: rgba(48, 123, 191, 0.15);
 }
 
 /* Custom tooltip styling with animations */
@@ -350,5 +345,3 @@ html {
     transform-origin: bottom left;
   }
 }
-
-
