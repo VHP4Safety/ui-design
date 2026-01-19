@@ -176,6 +176,11 @@
         {% if tool_details.workflow %}
           <li>Workflow: <a href={{ tool_details.workflow.url }}>{{ tool_details.workflow.title }}</a></li>
         {% endif %}
+        {% if tool_details.Other %}
+          {% if tool_details.Other.rsd %}
+          <li>Research Software Directory: <a href="https://research-software-directory.org/software/{{ tool_details.Other.rsd }}">{{ tool_details.Other.rsd }}</a>.</p>
+          {% endif %}
+        {% endif %}
       </ul>
       </div>
       <div class="tab-pane" id="simple-tabpanel-3" role="tabpanel" aria-labelledby="simple-tab-3">
