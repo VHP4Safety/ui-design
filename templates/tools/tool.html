@@ -58,7 +58,7 @@
         {% if tool_details.screenshot %}
         <div class="row">
           <div class="col-md-6">
-            {{ tool_json.description }}
+            <p>{{ tool_json.description }}
         {% if tool_details.stage %}
         <div style="margin-top: 5px">
           {% if tool_details.stage == "https://vhp4safety.github.io/glossary#VHP0000102" or
@@ -117,7 +117,7 @@
         </div>
         {%else%}
         <div class="row">
-          {{ tool_json.description }}
+          <p>{{ tool_json.description }}
         {% if tool_details.get("regulatory-question") %}
         <div style="margin-top: 5px">
           {% if tool_details.get("regulatory-question").get("1a") == "true" or
@@ -135,6 +135,11 @@
         </div>
         {% endif %}
         </div>
+        {% endif %}
+        {% if tool_details.Other %}
+          {% if tool_details.Other.wikipedia %}
+          <p>More at <a href="{{ tool_details.Other.wikipedia }}">Wikipedia</a>.</p>
+          {% endif %}
         {% endif %}
         <!-- Instance Page -->
         {% if tool_details.instance %}
@@ -170,6 +175,11 @@
         {% endif %}
         {% if tool_details.workflow %}
           <li>Workflow: <a href={{ tool_details.workflow.url }}>{{ tool_details.workflow.title }}</a></li>
+        {% endif %}
+        {% if tool_details.Other %}
+          {% if tool_details.Other.rsd %}
+          <li>Research Software Directory: <a href="https://research-software-directory.org/software/{{ tool_details.Other.rsd }}">{{ tool_details.Other.rsd }}</a>.</p>
+          {% endif %}
         {% endif %}
       </ul>
       </div>
