@@ -46,27 +46,91 @@
   opacity: 1;
 }
 
-/* Settings for the dropdownmenu and small mobile phones (screens ≤ 375px) */
-.dropdown-menu.dropdown-scroll {
-  max-height: 200px;
-  overflow-y: scroll;
-  overflow-x: hidden; 
-  white-space: normal;
-  word-wrap: break-word;
-  word-break: break-word;
-  width: 100%;      
-  min-width: 100%;   
-  max-width: none;  
-  padding: 5px 0;
-}
 
-.dropdown-menu.dropdown-scroll .dropdown-item {
-  white-space: normal;
-  line-height: 1.2;
-  padding: 6px 12px;
-}
+/* Mobile phone screens ≤ 375px */
+@media (max-width: 408px) {
 
-@media (max-width: 375px) {
+    .dropdown-menu.dropdown-scroll {
+    max-height: 200px;
+    overflow-y: scroll;
+    overflow-x: hidden; 
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-word;
+    width: 100%;      
+    min-width: 100%;   
+    max-width: none;  
+    padding: 5px 0;
+    }
+
+    .dropdown-menu.dropdown-scroll .dropdown-item {
+    white-space: normal;
+    line-height: 1.2;
+    padding: 6px 12px;
+    }
+
+  nav.navbar {
+    float: left;
+    display: inline-flex;       
+    align-items: center;
+    justify-content: flex-start;
+    width: auto;
+    margin: 0;
+    padding-right: 8px;        
+    box-sizing: border-box;
+  }
+
+  .flex-grow-1.d-flex.justify-content-center {
+    float: left;
+    display: inline-flex;
+    align-items: center;
+    width: calc(100% - 56px) !important;  /* to reserve ~56px for toggler + gap */
+    max-width: 60% !important;           /*I set this specifically to 60% so that on small iphones the searchbar and hamburger toggle are not placed on top of each other*/
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .flex-grow-1.d-flex.justify-content-center form.d-flex {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* Input and button sizing & alignment */
+  .flex-grow-1.d-flex.justify-content-center input.form-control {
+    flex: 1;
+    min-width: 60%;
+    max-width: 100%;
+    height: 38px;
+    box-sizing: border-box;
+  }
+
+  .flex-grow-1.d-flex.justify-content-center button.btn {
+    flex-shrink: 0;
+    height: 38px;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+
+  /* Toggler sizing*/
+  .navbar-toggler {
+    flex-shrink: 0;
+    width: 40px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 6px 0 0;   /* to give more space between toggler and searchbar */
+    box-sizing: border-box;
+  }
+
+ 
+  nav.navbar + .flex-grow-1.d-flex.justify-content-center + * {
+    clear: both;
+  }
   .results-section {
       padding-top: 80px; 
       padding-left: 0.25rem;

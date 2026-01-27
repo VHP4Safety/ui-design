@@ -10,7 +10,7 @@ body {
 nav.navbar {
     background-color: #e9ecef;
     position: relative;
-    padding: 0;
+    width: 100%;
 }
 
 /* Breadcrumb Items */
@@ -182,6 +182,20 @@ nav.navbar {
 /* Settings for mobile screens ≤ 375px */
 @media (max-width: 408px) {
 
+nav.navbar {
+    background-color: #e9ecef;
+    position: sticky;
+    float: left;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: auto;
+    margin: 0;
+    padding-right: 8px;
+    box-sizing: border-box;
+}
+
+
 .scroll-down-arrow {
   position: fixed; 
   bottom: 20px;
@@ -203,6 +217,11 @@ nav.navbar {
   transition: border-top-color 0.3s;
 }
 
+.search-header {
+    margin-bottom: 1rem;
+}
+
+
 /* Tools dropdown with scrollable long items */
 .dropdown-menu.dropdown-scroll {
   max-height: 300px;      
@@ -214,17 +233,10 @@ nav.navbar {
   padding: 0.25rem 0;     
 }
 
-
-/* This is set to remove extra space between the breadcrumb and casestudy progress bar*/
-nav.navbar {
-    margin-bottom: 0; 
-    padding-bottom: 0; /* this is set to remove extra padding */
-}
-
 .workflow-header {
     margin-top: 0;  
-    padding-top: 10px; 
-    padding-bottom: 10px; 
+    padding-top: 5px; 
+    padding-bottom: 5px; 
 }
 
 /* Mobile step tracker adjustments with horizontal scroll */
@@ -257,6 +269,14 @@ nav.navbar {
     min-width: 80px;
   }
 
+  .step-line {
+        flex: 0 0 30px;
+        min-width: 30px;
+        height: 2px;
+        background: #d0d4da;
+        align-self: center;
+    }
+
   .step-icon {
     width: 28px;
     height: 28px;
@@ -278,4 +298,5 @@ nav.navbar {
   body.casestudy-page .workflow-header {
     top: 120px;
   }
+}
 }

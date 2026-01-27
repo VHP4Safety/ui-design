@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/methods.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/data.css') }}">
-
+<!-- Page-specific CSS for home page -->
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/tools.css') }}"
+/>
 <!-- Marked.js for Markdown rendering -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
