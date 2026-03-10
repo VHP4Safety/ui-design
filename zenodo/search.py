@@ -18,7 +18,7 @@ class ZenodoExtractor:
 
     def __init__(
         self,
-        access_token: str|None = None,
+        access_token: str | None = None,
         community: str = "vhp4safety",
         record_type: str = "dataset",
         base_url: str = "https://zenodo.org/api/records",
@@ -35,7 +35,7 @@ class ZenodoExtractor:
             # Use Authorization header when token is provided
             self.headers["Authorization"] = f"Bearer {access_token}"
 
-    def validate_record_id(self, record_id: Any) -> tuple[bool, Any, str|None]:
+    def validate_record_id(self, record_id: Any) -> tuple[bool, Any, str | None]:
         """Validate a Zenodo record identifier.
 
         Accepts numeric recid (int or numeric string) or DOI (10.xxxx/...).
@@ -67,7 +67,11 @@ class ZenodoExtractor:
             if re.match(doi_regex, candidate, flags=re.IGNORECASE):
                 return True, candidate, None
 
-        return False, record_id, "Invalid Zenodo record identifier (expect recid or DOI)"
+        return (
+            False,
+            record_id,
+            "Invalid Zenodo record identifier (expect recid or DOI)",
+        )
 
     def build_record_url(self, record_id: Any) -> dict[str, Any]:
         """Build a public URL for a record identifier (recid or DOI)."""
@@ -114,7 +118,9 @@ class ZenodoExtractor:
             # DOI case: search for DOI
             doi = normalized
             query = f'doi:"{doi}"'
-            search = self.search_records(query=query, page=1, size=1, load_metadata=True)
+            search = self.search_records(
+                query=query, page=1, size=1, load_metadata=True
+            )
             if "error" in search:
                 return search
             hits = search.get("hits", [])
@@ -124,7 +130,9 @@ class ZenodoExtractor:
             first = hits[0]
             # parsed metadata may be under 'parsed_metadata' or 'metadata'
             parsed = first.get("parsed_metadata") or first.get("metadata")
-            parsed_url = self.build_record_url(first.get("recid") or first.get("id") or doi).get(
+            parsed_url = self.build_record_url(
+                first.get("recid") or first.get("id") or doi
+            ).get(
                 "url",
                 "",
             )
@@ -133,7 +141,9 @@ class ZenodoExtractor:
         except requests.exceptions.Timeout:
             return {"error": "Request timed out. Zenodo server may be slow."}
         except requests.exceptions.ConnectionError:
-            return {"error": "Cannot connect to Zenodo server. Check your internet connection."}
+            return {
+                "error": "Cannot connect to Zenodo server. Check your internet connection."
+            }
         except requests.exceptions.RequestException as e:
             return {"error": f"Network error: {e}"}
         except Exception as e:
@@ -168,15 +178,25 @@ class ZenodoExtractor:
                 "type": self.record_type,
             }
 
-            resp = self.session.get(self.base_url, headers=self.headers, params=params, timeout=30)
+            resp = self.session.get(
+                self.base_url, headers=self.headers, params=params, timeout=30
+            )
             if resp.status_code == 200:
                 try:
                     data = resp.json()
                 except json.JSONDecodeError as e:
                     return {"error": f"Invalid JSON response from Zenodo API: {e}"}
 
-                hits = data.get("hits", {}).get("hits", []) if isinstance(data.get("hits"), dict) else data.get("hits", [])
-                total = data.get("hits", {}).get("total") if isinstance(data.get("hits"), dict) else data.get("total", 0)
+                hits = (
+                    data.get("hits", {}).get("hits", [])
+                    if isinstance(data.get("hits"), dict)
+                    else data.get("hits", [])
+                )
+                total = (
+                    data.get("hits", {}).get("total")
+                    if isinstance(data.get("hits"), dict)
+                    else data.get("total", 0)
+                )
 
                 if not data or (isinstance(total, int) and total == 0):
                     return {"error": "No results found.", "hits": []}
@@ -192,8 +212,10 @@ class ZenodoExtractor:
                     page_size_met = len(hits) >= size
                     pages_fetched = 1
                     if not page_size_met:
-                        hits, page_size_met, pages_fetched = self._backfill_filtered_results(
-                            hits, page, size, filters, query
+                        hits, page_size_met, pages_fetched = (
+                            self._backfill_filtered_results(
+                                hits, page, size, filters, query
+                            )
                         )
 
                     return {
@@ -212,7 +234,9 @@ class ZenodoExtractor:
             elif resp.status_code == 400:
                 return {"error": "Bad request. Check your search parameters."}
             elif resp.status_code == 403:
-                return {"error": "Access forbidden. Community or collection may be restricted."}
+                return {
+                    "error": "Access forbidden. Community or collection may be restricted."
+                }
             elif resp.status_code in (500, 503):
                 return {"error": "Zenodo server error. Please try again later."}
             else:
@@ -221,7 +245,9 @@ class ZenodoExtractor:
         except requests.exceptions.Timeout:
             return {"error": "Request timed out. Zenodo server may be slow."}
         except requests.exceptions.ConnectionError:
-            return {"error": "Cannot connect to Zenodo server. Check your internet connection."}
+            return {
+                "error": "Cannot connect to Zenodo server. Check your internet connection."
+            }
         except requests.exceptions.RequestException as e:
             return {"error": f"Network error: {e}"}
         except Exception as e:
@@ -241,7 +267,9 @@ class ZenodoExtractor:
             load_metadata = True
             include_urls = True
 
-        result = self.search_records(query="", page=page, size=size, load_metadata=load_metadata, filters=filters)
+        result = self.search_records(
+            query="", page=page, size=size, load_metadata=load_metadata, filters=filters
+        )
 
         if include_urls and "hits" in result:
             result["hits"] = self._hit_url(result["hits"])
@@ -251,14 +279,22 @@ class ZenodoExtractor:
     def _hit_url(self, hits: list[dict[str, Any]]) -> list[dict[str, Any]]:
         for hit in hits:
             # try recid present in different keys
-            recid = hit.get("recid") or hit.get("id") or (hit.get("metadata", {}).get("doi") if hit.get("metadata") else None)
+            recid = (
+                hit.get("recid")
+                or hit.get("id")
+                or (hit.get("metadata", {}).get("doi") if hit.get("metadata") else None)
+            )
             if recid:
                 try:
                     recid_int = int(recid)
                     hit["url"] = self.build_record_url(recid_int).get("url", "")
                 except Exception:
                     # fallback to DOI url
-                    doi = hit.get("metadata", {}).get("doi") if hit.get("metadata") else None
+                    doi = (
+                        hit.get("metadata", {}).get("doi")
+                        if hit.get("metadata")
+                        else None
+                    )
                     if doi:
                         hit["url"] = self.build_record_url(doi).get("url", "")
         return hits
@@ -275,7 +311,9 @@ class ZenodoExtractor:
                 hit["parsed_metadata"] = {}
         return hits
 
-    def _apply_filters(self, hits: list[dict[str, Any]], filters: list[tuple[str, str]]) -> list[dict[str, Any]]:
+    def _apply_filters(
+        self, hits: list[dict[str, Any]], filters: list[tuple[str, str]]
+    ) -> list[dict[str, Any]]:
         """Apply AND-filters to hits using parsed metadata when available.
 
         Field matching is case-insensitive. For list fields (keywords, creators,
@@ -302,7 +340,9 @@ class ZenodoExtractor:
                         # item may be dict (e.g., creators)
                         if isinstance(item, dict):
                             # try to match on common text fields
-                            text = " ".join(str(v) for v in item.values() if isinstance(v, str))
+                            text = " ".join(
+                                str(v) for v in item.values() if isinstance(v, str)
+                            )
                         else:
                             text = str(item)
                         if filter_value in text.lower():
@@ -315,7 +355,10 @@ class ZenodoExtractor:
                 else:
                     if not isinstance(field_value, str):
                         field_value = str(field_value)
-                    if filter_value != field_value.lower() and filter_value not in field_value.lower():
+                    if (
+                        filter_value != field_value.lower()
+                        and filter_value not in field_value.lower()
+                    ):
                         matches_all = False
                         break
 
@@ -330,7 +373,7 @@ class ZenodoExtractor:
         page: int,
         page_size: int,
         filters: list[tuple[str, str]],
-        query: None|str = None,
+        query: None | str = None,
     ) -> tuple[list[dict[str, Any]], bool, int]:
         """Fetch subsequent pages until page_size filtered results are collected or timeout.
 
@@ -354,11 +397,17 @@ class ZenodoExtractor:
                     "communities": self.community,
                     "type": self.record_type,
                 }
-                resp = self.session.get(self.base_url, headers=self.headers, params=params, timeout=30)
+                resp = self.session.get(
+                    self.base_url, headers=self.headers, params=params, timeout=30
+                )
                 if resp.status_code != 200:
                     break
                 data = resp.json()
-                next_hits = data.get("hits", {}).get("hits", []) if isinstance(data.get("hits"), dict) else data.get("hits", [])
+                next_hits = (
+                    data.get("hits", {}).get("hits", [])
+                    if isinstance(data.get("hits"), dict)
+                    else data.get("hits", [])
+                )
                 if not next_hits:
                     break
 
@@ -385,13 +434,17 @@ class ZenodoExtractor:
             raw = raw_record.get("metadata", raw_record)
 
             metadata: dict[str, Any] = {
-                "id": raw_record.get("id") or raw_record.get("recid") or raw.get("recid"),
+                "id": raw_record.get("id")
+                or raw_record.get("recid")
+                or raw.get("recid"),
                 "recid": raw_record.get("recid") or raw_record.get("id"),
                 "doi": raw.get("doi"),
                 "doi_url": raw_record.get("doi_url") or raw.get("doi_url"),
                 "title": raw.get("title", "N/A"),
                 "description": raw.get("description", "N/A"),
-                "publication_date": raw.get("publication_date", raw.get("publication_date", "N/A")),
+                "publication_date": raw.get(
+                    "publication_date", raw.get("publication_date", "N/A")
+                ),
                 "access_right": raw.get("access_right"),
                 "creators": raw.get("creators", []),
                 "keywords": raw.get("keywords", []),
@@ -399,7 +452,9 @@ class ZenodoExtractor:
                 "license": raw.get("license", {}),
                 "grants": raw.get("grants", []),
                 "communities": raw.get("communities", []),
-                "related_identifiers": raw.get("related_identifiers", raw.get("related_identifiers", [])),
+                "related_identifiers": raw.get(
+                    "related_identifiers", raw.get("related_identifiers", [])
+                ),
                 "files": [],
                 "links": raw_record.get("links", {}),
                 "stats": raw_record.get("stats", {}),
@@ -408,7 +463,10 @@ class ZenodoExtractor:
 
             # Extract files if available at top-level or under raw
             files = raw_record.get("files") or raw.get("files") or []
+            is_rocrate = False
             for f in files:
+                if f.get("key", "").lower() == "rocrate-metadata.json":
+                    is_rocrate = True
                 metadata["files"].append(
                     {
                         "id": f.get("id"),
@@ -418,6 +476,7 @@ class ZenodoExtractor:
                         "links": f.get("links", {}),
                     }
                 )
+            metadata["is_rocrate"] = is_rocrate
 
             return metadata
 

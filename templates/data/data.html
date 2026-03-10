@@ -153,7 +153,7 @@
                             <a href="{{ dataset.doi_url}}" class="btn btn-outline-vhpteal d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View on Zenodo</a>
                             {% endif%}
                             {% if dataset.links.archive%}
-                            <a href="{{ dataset.links.archive}}" class="btn btn-outline-secondary d-inline view-details-btn"><i class="bi bi-box-fill pe-1"></i> Archive</a>
+                            <a href="{{ dataset.links.archive}}" class="btn btn-outline-secondary d-inline view-details-btn"><i class="bi bi-box-fill pe-1"></i>{%if dataset.parsed_metadata.is_rocrate %}RO-Crate{% else %}Archive{% endif %}</a>
                             {% endif%}  
                     </div>
                 </div>
