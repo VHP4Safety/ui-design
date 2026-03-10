@@ -138,6 +138,7 @@ def home():
     num_datasets = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION).list_studies(
         page=1, page_size=1
     )["total"]
+    num_datasets += ZenodoExtractor().list_records(page=1, size=1)["total"]
     return render_template(
         "home.html",
         num_tools=num_tools,
@@ -196,7 +197,7 @@ def data():
         else:
             zen_result = zen_extractor.list_records(page=page, size=page_size)
     else:
-        zen_result = {"hits": [], "total": 0, "error": None}    
+        zen_result = {"hits": [], "total": 0, "error": None}
 
     # Extract studies and metadata
     studies = bs_results.get("hits", [])
