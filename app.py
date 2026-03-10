@@ -206,7 +206,6 @@ def data():
 
     # Extract datasets and metadata from Zenodo
     datasets = zen_result.get("hits", [])
-    
     zen_total = zen_result.get("total", 0)
     zen_error: str | None = zen_result.get("error", None)
 
