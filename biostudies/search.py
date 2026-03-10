@@ -316,8 +316,8 @@ class BioStudiesExtractor:
             
             matches_all = True
             for field, value in filters:
-                field_value = metadata.get(field, "").lower()
-                filter_value = value.lower()
+                field_value = str(metadata.get(field, "")).strip().lower()
+                filter_value = str(value).strip().lower()
                 if field_value != filter_value:
                     matches_all = False
                     break
@@ -515,6 +515,9 @@ class BioStudiesExtractor:
                 "release_date": raw_data.get("rdate", "N/A"),
                 "modification_date": raw_data.get("mdate", "N/A"),
                 "type": raw_data.get("type", "N/A"),
+                "case_study": "",
+                "regulatory_question": "",
+                "flow_step": "",
                 "attributes": [],
                 "authors": [],
                 "files": [],
@@ -533,10 +536,6 @@ class BioStudiesExtractor:
                 for attr in raw_data["attributes"]:
                     attr_name = attr.get("name", "").lower()
                     attr_value = attr.get("value", "")
-                    # initialize VHP4Safety specific fields
-                    metadata["case_study"] = ""
-                    metadata["regulatory_question"] = ""
-                    metadata["flow_step"] = ""
 
                     metadata["attributes"].append(
                         {"name": attr.get("name", ""), "value": attr_value}
@@ -611,6 +610,16 @@ class BioStudiesExtractor:
                         attr_name == "description" and metadata["description"] == "N/A"
                     ):
                         metadata["description"] = attr_value
+
+                    # VHP4Safety filterable fields may appear in section attributes
+                    elif attr_name == "case study":
+                        metadata["case_study"] = attr_value
+
+                    elif attr_name == "regulatory question":
+                        metadata["regulatory_question"] = attr_value
+
+                    elif attr_name == "flow step":
+                        metadata["flow_step"] = attr_value
 
                     # Categorize biological context
                     elif attr_name in [

@@ -14,6 +14,7 @@ from wikibaseintegrator import wbi_helpers
 
 # Import BioStudies extractor
 from biostudies.search import BioStudiesExtractor
+from zenodo.search import ZenodoExtractor
 
 ################################################################################
 ### Configuration for BioStudies Integration
@@ -61,7 +62,9 @@ REG_QUESTIONS = {
 }
 
 # Derived: keep the old structure available for templates expecting {label: explanation}
-REG_QUESTION_EXPLANATIONS = {v["label"]: v["explanation"] for v in REG_QUESTIONS.values()}
+REG_QUESTION_EXPLANATIONS = {
+    v["label"]: v["explanation"] for v in REG_QUESTIONS.values()
+}
 
 
 ################################################################################
@@ -97,8 +100,13 @@ def inject_methods_menu():
             return {"methods_menu": []}
         data = resp.json()
         items = []
-        for key, val in (data.items() if isinstance(data, dict) else []):
-            title = val.get("method") or val.get("method_name_content") or val.get("method_name") or key
+        for key, val in data.items() if isinstance(data, dict) else []:
+            title = (
+                val.get("method")
+                or val.get("method_name_content")
+                or val.get("method_name")
+                or key
+            )
             items.append({"id": key, "title": title})
         # sort by title
         items = sorted(items, key=lambda x: x["title"].lower())
@@ -134,7 +142,7 @@ def home():
         "home.html",
         num_tools=num_tools,
         num_case_studies=num_case_studies,
-        num_datasets=num_datasets
+        num_datasets=num_datasets,
     )
 
 
@@ -163,29 +171,51 @@ def data():
     if filter_flow_step:
         filters.append(("flow_step", filter_flow_step))
 
-    # Initialize extractor
-    extractor = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION)
+    # Initialize extractor for BIOSTUDIES
+    bs_extractor = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION)
 
     # Fetch data based on search query or list all
     if search_query:
-        results = extractor.search_studies(
+        bs_results = bs_extractor.search_studies(
             search_query, page=page, page_size=page_size, filter=filters
         )
     else:
-        results = extractor.list_studies(
+        bs_results = bs_extractor.list_studies(
             page=page, page_size=page_size, include_urls=True, filter=filters
         )
 
+    # Initialize extractor for Zenodo
+    zen_extractor = ZenodoExtractor()
+
+    if not filters:
+        # We currently do no filter Zenodo datasets.
+        if search_query:
+            zen_result = zen_extractor.search_records(
+                search_query, page=page, size=page_size
+            )
+        else:
+            zen_result = zen_extractor.list_records(page=page, size=page_size)
+    else:
+        zen_result = {"hits": [], "total": 0, "error": None}    
+
     # Extract studies and metadata
-    studies = results.get("hits", [])
-    total = results.get("total", 0)
-    error = results.get("error", None)
+    studies = bs_results.get("hits", [])
+    bs_total = bs_results.get("total", 0)
+    bs_error: str | None = bs_results.get("error", None)
+
+    # Extract datasets and metadata from Zenodo
+    datasets = zen_result.get("hits", [])
+    zen_total = zen_result.get("total", 0)
+    zen_error: str | None = zen_result.get("error", None)
+
+    # combine totals for pagination
+    total = bs_total + zen_total
 
     # Get filtering metadata (if filters were applied)
-    filters_applied = results.get("filters_applied", False)
-    hits_returned = results.get("hits_returned", len(studies))
-    pages_fetched = results.get("pages_fetched", 1)
-    page_size_met = results.get("page_size_met", True)
+    filters_applied = bs_results.get("filters_applied", False)
+    hits_returned = bs_results.get("hits_returned", len(studies))
+    pages_fetched = bs_results.get("pages_fetched", 1)
+    page_size_met = bs_results.get("page_size_met", True)
 
     # Calculate pagination info
     has_next = (page * page_size) < total
@@ -195,13 +225,14 @@ def data():
     return render_template(
         "data/data.html",
         studies=studies,
+        datasets=datasets,
         total=total,
         page=page,
         page_size=page_size,
         search_query=search_query,
         collection_name=BIOSTUDIES_COLLECTION_NAME,
         collection=BIOSTUDIES_COLLECTION,
-        error=error,
+        errors={"zenodo": zen_error, "biostudies": bs_error},
         has_next=has_next,
         has_prev=has_prev,
         filter_case_study=filter_case_study,
@@ -292,7 +323,6 @@ def models():
         stage_explanations=STAGE_EXPLANATIONS,
         reg_question_explanations=REG_QUESTION_EXPLANATIONS,
     )
-
 
 
 ################################################################################
@@ -475,7 +505,7 @@ def tools():
             stages.append("Other")
 
         # Filtering over the regulatory questions.
-        reg_questions = { v["label"]: k for k, v in REG_QUESTIONS.items() }
+        reg_questions = {v["label"]: k for k, v in REG_QUESTIONS.items()}
 
         selected_questions = request.args.getlist("reg_q")
 
@@ -541,9 +571,7 @@ def methods():
                 or ""
             )
             norm["description"] = (
-                m.get("method_description_content")
-                or m.get("method_description")
-                or ""
+                m.get("method_description_content") or m.get("method_description") or ""
             )
             # main_url used for method webpage (catalog page)
             norm["main_url"] = m.get("catalog_webpage_url") or "no_url"
@@ -573,18 +601,38 @@ def methods():
         methods_filtered = normalized
 
         if selected_stages:
-            methods_filtered = [m for m in methods_filtered if any(s in ((m["raw"].get("vhp4safety_workflow_stage_content") or "").split(",")) for s in selected_stages)]
+            methods_filtered = [
+                m
+                for m in methods_filtered
+                if any(
+                    s
+                    in (
+                        (m["raw"].get("vhp4safety_workflow_stage_content") or "").split(
+                            ","
+                        )
+                    )
+                    for s in selected_stages
+                )
+            ]
 
         # Filter by regulatory questions if provided (REG_QUESTIONS keys map to internal fields)
-        reg_questions = { v["label"]: k for k, v in REG_QUESTIONS.items() }
+        reg_questions = {v["label"]: k for k, v in REG_QUESTIONS.items()}
         if selected_questions:
             for question in selected_questions:
                 field = reg_questions.get(question)
                 if field:
-                    methods_filtered = [m for m in methods_filtered if str(m["raw"].get(field, "")).lower() == "true"]
+                    methods_filtered = [
+                        m
+                        for m in methods_filtered
+                        if str(m["raw"].get(field, "")).lower() == "true"
+                    ]
 
         if search_query:
-            methods_filtered = [m for m in methods_filtered if search_query in m.get("service", "").lower()]
+            methods_filtered = [
+                m
+                for m in methods_filtered
+                if search_query in m.get("service", "").lower()
+            ]
 
         stages = sorted(stages_set)
         if "Other" in stages:
@@ -630,7 +678,7 @@ def method_page(methodid):
     # Try to load the full method JSON from the docs/methods folder (raw github)
     method_json = None
     # URL-encode the filename part to be safe
-    encoded = urllib.parse.quote(methodid, safe='')
+    encoded = urllib.parse.quote(methodid, safe="")
     raw_url = (
         "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/docs/methods/"
         + f"{encoded}.json"
@@ -677,7 +725,7 @@ def tool_page(toolname):
         abort(404)
 
     # get the tools metadata:
-    url = "https://cloud.vhp4safety.nl/service/" + toolname+ ".json"
+    url = "https://cloud.vhp4safety.nl/service/" + toolname + ".json"
     response = requests.get(url)
 
     if response.status_code != 200:
@@ -692,7 +740,10 @@ def tool_page(toolname):
         return f"Error processing service data: {e}", 500
 
     # Pass the json filename to the template (for JS to pick up)
-    return render_template("tools/tool.html", tool_json=tools[toolname], tool_details=tool_details)
+    return render_template(
+        "tools/tool.html", tool_json=tools[toolname], tool_details=tool_details
+    )
+
 
 ################################################################################
 ### Pages under 'Process Flow'
@@ -707,6 +758,7 @@ def SafetyAssessmentWorkflow():
 ################################################################################
 ### Pages under 'Case Studies'
 
+
 # General case studies page
 @app.route("/casestudies")
 def workflows():
@@ -719,8 +771,9 @@ def workflows():
 def casestudy(case, step):
     if case not in CASESTUDIES:
         abort(404)
-    #JS will handle steps via the URL
+    # JS will handle steps via the URL
     return render_template("case_studies/casestudy.html", case=case)
+
 
 @app.route("/workflow/<workflow>")
 def show(workflow):
@@ -832,7 +885,11 @@ def show_compounds_identifiers_as_json(cwid):
             )
         else:
             compound_list.append(
-                {"propertyLabel": expProp["propertyLabel"]["value"], "value": "", "formatterURL": ""}
+                {
+                    "propertyLabel": expProp["propertyLabel"]["value"],
+                    "value": "",
+                    "formatterURL": "",
+                }
             )
     return jsonify(compound_list), 200
 
@@ -872,7 +929,7 @@ def show_compounds_toxicology_as_json(cwid):
             compound_list.append(
                 {
                     "propertyLabel": expProp["propertyLabel"]["value"],
-                    "value": expProp["value"]["value"]
+                    "value": expProp["value"]["value"],
                 }
             )
         else:

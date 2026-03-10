@@ -103,8 +103,8 @@
 
     <div class="results-section">
         <div id="results-list" class="results-list">
-            {% if error %}
-                <div class="alert alert-warning">{{ error }}</div>
+            {% if errors.biostudies %}
+                <div class="card mb-0 alert alert-warning">{{ errors.biostudies }}</div>
             {% elif studies %}
                 <!-- Server-rendered studies -->
                 {% for study in studies %}
@@ -122,14 +122,45 @@
                         </div>
                     </div>
                     <div class="card-footer bg-white border-0 py-3">
-                            <a href="{{ study.url or '#' }}" class="btn btn-outline-vhpteal d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View in BioStudies</a>
+                            {% if study.url%}
+                            <a href="{{ study.url}}" class="btn btn-outline-vhpteal d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View in BioStudies</a>
+                            {% endif%}
                             <a href="#" class="btn btn-outline-secondary d-inline view-details-btn"><i class="bi bi-box-fill pe-1"></i> RO-Crate</a>
                     </div>
                 </div>
                 {% endfor %}
-            
-            {% else %}
-                <div class="alert alert-warning">No studies found</div>
+            {% endif %}
+            {% if errors.zenodo %}
+                <div class="card mb-0 alert alert-warning">{{ errors.zenodo }}</div>
+            {% elif datasets%}
+            <!-- Server-rendered studies -->
+                {% for dataset in datasets %}
+                <div class="card p-0 mb-0" data-accession="{{ dataset.doi or dataset.id }}">
+                    <div class="card-header justify-content-between d-flex">
+                        <span class="result-accession">{{ dataset.doi or dataset.id }}</span>
+                        <span class="badge bg-vhplight-blue text-secondary rounded-pill align-content-center">{{ dataset.metadata.resource_type.type or 'unknown' }}</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title" style="word-break: break-word;">
+                            {{ dataset.title or 'Untitled Dataset' }}
+                        </h5>
+                        <div class="card-text">
+                            <span class="text-secondary">Released: {{ dataset.metadata.publication_date or study.created or 'N/A' }}</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-0 py-3">
+                            {% if dataset.doi_url%}
+                            <a href="{{ dataset.doi_url}}" class="btn btn-outline-vhpteal d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View on Zenodo</a>
+                            {% endif%}
+                            {% if dataset.links.archive%}
+                            <a href="{{ dataset.links.archive}}" class="btn btn-outline-secondary d-inline view-details-btn"><i class="bi bi-box-fill pe-1"></i> Archive</a>
+                            {% endif%}  
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% if not datasets and not studies and not errors.biostudies and not errors.zenodo %}
+                <div class="card alert alert-warning mb-0 justify-content-center align-items-center">No results found</div>
             {% endif %}
         </div>
 
