@@ -195,7 +195,10 @@ def data():
                 search_query, page=page, size=page_size
             )
         else:
-            zen_result = zen_extractor.list_records(page=page, size=page_size)
+            # load metadata needed for is_rocrate filtering in template
+            zen_result = zen_extractor.list_records(
+                page=page, size=page_size, load_metadata=True
+            )
     else:
         zen_result = {"hits": [], "total": 0, "error": None}
 
