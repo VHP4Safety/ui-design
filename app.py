@@ -14,11 +14,12 @@ from werkzeug.routing import BaseConverter
 from wikibaseintegrator import wbi_helpers
 
 # Import BioStudies extractor
-from biostudies.search import BioStudiesExtractor
-from zenodo.search import ZenodoExtractor
+from data.biostudies.search import BioStudiesExtractor
+from data.zenodo.search import ZenodoExtractor
+from data.mapping import normalize_all
 
 ################################################################################
-CACHE_TIMEOUT = 60*60*24*5 # 5 days
+CACHE_TIMEOUT = 60 * 60 * 24 * 5  # 5 days
 ### Configuration for BioStudies Integration
 # Change these variables to switch between collections
 BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
@@ -91,6 +92,7 @@ class RegexConverter(BaseConverter):
         super(RegexConverter, self).__init__(url_map)
         self.regex = items[0]
 
+
 cache_config = {
     "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
     "CACHE_DEFAULT_TIMEOUT": CACHE_TIMEOUT,  # 60 min chaching
@@ -120,7 +122,11 @@ def get_json_dict(url: str, timeout: int = 5) -> dict:
 
 @cache.memoize(timeout=CACHE_TIMEOUT)
 def get_repository_data(
-    search_query: str, page: int = 1, page_size: int = 18, filters: list | None = None
+    search_query: str,
+    page: int = 1,
+    page_size: int = 18,
+    filters: list | None = None,
+    load_metadata: bool = True,
 ) -> tuple[dict, dict]:
     """
     Extract data from respositories
@@ -131,11 +137,19 @@ def get_repository_data(
     # Fetch data based on search query or list all
     if search_query:
         bs_results = bs_extractor.search_studies(
-            search_query, page=page, page_size=page_size, filters=filters
+            search_query,
+            page=page,
+            page_size=page_size,
+            filters=filters,
+            load_metadata=load_metadata,
         )
     else:
         bs_results = bs_extractor.list_studies(
-            page=page, page_size=page_size, include_urls=True, filters=filters
+            page=page,
+            page_size=page_size,
+            include_urls=True,
+            filters=filters,
+            load_metadata=load_metadata,
         )
 
     # Initialize extractor for Zenodo
@@ -147,12 +161,15 @@ def get_repository_data(
         # We currently do no filter Zenodo datasets.
         if search_query:
             zen_result = zen_extractor.search_records(
-                search_query, page=page, size=page_size
+                search_query, page=page, size=page_size, load_metadata=load_metadata
             )
         else:
             # load metadata needed for is_rocrate filtering in template
             zen_result = zen_extractor.list_records(
-                page=page, size=page_size, load_metadata=True
+                page=page,
+                size=page_size,
+                include_urls=True,
+                load_metadata=load_metadata,
             )
     else:
         zen_result = {"hits": [], "total": 0, "error": None}
@@ -208,15 +225,15 @@ def inject_data_menu():
     Return an empty list on any error to avoid breaking pages.
     """
     bs_results, zen_results = get_repository_data(search_query="")
-    hits:list = bs_results.get("hits", [])
+    hits: list = bs_results.get("hits", [])
     hits.extend(zen_results.get("hits", []))
     if hits:
         items = []
         for hit in hits:
             title = hit.get("title")
-            id = hit.get("accession", "") or hit.get("doi_url","") or hit.get("id","")
-            url = hit.get("url","") or hit.get("doi_url")
-            items.append({"id": id, "title": title, "url":url})
+            id = hit.get("accession", "") or hit.get("doi_url", "") or hit.get("id", "")
+            url = hit.get("url", "") or hit.get("doi_url")
+            items.append({"id": id, "title": title, "url": url})
             # sort by title
             items = sorted(items, key=lambda x: x["title"].lower())
         return {"data_menu": items}
@@ -286,6 +303,10 @@ def data():
     zen_total = zen_results.get("total", 0)
     zen_error: str | None = zen_results.get("error", None)
 
+    # enrich with normalized metadata mapping:
+
+    # studies, datasets = normalize_all([studies],[datasets])
+
     # combine totals for pagination
     total = bs_total + zen_total
 
@@ -323,6 +344,35 @@ def data():
         stage_explanations=STAGE_EXPLANATIONS,
         reg_question_explanations=REG_QUESTION_EXPLANATIONS,
     )
+
+
+################################################################################
+### DataSet detail view
+@app.route("/data/<dataid>")
+def data_detail(dataid):
+    bs_results, zen_results = get_repository_data(dataid)
+
+    studies = bs_results.get("hits", [])
+    bs_total = bs_results.get("total", 0)
+    bs_error: str | None = bs_results.get("error", None)
+
+    # Extract datasets and metadata from Zenodo
+    datasets = zen_results.get("hits", [])
+    zen_total = zen_results.get("total", 0)
+    zen_error: str | None = zen_results.get("error", None)
+
+    studies, datasets = normalize_all(studies, datasets)
+
+    if bs_error and not zen_error:
+        if zen_total != 1:
+            return abort(404)
+    elif zen_error and not bs_error:
+        if bs_total != 1:
+            return abort(404)
+    if studies:
+        return render_template("data/data_details.html", data=studies[0])
+    elif datasets:
+        return render_template("data/data_details.html", data=datasets[0])
 
 
 ################################################################################

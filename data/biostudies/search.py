@@ -169,7 +169,7 @@ class BioStudiesExtractor:
         query,
         page=1,
         page_size=10,
-        load_metadate: bool = True,
+        load_metadata: bool = True,
         filters: tuple[tuple] | None = None,
     ) -> dict:
         """
@@ -179,7 +179,7 @@ class BioStudiesExtractor:
             query (str): Search query string
             page (int): Page number for pagination
             page_size (int): Number of results per page
-            load_metadate (bool): Whether to load metadata for each hit (default: True)
+            load_metadata (bool): Whether to load metadata for each hit (default: True)
                 Only use when page_size is small to avoid performance issues
             filter (list): Optional list of tuples of (field, value) to filter results (default: no filter)
 
@@ -193,7 +193,7 @@ class BioStudiesExtractor:
             # If filters are provided, metadata must be loaded
             filters_applied = bool(filters)
             if filters_applied:
-                load_metadate = True
+                load_metadata = True
 
             params = {"query": query, "page": page, "pageSize": page_size}
 
@@ -216,7 +216,7 @@ class BioStudiesExtractor:
                         return {"error": "No results found."}
 
                     # Augment hits with URLs and metadata if requested
-                    if load_metadate:
+                    if load_metadata:
                         hits = self._hit_metadata(hits)
                     hits = self._hit_url(hits)
 

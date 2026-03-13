@@ -1,0 +1,339 @@
+{% extends "base.html" %}
+{% block content %}
+
+<link rel="stylesheet" href="/static/css/data.css" />
+
+{% with record = data.norm_metadata %}
+
+{# ---------------------------
+   Schema.org / Bioschemas JSON-LD
+   --------------------------- #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Dataset",
+  "@id": "{{ record.doi_url or record.url }}",
+  "name": "{{ (record.title or '') | e }}",
+  "description": "{{ (record.description or '') | e }}",
+  "url": "{{ record.url or '' }}"{% if record.doi %},
+  "identifier": "{{ record.doi }}"{% endif %}{% if record.license %},
+  "license": "{{ record.license }}"{% endif %}{% if record.authors and record.authors|length > 0 %},
+  "creator": [
+    {% for a in record.authors %}
+    {
+      "@type": "Person",
+      "name": "{{ a.name | default('') | e }}"{% if a.orcid %},
+      "identifier": "https://orcid.org/{{ a.orcid }}"{% endif %}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]{% endif %}
+}
+</script>
+
+{# ---------------------------
+   Helper macros
+   --------------------------- #}
+{% macro val(v, default='—') %}
+  {%- if v is none -%}{{ default }}
+  {%- elif v is string and (v|trim == '' or v|lower == 'na' or v|lower == 'n/a' or 'no response' in v|lower) -%}{{ default }}
+  {%- elif v is sequence and (v is not string) and (v|length == 0) -%}{{ default }}
+  {%- else -%}{{ v }}
+  {%- endif -%}
+{% endmacro %}
+
+{% macro fmt_date(d, default='—') %}
+  {# expects YYYY-MM-DD or any string; show first 10 chars if ISO #}
+  {%- if not d -%}{{ default }}
+  {%- else -%}{{ d[:10] }}
+  {%- endif -%}
+{% endmacro %}
+
+{% macro bytes_mb(n, default='') %}
+  {%- if n is number -%}{{ (n / 1000000) | round(1) }} MB
+  {%- else -%}{{ default }}
+  {%- endif -%}
+{% endmacro %}
+
+{# ---------------------------
+   Page header
+   --------------------------- #}
+<section class="container py-5">
+  <div class="pb-2">
+    <h1><span class="text-vhpteal">{{ val(record.title, 'Dataset') }}</span></h1>
+    {% if record.description %}
+      <p class="text-secondary">{{ record.description }}</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a class="nav-link text-vhpteal  active"
+             id="tab-general-link"
+             data-bs-toggle="tab"
+             href="#tab-general"
+             role="tab"
+             aria-controls="tab-general"
+             aria-selected="true">General</a>
+        </li>
+    {% if record.type == "study" %}
+        <li class="nav-item" role="presentation">
+          <a class="nav-link text-vhpteal "
+             id="tab-biomodel-link"
+             data-bs-toggle="tab"
+             href="#tab-biomodel"
+             role="tab"
+             aria-controls="tab-biomodel"
+             aria-selected="false">Biological Model</a>
+        </li>
+
+        <li class="nav-item" role="presentation">
+          <a class="nav-link text-vhpteal "
+             id="tab-chemical-link"
+             data-bs-toggle="tab"
+             href="#tab-chemical"
+             role="tab"
+             aria-controls="tab-chemical"
+             aria-selected="false">Chemical</a>
+        </li>
+
+        <li class="nav-item" role="presentation">
+          <a class="nav-link text-vhpteal "
+             id="tab-exposure-link"
+             data-bs-toggle="tab"
+             href="#tab-exposure"
+             role="tab"
+             aria-controls="tab-exposure"
+             aria-selected="false">Exposure</a>
+        </li>
+
+        <li class="nav-item" role="presentation">
+          <a class="nav-link text-vhpteal "
+             id="tab-endpoint-link"
+             data-bs-toggle="tab"
+             href="#tab-endpoint"
+             role="tab"
+             aria-controls="tab-endpoint"
+             aria-selected="false">Endpoint Readout</a>
+        </li>
+
+        <li class="nav-item" role="presentation">
+          <a class="nav-link text-vhpteal "
+             id="tab-analysis-link"
+             data-bs-toggle="tab"
+             href="#tab-analysis"
+             role="tab"
+             aria-controls="tab-analysis"
+             aria-selected="false">Data Analysis</a>
+        </li>
+    
+    {%endif%}
+
+        <li class="nav-item" role="presentation">
+          <a class="nav-link text-vhpteal "
+             id="tab-pubs-link"
+             data-bs-toggle="tab"
+             href="#tab-publications"
+             role="tab"
+             aria-controls="tab-publications"
+             aria-selected="false">Publications</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card-body">
+      <div class="tab-content" id="tab-content">
+
+        {# ---------------------------
+           GENERAL TAB (norm_metadata)
+           --------------------------- #}
+        <div class="tab-pane fade show active" id="tab-general" role="tabpanel" aria-labelledby="tab-general-link">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <h4>General information</h4>
+
+              <dl class="row">
+                <dt class="col-sm-4">Type</dt>
+                <dd class="col-sm-8">{{ val(record.type) }}</dd>
+
+                <dt class="col-sm-4">Internal ID</dt>
+                <dd class="col-sm-8">{{ val(record.id) }}</dd>
+
+                <dt class="col-sm-4">Release date</dt>
+                <dd class="col-sm-8">{{ fmt_date(record.ReleaseDate) }}</dd>
+
+                <dt class="col-sm-4">Version</dt>
+                <dd class="col-sm-8">{{ val(record.version) }}</dd>
+
+                <dt class="col-sm-4">License</dt>
+                <dd class="col-sm-8">{{ val(record.license) }}</dd>
+
+                <dt class="col-sm-4">URL</dt>
+                <dd class="col-sm-8">
+                  {% if record.url %}
+                    <a href="{{ record.url }}" target="_blank" rel="noopener">{{ record.url }}</a>
+                  {% else %}
+                    —
+                  {% endif %}
+                </dd>
+
+                <dt class="col-sm-4">DOI</dt>
+                <dd class="col-sm-8">
+                  {% if record.doi_url %}
+                    <a href="{{ record.doi_url }}" target="_blank" rel="noopener">{{ record.doi }}</a>
+                  {% elif record.doi %}
+                    {{ record.doi }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </dd>
+              </dl>
+
+              {% if record.funding and record.funding|length > 0 %}
+                <h5 class="mt-3">Funding</h5>
+                <ul>
+                  {% for f in record.funding %}
+                    <li>
+                      {{ val(f.funder) }}
+                      {% if f.acronym %} ({{ f.acronym }}){% endif %}
+                      {% if f.code %} — {{ f.code }}{% endif %}
+                      {% if f.url %} — <a href="{{ f.url }}" target="_blank" rel="noopener">project</a>{% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <h5 class="mt-3">Funding</h5>
+                <p class="text-muted mb-0">No funding information available.</p>
+              {% endif %}
+            </div>
+
+            <div class="col-md-4">
+              <h5>Authors</h5>
+              {% if record.authors and record.authors|length > 0 %}
+                <ul class="small">
+                  {% for a in record.authors %}
+                    <li>
+                      {{ val(a.name) }}
+                      {% if a.affiliation %}<br><span class="text-muted">{{ a.affiliation }}</span>{% endif %}
+                      {% if a.orcid %}<br><a href="https://orcid.org/{{ a.orcid }}" target="_blank" rel="noopener">ORCID: {{ a.orcid }}</a>{% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="text-muted">No author information available.</p>
+              {% endif %}
+
+              <h5 class="mt-3">Files</h5>
+              {% if record.files and record.files|length > 0 %}
+                <ul class="small">
+                  {% for f in record.files %}
+                    <li>
+                      {% if f.url %}
+                        <a href="{{ f.url }}" target="_blank" rel="noopener">{{ val(f.name) }}</a>
+                      {% else %}
+                        {{ val(f.name) }}
+                      {% endif %}
+                      {% if f.size %} <span class="text-muted">({{ bytes_mb(f.size) }})</span>{% endif %}
+                      {% if f.checksum %}<br><span class="text-muted">{{ f.checksum }}</span>{% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="text-muted">No files listed.</p>
+              {% endif %}
+              
+            </div>
+          </div>
+        </div>
+
+        {# ---------------------------
+           PLACEHOLDER TABS (fill later)
+           --------------------------- #}
+        <div class="tab-pane fade" id="tab-biomodel" role="tabpanel" aria-labelledby="tab-biomodel-link">
+          <h4>Biological Model</h4>
+          <p class="text-muted">Coming soon: organism, organ, tissue, cell line, etc.</p>
+        </div>
+
+        <div class="tab-pane fade" id="tab-chemical" role="tabpanel" aria-labelledby="tab-chemical-link">
+          <h4>Chemical</h4>
+          <p class="text-muted">Coming soon: chemical name(s), CAS, identifiers, concentrations, etc.</p>
+        </div>
+
+        <div class="tab-pane fade" id="tab-exposure" role="tabpanel" aria-labelledby="tab-exposure-link">
+          <h4>Exposure</h4>
+          <p class="text-muted">Coming soon: exposure type, duration, regimen, units, etc.</p>
+        </div>
+
+        <div class="tab-pane fade" id="tab-endpoint" role="tabpanel" aria-labelledby="tab-endpoint-link">
+          <h4>Endpoint Readout</h4>
+          <p class="text-muted">Coming soon: endpoint, measured entity, instrument, replicates, time points, units, etc.</p>
+        </div>
+
+        <div class="tab-pane fade" id="tab-analysis" role="tabpanel" aria-labelledby="tab-analysis-link">
+          <h4>Data Analysis</h4>
+          <p class="text-muted">Coming soon: normalization, model fitting, statistics, QC, etc.</p>
+        </div>
+
+        {# ---------------------------
+           PUBLICATIONS TAB (DOI-based)
+           --------------------------- #}
+        <div class="tab-pane fade" id="tab-publications" role="tabpanel" aria-labelledby="tab-pubs-link">
+          <h4>Publications</h4>
+
+          {% if record.doi %}
+            {% set doi_str = record.doi %}
+            {% set doi_link = record.doi_url if record.doi_url else ('https://doi.org/' ~ doi_str) %}
+
+            <p>
+              Primary DOI:
+              <a href="{{ doi_link }}" target="_blank" rel="noopener">{{ doi_str }}</a>
+            </p>
+
+            {# Optional: citation-js formatting (works client-side) #}
+            <div id="bibliography" class="mt-3">
+              <p class="text-muted">Loading formatted citation…</p>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/citation-js"></script>
+            <script>
+              (function () {
+                try {
+                  var doiInput = "{{ doi_str }}".split('doi.org/').pop();
+                  var Cite = require('citation-js');
+                  Cite.async(doiInput).then(function (cite) {
+                    document.getElementById('bibliography').innerHTML =
+                      "<ul>" +
+                      cite.format('bibliography', {
+                        format: 'html',
+                        template: 'apa',
+                        prepend: function () { return '<li>'; },
+                        append: function (e) {
+                          return ' <a href="https://doi.org/' + e.DOI + '" target="_blank" rel="noopener">CrossRef</a>' +
+                                 ' <a href="https://scholia.toolforge.org/doi/' + e.DOI + '" target="_blank" rel="noopener">Scholia</a></li>';
+                        }
+                      }) +
+                      "</ul>";
+                  }).catch(function () {
+                    document.getElementById('bibliography').innerHTML =
+                      '<p class="text-muted">Could not format citation automatically.</p>';
+                  });
+                } catch (e) {
+                  document.getElementById('bibliography').innerHTML =
+                    '<p class="text-muted">Citation formatting library not available.</p>';
+                }
+              })();
+            </script>
+
+          {% else %}
+            <p class="text-muted">No DOI/publications available for this record.</p>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endwith %}
+{% endblock %}

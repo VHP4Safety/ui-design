@@ -9,7 +9,7 @@
         <p class="text-secondary fs-5">Explore datasets generated or used in <span id="collection-name-sub">{{ collection_name }} and hosted on BioStudies or Zenodo archives.</span></p>
     </div>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3 d-inline">
+    <nav class="navbar navbar-expand-lg  mb-3 d-inline">
         <form method="GET" action="{{ url_for('data') }}" class="d-flex" role="search" id="search-form">
             <input type="text" class="form-control me-2" name="query" id="search-input" value="{{ search_query or '' }}" placeholder="Search for datasets (e.g., S-ONTX26, toxicity, liver...)" />
             <!-- Hidden inputs for filters -->
@@ -121,7 +121,8 @@
                             <span class="text-secondary">Released: {{ study.release_date or study.rdate or 'N/A' }}</span>
                         </div>
                     </div>
-                    <div class="card-footer bg-white border-0 py-3">
+                    <div class="card-footer btn-group bg-white border-0 py-3" role="group">
+                            <a href="{{ url_for('data_detail', dataid=study.accession) }}" style="min-width:70px" class="btn btn-vhpteal" role="button" data-bs-toggle="tooltip" data-bs-title="View details"><i class="bi bi-info-circle"></i></a>
                             {% if study.url%}
                             <a href="{{ study.url}}" class="btn btn-outline-vhpteal d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View in BioStudies</a>
                             {% endif%}
@@ -148,7 +149,8 @@
                             <span class="text-secondary">Released: {{ dataset.metadata.publication_date or study.created or 'N/A' }}</span>
                         </div>
                     </div>
-                    <div class="card-footer bg-white border-0 py-3">
+                    <div class="card-footer btn-group bg-white border-0 py-3" role="group">
+                            <a href="{{ url_for('data_detail', dataid=dataset.id) }}"style="min-width:70px" class="btn btn-vhpteal" role="button" data-bs-toggle="tooltip" data-bs-title="View details"><i class="bi bi-info-circle"></i></a>
                             {% if dataset.doi_url%}
                             <a href="{{ dataset.doi_url}}" class="btn btn-outline-vhpteal d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View on Zenodo</a>
                             {% endif%}
