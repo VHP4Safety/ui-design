@@ -1,0 +1,45 @@
+name: API check
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  api-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t vhp4safety .
+
+      - name: Start container
+        run: |
+          docker run -d --name vhp4safety -p 5050:5050 vhp4safety
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:5050/api/tools/ && break
+            sleep 2
+          done
+
+      - name: Run API checks
+        id: report
+        run: |
+          python3 .github/scripts/api_check.py > report.md
+          {
+            echo 'REPORT<<GHEOF'
+            cat report.md
+            echo 'GHEOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Post PR comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: api-check
+          message: ${{ steps.report.outputs.REPORT }}
+
+      - name: Stop container
+        if: always()
+        run: docker stop vhp4safety && docker rm vhp4safety
