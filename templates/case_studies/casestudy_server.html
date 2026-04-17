@@ -1,0 +1,229 @@
+{% extends "base.html" %} {% block content %}
+<link rel="stylesheet" href="/static/css/casestudies.css" />
+
+<style>
+  /* View-transition slide animation for browsers that support it */
+  @keyframes cs-slide-in-from-right {
+    from { transform: translateX(60px); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+  }
+  @keyframes cs-slide-in-from-left {
+    from { transform: translateX(-60px); opacity: 0; }
+    to   { transform: translateX(0);     opacity: 1; }
+  }
+  @keyframes cs-slide-out-to-left {
+    from { transform: translateX(0);     opacity: 1; }
+    to   { transform: translateX(-60px); opacity: 0; }
+  }
+  @keyframes cs-slide-out-to-right {
+    from { transform: translateX(0);    opacity: 1; }
+    to   { transform: translateX(60px); opacity: 0; }
+  }
+
+  /* Native View Transitions API (Chrome 111+, Edge 111+) */
+  ::view-transition-old(cs-main) {
+    animation: cs-slide-out-to-left 0.35s ease both;
+  }
+  ::view-transition-new(cs-main) {
+    animation: cs-slide-in-from-right 0.35s ease both;
+  }
+
+  /* Reverse direction class */
+  .nav-back::view-transition-old(cs-main) {
+    animation: cs-slide-out-to-right 0.35s ease both;
+  }
+  .nav-back::view-transition-new(cs-main) {
+    animation: cs-slide-in-from-left 0.35s ease both;
+  }
+
+  /* Fallback fade-slide for all browsers via CSS class */
+  .cs-enter {
+    animation: cs-slide-in-from-right 0.4s ease both;
+  }
+</style>
+
+{# ── Breadcrumbs ── #}
+<nav class="navbar navbar-expand-lg bg-body-tertiary" style="--bs-breadcrumb-divider:'/'" aria-label="breadcrumb">
+  <ol class="breadcrumb p-3 m-0">
+    {% for crumb in step.breadcrumbs %}
+    <li class="breadcrumb-item{% if crumb.active %} active text-vhpblue{% endif %}"
+        {% if crumb.active %}aria-current="page"{% endif %}>
+      {% if crumb.active %}
+        {{ crumb.label }}
+      {% else %}
+        <a href="{{ crumb.url }}">{{ crumb.label }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+</nav>
+
+{# ── Workflow Header ── #}
+<div class="workflow-header">
+  <h5>Process Flow</h5>
+  <div class="step-tracker">
+    {% for ws in step.workflow_steps %}
+    {% if not loop.first %}
+    <div class="step-line"></div>
+    {% endif %}
+    <div class="step-item {{ ws.state }}" data-step="{{ ws.number }}" data-type="{{ ws.type }}">
+      <div class="step-icon">{{ ws.number }}</div>
+      <span class="step-text">{{ ws.label }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{# ── Main Content ── #}
+<div class="container py-md-5 py-3" id="csMain" style="view-transition-name: cs-main;">
+
+  {% if step.nav_title %}
+  <h1 class="text-vhpblue"><span class="kinetics-bold">{{ step.nav_title }}</span></h1>
+  {% endif %}
+
+  {% if step.nav_description %}
+  <p class="step-desc">{{ step.nav_description }}</p>
+  {% endif %}
+
+  {% if step.image_html %}
+  {{ step.image_html | safe }}
+  {% endif %}
+
+  {# ── Step Buttons ── #}
+  {% if step.buttons %}
+  <div class="row py-3">
+    {% for btn in step.buttons %}
+    <div class="col-md pb-2 d-flex align-items-stretch">
+      {% if btn.disabled %}
+      <button class="btn w-100 text-white {{ btn.css_class }} disabled opacity-25" disabled>
+        <b>{{ btn.label }}</b>
+        {% if btn.description %}<br>{{ btn.description }}{% endif %}
+      </button>
+      {% elif btn.url %}
+      <a href="{{ btn.url }}" class="btn w-100 text-white {{ btn.css_class }}">
+        <b>{{ btn.label }}</b>
+        {% if btn.description %}<br>{{ btn.description }}{% endif %}
+      </a>
+      {% else %}
+      <button class="btn w-100 text-white {{ btn.css_class }}">
+        <b>{{ btn.label }}</b>
+        {% if btn.description %}<br>{{ btn.description }}{% endif %}
+      </button>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {# ── HTML Content Block ── #}
+  {% if step.content_html %}
+  <div class="mt-4">
+    {{ step.content_html | safe }}
+  </div>
+  {% endif %}
+
+  {# ── Accordion Sections ── #}
+  {% if step.accordion_sections %}
+  <div class="accordion mt-4" id="accordionMain">
+    {% for item in step.accordion_sections %}
+    {% set item_id = "accordionItem" ~ loop.index0 %}
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading{{ loop.index0 }}">
+        <button class="accordion-button{% if not loop.first %} collapsed{% endif %}"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#{{ item_id }}"
+                aria-expanded="{{ 'true' if loop.first else 'false' }}"
+                aria-controls="{{ item_id }}">
+          {{ item.section | default("Section " ~ loop.index) }}
+        </button>
+      </h2>
+      <div id="{{ item_id }}"
+           class="accordion-collapse collapse{% if loop.first %} show{% endif %}"
+           aria-labelledby="heading{{ loop.index0 }}"
+           data-bs-parent="#accordionMain">
+        <div class="accordion-body">
+          {{ item.description | default("") | safe }}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</div>
+
+{# ── Feedback Button ── #}
+<a href="https://github.com/VHP4Safety/ui-casestudy-config/issues/new">
+  <button class="btn btn-vhppink-distinct ms-2" style="position: fixed; bottom: 20px; right: 20px;">Give Us feedback</button>
+</a>
+
+<script>
+(function() {
+  var main = document.getElementById('csMain');
+
+  // On load: play enter animation
+  if (main) main.classList.add('cs-enter');
+
+  // Intercept casestudy link clicks → fetch new page, swap content with animation
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest('a[href*="/casestudies/"]');
+    if (!link) return;
+    var href = link.getAttribute('href');
+    if (!href || href.startsWith('http') || href.startsWith('//')) return;
+    e.preventDefault();
+
+    // Determine direction
+    var currentDepth = document.querySelectorAll('.breadcrumb-item').length;
+    var targetDepth = (href.match(/\//g) || []).length;
+    var goingBack = targetDepth < currentDepth;
+
+    var slideOut = goingBack ? 'cs-slide-out-to-right' : 'cs-slide-out-to-left';
+    var slideIn  = goingBack ? 'cs-slide-in-from-left'  : 'cs-slide-in-from-right';
+
+    // Animate out current content
+    main.style.animation = slideOut + ' 0.3s ease forwards';
+
+    // Fetch new page
+    fetch(href).then(function(r) { return r.text(); }).then(function(html) {
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(html, 'text/html');
+      var newMain = doc.getElementById('csMain');
+      var newBreadcrumbs = doc.querySelector('.breadcrumb');
+      var newWorkflow = doc.querySelector('.workflow-header');
+
+      // Update URL
+      history.pushState(null, '', href);
+
+      // Swap breadcrumbs
+      if (newBreadcrumbs) {
+        var bc = document.querySelector('.breadcrumb');
+        if (bc) bc.innerHTML = newBreadcrumbs.innerHTML;
+      }
+
+      // Swap workflow header
+      if (newWorkflow) {
+        var wh = document.querySelector('.workflow-header');
+        if (wh) wh.innerHTML = newWorkflow.innerHTML;
+      }
+
+      // Swap main content with slide-in
+      if (newMain) {
+        main.innerHTML = newMain.innerHTML;
+      }
+      main.style.animation = slideIn + ' 0.4s ease forwards';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }).catch(function() {
+      // Fallback: hard navigate
+      window.location.href = href;
+    });
+  });
+
+  // Handle browser back/forward
+  window.addEventListener('popstate', function() {
+    window.location.reload();
+  });
+})();
+</script>
+
+{% endblock %}
