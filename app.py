@@ -35,13 +35,19 @@ CASESTUDIES = ["thyroid", "kidney", "parkinson"]  # List of valid case studies
 
 ###Shared explanation dictionaries for filters (used in both tools and data page)
 STAGE_EXPLANATIONS = {
+    "Chemical Characteristics and Hazard Identification": "A Safety Assessment Workflow Step that categorizes services that use molecular structures, chemical descriptors, and databases to predict or analyze the properties, behavior, and potential risks of chemical substances.",
+    "Exposure": "A Safety Assessment Workflow Step which categorizes services that evaluate and analyze the route, duration, magnitude and frequency of exposure of an organism or (sub)population to one or multiple chemicals.",
+    "Toxicokinetics": "A Safety Assessment Workflow Step which categorizes services that analyze the kinetics (absorption, distribution, metabolism and excretion) of chemicals and how these processes influence the internal dose.",
+    "Toxicodynamics": "A Safety Assessment Workflow Step which categorizes services that use or extend the (quantitative) AOP framework to analyze and assess the interaction of chemicals with biological targets.",
+    "Adverse Outcome": "A Safety Assessment Workflow Step which specifically refers to clinical and epidemiological effects. It categorizes services that provide information on the toxicological endpoints and adverse outcomes at a clinical or epidemiological level of chemical exposures.",
+    "Other": "Other or unknown category.",
+    # Legacy labels (kept for the data/methods pages until their data sources migrate)
     "ADME": "Absorption, distribution, metabolism, and excretion of a substance (toxic or not) in a living organism, following exposure to this substance.",
     "Hazard Assessment": "The process of assessing the intrinsic hazard a substance poses to human health and/or the environment",
     "Chemical Information": "Information about chemical properties and identity.",
     "General": "Not specific to a flow step.",
     "(External) exposure": "External exposure assessment.",
     "Generic": "Generic category.",
-    "Other": "Other or unknown category.",
 }
 METHODS_URL = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/methods_index.json"
 # TOOLS and SERVICES are synonymous
@@ -540,6 +546,12 @@ def tools():
 
         # Mapping the URLs with glossary IDs to their text values.
         stage_mapping = {
+            "https://vhp4safety.github.io/glossary#VHP0000153": "Chemical Characteristics and Hazard Identification",
+            "https://vhp4safety.github.io/glossary#VHP0000154": "Exposure",
+            "https://vhp4safety.github.io/glossary#VHP0000155": "Toxicokinetics",
+            "https://vhp4safety.github.io/glossary#VHP0000156": "Toxicodynamics",
+            "https://vhp4safety.github.io/glossary#VHP0000158": "Adverse Outcome",
+            # Legacy mappings (superseded by the Process Flow Step URIs above)
             "https://vhp4safety.github.io/glossary#VHP0000056": "ADME",
             "https://vhp4safety.github.io/glossary#VHP0000102": "Hazard Assessment",
             "https://vhp4safety.github.io/glossary#VHP0000148": "Chemical Information",
