@@ -20,10 +20,10 @@ from data.mapping import normalize_all
 
 ################################################################################
 CACHE_TIMEOUT = 60 * 60 * 24 * 5    # 5 days -- [Ozan] I created a separate
-                                    # timeout object for the tools page because
-                                    # a 5-day caching is too long for it. 
+# timeout object for the tools page because
+# a 5-day caching is too long for it.
 CACHE_TIMEOUT_SERVICE = 60          # Separate timeout for the tools page -- 60
-                                    # seconds. 
+# seconds.
 ### Configuration for BioStudies Integration
 # Change these variables to switch between collections
 BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
@@ -131,7 +131,7 @@ def get_json_dict(url: str, timeout: int = 5) -> dict:
         return {}
 
 
-# A separate get_json_dict function for the tools page with its own timeout. 
+# A separate get_json_dict function for the tools page with its own timeout.
 @cache.memoize(timeout=CACHE_TIMEOUT_SERVICE)
 def get_json_dict_service(url: str, timeout: int = 5) -> dict:
     """Fetch xxxx_index.json from the cloud repo and return as a dictionary.
@@ -319,7 +319,7 @@ def sitemap():
 """;
     return Response(sitemapContent, mimetype='text/xml');
 
-  
+
 ################################################################################
 ### Pages under 'Data'
 @app.route("/data")
@@ -400,7 +400,6 @@ def data():
         stage_explanations=STAGE_EXPLANATIONS,
         reg_question_explanations=REG_QUESTION_EXPLANATIONS,
     )
-
 
 ################################################################################
 ### DataSet detail view
@@ -857,25 +856,25 @@ def tool_page(toolname):
     return render_template(
         "tools/tool.html", tool_json=tools[toolname], tool_details=tool_details
     )
-  
-  
+
+
 ################################################################################
 ### Pages under 'Implementation'
 
 # General Explore our work
-@app.route("/exploreourwork")
-def exploreourwork():
-    return render_template("exploreourwork.html")
+@app.route("/explore_our_work")
+def explore_our_work():
+    return render_template("RL3/explore_our_work.html")
 
 # General Training
 @app.route("/training")
 def training():
-    return render_template("training.html")
+    return render_template("RL3/training.html")
 
 # General Impact
 @app.route("/impact")
 def impact():
-    return render_template("impact.html")
+    return render_template("RL3/impact.html")
 
 ################################################################################
 ### Pages under 'Process Flow'
@@ -1168,5 +1167,3 @@ def privacy_policy():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5050, debug=True)
-
-    
