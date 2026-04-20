@@ -5,7 +5,7 @@ import re
 
 import requests
 import urllib.parse
-from flask import Flask, abort, jsonify, render_template, request
+from flask import Flask, abort, jsonify, render_template, request, Response
 from flask_caching import Cache
 from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
@@ -20,10 +20,10 @@ from data.mapping import normalize_all
 
 ################################################################################
 CACHE_TIMEOUT = 60 * 60 * 24 * 5    # 5 days -- [Ozan] I created a separate
-# timeout object for the tools page because
-# a 5-day caching is too long for it.
+                                    # timeout object for the tools page because
+                                    # a 5-day caching is too long for it. 
 CACHE_TIMEOUT_SERVICE = 60          # Separate timeout for the tools page -- 60
-# seconds.
+                                    # seconds. 
 ### Configuration for BioStudies Integration
 # Change these variables to switch between collections
 BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
@@ -35,19 +35,19 @@ CASESTUDIES = ["thyroid", "kidney", "parkinson"]  # List of valid case studies
 
 ###Shared explanation dictionaries for filters (used in both tools and data page)
 STAGE_EXPLANATIONS = {
-  "Chemical Characteristics and Hazard Identification": "A Safety Assessment Workflow Step that categorizes services that use molecular structures, chemical descriptors, and databases to predict or analyze the properties, behavior, and potential risks of chemical substances.",
-  "Exposure": "A Safety Assessment Workflow Step which categorizes services that evaluate and analyze the route, duration, magnitude and frequency of exposure of an organism or (sub)population to one or multiple chemicals.",
-  "Toxicokinetics": "A Safety Assessment Workflow Step which categorizes services that analyze the kinetics (absorption, distribution, metabolism and excretion) of chemicals and how these processes influence the internal dose.",
-  "Toxicodynamics": "A Safety Assessment Workflow Step which categorizes services that use or extend the (quantitative) AOP framework to analyze and assess the interaction of chemicals with biological targets.",
-  "Adverse Outcome": "A Safety Assessment Workflow Step which specifically refers to clinical and epidemiological effects. It categorizes services that provide information on the toxicological endpoints and adverse outcomes at a clinical or epidemiological level of chemical exposures.",
-  "Other": "Other or unknown category.",
-  # Legacy labels (kept for the data/methods pages until their data sources migrate)
-  "ADME": "Absorption, distribution, metabolism, and excretion of a substance (toxic or not) in a living organism, following exposure to this substance.",
-  "Hazard Assessment": "The process of assessing the intrinsic hazard a substance poses to human health and/or the environment",
-  "Chemical Information": "Information about chemical properties and identity.",
-  "General": "Not specific to a flow step.",
-  "(External) exposure": "External exposure assessment.",
-  "Generic": "Generic category.",
+    "Chemical Characteristics and Hazard Identification": "A Safety Assessment Workflow Step that categorizes services that use molecular structures, chemical descriptors, and databases to predict or analyze the properties, behavior, and potential risks of chemical substances.",
+    "Exposure": "A Safety Assessment Workflow Step which categorizes services that evaluate and analyze the route, duration, magnitude and frequency of exposure of an organism or (sub)population to one or multiple chemicals.",
+    "Toxicokinetics": "A Safety Assessment Workflow Step which categorizes services that analyze the kinetics (absorption, distribution, metabolism and excretion) of chemicals and how these processes influence the internal dose.",
+    "Toxicodynamics": "A Safety Assessment Workflow Step which categorizes services that use or extend the (quantitative) AOP framework to analyze and assess the interaction of chemicals with biological targets.",
+    "Adverse Outcome": "A Safety Assessment Workflow Step which specifically refers to clinical and epidemiological effects. It categorizes services that provide information on the toxicological endpoints and adverse outcomes at a clinical or epidemiological level of chemical exposures.",
+    "Other": "Other or unknown category.",
+    # Legacy labels (kept for the data/methods pages until their data sources migrate)
+    "ADME": "Absorption, distribution, metabolism, and excretion of a substance (toxic or not) in a living organism, following exposure to this substance.",
+    "Hazard Assessment": "The process of assessing the intrinsic hazard a substance poses to human health and/or the environment",
+    "Chemical Information": "Information about chemical properties and identity.",
+    "General": "Not specific to a flow step.",
+    "(External) exposure": "External exposure assessment.",
+    "Generic": "Generic category.",
 }
 METHODS_URL = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/methods_index.json"
 # TOOLS and SERVICES are synonymous
@@ -131,7 +131,7 @@ def get_json_dict(url: str, timeout: int = 5) -> dict:
         return {}
 
 
-# A separate get_json_dict function for the tools page with its own timeout.
+# A separate get_json_dict function for the tools page with its own timeout. 
 @cache.memoize(timeout=CACHE_TIMEOUT_SERVICE)
 def get_json_dict_service(url: str, timeout: int = 5) -> dict:
     """Fetch xxxx_index.json from the cloud repo and return as a dictionary.
@@ -401,6 +401,7 @@ def data():
         reg_question_explanations=REG_QUESTION_EXPLANATIONS,
     )
 
+
 ################################################################################
 ### DataSet detail view
 
@@ -613,7 +614,7 @@ def tools():
                 except Exception:
                     pass
             tool["vhp_hosted"] = vhp_hosted
-            
+
         # Getting selected stages from the URL.
         selected_stages = request.args.getlist("stage")
 
