@@ -1,0 +1,26 @@
+# Normalize all text files to LF on checkout and commit.
+# This prevents CRLF line-ending noise from files uploaded via the GitHub web UI.
+* text=auto eol=lf
+
+# Explicitly enforce LF for the most sensitive file types in this project
+*.py   text eol=lf
+*.html text eol=lf
+*.css  text eol=lf
+*.js   text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+*.txt  text eol=lf
+*.sh   text eol=lf
+
+# Treat compiled/binary assets as binary (no line-ending conversion)
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.svg  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+*.eot  binary
+*.z    binary
