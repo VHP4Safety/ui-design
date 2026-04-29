@@ -25,7 +25,7 @@ Central HTML-based web application for the VHP4Safety project, providing access 
 
 - GUI for the Virtual Human Platform
 - Multiple tools for compound, gene, and risk assessment workflows
-- Interactive visualizations (Cytoscape.js, JSmol)
+- Interactive molecular visualizations (JSmol)
 - Modular templates and CSS for easy customization
 - RESTful API endpoints (Flask)
 - Data integration from Wikidata and custom sources
@@ -55,6 +55,8 @@ Central HTML-based web application for the VHP4Safety project, providing access 
 - `home.html`: Landing page with tab descriptions, about section, partner carousel and contact form
 - `tools/tools.html`: Tool catalog with search and filter functionality
 - `tools/tool.html`: Tool-specific template, dynamically filled from .json files based on URL
+- `methods/methods.html`: Method catalog with search and filter functionality
+- `methods/method.html`: Method-specific template, dynamically filled from .json files based on URL
 - `tabs/casestudies.html`: Case study catalog where user can choose between the case studies
 - `case_studies/casestudy.html`: Case study template, dynamically filled from .json files based on URL
 - `tabs/data.html`: Data tab where metadata will be shared
@@ -63,14 +65,13 @@ Central HTML-based web application for the VHP4Safety project, providing access 
 ## CSS Styles
 
 The new philosophy is to do as much as possible with bootstrap5 native css. Before defining new styles try to
-accomplish the same (or similar) with bootstrapt5. This will improve readability, maintainability, generate less 
+accomplish the same (or similar) with bootstrap5. This will improve readability, maintainability, generate less 
 unexpected behavior and makes extending the website much easier.
 
 - `bootstrap-custom.css`: This repo uses a custom bootstrap5 cascading style sheet to reflect vhp4safety design-choices (colors) and defaults. The philosophy is to have a little as possible one-off css classes.
 - `home.css`: Home page styles
 - `tools.css`, `tool.css`: Tool and service card styles
 - `casestudies.css`: Case study styles
-- `qaop_app.css`: qAOP app and Cytoscape visualizations
 - `hackathondemo.css`: Hackathon demo page styles _(not sure if still in use?)_
 
 ### Bootstrap5 SASS maps
@@ -91,15 +92,14 @@ Move bootstrap-custom.css to `static/css`.
 ## Key Files
 
 - `app.py`: Main Flask application, routing, and rendering
-- `routes/aop_app.py`: API endpoints for AOP tools and data
 - `patch.py`: Patch script to fix dependency issues (e.g., pyshexc)
 - `requirements.txt`: Python dependencies
 - `Dockerfile` & `entrypoint.sh`: Containerization and startup
 
 ## Tech Stack
 
-- **Backend:** Python 3.10+, Flask, requests, wikidataintegrator, pyBiodatafuse
-- **Frontend:** HTML5, Jinja2, CSS3, JavaScript (Cytoscape.js, JSmol)
+- **Backend:** Python 3.10+, Flask, requests, wikidataintegrator
+- **Frontend:** HTML5, Jinja2, CSS3, JavaScript
 - **Containerization:** Docker
 - **Data:** CSV, JSON, integration with Wikidata
 
@@ -162,7 +162,7 @@ This web app uses a dynamic content loading approach for both the tool and case 
 
 - **JavaScript Files:**
 
-  - A script (`tool.js` and `casestudies.js`) fetches the appropriate JSON file (such as `static/data/tool/qaopapp_content.json`) using the name from the URL. It then updates the HTML elements with the content from that file.
+  - A script (`tool.js` and `casestudies.js`) fetches the appropriate JSON file using the name from the URL. It then updates the HTML elements with the content from that file.
 
 - **JSON Files:**
   - Each tool and case study has its own JSON file containing all the content and metadata needed for the page.

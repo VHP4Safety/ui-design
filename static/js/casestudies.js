@@ -253,29 +253,38 @@ function loadCaseStudyContent() {
   step = applyStateFromUrl();
   initWorkflowHeaderClicks();
   updateWorkflowHeader(step);
+
+  function applyContent(content) {
+    step1Contents = content.step1Contents;
+    step2Contents = content.step2Contents;
+    step3Contents = content.step3Contents;
+    step4Contents = content.step4Contents;
+    step5Contents = content.step5Contents;
+    step6Contents = content.step6Contents;
+    contentLoaded = true;
+    updateStep1Content();
+    updateBreadcrumb(step);
+    updateWorkflowHeader(step);
+    updateStep2Content();
+    updateStep3Content();
+    updateStep4Content();
+    updateStep5Content();
+    updateStep6Content();
+  }
+
+  // Use server-injected content (from DB) when available — no network fetch needed
+  if (window.__CASE_CONTENT__ && window.__CASE_CONTENT__.step1Contents) {
+    applyContent(window.__CASE_CONTENT__);
+    return;
+  }
+
+  // Fallback: fetch from GitHub (used when content not injected server-side)
   const caseStudy = getCaseStudyNameFromUrl();
   const caseStudyBranch = getCaseStudyVersionFromUrl();
   var data_url = `https://raw.githubusercontent.com/VHP4Safety/ui-casestudy-config/${caseStudyBranch}/${caseStudy}_content.json`;
-  //var data_url_test = `https://raw.githubusercontent.com/johannehouweling/ui-casestudy-config/refs/heads/jh-content-structure/${caseStudy}_content.json`
   fetch(data_url)
     .then((res) => res.json())
-    .then((content) => {
-      step1Contents = content.step1Contents;
-      step2Contents = content.step2Contents;
-      step3Contents = content.step3Contents;
-      step4Contents = content.step4Contents;
-      step5Contents = content.step5Contents;
-      step6Contents = content.step6Contents;
-      contentLoaded = true;
-      updateStep1Content();
-      updateBreadcrumb(step);
-      updateWorkflowHeader(step);
-      updateStep2Content();
-      updateStep3Content();
-      updateStep4Content();
-      updateStep5Content();
-      updateStep6Content();
-    });
+    .then((content) => applyContent(content));
 }
 
 function getCaseStudyDisplayName() {
@@ -473,14 +482,14 @@ function updateWorkflowHeader(activeStepNumber) {
 }
 
 // Function for backward clickability of the step-icons in the workflow header
-let currentStep=1;
 function initWorkflowHeaderClicks() {
   const steps = document.querySelectorAll(".step-item");
 
   steps.forEach(step => {
     step.addEventListener("click", () => {
       const stepNum = parseInt(step.getAttribute("data-step"));
-      if (stepNum <= currentStep) { //Goes back to step 1 (start of the workflow)
+      const currentStep = getCurrentStepNumber();
+      if (stepNum < currentStep) { // Allow navigating back to any previously visited step
          goToStep(stepNum); 
       }
     });

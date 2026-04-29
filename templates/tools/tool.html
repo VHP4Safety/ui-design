@@ -223,7 +223,7 @@
         <ul>
           {% if tool_details.provider %}{% if tool_details.provider.contact %}
             {% if tool_details.provider.contact.name %}
-              <li>{{ tool_details.provider.contact.name }}{% if tool_details.provider.name %} ({{ tool_details.provider.name }}){% endif%}</li>
+              <li>{% if tool_details.provider.email %}<a href="mailto:{{tool_details.provider.email}}">{% endif %}{{ tool_details.provider.contact.name }}{% if tool_details.provider.name %}{% if tool_details.provider.email %}</a>{% endif %} ({{ tool_details.provider.name }}){% endif %}</li>
             {% else %}
               {% if tool_details.provider.name %}<li>{{ tool_details.provider.name }}</li>{% endif%}
             {% endif %}

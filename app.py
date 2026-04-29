@@ -41,13 +41,19 @@ CASESTUDIES = ["thyroid", "kidney", "parkinson"]  # List of valid case studies
 
 ###Shared explanation dictionaries for filters (used in both tools and data page)
 STAGE_EXPLANATIONS = {
+    "Chemical Characteristics and Hazard Identification": "A Safety Assessment Workflow Step that categorizes services that use molecular structures, chemical descriptors, and databases to predict or analyze the properties, behavior, and potential risks of chemical substances.",
+    "Exposure": "A Safety Assessment Workflow Step which categorizes services that evaluate and analyze the route, duration, magnitude and frequency of exposure of an organism or (sub)population to one or multiple chemicals.",
+    "Toxicokinetics": "A Safety Assessment Workflow Step which categorizes services that analyze the kinetics (absorption, distribution, metabolism and excretion) of chemicals and how these processes influence the internal dose.",
+    "Toxicodynamics": "A Safety Assessment Workflow Step which categorizes services that use or extend the (quantitative) AOP framework to analyze and assess the interaction of chemicals with biological targets.",
+    "Adverse Outcome": "A Safety Assessment Workflow Step which specifically refers to clinical and epidemiological effects. It categorizes services that provide information on the toxicological endpoints and adverse outcomes at a clinical or epidemiological level of chemical exposures.",
+    "Other": "Other or unknown category.",
+    # Legacy labels (kept for the data/methods pages until their data sources migrate)
     "ADME": "Absorption, distribution, metabolism, and excretion of a substance (toxic or not) in a living organism, following exposure to this substance.",
     "Hazard Assessment": "The process of assessing the intrinsic hazard a substance poses to human health and/or the environment",
     "Chemical Information": "Information about chemical properties and identity.",
     "General": "Not specific to a flow step.",
     "(External) exposure": "External exposure assessment.",
     "Generic": "Generic category.",
-    "Other": "Other or unknown category.",
 }
 METHODS_URL = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/methods_index.json"
 # TOOLS and SERVICES are synonymous
@@ -533,6 +539,7 @@ def tools():
     try:
         conn = get_conn()
 
+        # Getting selected stages from the URL.
         selected_stages = request.args.getlist("stage")
         search_query = request.args.get("search", "").strip().lower()
 
@@ -763,6 +770,24 @@ def tool_page(toolname):
 
 
 ################################################################################
+### Pages under 'Implementation'
+
+# General Explore our work
+@app.route("/explore_our_work")
+def explore_our_work():
+    return render_template("implementation/explore_our_work.html")
+
+# General Training
+@app.route("/training")
+def training():
+    return render_template("implementation/training.html")
+
+# General Impact
+@app.route("/impact")
+def impact():
+    return render_template("implementation/impact.html")
+
+################################################################################
 ### Pages under 'Process Flow'
 
 
@@ -786,8 +811,9 @@ def workflows():
     )
 
 
-@app.route("/casestudies/<case>")
+@app.route("/casestudies/<case>", defaults={"subpath": ""})
 @app.route("/casestudies/<case>/<path:subpath>")
+# additional routes are parsed client-side via JS to allow smooth animation
 def casestudy(case: str, subpath: str = ""):
     conn = get_conn()
     cs = conn.execute("SELECT * FROM case_studies WHERE slug = ?", (case,)).fetchone()
@@ -795,16 +821,12 @@ def casestudy(case: str, subpath: str = ""):
     if not cs:
         abort(404)
 
-    parts = [
-        p for p in subpath.split("/") if p
-    ] if subpath else []
-
-    step = resolve_casestudy(case, parts)
-    if step is None:
-        abort(404)
-
+    # Load content JSON from DB and pass inline so JS skips the GitHub fetch
+    raw = cs["content_json"] if cs["content_json"] else "{}"
     return render_template(
-        "case_studies/casestudy_server.html", step=step
+        "case_studies/casestudy.html",
+        case=case,
+        case_content_json=raw,
     )
 
 

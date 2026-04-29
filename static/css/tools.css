@@ -46,6 +46,14 @@
   opacity: 1;
 }
 
+.vhp-badge {
+  width: 40px;
+  height: 40px;
+  filter: none !important;
+  opacity: 1 !important;
+  flex-shrink: 0;
+}
+
 
 /* Mobile phone screens ≤ 375px */
 @media (max-width: 408px) {

@@ -15,6 +15,8 @@
         <p class="text-secondary fs-5"> Explore tools developed by and/or used in VHP4Safety. </p>
         <p>You can search for a tool that you know using the search box below. Alternatively, you can filter the tools with respect to the <a class="link-vhppink text-decoration-none" href="{{ url_for('workflows') }}#about-section">case studies' flow step</a> that they belong to and/or the regulatory question that they are associated with. Use the "Filters" button to show filter options, then "Apply Filter" to see results, and click "Clear Filter" to reset the filters.</p>
 
+        <p class="text-secondary fs-5"> Contribution and Feedback </p>
+        <p>We welcome and appreciate any feedback on this catalog of tools or the individual tools listed in it. We also appreciate receiving requests for other tools that you are aware of and deem relevant to this catalog. For these contribution and feedback, please feel free to create <a class="link-vhppink text-decoration-none" href="https://github.com/VHP4Safety/virtual-human-platform/issues">an issue at our repository</a>.
     </div>
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3 d-inline">
@@ -104,6 +106,19 @@
         </div>
     </nav>
 
+    <!-- Icon Legend -->
+    <div class="d-flex align-items-center gap-4 mt-3 ms-2">
+        <strong>Legend:</strong>
+        <span class="d-flex align-items-center gap-1">
+            <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_HexaHead_300.png" alt="Developed by VHP" style="width:28px;height:28px;">
+            = Developed by VHP
+        </span>
+        <span class="d-flex align-items-center gap-1">
+            <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" style="width:28px;height:28px;">
+            = Hosted by VHP
+        </span>
+    </div>
+
     <!-- Tools List -->
     <div class="results-section mt-2 pt-3">
         <ul class="results-list p-0">
@@ -115,7 +130,15 @@
                     {% endif %}
                     </div>
                     <div class="card-body">
-                        <h2 class="card-title">{{ item.service }}</h2>
+                        <div class="d-flex align-items-center gap-2">
+                            <h2 class="card-title mb-0">{{ item.service }}</h2>
+                            {% if item.inst_url != "no_url" %}
+                                <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_HexaHead_300.png" alt="Developed by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Developed by VHP">
+                                {% if item.vhp_hosted %}
+                                    <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Hosted by VHP">
+                                {% endif %}
+                            {% endif %}
+                        </div>
                         <p id="desc" class="card-text">{{ item.description }}</p>
                     </div>
                     <div class="card-footer bg-white border-0 py-3">
@@ -125,21 +148,13 @@
                              <!-- Catalog Page -->
                             <a href="{{ url_for('tools') }}/{{ item.id }}" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-title="View tool details"><i class="bi bi-info-circle"></i></a>
 
-                             <!-- Instance Page -->
-                            {% if item.inst_url == "no_url" %}
-                                <a type="button" class="btn btn-outline-vhppink disabled" data-bs-toggle="tooltip" data-bs-title="There is no interactive tools available at the moment">External Tool</a> 
+                             <!-- Go to tool -->
+                            {% if item.inst_url != "no_url" %}
+                                <a type="button" href="{{ item.inst_url }}" class="btn btn-vhppink flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Go to tool">Go to tool</a>
+                            {% elif item.main_url != "no_url" %}
+                                <a type="button" href="{{ item.main_url }}" class="btn btn-vhppink flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Go to tool">Go to tool</a>
                             {% else %}
-                                <a type="button" href="{{ item.inst_url }}" class="btn btn-vhppink flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Try VHP-hosted instance">Run the tool</a>
-                            {% endif %}                   
-
-
-                            <!-- Tool Webpage -->
-                            {% if item.main_url == "no_url" %}
-                                <a type="button" class="btn btn-outline-secondary disabled" data-bs-toggle="tooltip" data-bs-title="No webpage available"><i class="bi bi-box-arrow-up-right"></i>
-</a> 
-                            {% else %}
-                                <a type="button" href="{{ item.main_url }}" class="btn btn-outline-secondary" target="_blank" data-bs-toggle="tooltip" data-bs-title="Visit main webpage"><i class="bi bi-box-arrow-up-right"></i>
-</a>
+                                <a type="button" class="btn btn-outline-vhppink disabled flex-grow-1" data-bs-toggle="tooltip" data-bs-title="No webpage available">Go to tool</a>
                             {% endif %}
 
                             <!-- Meta-Data -->
