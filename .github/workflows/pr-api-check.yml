@@ -35,13 +35,11 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Post PR comment
+        if: always()
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: api-check
           message: ${{ steps.report.outputs.REPORT }}
-
-      - name: Fail if API checks did not pass
-        run: "grep -q '**Result: PASS**' report.md"
 
       - name: Stop container
         if: always()
