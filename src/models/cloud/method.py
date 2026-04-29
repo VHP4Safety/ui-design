@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, Field
+
 
 class ServiceContact(BaseModel):
     name: Optional[str] = None
@@ -90,22 +90,20 @@ class ServiceIndexEntry(BaseModel):
     main_url: Optional[str] = None
     inst_url: Optional[str] = None
 
-    # Regulatory question flags
-    reg_q_1a: Optional[str] = None
-    reg_q_1b: Optional[str] = None
-    reg_q_2a: Optional[str] = None
-    reg_q_2b: Optional[str] = None
-    reg_q_3a: Optional[str] = None
-    reg_q_3b: Optional[str] = None
+    # Regulatory question flags (stored as 0/1 in DB)
+    reg_q_1a: Optional[bool] = None
+    reg_q_1b: Optional[bool] = None
+    reg_q_2a: Optional[bool] = None
+    reg_q_2b: Optional[bool] = None
+    reg_q_3a: Optional[bool] = None
+    reg_q_3b: Optional[bool] = None
 
     # Upstream issue-template fields (new-tool-service-entry.yml)
     login: Optional[str] = None
     api_type: Optional[str] = Field(None, alias="api")
     casestudy: Optional[str] = None
     provider: Optional[str] = None
-    provider_email: Optional[str] = Field(
-        None, alias="provider-email"
-    )
+    provider_email: Optional[str] = Field(None, alias="provider-email")
     citation: Optional[str] = None
     version: Optional[str] = None
     license: Optional[str] = None

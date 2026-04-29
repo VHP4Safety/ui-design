@@ -40,9 +40,9 @@ class BioStudiesExtractor:
 
         # Examples: S-ONTX26, E-MTAB-1234, S-BSST123, S-VHPS21, S-TOXR1735
         patterns = [
-            r"^S-[A-Z0-9]+$",      # Studies starting with S-
-            r"^E-[A-Z]+-\d+$",     # Expression studies like E-MTAB-1234
-            r"^[A-Z]+-\d+$",       # General pattern like ABC-123
+            r"^S-[A-Z0-9]+$",  # Studies starting with S-
+            r"^E-[A-Z]+-\d+$",  # Expression studies like E-MTAB-1234
+            r"^[A-Z]+-\d+$",  # General pattern like ABC-123
         ]
 
         if not any(re.match(pattern, verified_id) for pattern in patterns):
@@ -88,10 +88,7 @@ class BioStudiesExtractor:
         # Encode only the filename segment (allow "/" for potential subpaths)
         safe_name = quote(filename, safe="/")
 
-        return (
-            self.ftp_base
-            + f"{prefix}/{num3}/{accno}/Files/{safe_name}"
-        )
+        return self.ftp_base + f"{prefix}/{num3}/{accno}/Files/{safe_name}"
 
     def url_exists_no_download(self, url: str, timeout=(3.05, 10)):
         """
@@ -174,13 +171,14 @@ class BioStudiesExtractor:
 
         # Prefer verified existing ones if available
         verified = [
-            f for f in matches
+            f
+            for f in matches
             if isinstance(f, dict)
             and isinstance(f.get("exists_check"), dict)
             and f["exists_check"].get("exists") is True
         ]
         return verified[0] if verified else matches[0]
-    
+
     # -----------------------------
     # API operations
     # -----------------------------
@@ -213,34 +211,50 @@ class BioStudiesExtractor:
                 try:
                     data = response.json()
                     if not data:
-                        return {"error": f"Empty response received for study {verified_id}"}
+                        return {
+                            "error": f"Empty response received for study {verified_id}"
+                        }
 
                     # Parse metadata first, then build URL using the derived collection (no extra API calls)
                     md = self.parse_metadata(data)
                     collection = md.get("collection", "")
-                    web_url = self.build_study_url(verified_id, collection).get("url", "")
+                    web_url = self.build_study_url(verified_id, collection).get(
+                        "url", ""
+                    )
                     return md | {"url": web_url}
 
                 except json.JSONDecodeError as e:
-                    return {"error": f"Invalid JSON response from BioStudies API: {str(e)}"}
+                    return {
+                        "error": f"Invalid JSON response from BioStudies API: {str(e)}"
+                    }
 
             elif response.status_code == 404:
                 return {
                     "error": f"Study '{verified_id}' not found in BioStudies database. Please check the ID and try again."
                 }
             elif response.status_code == 403:
-                return {"error": "Access forbidden. The study may be restricted or private."}
+                return {
+                    "error": "Access forbidden. The study may be restricted or private."
+                }
             elif response.status_code == 500:
                 return {"error": "BioStudies server error. Please try again later."}
             elif response.status_code == 503:
-                return {"error": "BioStudies service temporarily unavailable. Please try again later."}
+                return {
+                    "error": "BioStudies service temporarily unavailable. Please try again later."
+                }
             else:
-                return {"error": f"BioStudies API returned status {response.status_code}. Please try again later."}
+                return {
+                    "error": f"BioStudies API returned status {response.status_code}. Please try again later."
+                }
 
         except requests.exceptions.Timeout:
-            return {"error": "Request timed out. BioStudies server may be slow. Please try again."}
+            return {
+                "error": "Request timed out. BioStudies server may be slow. Please try again."
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Cannot connect to BioStudies server. Please check your internet connection."}
+            return {
+                "error": "Cannot connect to BioStudies server. Please check your internet connection."
+            }
         except requests.exceptions.RequestException as e:
             return {"error": f"Network error: {str(e)}"}
         except Exception as e:
@@ -300,7 +314,9 @@ class BioStudiesExtractor:
                 "User-Agent": "BioStudies-VHP4Safety-App/1.0",
             }
 
-            response = requests.get(self.search_url, headers=headers, params=params, timeout=30)
+            response = requests.get(
+                self.search_url, headers=headers, params=params, timeout=30
+            )
 
             if response.status_code == 200:
                 try:
@@ -322,8 +338,10 @@ class BioStudiesExtractor:
                         pages_fetched = 1
 
                         if not page_size_met:
-                            hits, page_size_met, pages_fetched = self._backfill_filtered_results(
-                                hits, page, page_size, filters, query
+                            hits, page_size_met, pages_fetched = (
+                                self._backfill_filtered_results(
+                                    hits, page, page_size, filters, query
+                                )
                             )
 
                         return {
@@ -340,7 +358,9 @@ class BioStudiesExtractor:
                     return data | {"hits": hits, "total": total_hits}
 
                 except json.JSONDecodeError as e:
-                    return {"error": f"Invalid JSON response from BioStudies API: {str(e)}"}
+                    return {
+                        "error": f"Invalid JSON response from BioStudies API: {str(e)}"
+                    }
 
             elif response.status_code == 400:
                 return {"error": "Bad request. Please check your search parameters."}
@@ -349,14 +369,22 @@ class BioStudiesExtractor:
             elif response.status_code == 500:
                 return {"error": "BioStudies server error. Please try again later."}
             elif response.status_code == 503:
-                return {"error": "BioStudies service temporarily unavailable. Please try again later."}
+                return {
+                    "error": "BioStudies service temporarily unavailable. Please try again later."
+                }
             else:
-                return {"error": f"BioStudies API returned status {response.status_code}. Please try again later."}
+                return {
+                    "error": f"BioStudies API returned status {response.status_code}. Please try again later."
+                }
 
         except requests.exceptions.Timeout:
-            return {"error": "Request timed out. BioStudies server may be slow. Please try again."}
+            return {
+                "error": "Request timed out. BioStudies server may be slow. Please try again."
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Cannot connect to BioStudies server. Please check your internet connection."}
+            return {
+                "error": "Cannot connect to BioStudies server. Please check your internet connection."
+            }
         except requests.exceptions.RequestException as e:
             return {"error": f"Network error: {str(e)}"}
         except Exception as e:
@@ -385,9 +413,15 @@ class BioStudiesExtractor:
         params = {"page": page, "pageSize": page_size}
 
         try:
-            response = requests.get(self.search_url, headers=headers, params=params, timeout=30)
+            response = requests.get(
+                self.search_url, headers=headers, params=params, timeout=30
+            )
         except requests.exceptions.RequestException as e:
-            return {"error": f"Network error during listing: {e}", "total": 0, "hits": []}
+            return {
+                "error": f"Network error during listing: {e}",
+                "total": 0,
+                "hits": [],
+            }
 
         if response.status_code != 200:
             return {
@@ -399,7 +433,11 @@ class BioStudiesExtractor:
         try:
             data = response.json()
         except json.JSONDecodeError as e:
-            return {"error": f"Invalid JSON response from BioStudies API: {str(e)}", "total": 0, "hits": []}
+            return {
+                "error": f"Invalid JSON response from BioStudies API: {str(e)}",
+                "total": 0,
+                "hits": [],
+            }
 
         total_hits = data.get("totalHits") or data.get("total") or 0
         hits = data.get("hits", [])
@@ -498,12 +536,17 @@ class BioStudiesExtractor:
 
             try:
                 params = {"page": current_page, "pageSize": page_size}
-                headers = {"Accept": "application/json", "User-Agent": "BioStudies-VHP4Safety-App/1.0"}
+                headers = {
+                    "Accept": "application/json",
+                    "User-Agent": "BioStudies-VHP4Safety-App/1.0",
+                }
 
                 if query:
                     params["query"] = query
 
-                response = requests.get(self.search_url, headers=headers, params=params, timeout=30)
+                response = requests.get(
+                    self.search_url, headers=headers, params=params, timeout=30
+                )
                 if response.status_code != 200:
                     break
 
@@ -526,7 +569,9 @@ class BioStudiesExtractor:
     # -----------------------------
     # Metadata parsing (FIXED)
     # -----------------------------
-    def parse_metadata(self, raw_data: dict, *, validate_files: bool = True, file_timeout=(3.05, 10)):
+    def parse_metadata(
+        self, raw_data: dict, *, validate_files: bool = True, file_timeout=(3.05, 10)
+    ):
         """
         Parse and structure the metadata from BioStudies API response.
 
@@ -539,16 +584,16 @@ class BioStudiesExtractor:
                 "accession": raw_data.get("accno", "N/A"),
                 "title": raw_data.get("title", "N/A"),
                 "description": raw_data.get("description", "N/A"),
-                "release_date": raw_data.get("rdate", raw_data.get("ReleaseDate", "N/A")),
+                "release_date": raw_data.get(
+                    "rdate", raw_data.get("ReleaseDate", "N/A")
+                ),
                 "modification_date": raw_data.get("mdate", "N/A"),
                 "type": raw_data.get("type", "N/A"),
-
                 # VHP4Safety filterable fields
                 "case_study": "",
                 "regulatory_question": "",
                 "flow_step": "",
                 "collection": "",
-
                 "attributes": [],
                 "authors": [],
                 "files": [],
@@ -556,11 +601,9 @@ class BioStudiesExtractor:
                 "protocols": [],
                 "publications": [],
                 "organizations": [],
-
                 "biological_context": {},
                 "technical_details": {},
                 "experimental_design": {},
-
                 "raw_data": raw_data,
             }
 
@@ -583,13 +626,28 @@ class BioStudiesExtractor:
                     metadata["flow_step"] = attr_value
 
             BIO_KEYS = {
-                "organism", "species", "organism part", "organ", "cell type",
-                "tissue", "disease", "disease state", "sample type",
+                "organism",
+                "species",
+                "organism part",
+                "organ",
+                "cell type",
+                "tissue",
+                "disease",
+                "disease state",
+                "sample type",
             }
             TECH_KEYS = {
-                "platform", "instrument", "assay", "assay type", "library strategy",
-                "library source", "data type", "sequencing mode", "sequencing date",
-                "index adapters", "pipeline",
+                "platform",
+                "instrument",
+                "assay",
+                "assay type",
+                "library strategy",
+                "library source",
+                "data type",
+                "sequencing mode",
+                "sequencing date",
+                "index adapters",
+                "pipeline",
             }
             AUTHOR_KEYS = {"author", "authors", "contact", "submitter"}
 
@@ -632,7 +690,9 @@ class BioStudiesExtractor:
                     if not isinstance(f, dict):
                         continue
 
-                    file_path = (f.get("path") or f.get("name") or f.get("filename") or "").strip()
+                    file_path = (
+                        f.get("path") or f.get("name") or f.get("filename") or ""
+                    ).strip()
                     if not file_path:
                         continue
 
@@ -649,7 +709,9 @@ class BioStudiesExtractor:
                         "path": file_path,
                         "size": f.get("size"),
                         "type": f.get("type"),
-                        "description": fam.get("Description") or fam.get("description") or "",
+                        "description": fam.get("Description")
+                        or fam.get("description")
+                        or "",
                         "file_kind": fam.get("Type") or fam.get("type") or "",
                         "attributes": f.get("attributes", []),
                         "url": url,
@@ -658,7 +720,9 @@ class BioStudiesExtractor:
                     }
 
                     if validate_files and url:
-                        entry["exists_check"] = self.url_exists_no_download(url, timeout=file_timeout)
+                        entry["exists_check"] = self.url_exists_no_download(
+                            url, timeout=file_timeout
+                        )
 
                     metadata["files"].append(entry)
 
@@ -678,10 +742,16 @@ class BioStudiesExtractor:
             # ---- org lookup
             organization_lookup = {}
             if isinstance(raw_data.get("section"), dict):
-                self._build_organization_lookup(raw_data["section"], organization_lookup)
+                self._build_organization_lookup(
+                    raw_data["section"], organization_lookup
+                )
 
             # ---- section attributes
-            section = raw_data.get("section") if isinstance(raw_data.get("section"), dict) else None
+            section = (
+                raw_data.get("section")
+                if isinstance(raw_data.get("section"), dict)
+                else None
+            )
             if section and isinstance(section.get("attributes"), list):
                 for attr in section["attributes"]:
                     if not isinstance(attr, dict):
@@ -690,9 +760,13 @@ class BioStudiesExtractor:
                     attr_name = _norm_attr_name(attr)
                     value = _attr_value(attr)
 
-                    if attr_name == "title" and (metadata["title"] == "N/A" or not metadata["title"]):
+                    if attr_name == "title" and (
+                        metadata["title"] == "N/A" or not metadata["title"]
+                    ):
                         metadata["title"] = value
-                    elif attr_name == "description" and (metadata["description"] == "N/A" or not metadata["description"]):
+                    elif attr_name == "description" and (
+                        metadata["description"] == "N/A" or not metadata["description"]
+                    ):
                         metadata["description"] = value
 
                     _capture_vhp_fields(attr_name, value)
@@ -701,7 +775,9 @@ class BioStudiesExtractor:
 
             # ---- comprehensive extraction (NO FILES inside this anymore!)
             if section:
-                self._extract_comprehensive_metadata(section, metadata, organization_lookup)
+                self._extract_comprehensive_metadata(
+                    section, metadata, organization_lookup
+                )
 
             # ---- files (enriched, deduped)
             if section:
@@ -725,7 +801,11 @@ class BioStudiesExtractor:
                     metadata["links"].append(link_data)
 
                     link_type = (link.get("type", "") or "").lower()
-                    if ("doi" in link_type) or ("pubmed" in link_type) or ("publication" in link_type):
+                    if (
+                        ("doi" in link_type)
+                        or ("pubmed" in link_type)
+                        or ("publication" in link_type)
+                    ):
                         metadata["publications"].append(link_data)
 
             _add_links(raw_data.get("links"))
@@ -734,14 +814,20 @@ class BioStudiesExtractor:
 
             # pick ro-crate link from available files -> requires filename to contain "rocrate"
             rocrate = self._pick_rocrate_file(metadata.get("files", []))
-            metadata["rocrate_file"] = rocrate  # full dict (name/path/url/size/exists_check...)
-            metadata["rocrate_url"] = rocrate.get("url") if isinstance(rocrate, dict) else None
+            metadata["rocrate_file"] = (
+                rocrate  # full dict (name/path/url/size/exists_check...)
+            )
+            metadata["rocrate_url"] = (
+                rocrate.get("url") if isinstance(rocrate, dict) else None
+            )
 
-            
             return metadata
 
         except Exception as e:
-            return {"error": f"Failed to parse metadata: {str(e)}", "raw_data": raw_data}
+            return {
+                "error": f"Failed to parse metadata: {str(e)}",
+                "raw_data": raw_data,
+            }
 
     # -----------------------------
     # Organisation lookup / deep extraction
@@ -756,7 +842,14 @@ class BioStudiesExtractor:
                     for attr in section["attributes"]:
                         attr_name = (attr.get("name", "") or "").lower()
                         attr_value = attr.get("value", "")
-                        if attr_name in ["name", "organization", "email", "address", "department", "affiliation"]:
+                        if attr_name in [
+                            "name",
+                            "organization",
+                            "email",
+                            "address",
+                            "department",
+                            "affiliation",
+                        ]:
                             org_data[attr_name] = attr_value
                     if org_data:
                         org_lookup[org_id] = org_data
@@ -769,7 +862,9 @@ class BioStudiesExtractor:
             for item in section:
                 self._build_organization_lookup(item, org_lookup)
 
-    def _extract_comprehensive_metadata(self, section, metadata, organization_lookup=None):
+    def _extract_comprehensive_metadata(
+        self, section, metadata, organization_lookup=None
+    ):
         """
         Comprehensively extract metadata from sections/subsections.
 
@@ -781,7 +876,10 @@ class BioStudiesExtractor:
 
         if isinstance(section, dict):
             # ---- protocols
-            if section.get("type", "").lower() == "protocols" or "protocol" in section.get("type", "").lower():
+            if (
+                section.get("type", "").lower() == "protocols"
+                or "protocol" in section.get("type", "").lower()
+            ):
                 if "subsections" in section:
                     for protocol in section["subsections"]:
                         protocol_data = {
@@ -793,7 +891,10 @@ class BioStudiesExtractor:
                         if "attributes" in protocol:
                             for attr in protocol["attributes"]:
                                 protocol_data["attributes"].append(
-                                    {"name": attr.get("name", ""), "value": attr.get("value", "")}
+                                    {
+                                        "name": attr.get("name", ""),
+                                        "value": attr.get("value", ""),
+                                    }
                                 )
 
                         metadata["protocols"].append(protocol_data)
@@ -808,7 +909,14 @@ class BioStudiesExtractor:
                         attr_name = (attr.get("name", "") or "").lower()
                         attr_value = attr.get("value", "")
 
-                        if attr_name in ["name", "first name", "last name", "email", "e-mail", "orcid"]:
+                        if attr_name in [
+                            "name",
+                            "first name",
+                            "last name",
+                            "email",
+                            "e-mail",
+                            "orcid",
+                        ]:
                             author_info[attr_name] = attr_value
                         elif attr_name == "affiliation" and attr.get("reference"):
                             author_affiliation_ref = attr_value
@@ -820,7 +928,9 @@ class BioStudiesExtractor:
                             last = author_info.get("last name", "")
                             author_name = f"{first} {last}".strip()
 
-                        email = author_info.get("email") or author_info.get("e-mail", "")
+                        email = author_info.get("email") or author_info.get(
+                            "e-mail", ""
+                        )
                         orcid = author_info.get("orcid") or None
 
                         author_entry = {
@@ -831,17 +941,28 @@ class BioStudiesExtractor:
                             "affiliation_name": "",
                         }
 
-                        if author_affiliation_ref and author_affiliation_ref in organization_lookup:
+                        if (
+                            author_affiliation_ref
+                            and author_affiliation_ref in organization_lookup
+                        ):
                             resolved_org = organization_lookup[author_affiliation_ref]
-                            author_entry["affiliation_name"] = resolved_org.get("name", "")
+                            author_entry["affiliation_name"] = resolved_org.get(
+                                "name", ""
+                            )
 
                         if author_name:
                             existing_author = next(
-                                (a for a in metadata.get("author_details", []) if a.get("name") == author_name),
+                                (
+                                    a
+                                    for a in metadata.get("author_details", [])
+                                    if a.get("name") == author_name
+                                ),
                                 None,
                             )
                             if not existing_author:
-                                metadata.setdefault("author_details", []).append(author_entry)
+                                metadata.setdefault("author_details", []).append(
+                                    author_entry
+                                )
 
                             if author_name not in metadata["authors"]:
                                 metadata["authors"].append(author_name)
@@ -852,16 +973,26 @@ class BioStudiesExtractor:
                     attr_name = (attr.get("name", "") or "").lower()
                     attr_value = attr.get("value", "")
 
-                    if attr_name in ["experimental factor", "variable", "treatment", "condition", "time point"]:
-                        metadata["experimental_design"].setdefault("factors", []).append(
-                            {"name": attr_name, "value": attr_value}
-                        )
+                    if attr_name in [
+                        "experimental factor",
+                        "variable",
+                        "treatment",
+                        "condition",
+                        "time point",
+                    ]:
+                        metadata["experimental_design"].setdefault(
+                            "factors", []
+                        ).append({"name": attr_name, "value": attr_value})
 
             # ---- recurse
             if "subsections" in section:
                 for subsection in section["subsections"]:
-                    self._extract_comprehensive_metadata(subsection, metadata, organization_lookup)
+                    self._extract_comprehensive_metadata(
+                        subsection, metadata, organization_lookup
+                    )
 
         elif isinstance(section, list):
             for item in section:
-                self._extract_comprehensive_metadata(item, metadata, organization_lookup)
+                self._extract_comprehensive_metadata(
+                    item, metadata, organization_lookup
+                )

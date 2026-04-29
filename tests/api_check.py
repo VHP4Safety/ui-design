@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""API check: counts, validation summary, and route health."""
+"""API quality check — Pydantic-first.
+
+For every entity type, fetches the API response and validates each
+entry through its Pydantic model (structural) + domain rules (content).
+Reports counts, field completeness, content warnings, and route health.
+"""
+
+from __future__ import annotations
 
 import json
 import os
@@ -9,11 +16,15 @@ import sys
 import urllib.request
 from datetime import datetime, timezone
 
+from .quality_models import ENTITY_CHECKS
 
-def _port_from_dockerfile(dockerfile_path: str) -> str:
-    """Read the first EXPOSE port from the Dockerfile next to this repo."""
+
+# resolve BASE URL
+
+
+def _port_from_dockerfile(path: str) -> str:
     try:
-        with open(dockerfile_path) as f:
+        with open(path) as f:
             for line in f:
                 m = re.match(r"^\s*EXPOSE\s+(\d+)", line)
                 if m:
@@ -23,51 +34,44 @@ def _port_from_dockerfile(dockerfile_path: str) -> str:
     return "5050"
 
 
-def _container_ip(container_name: str) -> str | None:
-    """Return the bridge IP of a running container, or None."""
+def _container_ip(name: str) -> str | None:
     try:
         out = subprocess.check_output(
             [
-                "docker", "inspect",
-                "--format", "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}",
-                container_name,
+                "docker",
+                "inspect",
+                "--format",
+                "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}",
+                name,
             ],
             stderr=subprocess.DEVNULL,
             text=True,
         ).strip()
-        return out if out else None
+        return out or None
     except Exception:
         return None
 
 
-# ── resolve BASE URL ─────────────────────────────────────────────
-# Priority:
-#   1. VHP_BASE_URL env var (set manually or by CI)
-#   2. Docker-inspect the container named in VHP_CONTAINER env var
-#   3. localhost + port from Dockerfile EXPOSE
-
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DOCKERFILE = os.path.join(REPO_ROOT, "Dockerfile")
-PORT = _port_from_dockerfile(DOCKERFILE)
+PORT = _port_from_dockerfile(os.path.join(REPO_ROOT, "Dockerfile"))
 
 if "VHP_BASE_URL" in os.environ:
     BASE = os.environ["VHP_BASE_URL"].rstrip("/")
 else:
-    container_name = os.environ.get("VHP_CONTAINER", "vhp4safety")
-    ip = _container_ip(container_name)
-    if ip:
-        BASE = f"http://{ip}:{PORT}/api"
-    else:
-        BASE = f"http://localhost:{PORT}/api"
+    ip = _container_ip(os.environ.get("VHP_CONTAINER", "vhp4safety"))
+    BASE = f"http://{ip}:{PORT}/api" if ip else f"http://localhost:{PORT}/api"
 
 print(f"# Using BASE: {BASE}", file=sys.stderr)
 
 
-def get(path):
-    url = f"{BASE}{path}"
+# HTTP helper
+
+
+def get(path: str) -> tuple[int, object]:
     try:
-        req = urllib.request.Request(url)
-        with urllib.request.urlopen(req, timeout=15) as r:
+        with urllib.request.urlopen(
+            urllib.request.Request(f"{BASE}{path}"), timeout=200  # TODO fix slow API call
+        ) as r:
             return r.status, json.loads(r.read())
     except urllib.error.HTTPError as e:
         return e.code, None
@@ -75,81 +79,126 @@ def get(path):
         return 0, None
 
 
-errors = []
+# run checks
 
-# 1. Entity counts
-ENTITIES = {
-    "Tools":                "/tools/",
-    "Methods":              "/methods/",
-    "Case studies":         "/casestudies/",
-    "Regulatory questions": "/regulatory-questions/",
-    "Stage explanations":   "/stages/",
-}
+errors: list[str] = []
+warnings: list[str] = []
 
-counts = {}
-for label, path in ENTITIES.items():
+# 1. Entity counts + content quality
+counts: dict[str, int | None] = {}
+quality_issues: list[tuple[str, str, str, str, str]] = []
+# shape: (entity, entry_id, entry_label, field, issue)
+
+for path, (checker, id_field, label_field) in ENTITY_CHECKS.items():
+    entity = path.strip("/").split("/")[0]
     status, data = get(path)
-    if status == 200 and isinstance(data, list):
-        counts[label] = len(data)
-    else:
-        counts[label] = None
+    if status != 200 or not isinstance(data, list):
+        counts[entity] = None
         errors.append(f"GET {path} -> {status}")
+        continue
 
-# 2. Validation summary
-status, validation = get("/validation/")
-if status != 200:
-    errors.append(f"GET /validation/ -> {status}")
-    validation = None
+    counts[entity] = len(data)
 
-# 3. Health check every route
-# Routes marked external=True depend on outside services (Virtuoso, BridgeDB, etc.)
-# and are reported as warnings only — they never affect PASS/FAIL.
+    for entry in data:
+        entry_id = str(entry.get(id_field, "?"))
+        entry_label = str(entry.get(label_field) or entry_id)
+        for field, msg in checker.check(entry):
+            quality_issues.append((entity, entry_id, entry_label, field, msg))
+            warnings.append(f"[{entity}] {entry_label!r} / {field}: {msg}")
+
+# 2. Validation completeness (from /validation/ endpoint)
+_, validation = get("/validation/")
+
+# 3. Route health
 ROUTES = [
-    ("GET", "/tools/",                                          False),
-    ("GET", "/tools/cdkdepict",                                 False),
-    ("GET", "/methods/",                                        False),
-    ("GET", "/methods/5_cfda_assay_to_determine_cytotoxicity",  False),
-    ("GET", "/regulatory-questions/",                           False),
-    ("GET", "/stages/",                                         False),
-    ("GET", "/casestudies/",                                    False),
-    ("GET", "/casestudies/kidney",                              False),
-    ("GET", "/compounds/Q2270",                                 True),   # proxies external source
-    ("GET", "/compounds/Q2270/properties",                      False),
-    ("GET", "/compounds/Q2270/identifiers",                     False),
-    ("GET", "/compounds/Q2270/toxicology",                      False),
-    ("GET", "/compounds/Q2270/experimental-data",               True),   # proxies external source
-    ("GET", "/data/",                                           True),   # proxies external sources
-    ("GET", "/validation/",                                     False),
-    ("GET", "/validation/tools",                                False),
+    ("/tools/", False),
+    ("/tools/cdkdepict", False),
+    ("/methods/", False),
+    ("/methods/5_cfda_assay_to_determine_cytotoxicity", False),
+    ("/regulatory-questions/", False),
+    ("/stages/", False),
+    ("/casestudies/", False),
+    ("/casestudies/kidney", False),
+    ("/compounds/Q2270", True),  # proxies Virtuoso
+    ("/compounds/Q2270/properties", False),
+    ("/compounds/Q2270/identifiers", False),
+    ("/compounds/Q2270/toxicology", False),
+    ("/compounds/Q2270/experimental-data", True),  # proxies BridgeDB
+    ("/data/", True),  # proxies external sources
+    ("/validation/", False),
+    ("/validation/tools", False),
 ]
 
-health = []
-for method, path, external in ROUTES:
+health: list[tuple[str, int, bool, bool]] = []
+for path, external in ROUTES:
     status, _ = get(path)
-    ok = 200 <= status < 300
-    health.append((method, path, status, ok, external))
-    if not ok and not external:
-        errors.append(f"{method} {path} -> {status}")
+    OK = 200 <= status < 300
+    health.append((path, status, OK, external))
+    if not OK and not external:
+        errors.append(f"GET {path} -> {status}")
+
+# 4. /data/ source stats (external: warnings only)
+_DATA_KEY_FIELDS = ("title", "description", "authors", "doi", "license")
+data_source_stats: list[dict] = []
+data_hit_details: dict[str, list[dict]] = {}  # source -> list of per-hit dicts
+_, data_resp = get("/data/")
+if isinstance(data_resp, dict):
+    for source in ("biostudies", "zenodo"):
+        block = data_resp.get(source, {})
+        hits = block.get("hits", [])
+        error = block.get("error")
+        field_stats = {
+            f: sum(
+                1 for h in hits if not h.get(f) or (isinstance(h[f], list) and not h[f])
+            )
+            for f in _DATA_KEY_FIELDS
+        }
+        data_source_stats.append(
+            {
+                "source": source,
+                "total": block.get("total", 0),
+                "returned": len(hits),
+                "error": error,
+                "field_stats": field_stats,
+            }
+        )
+        if error:
+            warnings.append(f"[data/{source}] error: {error}")
+
+        # per-hit detail: id + which key fields are present
+        hit_rows = []
+        for h in hits:
+            rec_id = h.get("id") or h.get("accession") or h.get("recid") or "?"
+            present = {
+                f: bool(h.get(f) and not (isinstance(h[f], list) and not h[f]))
+                for f in _DATA_KEY_FIELDS
+            }
+            hit_rows.append({"id": rec_id, "present": present})
+        data_hit_details[source] = hit_rows
+
 
 # build report
+
 now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-lines = [f"## API check -- {now}", ""]
+lines = [f"## API check {now}", ""]
 
-# counts
-lines.append("### Entity counts")
-lines.append("")
-lines.append("| Entity | Count |")
-lines.append("|--------|------:|")
-for label, n in counts.items():
-    lines.append(f"| {label} | {n if n is not None else 'ERR'} |")
+# counts (DB entities)
+lines += ["### Entity counts", "", "| Entity | Count |", "|--------|------:|"]
+for entity, n in counts.items():
+    lines.append(f"| {entity} | {n if n is not None else 'ERR'} |")
+# add data source totals
+for s in data_source_stats:
+    lines.append(f"| data/{s['source']} | {s['total']} |")
 lines.append("")
 
-# validation
+# validation completeness
 if validation and "entities" in validation:
-    lines.append("### Validation (field completeness)")
-    lines.append("")
-    lines.append("| Entity | Entries | Avg complete | Full |")
-    lines.append("|--------|--------:|-------------:|-----:|")
+    lines += [
+        "### Validation (field completeness)",
+        "",
+        "| Entity | Entries | Avg complete | Full |",
+        "|--------|--------:|-------------:|-----:|",
+    ]
     for e in validation["entities"]:
         lines.append(
             f"| {e['entity']} | {e['total_entries']}"
@@ -158,25 +207,86 @@ if validation and "entities" in validation:
         )
     lines.append("")
 
-# health
-lines.append("### Route health")
+# content quality
+lines += ["### Content quality TODOs", ""]
+
+if quality_issues:
+    lines += ["<details>"]
+    lines += ["<summary>Show issues</summary>", ""]
+
+    for entity, id, label, field, issue in quality_issues:
+        safe_label = label.replace("|", "&#124;")
+        if entity == "tools":
+            entity = "service"
+        lines.append(
+            f"- [ ] **{entity}** {safe_label}: fix `{field}`: {issue} (_cloud : [{id}](https://github.com/VHP4Safety/cloud/blob/main/docs/{entity}/{id}.json)_)"
+        )
+
+    lines += ["", "</details>"]
+else:
+    lines.append("_No content quality issues detected._")
+
 lines.append("")
-lines.append("| Method | Route | Status |")
-lines.append("|--------|-------|-------:|")
-for method, path, status, ok, external in health:
-    if ok:
-        mark = "ok"
+
+# data sources — aggregate + per-record breakdown
+lines += ["### Data sources (BioStudies + Zenodo)", ""]
+if data_source_stats:
+    for s in data_source_stats:
+        header = f"**{s['source']}**, {s['returned']} of {s['total']} returned"
+        if s["error"]:
+            header += f"  WARN `{s['error']}`"
+        lines += [
+            header,
+            "",
+            "| Field | Missing | Present |",
+            "|-------|--------:|--------:|",
+        ]
+        ret = s["returned"]
+        for f, missing in s["field_stats"].items():
+            present = ret - missing
+            flag = " WARN" if missing > 0 else ""
+            lines.append(f"| `{f}` | {missing}{flag} | {present}/{ret} |")
+        lines.append("")
+
+        # per-record detail
+        hit_rows = data_hit_details.get(s["source"], [])
+        if hit_rows:
+            col_headers = " | ".join(f"`{f}`" for f in _DATA_KEY_FIELDS)
+            col_seps = " | ".join("---" for _ in _DATA_KEY_FIELDS)
+            lines += [
+                f"_Per-record ({s['source']}):_",
+                "",
+                f"| ID | {col_headers} |",
+                f"|----|{col_seps}|",
+            ]
+            for row in hit_rows:
+                cells = " | ".join(
+                    "OK" if row["present"][f] else "FAIL" for f in _DATA_KEY_FIELDS
+                )
+                lines.append(f"| `{row['id']}` | {cells} |")
+            lines.append("")
+else:
+    lines += ["_/data/ endpoint unavailable._", ""]
+
+# route health
+lines += ["### Route health", "", "| Route | Status |", "|-------|-------:|"]
+for path, status, OK, external in health:
+    if OK:
+        mark = "OK"
     elif external:
-        mark = f"warn ({status}) ⚠️ external service"
+        mark = f"WARN ({status}) external"
     else:
         mark = f"FAIL ({status})"
-    lines.append(f"| {method} | `{path}` | {mark} |")
+    lines.append(f"| `{path}` | {mark} |")
 lines.append("")
 
 # result
-all_ok = not errors
-lines.append(f"**Result: {'PASS' if all_ok else 'FAIL'}**")
+WARN_count = len(warnings)
+result = "PASS" if not errors else "FAIL"
+if WARN_count:
+    result += f" ({WARN_count} content warning{'s' if WARN_count != 1 else ''})"
+lines.append(f"**Result: {result}**")
 
 print("\n".join(lines))
-if not all_ok:
+if errors:
     sys.exit(1)

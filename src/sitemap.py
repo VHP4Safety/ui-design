@@ -1,4 +1,5 @@
 """Generate a static sitemap.xml file from DB contents."""
+
 from __future__ import annotations
 
 from datetime import datetime

@@ -1,7 +1,7 @@
 """Pydantic models for compound data from CompoundCloud SPARQL.
 
 These are not stored in the database — they model the responses from
-the CompoundCloud Wikibase SPARQL endpoint and from Wikidata QLever
+the CompoundCloud Wikibase SPARQL endpoint and from Compound Wiki QLever
 for experimental data.
 """
 
@@ -29,13 +29,9 @@ class CompoundSummary(BaseModel):
 class CompoundIdentifier(BaseModel):
     """A single external identifier for a compound."""
 
-    property_label: str = Field(
-        "", description="Name of the identifier property"
-    )
+    property_label: str = Field("", description="Name of the identifier property")
     value: str = ""
-    formatter_url: str = Field(
-        "", description="URL template for the identifier"
-    )
+    formatter_url: str = Field("", description="URL template for the identifier")
 
 
 class CompoundToxicology(BaseModel):
@@ -46,30 +42,20 @@ class CompoundToxicology(BaseModel):
 
 
 class CompoundExperimentalDatum(BaseModel):
-    """A single experimental measurement from Wikidata."""
+    """A single experimental measurement from Compound Wiki."""
 
-    property_label: str = Field(
-        "", description="Measured property name"
-    )
+    property_label: str = Field("", description="Measured property name")
     value: str = ""
     units_label: str = ""
     source: str = ""
     doi: str = ""
-    see_also: str = Field(
-        "", description="Link to the Wikidata statement"
-    )
+    see_also: str = Field("", description="Link to the Compound Wiki statement")
 
 
 class CompoundDetail(BaseModel):
     """Full compound view combining all SPARQL query results."""
 
     summary: Optional[CompoundSummary] = None
-    identifiers: list[CompoundIdentifier] = Field(
-        default_factory=list
-    )
-    toxicology: list[CompoundToxicology] = Field(
-        default_factory=list
-    )
-    experimental_data: list[CompoundExperimentalDatum] = Field(
-        default_factory=list
-    )
+    identifiers: list[CompoundIdentifier] = Field(default_factory=list)
+    toxicology: list[CompoundToxicology] = Field(default_factory=list)
+    experimental_data: list[CompoundExperimentalDatum] = Field(default_factory=list)

@@ -22,10 +22,7 @@ from src.models.compound import (
 )
 
 COMPOUND_EP = "https://compoundcloud.wikibase.cloud/query/sparql"
-QLEVER_EP = (
-    "https://qlever.cs.uni-freiburg.de/api/wikidata"
-    "?format=json&query="
-)
+QLEVER_EP = "https://qlever.cs.uni-freiburg.de/api/wikidata?format=json&query="
 
 _QID_RE = re.compile(r"^Q\d+$")
 
@@ -50,7 +47,7 @@ def get_properties(cwid: str) -> Optional[CompoundSummary]:
         "  OPTIONAL { ?cmp wdt:P3 ?formula }\n"
         "  OPTIONAL { ?cmp wdt:P7 ?chiralSMILES }\n"
         "  OPTIONAL { ?cmp wdt:P12 ?nonchiralSMILES }\n"
-        '  BIND (COALESCE(IF(BOUND(?chiralSMILES), ?chiralSMILES, 1/0),'
+        "  BIND (COALESCE(IF(BOUND(?chiralSMILES), ?chiralSMILES, 1/0),"
         ' IF(BOUND(?nonchiralSMILES), ?nonchiralSMILES, 1/0), "")'
         " AS ?SMILES)\n"
         "  SERVICE wikibase:label {"
@@ -93,11 +90,13 @@ def get_identifiers(cwid: str) -> list[CompoundIdentifier]:
     bindings = result.get("results", {}).get("bindings", [])
     out: list[CompoundIdentifier] = []
     for b in bindings:
-        out.append(CompoundIdentifier(
-            property_label=b.get("propertyLabel", {}).get("value", ""),
-            value=b.get("value", {}).get("value", ""),
-            formatter_url=b.get("formatterURL", {}).get("value", ""),
-        ))
+        out.append(
+            CompoundIdentifier(
+                property_label=b.get("propertyLabel", {}).get("value", ""),
+                value=b.get("value", {}).get("value", ""),
+                formatter_url=b.get("formatterURL", {}).get("value", ""),
+            )
+        )
     return out
 
 
@@ -120,10 +119,12 @@ def get_toxicology(cwid: str) -> list[CompoundToxicology]:
     bindings = result.get("results", {}).get("bindings", [])
     out: list[CompoundToxicology] = []
     for b in bindings:
-        out.append(CompoundToxicology(
-            property_label=b.get("propertyLabel", {}).get("value", ""),
-            value=b.get("value", {}).get("value", ""),
-        ))
+        out.append(
+            CompoundToxicology(
+                property_label=b.get("propertyLabel", {}).get("value", ""),
+                value=b.get("value", {}).get("value", ""),
+            )
+        )
     return out
 
 
@@ -183,14 +184,16 @@ def get_experimental_data(
 
     out: list[CompoundExperimentalDatum] = []
     for b in bindings:
-        out.append(CompoundExperimentalDatum(
-            property_label=b.get("propEntityLabel", {}).get("value", ""),
-            value=b.get("value", {}).get("value", ""),
-            units_label=b.get("unitsLabel", {}).get("value", ""),
-            source=b.get("source", {}).get("value", ""),
-            doi=b.get("doi", {}).get("value", ""),
-            see_also=b.get("statement", {}).get("value", ""),
-        ))
+        out.append(
+            CompoundExperimentalDatum(
+                property_label=b.get("propEntityLabel", {}).get("value", ""),
+                value=b.get("value", {}).get("value", ""),
+                units_label=b.get("unitsLabel", {}).get("value", ""),
+                source=b.get("source", {}).get("value", ""),
+                doi=b.get("doi", {}).get("value", ""),
+                see_also=b.get("statement", {}).get("value", ""),
+            )
+        )
     return out
 
 

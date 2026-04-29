@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import json
 import os
-import sys
 from datetime import datetime, timezone
 
 import requests
@@ -36,8 +35,7 @@ REG_QUESTIONS = {
     "reg_q_1b": {
         "label": "Kidney Case Study (b)",
         "explanation": (
-            "What is the intrinsic hazard of tacrolimus "
-            "for nephrotoxicity?"
+            "What is the intrinsic hazard of tacrolimus for nephrotoxicity?"
         ),
     },
     "reg_q_2a": {
@@ -78,9 +76,7 @@ STAGE_EXPLANATIONS = {
         "The process of assessing the intrinsic hazard a substance "
         "poses to human health and/or the environment."
     ),
-    "Chemical Information": (
-        "Information about chemical properties and identity."
-    ),
+    "Chemical Information": ("Information about chemical properties and identity."),
     "General": "Not specific to a flow step.",
     "(External) exposure": "External exposure assessment.",
     "Generic": "Generic category.",
@@ -106,8 +102,7 @@ CASE_STUDIES = [
         "slug": "parkinson",
         "title": "Parkinson case study",
         "description": (
-            "To study life course pesticide exposure and "
-            "neurodegenerative disease."
+            "To study life course pesticide exposure and neurodegenerative disease."
         ),
         "image_src": "/static/images/image45_hexagon.svg",
         "image_alt": "Parkinson case study",
@@ -170,8 +165,14 @@ def seed_reference_data(conn) -> None:
             """INSERT OR REPLACE INTO case_studies
                (slug, title, description, image_src, image_alt, content_json)
                VALUES (?, ?, ?, ?, ?, ?)""",
-            (cs["slug"], cs["title"], cs["description"],
-             cs.get("image_src"), cs.get("image_alt"), content_json),
+            (
+                cs["slug"],
+                cs["title"],
+                cs["description"],
+                cs.get("image_src"),
+                cs.get("image_alt"),
+                content_json,
+            ),
         )
     conn.commit()
     print("ok reference data seeded")
@@ -202,19 +203,37 @@ def seed_tools(conn) -> None:
                 citation, version, license, sourcecode, docker,
                 bio_tools, tess, raw_json, updated_at)
                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-            (tool_id, raw.get("service", tool_id), raw.get("description"),
-             stage, raw.get("html_name"), raw.get("md_file_name"),
-             raw.get("png_file_name"), raw.get("main_url"),
-             raw.get("inst_url") or None,
-             _bool_flag(raw.get("reg_q_1a")), _bool_flag(raw.get("reg_q_1b")),
-             _bool_flag(raw.get("reg_q_2a")), _bool_flag(raw.get("reg_q_2b")),
-             _bool_flag(raw.get("reg_q_3a")), _bool_flag(raw.get("reg_q_3b")),
-             raw.get("login"), raw.get("api"), raw.get("casestudy"),
-             raw.get("provider"), raw.get("provider-email"),
-             raw.get("citation"), raw.get("version"), raw.get("license"),
-             raw.get("sourcecode"), raw.get("docker"),
-             raw.get("bioTools"), raw.get("tess"),
-             json.dumps(raw), now),
+            (
+                tool_id,
+                raw.get("service", tool_id),
+                raw.get("description"),
+                stage,
+                raw.get("html_name"),
+                raw.get("md_file_name"),
+                raw.get("png_file_name"),
+                raw.get("main_url"),
+                raw.get("inst_url") or None,
+                _bool_flag(raw.get("reg_q_1a")),
+                _bool_flag(raw.get("reg_q_1b")),
+                _bool_flag(raw.get("reg_q_2a")),
+                _bool_flag(raw.get("reg_q_2b")),
+                _bool_flag(raw.get("reg_q_3a")),
+                _bool_flag(raw.get("reg_q_3b")),
+                raw.get("login"),
+                raw.get("api"),
+                raw.get("casestudy"),
+                raw.get("provider"),
+                raw.get("provider-email"),
+                raw.get("citation"),
+                raw.get("version"),
+                raw.get("license"),
+                raw.get("sourcecode"),
+                raw.get("docker"),
+                raw.get("bioTools"),
+                raw.get("tess"),
+                json.dumps(raw),
+                now,
+            ),
         )
     conn.commit()
     print(f"ok {len(data)} tools seeded")
@@ -236,28 +255,36 @@ def seed_methods(conn) -> None:
                 type_iri, ontology, key_event_id, aop_id,
                 raw_json, updated_at)
                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-            (method_id,
-             raw.get("method") or raw.get("method_name_content", method_id),
-             raw.get("issue_number"),
-             raw.get("method_description_content"),
-             raw.get("vhp4safety_workflow_stage_content"),
-             raw.get("workflow_substage_content"),
-             raw.get("catalog_webpage_url"),
-             raw.get("case_study_content"),
-             raw.get("regulatory_question_content"),
-             _bool_flag(raw.get("reg_q_1a")), _bool_flag(raw.get("reg_q_1b")),
-             _bool_flag(raw.get("reg_q_2a")), _bool_flag(raw.get("reg_q_2b")),
-             _bool_flag(raw.get("reg_q_3a")), _bool_flag(raw.get("reg_q_3b")),
-             raw.get("data_producer_content"),
-             raw.get("available_sop_or_protocol_content"),
-             raw.get("vendor_content"),
-             raw.get("catalog_number_content"),
-             raw.get("citation_content"),
-             raw.get("ontology_term_content"),
-             raw.get("type_content"),
-             raw.get("relevant_aop_wiki_key_event(s)_to_the_assay_content"),
-             raw.get("relevant_aop_wiki_adverse_outcome_pathway(s)_to_the_assay_content"),
-             json.dumps(raw), now),
+            (
+                method_id,
+                raw.get("method") or raw.get("method_name_content", method_id),
+                raw.get("issue_number"),
+                raw.get("method_description_content"),
+                raw.get("vhp4safety_workflow_stage_content"),
+                raw.get("workflow_substage_content"),
+                raw.get("catalog_webpage_url"),
+                raw.get("case_study_content"),
+                raw.get("regulatory_question_content"),
+                _bool_flag(raw.get("reg_q_1a")),
+                _bool_flag(raw.get("reg_q_1b")),
+                _bool_flag(raw.get("reg_q_2a")),
+                _bool_flag(raw.get("reg_q_2b")),
+                _bool_flag(raw.get("reg_q_3a")),
+                _bool_flag(raw.get("reg_q_3b")),
+                raw.get("data_producer_content"),
+                raw.get("available_sop_or_protocol_content"),
+                raw.get("vendor_content"),
+                raw.get("catalog_number_content"),
+                raw.get("citation_content"),
+                raw.get("ontology_term_content"),
+                raw.get("type_content"),
+                raw.get("relevant_aop_wiki_key_event(s)_to_the_assay_content"),
+                raw.get(
+                    "relevant_aop_wiki_adverse_outcome_pathway(s)_to_the_assay_content"
+                ),
+                json.dumps(raw),
+                now,
+            ),
         )
     conn.commit()
     print(f"ok {len(data)} methods seeded")

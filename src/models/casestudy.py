@@ -28,7 +28,7 @@ from typing import Any, Optional
 from pydantic import BaseModel, Field
 
 
-# ── Enums ─────────────────────────────────────────────────────────────────
+# Enums
 
 
 class StepType(str, Enum):
@@ -49,7 +49,7 @@ class CaseStudySlug(str, Enum):
     THYROID = "thyroid"
 
 
-# ── Leaf / reusable pieces ────────────────────────────────────────────────
+# Leaf / reusable pieces
 
 
 class StepButton(BaseModel):
@@ -86,7 +86,7 @@ class AccordionSection(BaseModel):
 ContentBlock = str | list[AccordionSection] | None
 
 
-# ── Step 1 (intro + regulatory questions) ────────────────────────────────
+# Step 1 (intro + regulatory questions)
 
 
 class Step1Contents(BaseModel):
@@ -103,7 +103,7 @@ class Step1Contents(BaseModel):
     model_config = {"extra": "allow"}
 
 
-# ── Generic workflow node (steps 2–6) ─────────────────────────────────────
+# Generic workflow node (steps 2–6)
 
 
 class WorkflowStepNode(BaseModel):
@@ -147,7 +147,7 @@ class ProcessFlowNav(BaseModel):
     model_config = {"extra": "allow"}
 
 
-# ── Root document ─────────────────────────────────────────────────────────
+# Root document
 
 # Steps 3-6 are nested dicts whose keys are dynamic (question key,
 # step label, sub-step label …).  We type them as deeply as
@@ -156,9 +156,7 @@ class ProcessFlowNav(BaseModel):
 Step3Map = dict[str, dict[str, WorkflowStepNode]]
 Step4Map = dict[str, dict[str, dict[str, WorkflowStepNode]]]
 Step5Map = dict[str, dict[str, dict[str, dict[str, WorkflowStepNode]]]]
-Step6Map = dict[
-    str, dict[str, dict[str, dict[str, dict[str, WorkflowStepNode]]]]
-]
+Step6Map = dict[str, dict[str, dict[str, dict[str, dict[str, WorkflowStepNode]]]]]
 
 
 class CaseStudyContent(BaseModel):
@@ -168,9 +166,7 @@ class CaseStudyContent(BaseModel):
     """
 
     step1Contents: Step1Contents
-    step2Contents: dict[str, ProcessFlowNav] = Field(
-        default_factory=dict
-    )
+    step2Contents: dict[str, ProcessFlowNav] = Field(default_factory=dict)
     step3Contents: Optional[Step3Map] = None
     step4Contents: Optional[Step4Map] = None
     step5Contents: Optional[Step5Map] = None
@@ -179,7 +175,7 @@ class CaseStudyContent(BaseModel):
     model_config = {"extra": "allow"}
 
 
-# ── Case study card (listing page) ───────────────────────────────────────
+# Case study card (listing page)
 
 
 class CaseStudyCard(BaseModel):
@@ -195,7 +191,7 @@ class CaseStudyCard(BaseModel):
     content_json: Optional[str] = None
 
 
-# ── Convenience: full registry ────────────────────────────────────────────
+# Convenience: full registry
 
 
 class CaseStudyRegistry(BaseModel):

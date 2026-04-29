@@ -33,7 +33,9 @@ def get_content(slug: str) -> dict | None:
         return _content_cache[slug]
 
     conn = get_conn()
-    row = conn.execute("SELECT content_json FROM case_studies WHERE slug = ?", (slug,)).fetchone()
+    row = conn.execute(
+        "SELECT content_json FROM case_studies WHERE slug = ?", (slug,)
+    ).fetchone()
     conn.close()
     if not row or not row["content_json"]:
         return None
@@ -59,16 +61,11 @@ STEP_TYPE_COLORS = {
 
 # Workflow header definitions
 WORKFLOW_STEPS = [
-    {"number": 1, "type": "regulatory-question",
-     "label": "Regulatory Question"},
-    {"number": 2, "type": "workflow-step",
-     "label": "Safety Assessment Workflow Step"},
-    {"number": 3, "type": "process-flow-step",
-     "label": "Case Study Step"},
-    {"number": 4, "type": "workflow-substep",
-     "label": "Case Study Substep"},
-    {"number": 5, "type": "tool",
-     "label": "Tools, Models and Data"},
+    {"number": 1, "type": "regulatory-question", "label": "Regulatory Question"},
+    {"number": 2, "type": "workflow-step", "label": "Safety Assessment Workflow Step"},
+    {"number": 3, "type": "process-flow-step", "label": "Case Study Step"},
+    {"number": 4, "type": "workflow-substep", "label": "Case Study Substep"},
+    {"number": 5, "type": "tool", "label": "Tools, Models and Data"},
 ]
 
 
@@ -89,6 +86,7 @@ class Breadcrumb:
 @dataclass
 class StepButtonResolved:
     """A button ready to render in Jinja."""
+
     label: str
     description: str = ""
     css_class: str = "btn-vhpblue"
@@ -100,6 +98,7 @@ class StepButtonResolved:
 @dataclass
 class ResolvedStep:
     """Everything the template needs to render one case-study page."""
+
     case_slug: str = ""
     case_title: str = ""
     step_number: int = 1
@@ -183,9 +182,13 @@ def resolve(
     active_step = len(path_parts) + 1
     result.step_number = active_step
     for ws in WORKFLOW_STEPS:
-        state = "completed" if ws["number"] < active_step \
-            else "active" if ws["number"] == active_step \
+        state = (
+            "completed"
+            if ws["number"] < active_step
+            else "active"
+            if ws["number"] == active_step
             else ""
+        )
         result.workflow_steps.append({**ws, "state": state})
 
     # ── Step 1: no path parts ─────────────────────────────────────
@@ -197,15 +200,15 @@ def resolve(
         result.accordion_sections = sections
         # Buttons = regulatory questions
         for q in step1.get("questions", []):
-            result.buttons.append(StepButtonResolved(
-                label=q.get("label", ""),
-                description=q.get("description", ""),
-                css_class=btn_color(
-                    q.get("type", "regulatory-question")
-                ),
-                url=_make_url(slug, [q["value"]]),
-                disabled=q.get("state") == "disabled",
-            ))
+            result.buttons.append(
+                StepButtonResolved(
+                    label=q.get("label", ""),
+                    description=q.get("description", ""),
+                    css_class=btn_color(q.get("type", "regulatory-question")),
+                    url=_make_url(slug, [q["value"]]),
+                    disabled=q.get("state") == "disabled",
+                )
+            )
         result.breadcrumbs = [
             Breadcrumb("Case Studies", "/casestudies"),
             Breadcrumb(case_title, "", active=True),
@@ -250,13 +253,15 @@ def resolve(
     if node.get("steps"):
         for s in node["steps"]:
             val = s.get("value", s.get("label", ""))
-            result.buttons.append(StepButtonResolved(
-                label=s.get("label", ""),
-                description=s.get("description", ""),
-                css_class=btn_color(s.get("type")),
-                url=_make_url(slug, base_url_parts + [val]),
-                disabled=s.get("state") == "disabled",
-            ))
+            result.buttons.append(
+                StepButtonResolved(
+                    label=s.get("label", ""),
+                    description=s.get("description", ""),
+                    css_class=btn_color(s.get("type")),
+                    url=_make_url(slug, base_url_parts + [val]),
+                    disabled=s.get("state") == "disabled",
+                )
+            )
     elif node.get("tools"):
         for t in node["tools"]:
             tool_id = t.get("id")
@@ -267,32 +272,41 @@ def resolve(
             else:
                 url = ""
                 is_tool = False
-            result.buttons.append(StepButtonResolved(
-                label=t.get("label", ""),
-                description=t.get("description", ""),
-                css_class=btn_color(t.get("type", "tool")),
-                url=url,
-                disabled=t.get("state") == "disabled",
-                is_tool_link=is_tool,
-            ))
+            result.buttons.append(
+                StepButtonResolved(
+                    label=t.get("label", ""),
+                    description=t.get("description", ""),
+                    css_class=btn_color(t.get("type", "tool")),
+                    url=url,
+                    disabled=t.get("state") == "disabled",
+                    is_tool_link=is_tool,
+                )
+            )
 
     # Breadcrumbs
     crumbs = [Breadcrumb("Case Studies", "/casestudies")]
-    crumbs.append(Breadcrumb(
-        case_title, _make_url(slug, []),
-    ))
+    crumbs.append(
+        Breadcrumb(
+            case_title,
+            _make_url(slug, []),
+        )
+    )
 
     # Build intermediate crumbs
     # Step 2 label = "Regulatory Question <Q>"
     for i, part in enumerate(path_parts):
-        is_last = (i == len(path_parts) - 1)
+        is_last = i == len(path_parts) - 1
         label = _unslugify(part)
         if i == 0:
             label = f"Regulatory Question {label}"
         url = _make_url(slug, path_parts[: i + 1])
-        crumbs.append(Breadcrumb(
-            label, url, active=is_last,
-        ))
+        crumbs.append(
+            Breadcrumb(
+                label,
+                url,
+                active=is_last,
+            )
+        )
 
     result.breadcrumbs = crumbs
     return result

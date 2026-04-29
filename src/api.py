@@ -1,21 +1,41 @@
-"""RESTful API with auto-generated OpenAPI documentation.
+"""RESTful API — Pydantic -> OpenAPI 3.1 auto-generated.
 
-Uses flask-smorest (marshmallow + OpenAPI 3) so Swagger UI is
-served automatically at /api/v1/docs.
+Uses flask-openapi3 so that the OpenAPI spec is derived directly from
+the Pydantic models in src/models/.
+
+Swagger UI: /api/v1/
+OpenAPI JSON:/api/v1/openapi.json
 """
 
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
+from typing import Any, Optional
 
-from flask import Flask
-from flask_smorest import Api, Blueprint, abort
-from marshmallow import Schema, fields
+from flask import abort
+from flask_openapi3 import APIBlueprint, OpenAPI, Tag
+from pydantic import BaseModel, ConfigDict, Field, RootModel
 
+from src import repo
 from src.db import get_conn
+from src.models.casestudy import CaseStudyCard as CSModel
+from src.models.cloud.method import ServiceIndexEntry as ToolModel
+from src.models.cloud.tool import Method as MethodModel
+from src.models.compound import (
+    CompoundDetail,
+    CompoundExperimentalDatum,
+    CompoundIdentifier,
+    CompoundSummary,
+    CompoundToxicology,
+)
 from src.models.data.biostudies import BioStudiesExtractor
-from src.models.data.zenodo import ZenodoExtractor
 from src.models.data.mapping import normalize_all
+from src.models.data.zenodo import ZenodoExtractor
+from src.models.platform import (
+    RegulatoryQuestion as RQModel,
+    StageExplanation as SEModel,
+)
 from src.services.compound import (
     get_experimental_data,
     get_full_compound,
@@ -29,443 +49,560 @@ BIOSTUDIES_COLLECTION = "VHP4Safety"
 ZENODO_COMMUNITY = "vhp4safety"
 ZENODO_RECORD_TYPE = "dataset"
 
+#  Tags
+tag_tools = Tag(name="tools", description="Tool / service endpoints")
+tag_methods = Tag(name="methods", description="Method endpoints")
+tag_reg_q = Tag(name="regulatory_questions", description="Regulatory questions")
+tag_stages = Tag(name="stages", description="Safety-assessment workflow stages")
+tag_casestudies = Tag(name="casestudies", description="Case study endpoints")
+tag_compounds = Tag(name="compounds", description="Compound data (SPARQL-backed)")
+tag_data = Tag(name="data", description="Dataset search (BioStudies + Zenodo)")
+tag_validation = Tag(name="validation", description="Data completeness validation")
 
-# -- Marshmallow Schemas ---------------------------------------------------
-
-class ToolSchema(Schema):
-    id = fields.Str(metadata={"example": "cdkdepict"})
-    service = fields.Str(metadata={
-        "example": "CDK Depict",
-        "description": "Human-readable tool name"})
-    description = fields.Str(metadata={
-        "example": "A webservice for generating chemical "
-        "structure images from SMILES inputs."})
-    stage = fields.Str(metadata={
-        "example": "Other",
-        "description": "Safety-assessment workflow stage"})
-    main_url = fields.Str(metadata={
-        "example": "https://www.simolecule.com/cdkdepict/depict.html"})
-    inst_url = fields.Str(metadata={
-        "example": "https://cdkdepict.cloud.vhp4safety.nl/"})
-    html_name = fields.Str(metadata={"example": "cdkdepict.html"})
-    png_file_name = fields.Str(metadata={"example": "cdkdepict.png"})
+#  Query / path parameter models
 
 
-class MethodSchema(Schema):
-    id = fields.Str(metadata={
-        "example": "5_cfda_assay_to_determine_cytotoxicity"})
-    method = fields.Str(metadata={
-        "example": "5-CFDA assay to determine cytotoxicity",
-        "description": "Human-readable method name"})
-    description = fields.Str(metadata={
-        "example": "Fluorescence-based determination "
-        "of cell membrane damage"})
-    stage = fields.Str(metadata={"example": "Adverse Outcome"})
-    substage = fields.Str(metadata={
-        "example": "Cell death, Adverse outcome"})
-    catalog_webpage_url = fields.Str(metadata={
-        "example": "https://www.thermofisher.com/order/"
-        "catalog/product/C1354"})
-    raw = fields.Dict(load_default=None, metadata={
-        "description": "Full upstream YAML fields "
-        "from the methods catalog"})
+class FilterQuery(BaseModel):
+    stage: Optional[str] = Field(None, description="Workflow stage filter")
+    search: Optional[str] = Field("", description="Free-text search")
 
 
-class RegulatoryQuestionSchema(Schema):
-    key = fields.Str(metadata={"example": "reg_q_1a"})
-    label = fields.Str(metadata={
-        "example": "Kidney Case Study (a)"})
-    explanation = fields.Str(metadata={
-        "example": "What is the safe cisplatin dose "
-        "in cancer patients?"})
+class DataSearchQuery(BaseModel):
+    query: str = Field("", description="Search term")
+    page: int = Field(1, description="Page number (1-based)")
+    size: int = Field(18, description="Results per page")
 
 
-class StageExplanationSchema(Schema):
-    name = fields.Str(metadata={"example": "ADME"})
-    explanation = fields.Str(metadata={
-        "example": "Absorption, distribution, metabolism, "
-        "and excretion of a substance in a living organism, "
-        "following exposure."})
+class ToolPath(BaseModel):
+    tool_id: str = Field(..., description="Tool identifier, e.g. cdkdepict")
 
 
-class CaseStudySchema(Schema):
-    name = fields.Str(
-        attribute="slug",
-        metadata={"description": "Short identifier used in URLs",
-                  "example": "kidney"})
-    title = fields.Str(metadata={
-        "example": "Kidney case study"})
-    description = fields.Str(metadata={
-        "example": "To study kidney disease "
-        "and pharmacovigilance."})
-    image_src = fields.Str(metadata={
-        "example": "/static/images/image43_hexagon.svg"})
-    config_repo = fields.Str(metadata={
-        "example": "VHP4Safety/ui-casestudy-config"})
-    default_branch = fields.Str(metadata={
-        "example": "main"})
+class MethodPath(BaseModel):
+    method_id: str = Field(
+        ...,
+        description="Method identifier, e.g. 5_cfda_assay_to_determine_cytotoxicity",
+    )
 
 
-class CaseStudyDetailSchema(CaseStudySchema):
-    content_json = fields.Raw(
-        load_default=None,
-        metadata={
-            "description":
-            "Full nested JSON driving the case-study UI "
-            "(intro text, regulatory questions, "
-            "process-flow steps)"})
+class CaseStudyPath(BaseModel):
+    name: str = Field(..., description="Case study name: kidney, parkinson or thyroid")
 
 
-class CompoundSummarySchema(Schema):
-    wcid = fields.Str()
-    label = fields.Str()
-    inchi = fields.Str()
-    inchikey = fields.Str()
-    smiles = fields.Str(data_key="SMILES")
-    formula = fields.Str()
-    mass = fields.Str()
+class CompoundPath(BaseModel):
+    cwid: str = Field(..., description="Compound Wiki compound QID, e.g. Q2270")
 
 
-class CompoundIdentifierSchema(Schema):
-    property_label = fields.Str(data_key="propertyLabel")
-    value = fields.Str()
-    formatter_url = fields.Str(data_key="formatterURL")
+class DataDetailPath(BaseModel):
+    data_id: str = Field(..., description="Data entry identifier (e.g. 19665244) ")
 
 
-class CompoundToxicologySchema(Schema):
-    property_label = fields.Str(data_key="propertyLabel")
-    value = fields.Str()
+class EntityPath(BaseModel):
+    entity: str = Field(
+        ...,
+        description="Entity type: tools, methods, case_studies, regulatory_questions or stage_explanations",
+    )
 
 
-class CompoundExpDataSchema(Schema):
-    property_label = fields.Str(data_key="propEntityLabel")
-    value = fields.Str()
-    units_label = fields.Str(data_key="unitsLabel")
-    source = fields.Str()
-    doi = fields.Str()
-    see_also = fields.Str(data_key="seeAlso")
+#  Response schemas
 
 
-class CompoundDetailSchema(Schema):
-    summary = fields.Nested(CompoundSummarySchema)
-    identifiers = fields.List(fields.Nested(CompoundIdentifierSchema))
-    toxicology = fields.List(fields.Nested(CompoundToxicologySchema))
-    experimental_data = fields.List(fields.Nested(CompoundExpDataSchema))
+class ToolResponse(BaseModel):
+    """A platform tool / service."""
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "id": "cdkdepict",
+                "service": "CDK Depict",
+                "description": "A webservice for generating chemical structure images from SMILES inputs.",
+                "stage": "Chemical Characteristics and Hazard Identification",
+                "main_url": "https://www.simolecule.com/cdkdepict/depict.html",
+                "inst_url": "https://cdkdepict.cloud.vhp4safety.nl/",
+                "html_name": "cdkdepict.html",
+                "png_file_name": "cdkdepict.png",
+                "reg_q_1a": True,
+                "reg_q_1b": False,
+                "reg_q_2a": False,
+                "reg_q_2b": False,
+                "reg_q_3a": False,
+                "reg_q_3b": False,
+            }
+        }
+    )
+
+    id: str = Field(description="URL-safe identifier")
+    service: str = Field(description="Human-readable tool name")
+    description: Optional[str] = None
+    stage: Optional[str] = Field(None, description="Safety-assessment workflow stage")
+    main_url: Optional[str] = Field(None, description="Upstream / canonical URL")
+    inst_url: Optional[str] = Field(None, description="VHP4Safety instance URL")
+    html_name: Optional[str] = None
+    png_file_name: Optional[str] = None
+    reg_q_1a: Optional[bool] = Field(
+        None, description="Relevant to Kidney case study (a)"
+    )
+    reg_q_1b: Optional[bool] = Field(
+        None, description="Relevant to Kidney case study (b)"
+    )
+    reg_q_2a: Optional[bool] = Field(
+        None, description="Relevant to Parkinson case study (a)"
+    )
+    reg_q_2b: Optional[bool] = Field(
+        None, description="Relevant to Parkinson case study (b)"
+    )
+    reg_q_3a: Optional[bool] = Field(
+        None, description="Relevant to Thyroid case study (a)"
+    )
+    reg_q_3b: Optional[bool] = Field(
+        None, description="Relevant to Thyroid case study (b)"
+    )
+    login: Optional[str] = None
+    provider: Optional[str] = None
+    citation: Optional[str] = None
+    license: Optional[str] = None
+    sourcecode: Optional[str] = None
 
 
-class DataSearchQuerySchema(Schema):
-    query = fields.Str(
-        load_default="",
-        metadata={"example": "kidney"})
-    page = fields.Int(load_default=1)
-    size = fields.Int(load_default=18)
+class MethodResponse(BaseModel):
+    """A safety-assessment method / assay."""
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "id": "5_cfda_assay_to_determine_cytotoxicity",
+                "method": "5-CFDA assay to determine cytotoxicity",
+                "description": "Fluorescence-based determination of cell membrane damage.",
+                "stage": "Adverse Outcome",
+                "substage": "Cell death, Adverse outcome",
+                "catalog_webpage_url": "https://www.thermofisher.com/order/catalog/product/C1354",
+            }
+        }
+    )
+
+    id: str
+    method: str = Field(description="Human-readable method name")
+    description: Optional[str] = None
+    stage: Optional[str] = None
+    substage: Optional[str] = None
+    catalog_webpage_url: Optional[str] = None
+    vendor: Optional[str] = None
+    catalog_number: Optional[str] = None
+    citation: Optional[str] = None
+    case_study: Optional[str] = None
+    regulatory_question: Optional[str] = None
+    type_iri: Optional[str] = None
+    ontology: Optional[str] = None
+    key_event_id: Optional[str] = None
+    aop_id: Optional[str] = None
 
 
-class DataSourceResultSchema(Schema):
-    total = fields.Int()
-    hits = fields.List(fields.Dict())
-    error = fields.Str(allow_none=True)
+class RegulatoryQuestionResponse(BaseModel):
+    """One of the six regulatory questions that frame the case studies."""
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "key": "reg_q_1a",
+                "label": "Kidney Case Study (a)",
+                "explanation": "What is the safe cisplatin dose in cancer patients?",
+            }
+        }
+    )
+
+    key: str = Field(description="Internal key, e.g. reg_q_1a")
+    label: str
+    explanation: str
+    case_study: Optional[str] = None
 
 
-class DataResultSchema(Schema):
-    biostudies = fields.Nested(DataSourceResultSchema)
-    zenodo = fields.Nested(DataSourceResultSchema)
+class StageResponse(BaseModel):
+    """A safety-assessment workflow stage."""
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "name": "Toxicokinetics",
+                "explanation": "Analysis of kinetics (ADME) and how they influence internal dose.",
+            }
+        }
+    )
+
+    name: str
+    explanation: str
 
 
-class SearchQuerySchema(Schema):
-    stage = fields.Str(
-        load_default=None,
-        metadata={"example": "Other"})
-    search = fields.Str(
-        load_default="",
-        metadata={"example": ""})
+class CaseStudyResponse(BaseModel):
+    """Summary card for a VHP4Safety case study."""
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "name": "kidney",
+                "title": "Kidney case study",
+                "description": "To study kidney disease and pharmacovigilance.",
+                "image_src": "/static/images/image43_hexagon.svg",
+                "config_repo": "VHP4Safety/ui-casestudy-config",
+            }
+        }
+    )
+
+    name: str = Field(description="Case study, e.g. kidney")
+    title: str
+    description: str
+    image_src: Optional[str] = None
+    image_alt: Optional[str] = None
+    url: Optional[str] = None
+    config_repo: Optional[str] = None
 
 
-# -- Blueprints ------------------------------------------------------------
+class CaseStudyDetailResponse(CaseStudyResponse):
+    """Case study with full UI content JSON."""
 
-tools_bp = Blueprint("tools", __name__, url_prefix="/api/tools",
-                     description="Tool / service endpoints")
-methods_bp = Blueprint("methods", __name__, url_prefix="/api/methods",
-                       description="Method endpoints")
-reg_q_bp = Blueprint("regulatory_questions", __name__,
-                     url_prefix="/api/regulatory-questions",
-                     description="Regulatory questions")
-stages_bp = Blueprint("stages", __name__, url_prefix="/api/stages",
-                      description="Safety-assessment workflow stages")
-casestudies_bp = Blueprint("casestudies", __name__,
-                           url_prefix="/api/casestudies",
-                           description="Case study endpoints")
-compounds_bp = Blueprint("compounds", __name__, url_prefix="/api/compounds",
-                         description="Compound data (SPARQL-backed)")
-data_bp = Blueprint("data", __name__, url_prefix="/api/data",
-                    description="Dataset search (BioStudies + Zenodo)")
+    content_json: Optional[Any] = Field(
+        None,
+        description="Full nested JSON driving the case-study UI (intro, process-flow, etc.)",
+    )
 
 
-# -- Tools -----------------------------------------------------------------
+class DataSourceResult(BaseModel):
+    """Paginated results from one data source."""
 
-@tools_bp.route("/")
-@tools_bp.arguments(SearchQuerySchema, location="query")
-@tools_bp.response(200, ToolSchema(many=True))
-def list_tools(args):
-    """List all tools, with optional stage/search filters.
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "total": 8,
+                "hits": [
+                    {"title": "VHP4Safety kidney dataset", "doi": "10.1234/example"}
+                ],
+                "error": None,
+            }
+        }
+    )
 
-    Returns every tool (service) registered on the platform.
-    Filter by workflow stage or free-text search on the tool name.
-    """
-    conn = get_conn()
-    sql = "SELECT * FROM tools WHERE 1=1"
-    params = []
-    if args.get("stage"):
-        sql += " AND stage = ?"
-        params.append(args["stage"])
-    if args.get("search"):
-        sql += " AND service LIKE ?"
-        params.append(f"%{args['search']}%")
-    sql += " ORDER BY service"
-    rows = conn.execute(sql, params).fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
+    total: int = 0
+    hits: list[dict] = Field(default_factory=list)
+    error: Optional[str] = None
 
 
-@tools_bp.route("/<tool_id>")
-@tools_bp.doc(parameters=[{
-    "name": "tool_id", "in": "path",
-    "example": "cdkdepict"}])
-@tools_bp.response(200, ToolSchema)
-def get_tool(tool_id):
+class DataResult(BaseModel):
+    """Combined dataset search results from BioStudies and Zenodo."""
+
+    biostudies: DataSourceResult = Field(default_factory=DataSourceResult)
+    zenodo: DataSourceResult = Field(default_factory=DataSourceResult)
+
+
+class NormalisedDataset(BaseModel):
+    """Normalised metadata for a single dataset record."""
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "title": "VHP4Safety kidney cisplatin dataset",
+                "description": "In vitro and in vivo datasets for nephrotoxicity modelling.",
+                "doi": "10.1234/example",
+                "doi_url": "https://doi.org/10.1234/example",
+                "license": "CC-BY-4.0",
+                "authors": [{"name": "Smith J"}],
+                "files": [],
+                "publications": [],
+            }
+        }
+    )
+
+    title: Optional[str] = None
+    description: Optional[str] = None
+    doi: Optional[str] = None
+    doi_url: Optional[str] = None
+    license: Optional[str] = None
+    authors: list[dict] = Field(default_factory=list)
+    files: list[dict] = Field(default_factory=list)
+    publications: list[dict] = Field(default_factory=list)
+
+
+# Validation response schemas (re-exported from src.models.validation for OpenAPI)
+
+
+class FieldDetail(BaseModel):
+    field: str
+    present: bool
+    value_preview: Optional[str] = None
+
+
+class EntryValidation(BaseModel):
+    id: str
+    label: str
+    fields_total: int
+    fields_filled: int
+    completeness_pct: float
+    missing: list[str]
+    details: list[FieldDetail]
+
+
+class EntitySummaryResponse(BaseModel):
+    """Completeness report for one entity type."""
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "entity": "tools",
+                "total_entries": 50,
+                "schema_fields": ["service", "description", "stage", "main_url"],
+                "avg_completeness_pct": 42.9,
+                "fully_complete": 0,
+                "entries": [],
+            }
+        }
+    )
+
+    entity: str
+    total_entries: int
+    schema_fields: list[str]
+    avg_completeness_pct: float
+    fully_complete: int
+    entries: list[EntryValidation]
+
+
+class ValidationReportResponse(BaseModel):
+    """Full data completeness report across all entity types."""
+
+    generated_at: str
+    entities: list[EntitySummaryResponse]
+
+
+#  List response wrappers (flask-openapi3 requires a concrete BaseModel)
+
+
+class ToolList(RootModel[list[ToolResponse]]):
+    pass
+
+
+class MethodList(RootModel[list[MethodResponse]]):
+    pass
+
+
+class RegulatoryQuestionList(RootModel[list[RegulatoryQuestionResponse]]):
+    pass
+
+
+class StageList(RootModel[list[StageResponse]]):
+    pass
+
+
+class CaseStudyList(RootModel[list[CaseStudyResponse]]):
+    pass
+
+
+class CompoundIdentifierList(RootModel[list[CompoundIdentifier]]):
+    pass
+
+
+class CompoundToxicologyList(RootModel[list[CompoundToxicology]]):
+    pass
+
+
+class CompoundExperimentalDatumList(RootModel[list[CompoundExperimentalDatum]]):
+    pass
+
+
+#  Blueprints
+
+tools_bp = APIBlueprint(
+    "tools", __name__, url_prefix="/api/tools", abp_tags=[tag_tools]
+)
+methods_bp = APIBlueprint(
+    "methods", __name__, url_prefix="/api/methods", abp_tags=[tag_methods]
+)
+reg_q_bp = APIBlueprint(
+    "regulatory_questions",
+    __name__,
+    url_prefix="/api/regulatory-questions",
+    abp_tags=[tag_reg_q],
+)
+stages_bp = APIBlueprint(
+    "stages", __name__, url_prefix="/api/stages", abp_tags=[tag_stages]
+)
+casestudies_bp = APIBlueprint(
+    "casestudies", __name__, url_prefix="/api/casestudies", abp_tags=[tag_casestudies]
+)
+compounds_bp = APIBlueprint(
+    "compounds", __name__, url_prefix="/api/compounds", abp_tags=[tag_compounds]
+)
+data_bp = APIBlueprint("data", __name__, url_prefix="/api/data", abp_tags=[tag_data])
+validation_bp = APIBlueprint(
+    "validation", __name__, url_prefix="/api/validation", abp_tags=[tag_validation]
+)
+
+#  Tools
+
+
+@tools_bp.get("/", responses={200: ToolList})
+def list_tools(query: FilterQuery):
+    """List all tools, with optional stage/search filters."""
+    return [
+        t.model_dump() for t in repo.list_tools(stage=query.stage, search=query.search)
+    ]
+
+
+@tools_bp.get("/<tool_id>", responses={200: ToolResponse})
+def get_tool(path: ToolPath):
     """Get a single tool by its ID."""
-    conn = get_conn()
-    row = conn.execute("SELECT * FROM tools WHERE id = ?", (tool_id,)).fetchone()
-    conn.close()
-    if not row:
-        abort(404, message="Tool not found")
-    return dict(row)
+    tool = repo.get_tool(path.tool_id)
+    if not tool:
+        abort(404)
+    return tool.model_dump()
 
 
-# -- Methods ---------------------------------------------------------------
-
-@methods_bp.route("/")
-@methods_bp.arguments(SearchQuerySchema, location="query")
-@methods_bp.response(200, MethodSchema(many=True))
-def list_methods(args):
-    """List all methods, with optional stage/search filters.
-
-    Methods describe experimental or computational procedures
-    used in safety-assessment workflows.
-    """
-    conn = get_conn()
-    sql = "SELECT * FROM methods WHERE 1=1"
-    params = []
-    if args.get("stage"):
-        sql += " AND stage LIKE ?"
-        params.append(f"%{args['stage']}%")
-    if args.get("search"):
-        sql += " AND method LIKE ?"
-        params.append(f"%{args['search']}%")
-    sql += " ORDER BY method"
-    rows = conn.execute(sql, params).fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
+#  Methods
 
 
-@methods_bp.route("/<method_id>")
-@methods_bp.doc(parameters=[{
-    "name": "method_id", "in": "path",
-    "example": "5_cfda_assay_to_determine_cytotoxicity"}])
-@methods_bp.response(200, MethodSchema)
-def get_method(method_id):
-    """Get a single method by ID, including full upstream fields.
-
-    The ``raw`` field contains every field from the upstream
-    methods catalog YAML (AOP references, key events, etc.).
-    """
-    conn = get_conn()
-    row = conn.execute("SELECT * FROM methods WHERE id = ?", (method_id,)).fetchone()
-    conn.close()
-    if not row:
-        abort(404, message="Method not found")
-    d = dict(row)
-    if d.get("raw_json"):
-        d["raw"] = json.loads(d["raw_json"])
-    return d
+@methods_bp.get("/", responses={200: MethodList})
+def list_methods(query: FilterQuery):
+    """List all methods, with optional stage/search filters."""
+    return [
+        m.model_dump()
+        for m in repo.list_methods(stage=query.stage, search=query.search)
+    ]
 
 
-# -- Regulatory Questions --------------------------------------------------
+@methods_bp.get("/<method_id>", responses={200: MethodResponse})
+def get_method(path: MethodPath):
+    """Get a single method by ID, including full upstream fields."""
+    method = repo.get_method(path.method_id)
+    if not method:
+        abort(404)
+    return method.model_dump()
 
-@reg_q_bp.route("/")
-@reg_q_bp.response(200, RegulatoryQuestionSchema(many=True))
+
+#  Regulatory Questions
+
+
+@reg_q_bp.get("/", responses={200: RegulatoryQuestionList})
 def list_regulatory_questions():
-    """List the six regulatory questions that link tools to case studies.
-
-    Each question is tied to a case study pair (a/b).
-    For example, ``reg_q_1a`` = *"Kidney Case Study (a)"*.
-    """
-    conn = get_conn()
-    rows = conn.execute("SELECT * FROM regulatory_questions").fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
+    """List the six regulatory questions that link tools to case studies."""
+    return [q.model_dump() for q in repo.list_regulatory_questions()]
 
 
-# -- Stages ----------------------------------------------------------------
+#  Stages
 
-@stages_bp.route("/")
-@stages_bp.response(200, StageExplanationSchema(many=True))
+
+@stages_bp.get("/", responses={200: StageList})
 def list_stages():
-    """List all safety-assessment workflow stages.
-
-    Stages are the high-level phases of the VHP4Safety
-    process flow: ADME, Hazard Assessment, etc.
-    """
-    conn = get_conn()
-    rows = conn.execute("SELECT * FROM stage_explanations").fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
+    """List all safety-assessment workflow stages."""
+    return [s.model_dump() for s in repo.list_stages()]
 
 
-# -- Case Studies ----------------------------------------------------------
+#  Case Studies
 
-@casestudies_bp.route("/")
-@casestudies_bp.response(200, CaseStudySchema(many=True))
+
+@casestudies_bp.get("/", responses={200: CaseStudyList})
 def list_case_studies():
-    """List the three VHP4Safety case studies (summary only).
-
-    Returns name, title, description, and image for each.
-    Use the detail endpoint for the full content JSON.
-
-    Available names: ``kidney``, ``parkinson``, ``thyroid``.
-    """
-    conn = get_conn()
-    rows = conn.execute("SELECT * FROM case_studies").fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
+    """List the VHP4Safety case studies (summary only)."""
+    out = []
+    for c in repo.list_case_studies():
+        d = c.model_dump()
+        d["name"] = d.pop("slug", d.get("name"))
+        out.append(d)
+    return out
 
 
-@casestudies_bp.route("/<name>")
-@casestudies_bp.doc(parameters=[{
-    "name": "name", "in": "path",
-    "example": "kidney"}])
-@casestudies_bp.response(200, CaseStudyDetailSchema)
-def get_case_study(name):
-    """Get a case study by name, including its full content JSON.
-
-    The content JSON contains the intro text, regulatory questions,
-    and process-flow workflow steps that drive the case-study UI.
-    """
-    conn = get_conn()
-    row = conn.execute("SELECT * FROM case_studies WHERE slug = ?", (name,)).fetchone()
-    conn.close()
-    if not row:
-        abort(404, message="Case study not found")
-    d = dict(row)
-    if d.get("content_json"):
+@casestudies_bp.get("/<name>", responses={200: CaseStudyDetailResponse})
+def get_case_study(path: CaseStudyPath):
+    """Get a case study by name, including its full content JSON."""
+    case = repo.get_case_study(path.name)
+    if not case:
+        abort(404)
+    d = case.model_dump()
+    d["name"] = d.pop("slug", d.get("name"))
+    if isinstance(d.get("content_json"), str):
         d["content_json"] = json.loads(d["content_json"])
     return d
 
 
-# -- Compounds (SPARQL-backed) ---------------------------------------------
+#  Compounds
 
-@compounds_bp.route("/<cwid>")
-@compounds_bp.doc(parameters=[{
-    "name": "cwid", "in": "path",
-    "description": "Wikidata compound ID",
-    "example": "Q2270"}])
-@compounds_bp.response(200, CompoundDetailSchema)
-def get_compound(cwid):
-    """Get full compound data from Wikidata via SPARQL.
 
-    Returns summary properties, external identifiers,
-    toxicology data, and experimental measurements.
-    """
-    if not is_valid_qid(cwid):
-        abort(400, message="Invalid compound identifier")
+@compounds_bp.get("/<cwid>", responses={200: CompoundDetail})
+def get_compound(path: CompoundPath):
+    """Get full compound data from Compound Wiki via SPARQL."""
+    if not is_valid_qid(path.cwid):
+        abort(400)
     try:
-        return get_full_compound(cwid).model_dump()
-    except Exception as e:
-        abort(502, message=str(e))
+        return get_full_compound(path.cwid).model_dump()
+    except Exception:
+        abort(502)
 
 
-@compounds_bp.route("/<cwid>/properties")
-@compounds_bp.doc(parameters=[{
-    "name": "cwid", "in": "path", "example": "Q2270"}])
-@compounds_bp.response(200, CompoundSummarySchema)
-def get_compound_properties(cwid):
+@compounds_bp.get("/<cwid>/properties", responses={200: CompoundSummary})
+def get_compound_properties(path: CompoundPath):
     """Get core compound properties (formula, mass, InChI, SMILES)."""
-    if not is_valid_qid(cwid):
-        abort(400, message="Invalid compound identifier")
+    if not is_valid_qid(path.cwid):
+        abort(400)
     try:
-        summary = get_properties(cwid)
+        summary = get_properties(path.cwid)
         if not summary:
-            abort(404, message="No data found")
+            abort(404)
         return summary.model_dump()
-    except Exception as e:
-        abort(502, message=str(e))
+    except Exception:
+        abort(502)
 
 
-@compounds_bp.route("/<cwid>/identifiers")
-@compounds_bp.doc(parameters=[{
-    "name": "cwid", "in": "path", "example": "Q2270"}])
-@compounds_bp.response(200, CompoundIdentifierSchema(many=True))
-def get_compound_identifiers(cwid):
+@compounds_bp.get("/<cwid>/identifiers", responses={200: CompoundIdentifierList})
+def get_compound_identifiers(path: CompoundPath):
     """Get external database identifiers (CAS, PubChem, ChEBI, etc.)."""
-    if not is_valid_qid(cwid):
-        abort(400, message="Invalid compound identifier")
+    if not is_valid_qid(path.cwid):
+        abort(400)
     try:
-        return [i.model_dump() for i in get_identifiers(cwid)]
-    except Exception as e:
-        abort(502, message=str(e))
+        return [i.model_dump() for i in get_identifiers(path.cwid)]
+    except Exception:
+        abort(502)
 
 
-@compounds_bp.route("/<cwid>/toxicology")
-@compounds_bp.doc(parameters=[{
-    "name": "cwid", "in": "path", "example": "Q2270"}])
-@compounds_bp.response(200, CompoundToxicologySchema(many=True))
-def get_compound_toxicology(cwid):
+@compounds_bp.get("/<cwid>/toxicology", responses={200: CompoundToxicologyList})
+def get_compound_toxicology(path: CompoundPath):
     """Get toxicology data (LD50, LC50, etc.)."""
-    if not is_valid_qid(cwid):
-        abort(400, message="Invalid compound identifier")
+    if not is_valid_qid(path.cwid):
+        abort(400)
     try:
-        return [t.model_dump() for t in get_toxicology(cwid)]
-    except Exception as e:
-        abort(502, message=str(e))
+        return [t.model_dump() for t in get_toxicology(path.cwid)]
+    except Exception:
+        abort(502)
 
 
-@compounds_bp.route("/<cwid>/experimental-data")
-@compounds_bp.doc(parameters=[{
-    "name": "cwid", "in": "path", "example": "Q2270"}])
-@compounds_bp.response(200, CompoundExpDataSchema(many=True))
-def get_compound_exp_data(cwid):
+@compounds_bp.get(
+    "/<cwid>/experimental-data", responses={200: CompoundExperimentalDatumList}
+)
+def get_compound_exp_data(path: CompoundPath):
     """Get experimental measurements (EC50, IC50, etc.)."""
-    if not is_valid_qid(cwid):
-        abort(400, message="Invalid compound identifier")
+    if not is_valid_qid(path.cwid):
+        abort(400)
     try:
-        return [d.model_dump() for d in get_experimental_data(cwid)]
-    except Exception as e:
-        abort(502, message=str(e))
+        return [d.model_dump() for d in get_experimental_data(path.cwid)]
+    except Exception:
+        abort(502)
 
 
-# -- Data (BioStudies + Zenodo passthrough) --------------------------------
+#  Data (BioStudies + Zenodo)
 
-@data_bp.route("/")
-@data_bp.arguments(DataSearchQuerySchema, location="query")
-@data_bp.response(200, DataResultSchema)
-def list_data(args):
-    """Search datasets across BioStudies and Zenodo repositories.
 
-    Returns paginated results from both sources with normalised metadata.
-    """
-    query = args.get("query", "")
-    page = args.get("page", 1)
-    size = args.get("size", 18)
-
+@data_bp.get("/", responses={200: DataResult})
+def list_data(query: DataSearchQuery):
+    """Search datasets across BioStudies and Zenodo repositories."""
     bs = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION)
     zen = ZenodoExtractor(community=ZENODO_COMMUNITY, record_type=ZENODO_RECORD_TYPE)
-
-    if query:
-        bs_res = bs.search_studies(query, page=page, page_size=size)
-        zen_res = zen.search_records(query, page=page, size=size)
+    if query.query:
+        bs_res = bs.search_studies(
+            query.query, page=query.page, page_size=query.size, load_metadata=True
+        )
+        zen_res = zen.search_records(
+            query.query, page=query.page, size=query.size, load_metadata=True
+        )
     else:
-        bs_res = bs.list_studies(page=page, page_size=size, include_urls=True)
-        zen_res = zen.list_records(page=page, size=size, include_urls=True)
+        bs_res = bs.list_studies(
+            page=query.page, page_size=query.size, include_urls=True, load_metadata=True
+        )
+        zen_res = zen.list_records(
+            page=query.page, size=query.size, include_urls=True, load_metadata=True
+        )
 
     studies = bs_res.get("hits", [])
     datasets = zen_res.get("hits", [])
@@ -485,19 +622,13 @@ def list_data(args):
     }
 
 
-@data_bp.route("/<data_id>")
-@data_bp.doc(parameters=[{
-    "name": "data_id", "in": "path", "example": "S-BSST1503"}])
-@data_bp.response(200)
-def get_data_detail(data_id):
-    """Get normalised metadata for a single dataset by its accession ID.
-
-    Searches both BioStudies and Zenodo for the given identifier.
-    """
+@data_bp.get("/<data_id>", responses={200: NormalisedDataset})
+def get_data_detail(path: DataDetailPath):
+    """Get normalised metadata for a single dataset by its accession ID."""
     bs = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION)
     zen = ZenodoExtractor(community=ZENODO_COMMUNITY, record_type=ZENODO_RECORD_TYPE)
-    bs_res = bs.search_studies(data_id, page=1, page_size=1)
-    zen_res = zen.search_records(data_id, page=1, size=1)
+    bs_res = bs.search_studies(path.data_id, page=1, page_size=1, load_metadata=True)
+    zen_res = zen.search_records(path.data_id, page=1, size=1, load_metadata=True)
     studies = bs_res.get("hits", [])
     datasets = zen_res.get("hits", [])
     studies, datasets = normalize_all(studies, datasets)
@@ -505,69 +636,35 @@ def get_data_detail(data_id):
         return studies[0].get("norm_metadata", studies[0])
     if datasets:
         return datasets[0].get("norm_metadata", datasets[0])
-    abort(404, message="Dataset not found")
 
 
-# -- Validation blueprint --------------------------------------------------
 
-validation_bp = Blueprint("validation", __name__, url_prefix="/api/validation",
-                          description="Data completeness validation")
-
-from src.models.cloud.method import ServiceIndexEntry as ToolModel
-from src.models.cloud.tool import Method as MethodModel
-from src.models.platform import (
-    RegulatoryQuestion as RQModel,
-    StageExplanation as SEModel,
-)
-from src.models.casestudy import CaseStudyCard as CSModel
-
-_ENTITY_REGISTRY = {
-    "tools":                  ("tools",                  ToolModel,   "id",   "service"),
-    "methods":                ("methods",                MethodModel, "id",   "method"),
-    "case_studies":           ("case_studies",           CSModel,     "slug", "title"),
-    "regulatory_questions":   ("regulatory_questions",   RQModel,     "key",  "label"),
-    "stage_explanations":     ("stage_explanations",     SEModel,     "name", "name"),
-}
+#  Validation
 
 _SKIP_FIELDS = {
-    "raw_json", "updated_at", "model_config",
-    "timestamp", "https",
-    "reg_q_1a", "reg_q_1b", "reg_q_2a",
-    "reg_q_2b", "reg_q_3a", "reg_q_3b",
+    "raw_json",
+    "updated_at",
+    "model_config",
+    "timestamp",
+    "https",
+    "reg_q_1a",
+    "reg_q_1b",
+    "reg_q_2a",
+    "reg_q_2b",
+    "reg_q_3a",
+    "reg_q_3b",
+}
+
+_ENTITY_REGISTRY = {
+    "tools": ("tools", ToolModel, "id", "service"),
+    "methods": ("methods", MethodModel, "id", "method"),
+    "case_studies": ("case_studies", CSModel, "slug", "title"),
+    "regulatory_questions": ("regulatory_questions", RQModel, "key", "label"),
+    "stage_explanations": ("stage_explanations", SEModel, "name", "name"),
 }
 
 
-class FieldCompleteness(Schema):
-    field = fields.Str()
-    present = fields.Bool()
-    value_preview = fields.Str(allow_none=True)
-
-
-class EntryValidation(Schema):
-    id = fields.Str()
-    label = fields.Str()
-    fields_total = fields.Int()
-    fields_filled = fields.Int()
-    completeness_pct = fields.Float()
-    missing = fields.List(fields.Str())
-    details = fields.List(fields.Nested(FieldCompleteness))
-
-
-class EntitySummary(Schema):
-    entity = fields.Str()
-    total_entries = fields.Int()
-    schema_fields = fields.List(fields.Str())
-    avg_completeness_pct = fields.Float()
-    fully_complete = fields.Int()
-    entries = fields.List(fields.Nested(EntryValidation))
-
-
-class ValidationReport(Schema):
-    generated_at = fields.Str()
-    entities = fields.List(fields.Nested(EntitySummary))
-
-
-def _is_filled(val):
+def _is_filled(val) -> bool:
     if val is None:
         return False
     if isinstance(val, str) and val.strip() == "":
@@ -575,7 +672,7 @@ def _is_filled(val):
     return True
 
 
-def _preview(val, max_len=80):
+def _preview(val, max_len: int = 80):
     if val is None:
         return None
     s = str(val)
@@ -591,52 +688,47 @@ def _validate_entity(entity_name, table, pydantic_model, id_attr, label_attr):
     entries = []
     for row in rows:
         d = dict(row)
-        details = []
-        filled = 0
-        missing = []
+        details, filled, missing = [], 0, []
         for f in check_fields:
             val = d.get(f)
             ok = _is_filled(val)
-            if ok:
-                filled += 1
-            else:
+            filled += ok
+            if not ok:
                 missing.append(f)
             details.append({"field": f, "present": ok, "value_preview": _preview(val)})
 
         total = len(check_fields)
         pct = round(filled / total * 100, 1) if total else 100.0
-        entries.append({
-            "id": str(d.get(id_attr, "?")),
-            "label": str(d.get(label_attr) or d.get(id_attr, "?")),
-            "fields_total": total,
-            "fields_filled": filled,
-            "completeness_pct": pct,
-            "missing": missing,
-            "details": details,
-        })
+        entries.append(
+            {
+                "id": str(d.get(id_attr, "?")),
+                "label": str(d.get(label_attr) or d.get(id_attr, "?")),
+                "fields_total": total,
+                "fields_filled": filled,
+                "completeness_pct": pct,
+                "missing": missing,
+                "details": details,
+            }
+        )
 
-    avg = round(sum(e["completeness_pct"] for e in entries) / len(entries), 1) if entries else 0.0
-    fully = sum(1 for e in entries if e["completeness_pct"] == 100.0)
+    avg = (
+        round(sum(e["completeness_pct"] for e in entries) / len(entries), 1)
+        if entries
+        else 0.0
+    )
     return {
         "entity": entity_name,
         "total_entries": len(entries),
         "schema_fields": check_fields,
         "avg_completeness_pct": avg,
-        "fully_complete": fully,
+        "fully_complete": sum(1 for e in entries if e["completeness_pct"] == 100.0),
         "entries": entries,
     }
 
 
-@validation_bp.route("/")
-@validation_bp.response(200, ValidationReport)
+@validation_bp.get("/", responses={200: ValidationReportResponse})
 def validate_all():
-    """Full data completeness report across all entity types.
-
-    Checks every row in tools, methods, case_studies,
-    regulatory_questions, and stage_explanations for missing fields.
-
-    """
-    from datetime import datetime, timezone
+    """Full data completeness report across all entity types."""
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "entities": [
@@ -646,38 +738,28 @@ def validate_all():
     }
 
 
-@validation_bp.route("/<entity>")
-@validation_bp.doc(parameters=[{
-    "name": "entity", "in": "path", "example": "tools"}])
-@validation_bp.response(200, EntitySummary)
-def validate_entity(entity):
-    """Data completeness report for a single entity type.
-
-    Valid entity names: ``tools``, ``methods``, ``case_studies``,
-    ``regulatory_questions``, ``stage_explanations``.
-    """
-    if entity not in _ENTITY_REGISTRY:
-        abort(404, message=f"Unknown entity '{entity}'. Valid: {', '.join(_ENTITY_REGISTRY)}")
-    tbl, model, id_a, lbl_a = _ENTITY_REGISTRY[entity]
-    return _validate_entity(entity, tbl, model, id_a, lbl_a)
+@validation_bp.get("/<entity>", responses={200: EntitySummaryResponse})
+def validate_entity(path: EntityPath):
+    """Data completeness report for a single entity type."""
+    if path.entity not in _ENTITY_REGISTRY:
+        abort(404)
+    tbl, model, id_a, lbl_a = _ENTITY_REGISTRY[path.entity]
+    return _validate_entity(path.entity, tbl, model, id_a, lbl_a)
 
 
-# -- Registration helper ---------------------------------------------------
+#  App factory
 
-def init_api(app: Flask) -> Api:
-    """Configure flask-smorest and register all API blueprints."""
-    app.config.update({
-        "API_TITLE": "VHP4Safety Platform API",
-        "API_VERSION": "v1",
-        "OPENAPI_VERSION": "3.0.3",
-        "OPENAPI_URL_PREFIX": "/api/v1",
-        "OPENAPI_SWAGGER_UI_PATH": "/docs",
-        "OPENAPI_SWAGGER_UI_URL": "https://cdn.jsdelivr.net/npm/swagger-ui-dist/",
-        "OPENAPI_REDOC_PATH": "/redoc",
-        "OPENAPI_REDOC_URL": "https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js",
-    })
-    smorest_api = Api(app)
-    for bp in (tools_bp, methods_bp, reg_q_bp, stages_bp,
-               casestudies_bp, compounds_bp, data_bp, validation_bp):
-        smorest_api.register_blueprint(bp)
-    return smorest_api
+
+def init_api(app: OpenAPI) -> None:
+    """Register all API blueprints on the OpenAPI app."""
+    for bp in (
+        tools_bp,
+        methods_bp,
+        reg_q_bp,
+        stages_bp,
+        casestudies_bp,
+        compounds_bp,
+        data_bp,
+        validation_bp,
+    ):
+        app.register_api(bp)

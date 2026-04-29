@@ -27,7 +27,7 @@ jobs:
       - name: Run API checks
         id: report
         run: |
-          python3 tests/api_check.py > report.md || true
+          python3 -m tests.api_check > report.md || true
           {
             echo 'REPORT<<GHEOF'
             cat report.md

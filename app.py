@@ -6,15 +6,17 @@ import re
 
 import requests
 import urllib.parse
-from flask import Flask, abort, jsonify, render_template, request, Response
+from flask import abort, jsonify, render_template, request, Response
 from flask_caching import Cache
+from flask_openapi3 import OpenAPI
 from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
+from src.scheduler import init_scheduler
 
 # from wikidataintegrator import wdi_core
 from wikibaseintegrator import wbi_helpers
 
-# Data extractors (API wrappers — no DB needed)
+# Data extractors (API wrappers, no DB needed)
 from src.models.data.biostudies import BioStudiesExtractor
 from src.models.data.zenodo import ZenodoExtractor
 from src.models.data.mapping import normalize_all
@@ -22,14 +24,13 @@ from src.models.data.mapping import normalize_all
 # Database layer
 from src.db import get_conn, init_db
 from src.api import init_api
-from src.casestudy_resolver import resolve as resolve_casestudy
 
 ################################################################################
-CACHE_TIMEOUT = 60 * 60 * 24 * 5    # 5 days -- [Ozan] I created a separate
-                                    # timeout object for the tools page because
-                                    # a 5-day caching is too long for it. 
-CACHE_TIMEOUT_SERVICE = 60          # Separate timeout for the tools page -- 60
-                                    # seconds. 
+CACHE_TIMEOUT = 60 * 60 * 24 * 5  # 5 days -- [Ozan] I created a separate
+# timeout object for the tools page because
+# a 5-day caching is too long for it.
+CACHE_TIMEOUT_SERVICE = 60  # Separate timeout for the tools page -- 60
+# seconds.
 ### Configuration for BioStudies Integration
 # Change these variables to switch between collections
 BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
@@ -112,18 +113,27 @@ class RegexConverter(BaseConverter):
 cache_config = {
     "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
     "CACHE_DEFAULT_TIMEOUT": CACHE_TIMEOUT,  # 60 min chaching
-    "CACHE_SERVICE_TIMEOUT": CACHE_TIMEOUT_SERVICE
+    "CACHE_SERVICE_TIMEOUT": CACHE_TIMEOUT_SERVICE,
 }
-app = Flask(__name__)
-app.secret_key = os.environ.get(
-    "FLASK_SECRET_KEY", "dev-insecure-key"
+app = OpenAPI(
+    __name__,
+    info={"title": "VHP4Safety Platform API", "version": "1.0.0"},
+    doc_prefix="/api/v1",
 )
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-insecure-key")
 app.config.from_mapping(cache_config)
 cache = Cache(app)
 
 # Database init and API registration
 init_db()
 init_api(app)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    if request.path.startswith("/api/"):
+        return {"error": "Not found", "path": request.path}, 404
+    return render_template("404.html"), 404
 
 
 @cache.memoize(timeout=CACHE_TIMEOUT)
@@ -144,7 +154,7 @@ def get_json_dict(url: str, timeout: int = 5) -> dict:
         return {}
 
 
-# A separate get_json_dict function for the tools page with its own timeout. 
+# A separate get_json_dict function for the tools page with its own timeout.
 @cache.memoize(timeout=CACHE_TIMEOUT_SERVICE)
 def get_json_dict_service(url: str, timeout: int = 5) -> dict:
     """Fetch xxxx_index.json from the cloud repo and return as a dictionary.
@@ -289,15 +299,16 @@ def home():
 ### The sitemap.xml for search engines
 @app.route("/sitemap.xml")
 def sitemap():
-        # Prefer generated static sitemap if present (created by src.sitemap)
-        import os
-        path = os.path.join(os.path.dirname(__file__), "static", "sitemap.xml")
-        if os.path.exists(path):
-                with open(path, "rb") as fh:
-                        return Response(fh.read(), mimetype="application/xml")
+    # Prefer generated static sitemap if present (created by src.sitemap)
+    import os
 
-        # Fallback minimal sitemap
-        sitemapContent = """<?xml version="1.0" encoding="utf-8"?>
+    path = os.path.join(os.path.dirname(__file__), "static", "sitemap.xml")
+    if os.path.exists(path):
+        with open(path, "rb") as fh:
+            return Response(fh.read(), mimetype="application/xml")
+
+    # Fallback minimal sitemap
+    sitemapContent = """<?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://platform.vhp4safety.nl/\</loc\>
@@ -316,7 +327,7 @@ def sitemap():
     </url>
 </urlset>
 """
-        return Response(sitemapContent, mimetype="text/xml")
+    return Response(sitemapContent, mimetype="text/xml")
 
 
 ################################################################################
@@ -406,7 +417,7 @@ def data():
 
 
 @app.template_filter("split_text_int")
-def split_text_int(value: None|str) -> tuple[str, None|int]:
+def split_text_int(value: None | str) -> tuple[str, None | int]:
     """
     Splits trailing integer from a string.
     'S-VHPS21' -> ('S-VHPS', 21)
@@ -451,6 +462,7 @@ def data_detail(dataid):
     elif datasets:
         return render_template("data/data_details.html", data=datasets[0])
     return abort(404)
+
 
 ################################################################################
 ### Pages under 'Models'
@@ -581,27 +593,28 @@ def tools():
                 "/blob/main/static/images/logo.png"
             )
 
-            tools_list.append({
-                "id": row["id"],
-                "service": row["service"],
-                "description": row["description"],
-                "stage": row["stage"],
-                "html_name": html_name,
-                "url": f"https://cloud.vhp4safety.nl/service/{html_name}",
-                "inst_url": row["inst_url"] or "no_url",
-                "png": (
-                    None if png_name == placeholder else
-                    f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}"
-                    if png_name and not png_name.startswith("http")
-                    else png_name
-                ),
-                **raw,
-            })
+            tools_list.append(
+                {
+                    "id": row["id"],
+                    "service": row["service"],
+                    "description": row["description"],
+                    "stage": row["stage"],
+                    "html_name": html_name,
+                    "url": f"https://cloud.vhp4safety.nl/service/{html_name}",
+                    "inst_url": row["inst_url"] or "no_url",
+                    "png": (
+                        None
+                        if png_name == placeholder
+                        else f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}"
+                        if png_name and not png_name.startswith("http")
+                        else png_name
+                    ),
+                    **raw,
+                }
+            )
 
         # Collect stages for filter sidebar
-        all_stages = sorted(set(
-            t["stage"] for t in tools_list if t.get("stage")
-        ))
+        all_stages = sorted(set(t["stage"] for t in tools_list if t.get("stage")))
         if "Other" in all_stages:
             all_stages.remove("Other")
             all_stages.append("Other")
@@ -609,9 +622,7 @@ def tools():
         # Stage / reg question explanations from DB
         se_rows = conn.execute("SELECT * FROM stage_explanations").fetchall()
         stage_explanations = {s["name"]: s["explanation"] for s in se_rows}
-        reg_question_explanations = {
-            r["label"]: r["explanation"] for r in rq_rows
-        }
+        reg_question_explanations = {r["label"]: r["explanation"] for r in rq_rows}
         conn.close()
 
         return render_template(
@@ -672,16 +683,18 @@ def methods():
             if skip:
                 continue
 
-            methods_filtered.append({
-                "id": row["id"],
-                "service": row["method"],
-                "description": row.get("description") or "",
-                "main_url": row.get("catalog_webpage_url") or "no_url",
-                "inst_url": "no_url",
-                "meta_data": "",
-                "png": None,
-                "raw": raw,
-            })
+            methods_filtered.append(
+                {
+                    "id": row["id"],
+                    "service": row["method"],
+                    "description": row.get("description") or "",
+                    "main_url": row.get("catalog_webpage_url") or "no_url",
+                    "inst_url": "no_url",
+                    "meta_data": "",
+                    "png": None,
+                    "raw": raw,
+                }
+            )
 
         stages = sorted(stages_set)
         if "Other" in stages:
@@ -690,9 +703,7 @@ def methods():
 
         se_rows = conn.execute("SELECT * FROM stage_explanations").fetchall()
         stage_explanations = {s["name"]: s["explanation"] for s in se_rows}
-        reg_question_explanations = {
-            r["label"]: r["explanation"] for r in rq_rows
-        }
+        reg_question_explanations = {r["label"]: r["explanation"] for r in rq_rows}
         conn.close()
 
         return render_template(
@@ -772,20 +783,24 @@ def tool_page(toolname):
 ################################################################################
 ### Pages under 'Implementation'
 
+
 # General Explore our work
 @app.route("/explore_our_work")
 def explore_our_work():
     return render_template("implementation/explore_our_work.html")
+
 
 # General Training
 @app.route("/training")
 def training():
     return render_template("implementation/training.html")
 
+
 # General Impact
 @app.route("/impact")
 def impact():
     return render_template("implementation/impact.html")
+
 
 ################################################################################
 ### Pages under 'Process Flow'
@@ -851,7 +866,7 @@ def is_valid_qid(qid):
 @app.route("/compound/<cwid>")
 def show_compound(cwid):
     try:
-        return render_template(f"compound.html", cwid=cwid)
+        return render_template("compound.html", cwid=cwid)
     except TemplateNotFound:
         abort(404)
 
@@ -1087,7 +1102,6 @@ def privacy_policy():
     return render_template("legal/privacypolicy.html")
 
 
-from src.scheduler import init_scheduler
 init_scheduler(app)
 
 if __name__ == "__main__":

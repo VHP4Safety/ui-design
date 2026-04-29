@@ -18,7 +18,8 @@ _scheduler: BackgroundScheduler | None = None
 
 def _reseed_job() -> None:
     """Drop + re-seed all tables from upstream YAML indexes."""
-    from src.seed import seed_all          # late import to avoid circular deps
+    from src.seed import seed_all  # late import to avoid circular deps
+
     log.info("⏳ Nightly re-seed started …")
     try:
         seed_all()

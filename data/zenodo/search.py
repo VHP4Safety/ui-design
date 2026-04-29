@@ -155,7 +155,7 @@ class ZenodoExtractor:
         page: int = 1,
         size: int = 25,
         load_metadata: bool = True,
-        filters: tuple[tuple[str, str]] | None= None,
+        filters: tuple[tuple[str, str]] | None = None,
     ) -> dict[str, Any]:
         """Search Zenodo records.
 
@@ -259,7 +259,7 @@ class ZenodoExtractor:
         size: int = 25,
         include_urls: bool = False,
         load_metadata: bool = False,
-        filters: tuple[tuple[str, str]]|None = None,
+        filters: tuple[tuple[str, str]] | None = None,
     ) -> dict[str, Any]:
         """list records for the configured community/type (wrapper for search_records)."""
         # If filters provided, require metadata and URLs
@@ -312,7 +312,7 @@ class ZenodoExtractor:
         return hits
 
     def _apply_filters(
-        self, hits: list[dict[str, Any]], filters: tuple[tuple[str, str]]|None
+        self, hits: list[dict[str, Any]], filters: tuple[tuple[str, str]] | None
     ) -> list[dict[str, Any]]:
         """Apply AND-filters to hits using parsed metadata when available.
 
@@ -372,7 +372,7 @@ class ZenodoExtractor:
         initial_hits: list[dict[str, Any]],
         page: int,
         page_size: int,
-        filters: tuple[tuple[str, str]]|None,
+        filters: tuple[tuple[str, str]] | None,
         query: None | str = None,
     ) -> tuple[list[dict[str, Any]], bool, int]:
         """Fetch subsequent pages until page_size filtered results are collected or timeout.
