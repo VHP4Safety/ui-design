@@ -27,6 +27,7 @@ jobs:
       - name: Run API checks
         id: report
         run: |
+          pip install -r requirements.txt
           python3 -m tests.api_check > report.md || true
           {
             echo 'REPORT<<GHEOF'
