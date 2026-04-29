@@ -860,6 +860,24 @@ def tool_page(toolname):
 
 
 ################################################################################
+### Pages under 'Implementation'
+
+# General Explore our work
+@app.route("/explore_our_work")
+def explore_our_work():
+    return render_template("implementation/explore_our_work.html")
+
+# General Training
+@app.route("/training")
+def training():
+    return render_template("implementation/training.html")
+
+# General Impact
+@app.route("/impact")
+def impact():
+    return render_template("implementation/impact.html")
+
+################################################################################
 ### Pages under 'Process Flow'
 
 
