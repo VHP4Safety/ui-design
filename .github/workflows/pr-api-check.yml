@@ -27,7 +27,7 @@ jobs:
       - name: Run API checks
         id: report
         run: |
-          python3 .github/scripts/api_check.py > report.md
+          python3 tests/api_check.py > report.md || true
           {
             echo 'REPORT<<GHEOF'
             cat report.md
@@ -39,6 +39,9 @@ jobs:
         with:
           header: api-check
           message: ${{ steps.report.outputs.REPORT }}
+
+      - name: Fail if API checks did not pass
+        run: "grep -q '**Result: PASS**' report.md"
 
       - name: Stop container
         if: always()

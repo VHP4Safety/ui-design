@@ -2,11 +2,65 @@
 """API check: counts, validation summary, and route health."""
 
 import json
+import os
+import re
+import subprocess
 import sys
 import urllib.request
 from datetime import datetime, timezone
 
-BASE = "http://localhost:5050/api"
+
+def _port_from_dockerfile(dockerfile_path: str) -> str:
+    """Read the first EXPOSE port from the Dockerfile next to this repo."""
+    try:
+        with open(dockerfile_path) as f:
+            for line in f:
+                m = re.match(r"^\s*EXPOSE\s+(\d+)", line)
+                if m:
+                    return m.group(1)
+    except OSError:
+        pass
+    return "5050"
+
+
+def _container_ip(container_name: str) -> str | None:
+    """Return the bridge IP of a running container, or None."""
+    try:
+        out = subprocess.check_output(
+            [
+                "docker", "inspect",
+                "--format", "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}",
+                container_name,
+            ],
+            stderr=subprocess.DEVNULL,
+            text=True,
+        ).strip()
+        return out if out else None
+    except Exception:
+        return None
+
+
+# ── resolve BASE URL ─────────────────────────────────────────────
+# Priority:
+#   1. VHP_BASE_URL env var (set manually or by CI)
+#   2. Docker-inspect the container named in VHP_CONTAINER env var
+#   3. localhost + port from Dockerfile EXPOSE
+
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DOCKERFILE = os.path.join(REPO_ROOT, "Dockerfile")
+PORT = _port_from_dockerfile(DOCKERFILE)
+
+if "VHP_BASE_URL" in os.environ:
+    BASE = os.environ["VHP_BASE_URL"].rstrip("/")
+else:
+    container_name = os.environ.get("VHP_CONTAINER", "vhp4safety")
+    ip = _container_ip(container_name)
+    if ip:
+        BASE = f"http://{ip}:{PORT}/api"
+    else:
+        BASE = f"http://localhost:{PORT}/api"
+
+print(f"# Using BASE: {BASE}", file=sys.stderr)
 
 
 def get(path):
@@ -75,8 +129,7 @@ for method, path in ROUTES:
     if not ok:
         errors.append(f"{method} {path} -> {status}")
 
-# ── build report ──────────────────────────────────────────────────
-
+# build report
 now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 lines = [f"## API check -- {now}", ""]
 
