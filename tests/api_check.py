@@ -102,31 +102,33 @@ if status != 200:
     validation = None
 
 # 3. Health check every route
+# Routes marked external=True depend on outside services (Virtuoso, BridgeDB, etc.)
+# and are reported as warnings only — they never affect PASS/FAIL.
 ROUTES = [
-    ("GET", "/tools/"),
-    ("GET", "/tools/cdkdepict"),
-    ("GET", "/methods/"),
-    ("GET", "/methods/5_cfda_assay_to_determine_cytotoxicity"),
-    ("GET", "/regulatory-questions/"),
-    ("GET", "/stages/"),
-    ("GET", "/casestudies/"),
-    ("GET", "/casestudies/kidney"),
-    ("GET", "/compounds/Q2270"),
-    ("GET", "/compounds/Q2270/properties"),
-    ("GET", "/compounds/Q2270/identifiers"),
-    ("GET", "/compounds/Q2270/toxicology"),
-    ("GET", "/compounds/Q2270/experimental-data"),
-    ("GET", "/data/"),
-    ("GET", "/validation/"),
-    ("GET", "/validation/tools"),
+    ("GET", "/tools/",                                          False),
+    ("GET", "/tools/cdkdepict",                                 False),
+    ("GET", "/methods/",                                        False),
+    ("GET", "/methods/5_cfda_assay_to_determine_cytotoxicity",  False),
+    ("GET", "/regulatory-questions/",                           False),
+    ("GET", "/stages/",                                         False),
+    ("GET", "/casestudies/",                                    False),
+    ("GET", "/casestudies/kidney",                              False),
+    ("GET", "/compounds/Q2270",                                 True),   # proxies external source
+    ("GET", "/compounds/Q2270/properties",                      False),
+    ("GET", "/compounds/Q2270/identifiers",                     False),
+    ("GET", "/compounds/Q2270/toxicology",                      False),
+    ("GET", "/compounds/Q2270/experimental-data",               True),   # proxies external source
+    ("GET", "/data/",                                           True),   # proxies external sources
+    ("GET", "/validation/",                                     False),
+    ("GET", "/validation/tools",                                False),
 ]
 
 health = []
-for method, path in ROUTES:
+for method, path, external in ROUTES:
     status, _ = get(path)
     ok = 200 <= status < 300
-    health.append((method, path, status, ok))
-    if not ok:
+    health.append((method, path, status, ok, external))
+    if not ok and not external:
         errors.append(f"{method} {path} -> {status}")
 
 # build report
@@ -161,8 +163,13 @@ lines.append("### Route health")
 lines.append("")
 lines.append("| Method | Route | Status |")
 lines.append("|--------|-------|-------:|")
-for method, path, status, ok in health:
-    mark = "ok" if ok else f"FAIL ({status})"
+for method, path, status, ok, external in health:
+    if ok:
+        mark = "ok"
+    elif external:
+        mark = f"warn ({status}) ⚠️ external service"
+    else:
+        mark = f"FAIL ({status})"
     lines.append(f"| {method} | `{path}` | {mark} |")
 lines.append("")
 
