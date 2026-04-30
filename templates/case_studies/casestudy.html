@@ -132,6 +132,6 @@
 <script src="/static/js/casestudies.js"></script>
 <script>
   // Content injected server-side from DB — no GitHub fetch needed
-  window.__CASE_CONTENT__ = {{ case_content_json | safe }};
+  window.__CASE_CONTENT__ = {{ case_content_json | tojson }};
 </script>
 {% endblock %}

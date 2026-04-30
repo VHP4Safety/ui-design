@@ -118,7 +118,7 @@
   {# ── HTML Content Block ── #}
   {% if step.content_html %}
   <div class="mt-4">
-    {{ step.content_html | safe }}
+    {{ step.content_html }}
   </div>
   {% endif %}
 
@@ -143,7 +143,7 @@
            aria-labelledby="heading{{ loop.index0 }}"
            data-bs-parent="#accordionMain">
         <div class="accordion-body">
-          {{ item.description | default("") | safe }}
+          {{ item.description | default("") }}
         </div>
       </div>
     </div>
