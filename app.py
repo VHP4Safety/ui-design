@@ -311,19 +311,19 @@ def sitemap():
     sitemapContent = """<?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://platform.vhp4safety.nl/\</loc\>
+        <loc>https://platform.vhp4safety.nl/</loc>
     </url>
     <url>
-        <loc>https://platform.vhp4safety.nl/casestudies\</loc\>
+        <loc>https://platform.vhp4safety.nl/casestudies</loc>
     </url>
     <url>
-        <loc>https://platform.vhp4safety.nl/tools\</loc\>
+        <loc>https://platform.vhp4safety.nl/tools</loc>
     </url>
     <url>
-        <loc>https://platform.vhp4safety.nl/methods\</loc\>
+        <loc>https://platform.vhp4safety.nl/methods</loc>
     </url>
     <url>
-        <loc>https://platform.vhp4safety.nl/data\</loc\>
+        <loc>https://platform.vhp4safety.nl/data</loc>
     </url>
 </urlset>
 """
