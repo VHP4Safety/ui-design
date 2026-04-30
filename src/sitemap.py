@@ -26,7 +26,7 @@ def gather_urls() -> Iterable[tuple[str, str | None]]:
     conn = get_conn()
     try:
         yield (f"{BASE_URL}/", datetime.utcnow().isoformat())
-        for path in ("/tools", "/methods", "/data", "/casestudies", "/api/v1/docs"):
+        for path in ("/tools", "/methods", "/data", "/casestudies", "/api/v1/swagger"):
             yield (f"{BASE_URL}{path}", None)
         for t in conn.execute("SELECT id, updated_at FROM tools").fetchall():
             if t["id"]:
