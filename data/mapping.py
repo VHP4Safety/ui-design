@@ -6,18 +6,20 @@ import re
 # Prefer literal "<>" in real code (not HTML-escaped &lt; &gt;)
 DOI_RE = re.compile(r'\b10\.\d{4,9}/[^\s"<>]+', re.IGNORECASE)
 
+
 def is_valid_doi(doi: Optional[str]) -> bool:
     """Basic DOI sanity check. Rejects obvious redactions like '***'."""
     if not doi or not isinstance(doi, str):
         return False
     d = doi.strip()
-    if "*" in d:           # handles 10.5281/zenodo.*** etc.
+    if "*" in d:  # handles 10.5281/zenodo.*** etc.
         return False
     if not d.lower().startswith("10."):
         return False
     if "/" not in d:
         return False
     return True
+
 
 def g(d: Dict[str, Any], *path: str, default=None):
     """Safe nested-get. Never raises KeyError."""
@@ -28,6 +30,7 @@ def g(d: Dict[str, Any], *path: str, default=None):
         else:
             return default
     return cur
+
 
 def first(*vals, default=None):
     """Return first non-empty (not None, not '' , not []) value."""
@@ -41,6 +44,7 @@ def first(*vals, default=None):
         return v
     return default
 
+
 def find_attr(attrs: Any, name: str) -> Optional[str]:
     """Find BioStudies attribute list entry with given name."""
     if not isinstance(attrs, list):
@@ -50,6 +54,7 @@ def find_attr(attrs: Any, name: str) -> Optional[str]:
             return a.get("value")
     return None
 
+
 def extract_doi_from_text(text: Any) -> Optional[str]:
     """Extract a DOI from a string (or return None)."""
     if not isinstance(text, str) or not text:
@@ -57,6 +62,7 @@ def extract_doi_from_text(text: Any) -> Optional[str]:
     m = DOI_RE.search(text)
     doi = m.group(0) if m else None
     return doi if is_valid_doi(doi) else None
+
 
 def extract_all_dois(text: Any) -> List[str]:
     """Extract all valid DOIs from a string."""
@@ -69,6 +75,7 @@ def extract_all_dois(text: Any) -> List[str]:
             dois.append(d)
     return dois
 
+
 def doi_url(doi: Optional[str]) -> Optional[str]:
     """Convert DOI to https://doi.org/..."""
     if not doi:
@@ -78,7 +85,9 @@ def doi_url(doi: Optional[str]) -> Optional[str]:
         return d
     return f"https://doi.org/{d}"
 
+
 # ---------- DOI + publications extraction ----------
+
 
 def find_doi_anywhere(item: Dict[str, Any]) -> Optional[str]:
     """
@@ -135,6 +144,7 @@ def find_doi_anywhere(item: Dict[str, Any]) -> Optional[str]:
 
     return None
 
+
 def _dedup_publications(pubs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Deduplicate publications by DOI (preferred) or URL."""
     seen = set()
@@ -150,6 +160,7 @@ def _dedup_publications(pubs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         seen.add(key)
         out.append(p)
     return out
+
 
 def extract_publications_zenodo(z: Dict[str, Any]) -> List[Dict[str, Any]]:
     """
@@ -179,10 +190,13 @@ def extract_publications_zenodo(z: Dict[str, Any]) -> List[Dict[str, Any]]:
 
             # Heuristic: treat as publication if resource_type contains "publication"
             # or relation indicates citation-like linkage.
-            looks_like_pub = (
-                "publication" in rtype
-                or relation in {"references", "iscitedby", "isreferencedby", "issupplementto", "isdocumentedby"}
-            )
+            looks_like_pub = "publication" in rtype or relation in {
+                "references",
+                "iscitedby",
+                "isreferencedby",
+                "issupplementto",
+                "isdocumentedby",
+            }
 
             if not looks_like_pub:
                 # still accept DOI-looking identifiers if they are clearly *not* Zenodo dataset DOIs
@@ -192,7 +206,9 @@ def extract_publications_zenodo(z: Dict[str, Any]) -> List[Dict[str, Any]]:
             url = None
 
             if scheme == "doi":
-                doi = extract_doi_from_text(ident) or (ident.strip() if isinstance(ident, str) else None)
+                doi = extract_doi_from_text(ident) or (
+                    ident.strip() if isinstance(ident, str) else None
+                )
                 if not is_valid_doi(doi):
                     doi = None
                 url = doi_url(doi) if doi else None
@@ -202,50 +218,61 @@ def extract_publications_zenodo(z: Dict[str, Any]) -> List[Dict[str, Any]]:
             else:
                 # Unknown scheme: try DOI extraction
                 doi = extract_doi_from_text(ident)
-                url = doi_url(doi) if doi else (ident.strip() if isinstance(ident, str) else None)
+                url = (
+                    doi_url(doi)
+                    if doi
+                    else (ident.strip() if isinstance(ident, str) else None)
+                )
 
             # Exclude dataset DOI / concept DOI if they appear
             if doi and (doi == dataset_doi or doi == concept_doi):
                 continue
 
             if doi or url:
-                pubs.append({
-                    "doi": doi,
-                    "doi_url": doi_url(doi) if doi else None,
-                    "url": url,
-                    "relation": relation or None,
-                    "resource_type": r.get("resource_type"),
-                    "source": "zenodo.related_identifiers",
-                })
+                pubs.append(
+                    {
+                        "doi": doi,
+                        "doi_url": doi_url(doi) if doi else None,
+                        "url": url,
+                        "relation": relation or None,
+                        "resource_type": r.get("resource_type"),
+                        "source": "zenodo.related_identifiers",
+                    }
+                )
 
     refs = g(z, "metadata", "references", default=[]) or []
     if isinstance(refs, list):
         for ref in refs:
             doi = extract_doi_from_text(ref)
             if doi and doi not in {dataset_doi, concept_doi}:
-                pubs.append({
-                    "doi": doi,
-                    "doi_url": doi_url(doi),
-                    "url": doi_url(doi),
-                    "relation": "references",
-                    "resource_type": "publication",
-                    "source": "zenodo.references",
-                })
+                pubs.append(
+                    {
+                        "doi": doi,
+                        "doi_url": doi_url(doi),
+                        "url": doi_url(doi),
+                        "relation": "references",
+                        "resource_type": "publication",
+                        "source": "zenodo.references",
+                    }
+                )
 
     # Optional: mine description for DOI links (often present as doi.org/10.xxxx/...)
     desc = g(z, "metadata", "description")
     for doi in extract_all_dois(desc):
         if doi not in {dataset_doi, concept_doi}:
-            pubs.append({
-                "doi": doi,
-                "doi_url": doi_url(doi),
-                "url": doi_url(doi),
-                "relation": "mentions",
-                "resource_type": "publication",
-                "source": "zenodo.description",
-            })
+            pubs.append(
+                {
+                    "doi": doi,
+                    "doi_url": doi_url(doi),
+                    "url": doi_url(doi),
+                    "relation": "mentions",
+                    "resource_type": "publication",
+                    "source": "zenodo.description",
+                }
+            )
 
     return _dedup_publications(pubs)
+
 
 def extract_publications_biostudies(b: Dict[str, Any]) -> List[Dict[str, Any]]:
     """
@@ -262,28 +289,34 @@ def extract_publications_biostudies(b: Dict[str, Any]) -> List[Dict[str, Any]]:
     if isinstance(meta_pubs, list):
         for p in meta_pubs:
             if isinstance(p, dict):
-                doi = extract_doi_from_text(first(p.get("doi"), p.get("identifier"), p.get("url")))
+                doi = extract_doi_from_text(
+                    first(p.get("doi"), p.get("identifier"), p.get("url"))
+                )
                 url = first(p.get("url"), doi_url(doi))
                 if doi or url:
-                    pubs.append({
-                        "title": p.get("title"),
-                        "doi": doi,
-                        "doi_url": doi_url(doi) if doi else None,
-                        "url": url,
-                        "pmid": p.get("pmid") or p.get("PMID"),
-                        "year": p.get("year") or p.get("Year"),
-                        "authors": p.get("authors") or p.get("Authors"),
-                        "source": "biostudies.metadata.publications",
-                    })
+                    pubs.append(
+                        {
+                            "title": p.get("title"),
+                            "doi": doi,
+                            "doi_url": doi_url(doi) if doi else None,
+                            "url": url,
+                            "pmid": p.get("pmid") or p.get("PMID"),
+                            "year": p.get("year") or p.get("Year"),
+                            "authors": p.get("authors") or p.get("Authors"),
+                            "source": "biostudies.metadata.publications",
+                        }
+                    )
             elif isinstance(p, str):
                 doi = extract_doi_from_text(p)
                 if doi:
-                    pubs.append({
-                        "doi": doi,
-                        "doi_url": doi_url(doi),
-                        "url": doi_url(doi),
-                        "source": "biostudies.metadata.publications",
-                    })
+                    pubs.append(
+                        {
+                            "doi": doi,
+                            "doi_url": doi_url(doi),
+                            "url": doi_url(doi),
+                            "source": "biostudies.metadata.publications",
+                        }
+                    )
 
     # 2) raw_data.section.subsections: type == Publication
     subs = g(b, "metadata", "raw_data", "section", "subsections", default=[]) or []
@@ -312,25 +345,29 @@ def extract_publications_biostudies(b: Dict[str, Any]) -> List[Dict[str, Any]]:
             url = doi_url(doi) if doi else None
 
             if doi or pmid or title:
-                pubs.append({
-                    "title": title,
-                    "doi": doi,
-                    "doi_url": doi_url(doi) if doi else None,
-                    "url": url,
-                    "pmid": pmid,
-                    "year": year,
-                    "authors": authors,
-                    "journal": flat.get("Journal") or flat.get("journal"),
-                    "volume": flat.get("Volume") or flat.get("volume"),
-                    "issue": flat.get("Issue") or flat.get("issue"),
-                    "type": flat.get("Type") or flat.get("type"),
-                    "issn": flat.get("Issn") or flat.get("ISSN"),
-                    "source": "biostudies.raw_data.section.subsections",
-                })
+                pubs.append(
+                    {
+                        "title": title,
+                        "doi": doi,
+                        "doi_url": doi_url(doi) if doi else None,
+                        "url": url,
+                        "pmid": pmid,
+                        "year": year,
+                        "authors": authors,
+                        "journal": flat.get("Journal") or flat.get("journal"),
+                        "volume": flat.get("Volume") or flat.get("volume"),
+                        "issue": flat.get("Issue") or flat.get("issue"),
+                        "type": flat.get("Type") or flat.get("type"),
+                        "issn": flat.get("Issn") or flat.get("ISSN"),
+                        "source": "biostudies.raw_data.section.subsections",
+                    }
+                )
 
     return _dedup_publications(pubs)
 
+
 # ---------- Zenodo normalizer ----------
+
 
 def normalize_zenodo(z: Dict[str, Any]) -> Dict[str, Any]:
     creators = g(z, "metadata", "creators", default=[]) or []
@@ -383,19 +420,20 @@ def normalize_zenodo(z: Dict[str, Any]) -> Dict[str, Any]:
             if isinstance(f, dict)
         ],
         "url": first(z.get("url"), g(z, "links", "self_html"), g(z, "links", "self")),
-
         # dataset DOI
         "doi": doi,
         "doi_url": doi_url(doi),
-
         "conceptdoi": first(z.get("conceptdoi"), g(z, "metadata", "conceptdoi")),
-        "conceptdoi_url": doi_url(first(z.get("conceptdoi"), g(z, "metadata", "conceptdoi"))),
-
+        "conceptdoi_url": doi_url(
+            first(z.get("conceptdoi"), g(z, "metadata", "conceptdoi"))
+        ),
         # NEW: linked publications
         "publications": publications,
     }
 
+
 # ---------- BioStudies normalizer ----------
+
 
 def normalize_biostudies(b: Dict[str, Any]) -> Dict[str, Any]:
     meta = b.get("metadata", {}) or {}
@@ -425,7 +463,9 @@ def normalize_biostudies(b: Dict[str, Any]) -> Dict[str, Any]:
 
     # funding best-effort (normalized)
     funding: List[Dict[str, Any]] = []
-    subsections = g(b, "metadata", "raw_data", "section", "subsections", default=[]) or []
+    subsections = (
+        g(b, "metadata", "raw_data", "section", "subsections", default=[]) or []
+    )
     if isinstance(subsections, list):
         for s in subsections:
             if not isinstance(s, dict):
@@ -441,18 +481,32 @@ def normalize_biostudies(b: Dict[str, Any]) -> Dict[str, Any]:
             if not flat:
                 continue
 
-            funder = first(flat.get("Funder"), flat.get("Agency"), flat.get("Funding agency"), flat.get("Agency name"))
-            code = first(flat.get("Grant_id"), flat.get("Grant ID"), flat.get("Grant"), flat.get("Grant number"))
+            funder = first(
+                flat.get("Funder"),
+                flat.get("Agency"),
+                flat.get("Funding agency"),
+                flat.get("Agency name"),
+            )
+            code = first(
+                flat.get("Grant_id"),
+                flat.get("Grant ID"),
+                flat.get("Grant"),
+                flat.get("Grant number"),
+            )
             url = first(flat.get("URL"), flat.get("Url"), flat.get("Project URL"))
 
-            funding.append({
-                "funder": funder,
-                "code": code,
-                "url": url,
-                "acronym": flat.get("Acronym") or flat.get("Programme") or flat.get("Program"),
-                "raw": flat,
-                "source": "biostudies.raw_data.section.subsections",
-            })
+            funding.append(
+                {
+                    "funder": funder,
+                    "code": code,
+                    "url": url,
+                    "acronym": flat.get("Acronym")
+                    or flat.get("Programme")
+                    or flat.get("Program"),
+                    "raw": flat,
+                    "source": "biostudies.raw_data.section.subsections",
+                }
+            )
 
     doi = find_doi_anywhere(b)
     if not is_valid_doi(doi):
@@ -465,15 +519,17 @@ def normalize_biostudies(b: Dict[str, Any]) -> Dict[str, Any]:
     for f in files:
         if not isinstance(f, dict):
             continue
-        files_norm.append({
-            "name": first(f.get("name"), f.get("path")),
-            "size": f.get("size"),
-            "path": f.get("path"),
-            "url": f.get("url"),  # <-- do not rebuild
-            # optional (keep if useful)
-            "exists": g(f, "exists_check", "exists"),
-            "content_length": g(f, "exists_check", "content_length"),
-        })
+        files_norm.append(
+            {
+                "name": first(f.get("name"), f.get("path")),
+                "size": f.get("size"),
+                "path": f.get("path"),
+                "url": f.get("url"),  # <-- do not rebuild
+                # optional (keep if useful)
+                "exists": g(f, "exists_check", "exists"),
+                "content_length": g(f, "exists_check", "content_length"),
+            }
+        )
 
     # OPTIONAL strictness: attach warning if any url missing
     missing = [x.get("path") for x in files_norm if x.get("path") and not x.get("url")]
@@ -503,7 +559,9 @@ def normalize_biostudies(b: Dict[str, Any]) -> Dict[str, Any]:
         "publications": publications,
     }
 
+
 # ---------- combine ----------
+
 
 def normalize_all(
     bs_entries: List[Dict[str, Any]],
