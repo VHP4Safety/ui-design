@@ -251,9 +251,7 @@ if quality_issues:
         if entity == "tools":
             display_entity = "service"
         if entity.startswith("data/"):
-            link = f"[{id}]({BASE}/data/{id})"
-        if entity.startswith("casestudies"):
-            link = f"[{id}](https://github.com/VHP4Safety/ui-casestudy-config/blob/main/{id}_content.json)"
+            link = f"[{id}](https://platform.vhp4safety.nl/data/{id})"
         else:
             link = f"[{id}](https://github.com/VHP4Safety/cloud/blob/main/docs/{display_entity}/{id}.json)"
         field_display = str(field)
