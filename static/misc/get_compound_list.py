@@ -2,6 +2,7 @@
 
 # Importing the required modules.
 from wikidataintegrator import wdi_core
+import jsonify
 
 # Setting up the url for sparql endpoint.
 compoundwikiEP = "https://compoundcloud.wikibase.cloud/query/sparql"
