@@ -13,13 +13,31 @@ import json
 from datetime import datetime, timezone
 from typing import Any, Optional
 
-from flask import abort
+from flask import jsonify, request
 from flask_openapi3 import APIBlueprint, OpenAPI, Tag
 from pydantic import BaseModel, ConfigDict, Field, RootModel
 
 from src import repo
 from src.db import get_conn
 from src.models.casestudy import CaseStudyCard as CSModel
+
+
+class ErrorResponse(BaseModel):
+    """Standard error body returned by all API endpoints on failure."""
+
+    error: str = Field(..., description="Human-readable error message.")
+    status: int = Field(..., description="HTTP status code echoed in the body.")
+    path: str = Field(..., description="Request path that triggered the error.")
+
+    model_config = ConfigDict(
+        json_schema_extra={"example": {"error": "Not found", "status": 404, "path": "/api/tools/foo"}}
+    )
+
+
+def _api_error(status: int, message: str):
+    """Return a plain JSON error response — never the HTML error page."""
+    return jsonify({"error": message, "status": status, "path": request.path}), status
+
 from src.models.cloud.method import ServiceIndexEntry as ToolModel
 from src.models.cloud.tool import Method as MethodModel
 from src.models.compound import (
@@ -443,12 +461,12 @@ def list_tools(query: FilterQuery):
     ]
 
 
-@tools_bp.get("/<tool_id>", responses={200: ToolResponse})
+@tools_bp.get("/<tool_id>", responses={200: ToolResponse, 404: ErrorResponse})
 def get_tool(path: ToolPath):
     """Get a single tool by its ID."""
     tool = repo.get_tool(path.tool_id)
     if not tool:
-        abort(404)
+        return _api_error(404, "Not found")
     return tool.model_dump()
 
 
@@ -464,12 +482,12 @@ def list_methods(query: FilterQuery):
     ]
 
 
-@methods_bp.get("/<method_id>", responses={200: MethodResponse})
+@methods_bp.get("/<method_id>", responses={200: MethodResponse, 404: ErrorResponse})
 def get_method(path: MethodPath):
     """Get a single method by ID, including full upstream fields."""
     method = repo.get_method(path.method_id)
     if not method:
-        abort(404)
+        return _api_error(404, "Not found")
     return method.model_dump()
 
 
@@ -505,12 +523,12 @@ def list_case_studies():
     return out
 
 
-@casestudies_bp.get("/<name>", responses={200: CaseStudyDetailResponse})
+@casestudies_bp.get("/<name>", responses={200: CaseStudyDetailResponse, 404: ErrorResponse})
 def get_case_study(path: CaseStudyPath):
     """Get a case study by name, including its full content JSON."""
     case = repo.get_case_study(path.name)
     if not case:
-        abort(404)
+        return _api_error(404, "Not found")
     d = case.model_dump()
     d["name"] = d.pop("slug", d.get("name"))
     if isinstance(d.get("content_json"), str):
@@ -521,64 +539,64 @@ def get_case_study(path: CaseStudyPath):
 #  Compounds
 
 
-@compounds_bp.get("/<cwid>", responses={200: CompoundDetail})
+@compounds_bp.get("/<cwid>", responses={200: CompoundDetail, 400: ErrorResponse, 502: ErrorResponse})
 def get_compound(path: CompoundPath):
     """Get full compound data from Compound Wiki via SPARQL."""
     if not is_valid_qid(path.cwid):
-        abort(400)
+        return _api_error(400, "Bad request")
     try:
         return get_full_compound(path.cwid).model_dump()
     except Exception:
-        abort(502)
+        return _api_error(502, "Bad gateway")
 
 
-@compounds_bp.get("/<cwid>/properties", responses={200: CompoundSummary})
+@compounds_bp.get("/<cwid>/properties", responses={200: CompoundSummary, 400: ErrorResponse, 404: ErrorResponse, 502: ErrorResponse})
 def get_compound_properties(path: CompoundPath):
     """Get core compound properties (formula, mass, InChI, SMILES)."""
     if not is_valid_qid(path.cwid):
-        abort(400)
+        return _api_error(400, "Bad request")
     try:
         summary = get_properties(path.cwid)
         if not summary:
-            abort(404)
+            return _api_error(404, "Not found")
         return summary.model_dump()
     except Exception:
-        abort(502)
+        return _api_error(502, "Bad gateway")
 
 
-@compounds_bp.get("/<cwid>/identifiers", responses={200: CompoundIdentifierList})
+@compounds_bp.get("/<cwid>/identifiers", responses={200: CompoundIdentifierList, 400: ErrorResponse, 502: ErrorResponse})
 def get_compound_identifiers(path: CompoundPath):
     """Get external database identifiers (CAS, PubChem, ChEBI, etc.)."""
     if not is_valid_qid(path.cwid):
-        abort(400)
+        return _api_error(400, "Bad request")
     try:
         return [i.model_dump() for i in get_identifiers(path.cwid)]
     except Exception:
-        abort(502)
+        return _api_error(502, "Bad gateway")
 
 
-@compounds_bp.get("/<cwid>/toxicology", responses={200: CompoundToxicologyList})
+@compounds_bp.get("/<cwid>/toxicology", responses={200: CompoundToxicologyList, 400: ErrorResponse, 502: ErrorResponse})
 def get_compound_toxicology(path: CompoundPath):
     """Get toxicology data (LD50, LC50, etc.)."""
     if not is_valid_qid(path.cwid):
-        abort(400)
+        return _api_error(400, "Bad request")
     try:
         return [t.model_dump() for t in get_toxicology(path.cwid)]
     except Exception:
-        abort(502)
+        return _api_error(502, "Bad gateway")
 
 
 @compounds_bp.get(
-    "/<cwid>/experimental-data", responses={200: CompoundExperimentalDatumList}
+    "/<cwid>/experimental-data", responses={200: CompoundExperimentalDatumList, 400: ErrorResponse, 502: ErrorResponse}
 )
 def get_compound_exp_data(path: CompoundPath):
     """Get experimental measurements (EC50, IC50, etc.)."""
     if not is_valid_qid(path.cwid):
-        abort(400)
+        return _api_error(400, "Bad request")
     try:
         return [d.model_dump() for d in get_experimental_data(path.cwid)]
     except Exception:
-        abort(502)
+        return _api_error(502, "Bad gateway")
 
 
 #  Data (BioStudies + Zenodo)
@@ -622,7 +640,7 @@ def list_data(query: DataSearchQuery):
     }
 
 
-@data_bp.get("/<data_id>", responses={200: NormalisedDataset})
+@data_bp.get("/<data_id>", responses={200: NormalisedDataset, 404: ErrorResponse})
 def get_data_detail(path: DataDetailPath):
     """Get normalised metadata for a single dataset by its accession ID."""
     bs = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION)
@@ -738,11 +756,11 @@ def validate_all():
     }
 
 
-@validation_bp.get("/<entity>", responses={200: EntitySummaryResponse})
+@validation_bp.get("/<entity>", responses={200: EntitySummaryResponse, 404: ErrorResponse})
 def validate_entity(path: EntityPath):
     """Data completeness report for a single entity type."""
     if path.entity not in _ENTITY_REGISTRY:
-        abort(404)
+        return _api_error(404, "Not found")
     tbl, model, id_a, lbl_a = _ENTITY_REGISTRY[path.entity]
     return _validate_entity(path.entity, tbl, model, id_a, lbl_a)
 
