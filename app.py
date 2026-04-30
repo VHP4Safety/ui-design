@@ -1,22 +1,38 @@
 ################################################################################
 ### Loading the required modules
 import json
+import os
 import re
 
 import requests
 import urllib.parse
-from flask import Flask, abort, jsonify, render_template, request, Response
+from flask import abort, jsonify, render_template, request, Response
 from flask_caching import Cache
+from flask_openapi3.openapi import OpenAPI
+from flask_openapi3.models.info import Info
 from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
+from src.scheduler import init_scheduler
 
 # from wikidataintegrator import wdi_core
 from wikibaseintegrator import wbi_helpers
 
-# Import BioStudies extractor
-from data.biostudies.search import BioStudiesExtractor
-from data.zenodo.search import ZenodoExtractor
-from data.mapping import normalize_all
+# Data extractors (API wrappers, no DB needed)
+from src.models.data.biostudies import BioStudiesExtractor
+from src.models.data.zenodo import ZenodoExtractor
+from src.models.data.mapping import normalize_all
+
+# Database layer
+from src.db import (
+    db,
+    init_db,
+    Tool,
+    Method,
+    RegulatoryQuestion,
+    StageExplanation,
+    CaseStudy,
+)
+from src.api import init_api
 
 ################################################################################
 CACHE_TIMEOUT = 60 * 60 * 24 * 5  # 5 days -- [Ozan] I created a separate
@@ -68,7 +84,7 @@ REG_QUESTIONS = {
     },
     "reg_q_2b": {
         "label": "Parkinson Case Study (b)",
-        "explanation": "What level of exposure to compound Dinoseb leads to risk for developing Parkinson’s disease?",
+        "explanation": "What level of exposure to compound Dinoseb leads to risk for developing Parkinson's disease?",
     },
     "reg_q_3a": {
         "label": "Thyroid Case Study (a)",
@@ -108,9 +124,26 @@ cache_config = {
     "CACHE_DEFAULT_TIMEOUT": CACHE_TIMEOUT,  # 60 min chaching
     "CACHE_SERVICE_TIMEOUT": CACHE_TIMEOUT_SERVICE,
 }
-app = Flask(__name__)
+
+app = OpenAPI(
+    __name__,
+    info=Info(title="VHP4Safety Platform API", version="1.0.0"),
+    doc_prefix="/api/v1",
+)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-insecure-key")
 app.config.from_mapping(cache_config)
 cache = Cache(app)
+
+# Database init and API registration
+init_db(app)
+init_api(app)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    if request.path.startswith("/api/"):
+        return {"error": "Not found", "path": request.path}, 404
+    return render_template("404.html"), 404
 
 
 @cache.memoize(timeout=CACHE_TIMEOUT)
@@ -210,42 +243,21 @@ def get_repository_data(
 # Provide methods list to all templates for the Methods dropdown in the navbar
 @app.context_processor
 def inject_methods_menu():
-    """Fetch methods_index.json and expose a simple list of {id, title} to templates.
-    Return an empty list on any error to avoid breaking pages.
-    """
-    data = get_json_dict(METHODS_URL)
-    if data:
-        items = []
-        for key, val in data.items() if isinstance(data, dict) else []:
-            title = (
-                val.get("method")
-                or val.get("method_name_content")
-                or val.get("method_name")
-                or key
-            )
-            items.append({"id": key, "title": title})
-        # sort by title
-        items = sorted(items, key=lambda x: x["title"].lower())
-        return {"methods_menu": items}
-    else:
+    """Expose methods list to all templates for navbar dropdown."""
+    try:
+        rows = Method.query.order_by(Method.method).all()
+        return {"methods_menu": [{"id": r.id, "title": r.method} for r in rows]}
+    except Exception:
         return {"methods_menu": []}
 
 
 @app.context_processor
 def inject_tools_menu():
-    """Fetch methods_index.json and expose a simple list of {id, title} to templates.
-    Return an empty list on any error to avoid breaking pages.
-    """
-    data = get_json_dict_service(SERVICES_URL)
-    if data:
-        items = []
-        for key, val in data.items() if isinstance(data, dict) else []:
-            title = val.get("service") or key
-            items.append({"id": key, "title": title})
-        # sort by title
-        items = sorted(items, key=lambda x: x["title"].lower())
-        return {"tools_menu": items}
-    else:
+    """Expose tools list to all templates for navbar dropdown."""
+    try:
+        rows = Tool.query.order_by(Tool.service).all()
+        return {"tools_menu": [{"id": r.id, "title": r.service} for r in rows]}
+    except Exception:
         return {"tools_menu": []}
 
 
@@ -275,17 +287,10 @@ def inject_data_menu():
 ### The landing page
 @app.route("/")
 def home():
-    try:
-        tools = get_json_dict_service(
-            SERVICES_URL
-        )  # Geting the service_list.json in the dictionary format.
-        tools = list(tools.values())  # Converting the dictionary to a list object.
-    except Exception as e:
-        return f"Error processing service data: {e}", 500
-    num_tools = len(tools)
-    num_case_studies = len(CASESTUDIES)
+    num_tools = Tool.query.count()
+    num_case_studies = CaseStudy.query.count()
     bs_res, zen_res = get_repository_data(search_query="")
-    num_datasets = bs_res["total"] + zen_res["total"]
+    num_datasets = bs_res.get("total", 0) + zen_res.get("total", 0)
     return render_template(
         "home.html",
         num_tools=num_tools,
@@ -298,23 +303,32 @@ def home():
 ### The sitemap.xml for search engines
 @app.route("/sitemap.xml")
 def sitemap():
+    # Prefer generated static sitemap if present (created by src.sitemap)
+    import os
+
+    path = os.path.join(os.path.dirname(__file__), "static", "sitemap.xml")
+    if os.path.exists(path):
+        with open(path, "rb") as fh:
+            return Response(fh.read(), mimetype="application/xml")
+
+    # Fallback minimal sitemap
     sitemapContent = """<?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://platform.vhp4safety.nl/</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/casestudies</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/tools</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/methods</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/data</loc>
-  </url>
+    <url>
+        <loc>https://platform.vhp4safety.nl/</loc>
+    </url>
+    <url>
+        <loc>https://platform.vhp4safety.nl/casestudies</loc>
+    </url>
+    <url>
+        <loc>https://platform.vhp4safety.nl/tools</loc>
+    </url>
+    <url>
+        <loc>https://platform.vhp4safety.nl/methods</loc>
+    </url>
+    <url>
+        <loc>https://platform.vhp4safety.nl/data</loc>
+    </url>
 </urlset>
 """
     return Response(sitemapContent, mimetype="text/xml")
@@ -536,135 +550,86 @@ def models():
 ### Pages under 'Tools'
 
 
-### Here begins the updated version for creating the tool list page.
 @app.route("/tools")
 def tools():
     try:
-        tools = get_json_dict_service(
-            SERVICES_URL
-        )  # Geting the service_list.json in the dictionary format.
-        tools = list(tools.values())  # Converting the dictionary to a list object.
-
-        # Mapping the URLs with glossary IDs to their text values.
-        stage_mapping = {
-            "https://vhp4safety.github.io/glossary#VHP0000153": "Chemical Characteristics and Hazard Identification",
-            "https://vhp4safety.github.io/glossary#VHP0000154": "Exposure",
-            "https://vhp4safety.github.io/glossary#VHP0000155": "Toxicokinetics",
-            "https://vhp4safety.github.io/glossary#VHP0000156": "Toxicodynamics",
-            "https://vhp4safety.github.io/glossary#VHP0000158": "Adverse Outcome",
-            # Legacy mappings (superseded by the Process Flow Step URIs above)
-            "https://vhp4safety.github.io/glossary#VHP0000056": "ADME",
-            "https://vhp4safety.github.io/glossary#VHP0000102": "Hazard Assessment",
-            "https://vhp4safety.github.io/glossary#VHP0000148": "Chemical Information",
-            "https://vhp4safety.github.io/glossary#VHP0000149": "General",
-        }
-
-        for tool in tools:
-            full_stage_url = tool.get("stage", "")
-
-            # Writing the service name and stage values in the logs for troubleshooting.
-            # print(f"Tool: {tool['service']}, Stage URL: {full_stage_url}")  # Log the full URL
-
-            # Checking if the full URL is in the mapping and updating the stage.
-            if full_stage_url in stage_mapping:
-                # print(f"Mapping stage URL {full_stage_url} to {stage_mapping[full_stage_url]}")  # Log the mapping
-                tool["stage"] = stage_mapping[full_stage_url]
-            elif tool["stage"] in ["NA", "Unknown"]:
-                tool["stage"] = (
-                    "Other"  # Combining "NA" and "Unknown" stages in a single stage-type, "Other".
-                )
-
-            html_name = tool.get("html_name")
-            md_name = tool.get("md_file_name")
-            png_name = tool.get("png_file_name")
-
-            tool["url"] = f"https://cloud.vhp4safety.nl/service/{html_name}"
-            tool["meta_data"] = (
-                f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{md_name}"
-                if md_name
-                else "md file not found"
-            )
-
-            # Check if the tool has the placeholder logo
-            placeholder_logo = "https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png"
-            if png_name == placeholder_logo:
-                tool["png"] = None  # set to None if it's the common placeholder
-            else:
-                tool["png"] = (
-                    f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}"
-                    if not png_name.startswith("http")
-                    else png_name
-                )
-
-            inst_url = tool.get("inst_url", "no_url")
-            if not inst_url:  # catches "" as well
-                inst_url = "no_url"
-            tool["inst_url"] = inst_url
-
-            # Fetch per-tool detail JSON to check hosting status
-            tool_id = tool.get("id", "")
-            vhp_hosted = False
-            if inst_url != "no_url" and tool_id:
-                try:
-                    detail_url = f"https://cloud.vhp4safety.nl/service/{tool_id}.json"
-                    detail_resp = requests.get(detail_url, timeout=5)
-                    if detail_resp.status_code == 200:
-                        detail = detail_resp.json()
-                        vhp_platform = (
-                            detail.get("instance", {}).get("vhp-platform", "").lower()
-                        )
-                        vhp_hosted = vhp_platform not in ("external", "independent", "")
-                except Exception:
-                    pass
-            tool["vhp_hosted"] = vhp_hosted
-
         # Getting selected stages from the URL.
         selected_stages = request.args.getlist("stage")
-
-        # Filtering tools by selected stages.
-        if selected_stages:
-            tools = [tool for tool in tools if tool.get("stage") in selected_stages]
-
-        # Getting all unique stages from the tools for the filter options.
-        stages = sorted(set(tool.get("stage") for tool in tools if tool.get("stage")))
-
-        # Forcing "Other" to be the last item in the list of stages.
-        if "Other" in stages:
-            stages.remove("Other")
-            stages.append("Other")
-
-        # Filtering over the regulatory questions.
-        reg_questions = {v["label"]: k for k, v in REG_QUESTIONS.items()}
-
-        selected_questions = request.args.getlist("reg_q")
-
-        for question in selected_questions:
-            field = reg_questions.get(question)
-            if field:
-                tools = [
-                    tool for tool in tools if str(tool.get(field, "")).lower() == "true"
-                ]
-
-        # Getting the search query from URL to add a search bar based on tool names.
         search_query = request.args.get("search", "").strip().lower()
 
-        # Filtering tools by search query.
+        q = Tool.query
+        if selected_stages:
+            q = q.filter(Tool.stage.in_(selected_stages))
         if search_query:
-            tools = [
-                tool
-                for tool in tools
-                if search_query in tool.get("service", "").lower()
-            ]
+            q = q.filter(Tool.service.ilike(f"%{search_query}%"))
+        rows = q.order_by(Tool.service).all()
+
+        # Build reg_questions lookup from DB
+        rq_rows = RegulatoryQuestion.query.all()
+        reg_questions = {r.label: r.key for r in rq_rows}
+
+        # Apply regulatory question filters
+        selected_questions = request.args.getlist("reg_q")
+        tools_list = []
+        for row in rows:
+            raw = json.loads(row.raw_json) if row.raw_json else {}
+            # Check reg question filters
+            skip = False
+            for question in selected_questions:
+                field = reg_questions.get(question)
+                if field and str(raw.get(field, "")).lower() != "true":
+                    skip = True
+                    break
+            if skip:
+                continue
+
+            html_name = row.html_name
+            png_name = row.png_file_name
+            placeholder = (
+                "https://github.com/VHP4Safety/ui-design"
+                "/blob/main/static/images/logo.png"
+            )
+
+            tools_list.append(
+                {
+                    "id": row.id,
+                    "service": row.service,
+                    "description": row.description,
+                    "stage": row.stage,
+                    "html_name": html_name,
+                    "url": f"https://cloud.vhp4safety.nl/service/{html_name}",
+                    "inst_url": row.inst_url or "no_url",
+                    "png": (
+                        None
+                        if png_name == placeholder
+                        else f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}"
+                        if png_name and not png_name.startswith("http")
+                        else png_name
+                    ),
+                    **raw,
+                }
+            )
+
+        # Collect stages for filter sidebar
+        all_stages = sorted(set(t["stage"] for t in tools_list if t.get("stage")))
+        if "Other" in all_stages:
+            all_stages.remove("Other")
+            all_stages.append("Other")
+
+        # Stage / reg question explanations from DB
+        se_rows = StageExplanation.query.all()
+        stage_explanations = {s.name: s.explanation for s in se_rows}
+        reg_question_explanations = {r.label: r.explanation for r in rq_rows}
 
         return render_template(
             "tools/tools.html",
-            tools=tools,
-            stages=stages,
+            tools=tools_list,
+            stages=all_stages,
             selected_stages=selected_stages,
             reg_questions=reg_questions,
             selected_questions=selected_questions,
-            stage_explanations=STAGE_EXPLANATIONS,
-            reg_question_explanations=REG_QUESTION_EXPLANATIONS,
+            stage_explanations=stage_explanations,
+            reg_question_explanations=reg_question_explanations,
         )
 
     except Exception as e:
@@ -675,100 +640,62 @@ def tools():
 @app.route("/methods")
 @app.route("/methods/")
 def methods():
-    """Fetch methods_index.json from the cloud repo, normalize fields and render a methods list page."""
-    url = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/methods_index.json"
-    response = requests.get(url)
-
-    if response.status_code != 200:
-        return f"Error fetching methods list: {response.status_code}", 503
-
+    """Render methods list page from DB."""
     try:
-        methods = response.json()
-        methods = list(methods.values())  # convert dict to list
-
-        # Normalize fields for the template and collect stages
-        stages_set = set()
-        normalized = []
-        for m in methods:
-            norm = {}
-            norm["id"] = m.get("id", "")
-            # template expects 'service' and 'description'
-            norm["service"] = (
-                m.get("method")
-                or m.get("method_name_content")
-                or m.get("method_name")
-                or ""
-            )
-            norm["description"] = (
-                m.get("method_description_content") or m.get("method_description") or ""
-            )
-            # main_url used for method webpage (catalog page)
-            norm["main_url"] = m.get("catalog_webpage_url") or "no_url"
-            # interactive instance not present in methods index
-            norm["inst_url"] = m.get("inst_url") or "no_url"
-            # metadata md file not available in index; keep empty string
-            norm["meta_data"] = m.get("meta_data") or ""
-            # placeholder/no png
-            norm["png"] = None
-            # keep original raw data for potential details page
-            norm["raw"] = m
-
-            # collect stages (split comma-separated values)
-            stage_field = (m.get("vhp4safety_workflow_stage_content") or "").strip()
-            if stage_field:
-                for part in [s.strip() for s in stage_field.split(",")]:
-                    if part:
-                        stages_set.add(part)
-
-            normalized.append(norm)
-
-        # Apply search and filters similar to /tools
         selected_stages = request.args.getlist("stage")
-        selected_questions = request.args.getlist("reg_q")
         search_query = request.args.get("search", "").strip().lower()
 
-        methods_filtered = normalized
+        q = Method.query
+        if search_query:
+            q = q.filter(Method.method.ilike(f"%{search_query}%"))
+        rows = q.order_by(Method.method).all()
 
-        if selected_stages:
-            methods_filtered = [
-                m
-                for m in methods_filtered
-                if any(
-                    s
-                    in (
-                        (m["raw"].get("vhp4safety_workflow_stage_content") or "").split(
-                            ","
-                        )
-                    )
-                    for s in selected_stages
-                )
-            ]
+        rq_rows = RegulatoryQuestion.query.all()
+        reg_questions = {r.label: r.key for r in rq_rows}
+        selected_questions = request.args.getlist("reg_q")
 
-        # Filter by regulatory questions if provided (REG_QUESTIONS keys map to internal fields)
-        reg_questions = {v["label"]: k for k, v in REG_QUESTIONS.items()}
-        if selected_questions:
+        stages_set = set()
+        methods_filtered = []
+        for row in rows:
+            raw = json.loads(row.raw_json) if row.raw_json else {}
+            stage_field = (row.stage or "").strip()
+            parts = [s.strip() for s in stage_field.split(",") if s.strip()]
+            stages_set.update(parts)
+
+            if selected_stages and not any(s in parts for s in selected_stages):
+                continue
+
+            skip = False
             for question in selected_questions:
                 field = reg_questions.get(question)
-                if field:
-                    methods_filtered = [
-                        m
-                        for m in methods_filtered
-                        if str(m["raw"].get(field, "")).lower() == "true"
-                    ]
+                if field and str(raw.get(field, "")).lower() != "true":
+                    skip = True
+                    break
+            if skip:
+                continue
 
-        if search_query:
-            methods_filtered = [
-                m
-                for m in methods_filtered
-                if search_query in m.get("service", "").lower()
-            ]
+            methods_filtered.append(
+                {
+                    "id": row.id,
+                    "service": row.method,
+                    "description": row.description or "",
+                    "main_url": row.catalog_webpage_url or "no_url",
+                    "inst_url": "no_url",
+                    "meta_data": "",
+                    "png": None,
+                    "raw": raw,
+                }
+            )
 
         stages = sorted(stages_set)
         if "Other" in stages:
             stages.remove("Other")
             stages.append("Other")
 
-        # Pass everything the template expects
+        se_rows = StageExplanation.query.all()
+        stage_explanations = {s.name: s.explanation for s in se_rows}
+        reg_question_explanations = {r.label: r.explanation for r in rq_rows}
+
         return render_template(
             "methods/methods.html",
             methods=methods_filtered,
@@ -776,8 +703,8 @@ def methods():
             selected_stages=selected_stages,
             reg_questions=reg_questions,
             selected_questions=selected_questions,
-            stage_explanations=STAGE_EXPLANATIONS,
-            reg_question_explanations=REG_QUESTION_EXPLANATIONS,
+            stage_explanations=stage_explanations,
+            reg_question_explanations=reg_question_explanations,
         )
 
     except Exception as e:
@@ -786,38 +713,27 @@ def methods():
 
 @app.route("/methods/<methodid>")
 def method_page(methodid):
-    """Render a single method page using templates/methods/method.html
-    Method details are taken from methods_index.json (keyed by method id).
-    """
-    try:
-        methods = get_json_dict(METHODS_URL)
-        # methods_index.json is a dict keyed by method id
-        if methodid not in methods:
-            abort(404)
-        method_details = methods[methodid]
-    except Exception as e:
-        return f"Error processing methods data: {e}", 500
+    """Render a single method detail page."""
+    row = db.session.get(Method, methodid)
+    if not row:
+        abort(404)
 
-    # Try to load the full method JSON from the docs/methods folder (raw github)
-    method_json = None
-    # URL-encode the filename part to be safe
+    method_details = json.loads(row.raw_json) if row.raw_json else {}
+
+    # Try to load full JSON from GitHub docs/methods/
+    method_json = method_details
     encoded = urllib.parse.quote(methodid, safe="")
     raw_url = (
-        "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/docs/methods/"
-        + f"{encoded}.json"
+        "https://raw.githubusercontent.com/VHP4Safety/cloud"
+        f"/refs/heads/main/docs/methods/{encoded}.json"
     )
     try:
         r = requests.get(raw_url, timeout=5)
         if r.status_code == 200:
             method_json = r.json()
-        else:
-            # fall back to using the index entry as minimal data
-            method_json = method_details
     except Exception:
-        # on any error, fall back to index entry
-        method_json = method_details
+        pass
 
-    # Pass both to the template: some templates expect method_json, others method_details
     return render_template(
         "methods/method.html",
         method=method_details,
@@ -828,37 +744,25 @@ def method_page(methodid):
 
 @app.route("/tools/<toolname>")
 def tool_page(toolname):
-    # get the tools metadata:
-    try:
-        tools = get_json_dict_service(SERVICES_URL)
-        tools = dict(tools)
-        # Geting the service_list.json in the dictionary format.
-        # Converting the dictionary to a list object.
-    except Exception as e:
-        return f"Error processing service data: {e}", 500
-
-    # Map toolname to the correct JSON file in the new tool folder
-    if toolname not in tools:
+    """Render a single tool detail page."""
+    row = db.session.get(Tool, toolname)
+    if not row:
         abort(404)
 
-    # get the tools metadata:
-    url = "https://cloud.vhp4safety.nl/service/" + toolname + ".json"
-    response = requests.get(url)
+    tool_json = json.loads(row.raw_json) if row.raw_json else {}
 
-    if response.status_code != 200:
-        return f"Error fetching service list: {response.status_code}", 503
-
+    # Fetch full details from cloud service JSON
+    url = f"https://cloud.vhp4safety.nl/service/{toolname}.json"
     try:
-        tool_details = response.json()
-        tool_details = dict(tool_details)
-        # Geting the service_list.json in the dictionary format.
-        # Converting the dictionary to a list object.
-    except Exception as e:
-        return f"Error processing service data: {e}", 500
+        resp = requests.get(url, timeout=10)
+        tool_details = resp.json() if resp.status_code == 200 else tool_json
+    except Exception:
+        tool_details = tool_json
 
-    # Pass the json filename to the template (for JS to pick up)
     return render_template(
-        "tools/tool.html", tool_json=tools[toolname], tool_details=tool_details
+        "tools/tool.html",
+        tool_json=tool_json,
+        tool_details=tool_details,
     )
 
 
@@ -889,31 +793,39 @@ def impact():
 
 
 # General Safety Assessment Workflow page
-@app.route("/Safety_Assessment_Workflow")
+@app.route("/safety_assessment_workflow")
 def SafetyAssessmentWorkflow():
-    return render_template("Safety_Assessment_Workflow.html")
+    return render_template("safety_assessment_workflow.html")
 
 
 ################################################################################
 ### Pages under 'Case Studies'
 
 
-# General case studies page
 @app.route("/casestudies")
 def workflows():
-    return render_template("case_studies/casestudies.html")
+    cards = CaseStudy.query.all()
+    return render_template(
+        "case_studies/casestudies.html",
+        cards=cards,
+    )
 
 
-# Individual case study page, dynamically filled based on URL
-@app.route("/casestudies/<case>", defaults={"step": ""})
-@app.route("/casestudies/<case>/<question>")
-@app.route("/casestudies/<case>/<question>/<step>")
-# additional routes are parsed client side via js to allow smooth animation
-def casestudy(case: str = "", question: str = "", step: str = ""):
-    if case not in CASESTUDIES:
+@app.route("/casestudies/<case>", defaults={"subpath": ""})
+@app.route("/casestudies/<case>/<path:subpath>")
+# additional routes are parsed client-side via JS to allow smooth animation
+def casestudy(case: str, subpath: str = ""):
+    cs = db.session.get(CaseStudy, case)
+    if not cs:
         abort(404)
-    # JS will handle steps via the URL
-    return render_template("case_studies/casestudy.html", case=case)
+
+    # Load content JSON from DB and pass inline so JS skips the GitHub fetch
+    raw = cs.content_json if cs.content_json else "{}"
+    return render_template(
+        "case_studies/casestudy.html",
+        case=case,
+        case_content_json=raw,
+    )
 
 
 @app.route("/workflow/<workflow>")
@@ -1172,6 +1084,8 @@ def terms_of_service():
 def privacy_policy():
     return render_template("legal/privacypolicy.html")
 
+
+init_scheduler(app)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5050, debug=True)

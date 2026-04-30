@@ -21,6 +21,9 @@ COPY . .
 # Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
 
+# Create data directory for SQLite DB
+RUN mkdir -p /usr/src/app/data
+
 # Copy entrypoint script
 COPY entrypoint.sh /usr/src/app/entrypoint.sh
 RUN chmod +x /usr/src/app/entrypoint.sh
