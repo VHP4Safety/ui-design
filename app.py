@@ -19,11 +19,11 @@ from data.zenodo.search import ZenodoExtractor
 from data.mapping import normalize_all
 
 ################################################################################
-CACHE_TIMEOUT = 60 * 60 * 24 * 5    # 5 days -- [Ozan] I created a separate
-                                    # timeout object for the tools page because
-                                    # a 5-day caching is too long for it. 
-CACHE_TIMEOUT_SERVICE = 60          # Separate timeout for the tools page -- 60
-                                    # seconds. 
+CACHE_TIMEOUT = 60 * 60 * 24 * 5  # 5 days -- [Ozan] I created a separate
+# timeout object for the tools page because
+# a 5-day caching is too long for it.
+CACHE_TIMEOUT_SERVICE = 60  # Separate timeout for the tools page -- 60
+# seconds.
 ### Configuration for BioStudies Integration
 # Change these variables to switch between collections
 BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
@@ -106,7 +106,7 @@ class RegexConverter(BaseConverter):
 cache_config = {
     "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
     "CACHE_DEFAULT_TIMEOUT": CACHE_TIMEOUT,  # 60 min chaching
-    "CACHE_SERVICE_TIMEOUT": CACHE_TIMEOUT_SERVICE
+    "CACHE_SERVICE_TIMEOUT": CACHE_TIMEOUT_SERVICE,
 }
 app = Flask(__name__)
 app.config.from_mapping(cache_config)
@@ -131,7 +131,7 @@ def get_json_dict(url: str, timeout: int = 5) -> dict:
         return {}
 
 
-# A separate get_json_dict function for the tools page with its own timeout. 
+# A separate get_json_dict function for the tools page with its own timeout.
 @cache.memoize(timeout=CACHE_TIMEOUT_SERVICE)
 def get_json_dict_service(url: str, timeout: int = 5) -> dict:
     """Fetch xxxx_index.json from the cloud repo and return as a dictionary.
@@ -316,8 +316,8 @@ def sitemap():
     <loc>https://platform.vhp4safety.nl/data</loc>
   </url>
 </urlset>
-""";
-    return Response(sitemapContent, mimetype='text/xml');
+"""
+    return Response(sitemapContent, mimetype="text/xml")
 
 
 ################################################################################
@@ -407,7 +407,7 @@ def data():
 
 
 @app.template_filter("split_text_int")
-def split_text_int(value: None|str) -> tuple[str, None|int]:
+def split_text_int(value: None | str) -> tuple[str, None | int]:
     """
     Splits trailing integer from a string.
     'S-VHPS21' -> ('S-VHPS', 21)
@@ -452,6 +452,7 @@ def data_detail(dataid):
     elif datasets:
         return render_template("data/data_details.html", data=datasets[0])
     return abort(404)
+
 
 ################################################################################
 ### Pages under 'Models'
@@ -609,7 +610,9 @@ def tools():
                     detail_resp = requests.get(detail_url, timeout=5)
                     if detail_resp.status_code == 200:
                         detail = detail_resp.json()
-                        vhp_platform = detail.get("instance", {}).get("vhp-platform", "").lower()
+                        vhp_platform = (
+                            detail.get("instance", {}).get("vhp-platform", "").lower()
+                        )
                         vhp_hosted = vhp_platform not in ("external", "independent", "")
                 except Exception:
                     pass
@@ -810,7 +813,7 @@ def method_page(methodid):
         else:
             # fall back to using the index entry as minimal data
             method_json = method_details
-    except Exception as exc:
+    except Exception:
         # on any error, fall back to index entry
         method_json = method_details
 
@@ -862,20 +865,24 @@ def tool_page(toolname):
 ################################################################################
 ### Pages under 'Implementation'
 
+
 # General Explore our work
 @app.route("/explore_our_work")
 def explore_our_work():
     return render_template("implementation/explore_our_work.html")
+
 
 # General Training
 @app.route("/training")
 def training():
     return render_template("implementation/training.html")
 
+
 # General Impact
 @app.route("/impact")
 def impact():
     return render_template("implementation/impact.html")
+
 
 ################################################################################
 ### Pages under 'Process Flow'
@@ -902,7 +909,7 @@ def workflows():
 @app.route("/casestudies/<case>/<question>")
 @app.route("/casestudies/<case>/<question>/<step>")
 # additional routes are parsed client side via js to allow smooth animation
-def casestudy(case:str="", question:str="", step:str=""):
+def casestudy(case: str = "", question: str = "", step: str = ""):
     if case not in CASESTUDIES:
         abort(404)
     # JS will handle steps via the URL
@@ -930,7 +937,7 @@ def is_valid_qid(qid):
 @app.route("/compound/<cwid>")
 def show_compound(cwid):
     try:
-        return render_template(f"compound.html", cwid=cwid)
+        return render_template("compound.html", cwid=cwid)
     except TemplateNotFound:
         abort(404)
 
