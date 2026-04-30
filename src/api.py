@@ -654,7 +654,7 @@ def get_data_detail(path: DataDetailPath):
         return studies[0].get("norm_metadata", studies[0])
     if datasets:
         return datasets[0].get("norm_metadata", datasets[0])
-
+    return _api_error(404, "Not found")
 
 
 #  Validation
