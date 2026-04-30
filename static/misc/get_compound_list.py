@@ -1,15 +1,14 @@
-
-### Python script to get the list of compounds from Compound Wiki. 
+### Python script to get the list of compounds from Compound Wiki.
 
 # Importing the required modules.
-import requests
 from wikidataintegrator import wdi_core
+import jsonify
 
 # Setting up the url for sparql endpoint.
 compoundwikiEP = "https://compoundcloud.wikibase.cloud/query/sparql"
 
 # Setting up the sparql query for the full list of compounds.
-sparqlquery_full = '''
+sparqlquery_full = """
 PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>
 PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>
 
@@ -24,11 +23,11 @@ WHERE{
   BIND (COALESCE(IF(BOUND(?chiralSMILES), ?chiralSMILES, 1/0), IF(BOUND(?nonchiralSMILES), ?nonchiralSMILES, 1/0),"") AS ?SMILES)
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
 }
-'''
+"""
 
 
-# Setting up the spaqrl query for the vhp subset of the compounds. 
-sparqlquery_vhp = '''
+# Setting up the spaqrl query for the vhp subset of the compounds.
+sparqlquery_vhp = """
 PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>
 PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>
 
@@ -43,19 +42,21 @@ WHERE {
   OPTIONAL { ?cmp wdt:P17 ?role . ?role rdfs:label ?roleLabel }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
 } GROUP BY ?typeLabel ?cmp ?cmpLabel ?pubchem ?wikidata ?toxbank ?cas
-'''
+"""
 
 
-compound_dat = wdi_core.WDFunctionsEngine.execute_sparql_query(sparqlquery_full, endpoint=compoundwikiEP, as_dataframe=True)
+compound_dat = wdi_core.WDFunctionsEngine.execute_sparql_query(
+    sparqlquery_full, endpoint=compoundwikiEP, as_dataframe=True
+)
 # compound_dat = wdi_core.WDFunctionsEngine.execute_sparql_query(sparqlquery_vhp, endpoint=compoundwikiEP, as_dataframe=True)
 
 compound_dat.loc[:, "Term"]
-compound_dat.loc[:,["Term", "SMILES", "ID", "ref"]]
+compound_dat.loc[:, ["Term", "SMILES", "ID", "ref"]]
 
 SMILES = compound_dat[compound_dat.columns[0]]
-ID     = compound_dat[compound_dat.columns[1]]
-Term   = compound_dat[compound_dat.columns[2]]
-ref    = compound_dat[compound_dat.columns[3]]
+ID = compound_dat[compound_dat.columns[1]]
+Term = compound_dat[compound_dat.columns[2]]
+ref = compound_dat[compound_dat.columns[3]]
 
 compound_list = []
 compound_list.append(Term.tolist())

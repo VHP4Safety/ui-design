@@ -1,12 +1,13 @@
 from importlib import import_module
 from pathlib import Path
 
+
 def apply_patch():
     try:
         # Dynamically import the module and get its file path
         try:
-            module = import_module('pyshexc.parser.ShExDocLexer')
-        except ModuleNotFoundError as e:
+            module = import_module("pyshexc.parser.ShExDocLexer")
+        except ModuleNotFoundError:
             # Give a precise, actionable hint for installation in the active interpreter
             print(
                 "Missing dependency: 'pyshexc' (PyShExC).\n"
@@ -28,19 +29,24 @@ def apply_patch():
         file_content = file_path.read_text()
 
         # Replace 'from typing.io import TextIO' with 'from typing import TextIO'
-        new_content = file_content.replace("from typing.io import TextIO", "from typing import TextIO")
+        new_content = file_content.replace(
+            "from typing.io import TextIO", "from typing import TextIO"
+        )
 
         # Only write if a change is needed
         if new_content != file_content:
             file_path.write_text(new_content)
             print("Patch applied successfully!")
         else:
-            print("No patch needed; target text not found (already patched or different version).")
+            print(
+                "No patch needed; target text not found (already patched or different version)."
+            )
 
     except FileNotFoundError as e:
         print(e)
     except Exception as e:
         print(f"An error occurred: {e}")
+
 
 if __name__ == "__main__":
     apply_patch()
