@@ -16,7 +16,7 @@ import sys
 import urllib.request
 from datetime import datetime, timezone
 
-from .quality_models import ENTITY_CHECKS
+from .quality_models import ENTITY_CHECKS, DataHitChecker, deep_scan
 
 
 # resolve BASE URL
@@ -106,6 +106,28 @@ for path, (checker, id_field, label_field) in ENTITY_CHECKS.items():
             quality_issues.append((entity, entry_id, entry_label, field, msg))
             warnings.append(f"[{entity}] {entry_label!r} / {field}: {msg}")
 
+# 1b. Case study detail scan — content_json is only in the detail endpoint
+_cs_status, _cs_list = get("/casestudies/")
+if isinstance(_cs_list, list):
+    for cs in _cs_list:
+        cs_name = cs.get("name") or cs.get("slug", "?")
+        cs_title = cs.get("title") or cs_name
+        detail_status, detail = get(f"/casestudies/{cs_name}")
+        if detail_status != 200 or not isinstance(detail, dict):
+            continue
+        content = detail.get("content_json")
+        if not content:
+            continue
+        # deduplicate by (path, issue) — content_json can repeat the same template
+        seen: set[tuple[str, str]] = set()
+        for field, msg in deep_scan(content, "content_json"):
+            key = (field, msg)
+            if key in seen:
+                continue
+            seen.add(key)
+            quality_issues.append(("casestudies", cs_name, cs_title, field, msg))
+            warnings.append(f"[casestudies] {cs_title!r} / {field}: {msg}")
+
 # 2. Validation completeness (from /validation/ endpoint)
 _, validation = get("/validation/")
 
@@ -176,6 +198,15 @@ if isinstance(data_resp, dict):
             hit_rows.append({"id": rec_id, "present": present})
         data_hit_details[source] = hit_rows
 
+        # quality-check each hit (HTML, placeholders, missing fields)
+        entity_label = f"data/{source}"
+        for h in hits:
+            rec_id = h.get("id") or h.get("accession") or h.get("recid") or "?"
+            rec_label = h.get("title") or rec_id
+            for field, msg in DataHitChecker.check(h):
+                quality_issues.append((entity_label, rec_id, rec_label, field, msg))
+                warnings.append(f"[{entity_label}] {rec_label!r} / {field}: {msg}")
+
 
 # build report
 
@@ -216,10 +247,18 @@ if quality_issues:
 
     for entity, id, label, field, issue in quality_issues:
         safe_label = label.replace("|", "&#124;")
+        display_entity = entity
         if entity == "tools":
-            entity = "service"
+            display_entity = "service"
+        if entity.startswith("data/"):
+            link = f"[{id}]({BASE}/data/{id})"
+        else:
+            link = f"[{id}](https://github.com/VHP4Safety/cloud/blob/main/docs/{display_entity}/{id}.json)"
+        field_display = str(field)
+        if "content_json" in field_display:
+            field_display = field_display.split("content_json.")[1]
         lines.append(
-            f"- [ ] **{entity}** {safe_label}: fix `{field}`: {issue} (_cloud : [{id}](https://github.com/VHP4Safety/cloud/blob/main/docs/{entity}/{id}.json)_)"
+            f"- [ ] **{entity}** {safe_label}: fix `{field_display}`: {issue} (_source: {link}_)"
         )
 
     lines += ["", "</details>"]

@@ -29,11 +29,30 @@ _FALLBACK_LOGO = "github.com/VHP4Safety/ui-design"
 
 _PLACEHOLDER_RE = re.compile(
     r"\{\{.*?\}\}"
-    r"|\[.*?(todo|tbd|placeholder|fixme|insert).*?\]"
+    r"|\[.*?(todo|tbd|laceholder|fixme|insert).*?\]"
     r"|\btodo\b|\btbd\b|\bfixme\b|\blorem\s+ipsum\b",
     re.IGNORECASE,
 )
 _HTML_RE = re.compile(r"<[a-zA-Z][^>]*>|&[a-z]+;", re.IGNORECASE)
+
+
+def deep_scan(obj: Any, path: str = "") -> list[tuple[str, str]]:
+    """Recursively walk any dict/list/str and return (path, issue) pairs for
+    placeholder text or raw HTML found anywhere in the structure."""
+    issues: list[tuple[str, str]] = []
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            child = f"{path}.{k}" if path else k
+            issues += deep_scan(v, child)
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            issues += deep_scan(v, f"{path}[{i}]")
+    elif isinstance(obj, str) and obj:
+        if _PLACEHOLDER_RE.search(obj):
+            issues.append((path, "placeholder text"))
+        if _HTML_RE.search(obj):
+            issues.append((path, "raw HTML / entities"))
+    return issues
 
 
 # base helper
@@ -210,6 +229,42 @@ class CaseStudyChecker:
         if obj:
             issues += _text_issues(obj)
 
+        return issues
+
+
+class DataHitChecker:
+    """Recursively scans a normalised data hit dict for null/empty fields."""
+
+    # Fields that are genuinely optional — silence them
+    _OPTIONAL = {
+        "version", "conceptdoi", "conceptdoi_url", "funding",
+        "publications", "files", "ReleaseDate",
+    }
+
+    @classmethod
+    def _scan(cls, obj: Any, path: str, issues: list[tuple[str, str]]) -> None:
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                if k in cls._OPTIONAL:
+                    continue
+                child_path = f"{path}.{k}" if path else k
+                if v is None or v == "" or v == []:
+                    issues.append((child_path, "null / empty"))
+                else:
+                    cls._scan(v, child_path, issues)
+        elif isinstance(obj, list):
+            for i, item in enumerate(obj):
+                cls._scan(item, f"{path}[{i}]", issues)
+        # scalar non-null: nothing to report
+
+    @classmethod
+    def check(cls, data: dict) -> list[tuple[str, str]]:
+        issues: list[tuple[str, str]] = []
+        cls._scan(data, "", issues)
+        # additionally flag HTML in string fields
+        for k, v in data.items():
+            if isinstance(v, str) and _HTML_RE.search(v):
+                issues.append((k, "raw HTML / entities"))
         return issues
 # registry (used by the test runner)
 # Maps API path to (checker, id_field, label_field)
