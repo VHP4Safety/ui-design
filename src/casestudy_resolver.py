@@ -20,7 +20,7 @@ import json
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
-from src.db import get_conn
+from src.db import CaseStudy, db
 
 
 # In-memory cache keyed by slug
@@ -32,20 +32,16 @@ def get_content(slug: str) -> dict | None:
     if slug in _content_cache:
         return _content_cache[slug]
 
-    conn = get_conn()
-    row = conn.execute(
-        "SELECT content_json FROM case_studies WHERE slug = ?", (slug,)
-    ).fetchone()
-    conn.close()
-    if not row or not row["content_json"]:
+    row = db.session.get(CaseStudy, slug)
+    if not row or not row.content_json:
         return None
 
-    data = json.loads(row["content_json"])
+    data = json.loads(row.content_json)
     _content_cache[slug] = data
     return data
 
 
-# ── Resolved result ──────────────────────────────────────────────────────
+#  Resolved result
 
 STEP_TYPE_COLORS = {
     "workflow step": "btn-vhpdarkteal",
@@ -191,7 +187,7 @@ def resolve(
         )
         result.workflow_steps.append({**ws, "state": state})
 
-    # ── Step 1: no path parts ─────────────────────────────────────
+    #  Step 1: no path parts
     if not path_parts:
         result.nav_title = step1.get("navTitle", "")
         result.nav_description = step1.get("navDescription", "")
@@ -215,7 +211,7 @@ def resolve(
         ]
         return result
 
-    # ── Step 2+: walk the nested dicts ────────────────────────────
+    # Step 2+: walk the nested dicts
     # path_parts[0] is the question key (e.g. "Q1")
     # path_parts[1] is the step2 choice (e.g. "Kinetics")
     # etc.

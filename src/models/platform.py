@@ -15,12 +15,16 @@ class RegulatoryQuestion(BaseModel):
     explanation: str
     case_study: Optional[str] = None
 
+    model_config = {"from_attributes": True}
+
 
 class StageExplanation(BaseModel):
     """Safety-assessment workflow stage with a short explanation."""
 
     name: str
     explanation: str
+
+    model_config = {"from_attributes": True}
 
 
 class CompoundProperty(BaseModel):

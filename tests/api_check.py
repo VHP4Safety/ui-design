@@ -70,7 +70,8 @@ print(f"# Using BASE: {BASE}", file=sys.stderr)
 def get(path: str) -> tuple[int, object]:
     try:
         with urllib.request.urlopen(
-            urllib.request.Request(f"{BASE}{path}"), timeout=200  # TODO fix slow API call
+            urllib.request.Request(f"{BASE}{path}"),
+            timeout=200,  # TODO fix slow API call
         ) as r:
             return r.status, json.loads(r.read())
     except urllib.error.HTTPError as e:

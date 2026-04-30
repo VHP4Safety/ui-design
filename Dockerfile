@@ -28,7 +28,5 @@ RUN mkdir -p /usr/src/app/data
 COPY entrypoint.sh /usr/src/app/entrypoint.sh
 RUN chmod +x /usr/src/app/entrypoint.sh
 
-EXPOSE 5050
-
 # Define the entrypoint script
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]

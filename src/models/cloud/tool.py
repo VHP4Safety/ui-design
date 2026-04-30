@@ -55,7 +55,7 @@ class Method(BaseModel):
     timestamp: Optional[datetime] = None
     https: Optional[str] = Field(None, description="Broken URL fragment in some files")
 
-    model_config = {"populate_by_name": True, "extra": "allow"}
+    model_config = {"populate_by_name": True, "extra": "allow", "from_attributes": True}
 
 
 class MethodIndex(BaseModel):

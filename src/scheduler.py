@@ -14,6 +14,7 @@ from apscheduler.triggers.cron import CronTrigger
 log = logging.getLogger(__name__)
 
 _scheduler: BackgroundScheduler | None = None
+_flask_app = None  # stored so the background job can push an app context
 
 
 def _reseed_job() -> None:
@@ -22,7 +23,7 @@ def _reseed_job() -> None:
 
     log.info("Nightly re-seed started …")
     try:
-        seed_all()
+        seed_all(_flask_app)
         log.info("Nightly re-seed complete")
     except Exception:
         log.exception("Nightly re-seed failed")
@@ -37,7 +38,8 @@ def init_scheduler(app=None) -> BackgroundScheduler | None:
       RESEED_MINUTE – minute to run (0-59, default 0)
       RESEED_ENABLED – set to "false" to disable entirely
     """
-    global _scheduler
+    global _scheduler, _flask_app
+    _flask_app = app  # store for use in _reseed_job
     if _scheduler is not None:
         return _scheduler
 

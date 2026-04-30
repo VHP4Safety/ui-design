@@ -190,6 +190,8 @@ class CaseStudyCard(BaseModel):
     config_repo: Optional[str] = None
     content_json: Optional[str] = None
 
+    model_config = {"from_attributes": True}
+
 
 # Convenience: full registry
 

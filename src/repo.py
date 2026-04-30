@@ -1,8 +1,7 @@
 """Repository layer — all DB access returns Pydantic model instances.
 
-Every public function is the single point of contact between raw SQLite
-rows and the rest of the application.  The API, seed, and test suite all
-go through here so schema changes only need updating in one place.
+ORM instances are validated directly via ``model_validate(orm_obj)``
+thanks to ``from_attributes = True`` on every Pydantic schema.
 """
 
 from __future__ import annotations
@@ -10,110 +9,83 @@ from __future__ import annotations
 import json
 from typing import Optional
 
-from src.db import get_db
+from src.db import (
+    CaseStudy as CaseStudyORM,
+    Method as MethodORM,
+    RegulatoryQuestion as RegulatoryQuestionORM,
+    StageExplanation as StageExplanationORM,
+    Tool as ToolORM,
+    db,
+)
 from src.models.casestudy import CaseStudyCard
 from src.models.cloud.method import ServiceIndexEntry  # tool rows
 from src.models.cloud.tool import Method  # method rows
 from src.models.platform import RegulatoryQuestion, StageExplanation
 
 
-#  helpers 
-
-
-def _one(conn, sql: str, params: tuple = ()) -> Optional[dict]:
-    row = conn.execute(sql, params).fetchone()
-    return dict(row) if row else None
-
-
-def _many(conn, sql: str, params: tuple = ()) -> list[dict]:
-    return [dict(r) for r in conn.execute(sql, params).fetchall()]
-
-
-# tools
+# ── tools ──────────────────────────────────────────────────────────────
 
 
 def list_tools(
     stage: Optional[str] = None,
     search: Optional[str] = None,
 ) -> list[ServiceIndexEntry]:
-    sql, params = "SELECT * FROM tools WHERE 1=1", []
+    q = ToolORM.query
     if stage:
-        sql += " AND stage = ?"
-        params.append(stage)
+        q = q.filter(ToolORM.stage == stage)
     if search:
-        sql += " AND service LIKE ?"
-        params.append(f"%{search}%")
-    sql += " ORDER BY service"
-    with get_db() as conn:
-        return [ServiceIndexEntry.model_validate(r) for r in _many(conn, sql, params)]
+        q = q.filter(ToolORM.service.ilike(f"%{search}%"))
+    return [ServiceIndexEntry.model_validate(r) for r in q.order_by(ToolORM.service)]
 
 
 def get_tool(tool_id: str) -> Optional[ServiceIndexEntry]:
-    with get_db() as conn:
-        r = _one(conn, "SELECT * FROM tools WHERE id = ?", (tool_id,))
-        return ServiceIndexEntry.model_validate(r) if r else None
+    r = db.session.get(ToolORM, tool_id)
+    return ServiceIndexEntry.model_validate(r) if r else None
 
 
-#  methods 
+# ── methods ────────────────────────────────────────────────────────────
 
 
 def list_methods(
     stage: Optional[str] = None,
     search: Optional[str] = None,
 ) -> list[Method]:
-    sql, params = "SELECT * FROM methods WHERE 1=1", []
+    q = MethodORM.query
     if stage:
-        sql += " AND stage LIKE ?"
-        params.append(f"%{stage}%")
+        q = q.filter(MethodORM.stage.ilike(f"%{stage}%"))
     if search:
-        sql += " AND method LIKE ?"
-        params.append(f"%{search}%")
-    sql += " ORDER BY method"
-    with get_db() as conn:
-        return [Method.model_validate(r) for r in _many(conn, sql, params)]
+        q = q.filter(MethodORM.method.ilike(f"%{search}%"))
+    return [Method.model_validate(r) for r in q.order_by(MethodORM.method)]
 
 
 def get_method(method_id: str) -> Optional[Method]:
-    with get_db() as conn:
-        r = _one(conn, "SELECT * FROM methods WHERE id = ?", (method_id,))
-        if not r:
-            return None
-        if r.get("raw_json"):
-            r["raw"] = json.loads(r["raw_json"])
-        return Method.model_validate(r)
+    r = db.session.get(MethodORM, method_id)
+    if not r:
+        return None
+    m = Method.model_validate(r)
+    if r.raw_json:
+        m.model_extra["raw"] = json.loads(r.raw_json)  # type: ignore[index]
+    return m
 
 
-#  platform 
+# ── platform ───────────────────────────────────────────────────────────
 
 
 def list_regulatory_questions() -> list[RegulatoryQuestion]:
-    with get_db() as conn:
-        return [
-            RegulatoryQuestion.model_validate(r)
-            for r in _many(conn, "SELECT * FROM regulatory_questions")
-        ]
+    return [RegulatoryQuestion.model_validate(r) for r in RegulatoryQuestionORM.query]
 
 
 def list_stages() -> list[StageExplanation]:
-    with get_db() as conn:
-        return [
-            StageExplanation.model_validate(r)
-            for r in _many(conn, "SELECT * FROM stage_explanations")
-        ]
+    return [StageExplanation.model_validate(r) for r in StageExplanationORM.query]
 
 
-#  case studies 
+# ── case studies ───────────────────────────────────────────────────────
 
 
 def list_case_studies() -> list[CaseStudyCard]:
-    with get_db() as conn:
-        return [
-            CaseStudyCard.model_validate(r)
-            for r in _many(conn, "SELECT * FROM case_studies")
-        ]
+    return [CaseStudyCard.model_validate(r) for r in CaseStudyORM.query]
 
 
 def get_case_study(slug: str) -> Optional[CaseStudyCard]:
-    with get_db() as conn:
-        r = _one(conn, "SELECT * FROM case_studies WHERE slug = ?", (slug,))
-        return CaseStudyCard.model_validate(r) if r else None
+    r = db.session.get(CaseStudyORM, slug)
+    return CaseStudyCard.model_validate(r) if r else None

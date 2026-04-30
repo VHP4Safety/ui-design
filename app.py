@@ -8,7 +8,8 @@ import requests
 import urllib.parse
 from flask import abort, jsonify, render_template, request, Response
 from flask_caching import Cache
-from flask_openapi3 import OpenAPI
+from flask_openapi3.openapi import OpenAPI
+from flask_openapi3.models.info import Info
 from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
 from src.scheduler import init_scheduler
@@ -22,7 +23,15 @@ from src.models.data.zenodo import ZenodoExtractor
 from src.models.data.mapping import normalize_all
 
 # Database layer
-from src.db import get_conn, init_db
+from src.db import (
+    db,
+    init_db,
+    Tool,
+    Method,
+    RegulatoryQuestion,
+    StageExplanation,
+    CaseStudy,
+)
 from src.api import init_api
 
 ################################################################################
@@ -115,9 +124,10 @@ cache_config = {
     "CACHE_DEFAULT_TIMEOUT": CACHE_TIMEOUT,  # 60 min chaching
     "CACHE_SERVICE_TIMEOUT": CACHE_TIMEOUT_SERVICE,
 }
+
 app = OpenAPI(
     __name__,
-    info={"title": "VHP4Safety Platform API", "version": "1.0.0"},
+    info=Info(title="VHP4Safety Platform API", version="1.0.0"),
     doc_prefix="/api/v1",
 )
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-insecure-key")
@@ -125,7 +135,7 @@ app.config.from_mapping(cache_config)
 cache = Cache(app)
 
 # Database init and API registration
-init_db()
+init_db(app)
 init_api(app)
 
 
@@ -235,10 +245,8 @@ def get_repository_data(
 def inject_methods_menu():
     """Expose methods list to all templates for navbar dropdown."""
     try:
-        conn = get_conn()
-        rows = conn.execute("SELECT id, method FROM methods ORDER BY method").fetchall()
-        conn.close()
-        return {"methods_menu": [{"id": r["id"], "title": r["method"]} for r in rows]}
+        rows = Method.query.order_by(Method.method).all()
+        return {"methods_menu": [{"id": r.id, "title": r.method} for r in rows]}
     except Exception:
         return {"methods_menu": []}
 
@@ -247,10 +255,8 @@ def inject_methods_menu():
 def inject_tools_menu():
     """Expose tools list to all templates for navbar dropdown."""
     try:
-        conn = get_conn()
-        rows = conn.execute("SELECT id, service FROM tools ORDER BY service").fetchall()
-        conn.close()
-        return {"tools_menu": [{"id": r["id"], "title": r["service"]} for r in rows]}
+        rows = Tool.query.order_by(Tool.service).all()
+        return {"tools_menu": [{"id": r.id, "title": r.service} for r in rows]}
     except Exception:
         return {"tools_menu": []}
 
@@ -281,10 +287,8 @@ def inject_data_menu():
 ### The landing page
 @app.route("/")
 def home():
-    conn = get_conn()
-    num_tools = conn.execute("SELECT COUNT(*) FROM tools").fetchone()[0]
-    num_case_studies = conn.execute("SELECT COUNT(*) FROM case_studies").fetchone()[0]
-    conn.close()
+    num_tools = Tool.query.count()
+    num_case_studies = CaseStudy.query.count()
     bs_res, zen_res = get_repository_data(search_query="")
     num_datasets = bs_res.get("total", 0) + zen_res.get("total", 0)
     return render_template(
@@ -549,33 +553,26 @@ def models():
 @app.route("/tools")
 def tools():
     try:
-        conn = get_conn()
-
         # Getting selected stages from the URL.
         selected_stages = request.args.getlist("stage")
         search_query = request.args.get("search", "").strip().lower()
 
-        sql = "SELECT * FROM tools WHERE 1=1"
-        params = []
+        q = Tool.query
         if selected_stages:
-            placeholders = ",".join("?" * len(selected_stages))
-            sql += f" AND stage IN ({placeholders})"
-            params.extend(selected_stages)
+            q = q.filter(Tool.stage.in_(selected_stages))
         if search_query:
-            sql += " AND LOWER(service) LIKE ?"
-            params.append(f"%{search_query}%")
-        sql += " ORDER BY service"
-        rows = conn.execute(sql, params).fetchall()
+            q = q.filter(Tool.service.ilike(f"%{search_query}%"))
+        rows = q.order_by(Tool.service).all()
 
         # Build reg_questions lookup from DB
-        rq_rows = conn.execute("SELECT * FROM regulatory_questions").fetchall()
-        reg_questions = {r["label"]: r["key"] for r in rq_rows}
+        rq_rows = RegulatoryQuestion.query.all()
+        reg_questions = {r.label: r.key for r in rq_rows}
 
         # Apply regulatory question filters
         selected_questions = request.args.getlist("reg_q")
         tools_list = []
-        for row in [dict(r) for r in rows]:
-            raw = json.loads(row["raw_json"]) if row.get("raw_json") else {}
+        for row in rows:
+            raw = json.loads(row.raw_json) if row.raw_json else {}
             # Check reg question filters
             skip = False
             for question in selected_questions:
@@ -586,8 +583,8 @@ def tools():
             if skip:
                 continue
 
-            html_name = row["html_name"]
-            png_name = row["png_file_name"]
+            html_name = row.html_name
+            png_name = row.png_file_name
             placeholder = (
                 "https://github.com/VHP4Safety/ui-design"
                 "/blob/main/static/images/logo.png"
@@ -595,13 +592,13 @@ def tools():
 
             tools_list.append(
                 {
-                    "id": row["id"],
-                    "service": row["service"],
-                    "description": row["description"],
-                    "stage": row["stage"],
+                    "id": row.id,
+                    "service": row.service,
+                    "description": row.description,
+                    "stage": row.stage,
                     "html_name": html_name,
                     "url": f"https://cloud.vhp4safety.nl/service/{html_name}",
-                    "inst_url": row["inst_url"] or "no_url",
+                    "inst_url": row.inst_url or "no_url",
                     "png": (
                         None
                         if png_name == placeholder
@@ -620,10 +617,9 @@ def tools():
             all_stages.append("Other")
 
         # Stage / reg question explanations from DB
-        se_rows = conn.execute("SELECT * FROM stage_explanations").fetchall()
-        stage_explanations = {s["name"]: s["explanation"] for s in se_rows}
-        reg_question_explanations = {r["label"]: r["explanation"] for r in rq_rows}
-        conn.close()
+        se_rows = StageExplanation.query.all()
+        stage_explanations = {s.name: s.explanation for s in se_rows}
+        reg_question_explanations = {r.label: r.explanation for r in rq_rows}
 
         return render_template(
             "tools/tools.html",
@@ -646,28 +642,23 @@ def tools():
 def methods():
     """Render methods list page from DB."""
     try:
-        conn = get_conn()
-
         selected_stages = request.args.getlist("stage")
         search_query = request.args.get("search", "").strip().lower()
 
-        sql = "SELECT * FROM methods WHERE 1=1"
-        params = []
+        q = Method.query
         if search_query:
-            sql += " AND LOWER(method) LIKE ?"
-            params.append(f"%{search_query}%")
-        sql += " ORDER BY method"
-        rows = [dict(r) for r in conn.execute(sql, params).fetchall()]
+            q = q.filter(Method.method.ilike(f"%{search_query}%"))
+        rows = q.order_by(Method.method).all()
 
-        rq_rows = conn.execute("SELECT * FROM regulatory_questions").fetchall()
-        reg_questions = {r["label"]: r["key"] for r in rq_rows}
+        rq_rows = RegulatoryQuestion.query.all()
+        reg_questions = {r.label: r.key for r in rq_rows}
         selected_questions = request.args.getlist("reg_q")
 
         stages_set = set()
         methods_filtered = []
         for row in rows:
-            raw = json.loads(row["raw_json"]) if row.get("raw_json") else {}
-            stage_field = (row.get("stage") or "").strip()
+            raw = json.loads(row.raw_json) if row.raw_json else {}
+            stage_field = (row.stage or "").strip()
             parts = [s.strip() for s in stage_field.split(",") if s.strip()]
             stages_set.update(parts)
 
@@ -685,10 +676,10 @@ def methods():
 
             methods_filtered.append(
                 {
-                    "id": row["id"],
-                    "service": row["method"],
-                    "description": row.get("description") or "",
-                    "main_url": row.get("catalog_webpage_url") or "no_url",
+                    "id": row.id,
+                    "service": row.method,
+                    "description": row.description or "",
+                    "main_url": row.catalog_webpage_url or "no_url",
                     "inst_url": "no_url",
                     "meta_data": "",
                     "png": None,
@@ -701,10 +692,9 @@ def methods():
             stages.remove("Other")
             stages.append("Other")
 
-        se_rows = conn.execute("SELECT * FROM stage_explanations").fetchall()
-        stage_explanations = {s["name"]: s["explanation"] for s in se_rows}
-        reg_question_explanations = {r["label"]: r["explanation"] for r in rq_rows}
-        conn.close()
+        se_rows = StageExplanation.query.all()
+        stage_explanations = {s.name: s.explanation for s in se_rows}
+        reg_question_explanations = {r.label: r.explanation for r in rq_rows}
 
         return render_template(
             "methods/methods.html",
@@ -724,13 +714,11 @@ def methods():
 @app.route("/methods/<methodid>")
 def method_page(methodid):
     """Render a single method detail page."""
-    conn = get_conn()
-    row = conn.execute("SELECT * FROM methods WHERE id = ?", (methodid,)).fetchone()
-    conn.close()
+    row = db.session.get(Method, methodid)
     if not row:
         abort(404)
 
-    method_details = json.loads(row["raw_json"]) if row["raw_json"] else {}
+    method_details = json.loads(row.raw_json) if row.raw_json else {}
 
     # Try to load full JSON from GitHub docs/methods/
     method_json = method_details
@@ -757,13 +745,11 @@ def method_page(methodid):
 @app.route("/tools/<toolname>")
 def tool_page(toolname):
     """Render a single tool detail page."""
-    conn = get_conn()
-    row = conn.execute("SELECT * FROM tools WHERE id = ?", (toolname,)).fetchone()
-    conn.close()
+    row = db.session.get(Tool, toolname)
     if not row:
         abort(404)
 
-    tool_json = json.loads(row["raw_json"]) if row["raw_json"] else {}
+    tool_json = json.loads(row.raw_json) if row.raw_json else {}
 
     # Fetch full details from cloud service JSON
     url = f"https://cloud.vhp4safety.nl/service/{toolname}.json"
@@ -818,11 +804,10 @@ def SafetyAssessmentWorkflow():
 
 @app.route("/casestudies")
 def workflows():
-    conn = get_conn()
-    cards = conn.execute("SELECT * FROM case_studies").fetchall()
-    conn.close()
+    cards = CaseStudy.query.all()
     return render_template(
-        "case_studies/casestudies.html", cards=[dict(c) for c in cards]
+        "case_studies/casestudies.html",
+        cards=cards,
     )
 
 
@@ -830,14 +815,12 @@ def workflows():
 @app.route("/casestudies/<case>/<path:subpath>")
 # additional routes are parsed client-side via JS to allow smooth animation
 def casestudy(case: str, subpath: str = ""):
-    conn = get_conn()
-    cs = conn.execute("SELECT * FROM case_studies WHERE slug = ?", (case,)).fetchone()
-    conn.close()
+    cs = db.session.get(CaseStudy, case)
     if not cs:
         abort(404)
 
     # Load content JSON from DB and pass inline so JS skips the GitHub fetch
-    raw = cs["content_json"] if cs["content_json"] else "{}"
+    raw = cs.content_json if cs.content_json else "{}"
     return render_template(
         "case_studies/casestudy.html",
         case=case,

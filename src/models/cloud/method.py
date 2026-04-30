@@ -112,7 +112,7 @@ class ServiceIndexEntry(BaseModel):
     bio_tools: Optional[str] = Field(None, alias="bioTools")
     tess: Optional[str] = None
 
-    model_config = {"populate_by_name": True, "extra": "allow"}
+    model_config = {"populate_by_name": True, "extra": "allow", "from_attributes": True}
 
 
 class ServiceIndex(BaseModel):

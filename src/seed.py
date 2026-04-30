@@ -1,7 +1,7 @@
 """Seed the database from upstream GitHub JSON indexes.
 
 Run: python -m src.seed
-Idempotent — uses INSERT OR REPLACE (upsert).
+Idempotent — uses SQLAlchemy session.merge() (equivalent to INSERT OR REPLACE).
 """
 
 from __future__ import annotations
@@ -12,7 +12,16 @@ from datetime import datetime, timezone
 
 import requests
 
-from src.db import get_conn, init_db
+from src.db import (
+    db,
+    CaseStudy,
+    GlossaryStageMappings,
+    Method,
+    RegulatoryQuestion,
+    StageExplanation,
+    Tool,
+    init_db,
+)
 
 SERVICES_URL = os.environ.get(
     "SERVICES_URL",
@@ -135,22 +144,17 @@ def _now():
     return datetime.now(timezone.utc).isoformat()
 
 
-def seed_reference_data(conn) -> None:
+def seed_reference_data() -> None:
     for key, data in REG_QUESTIONS.items():
-        conn.execute(
-            "INSERT OR REPLACE INTO regulatory_questions (key, label, explanation) VALUES (?, ?, ?)",
-            (key, data["label"], data["explanation"]),
+        db.session.merge(
+            RegulatoryQuestion(
+                key=key, label=data["label"], explanation=data["explanation"]
+            )
         )
     for name, explanation in STAGE_EXPLANATIONS.items():
-        conn.execute(
-            "INSERT OR REPLACE INTO stage_explanations (name, explanation) VALUES (?, ?)",
-            (name, explanation),
-        )
+        db.session.merge(StageExplanation(name=name, explanation=explanation))
     for url, stage in GLOSSARY_STAGE_MAPPINGS.items():
-        conn.execute(
-            "INSERT OR REPLACE INTO glossary_stage_mappings (glossary_url, stage_name) VALUES (?, ?)",
-            (url, stage),
-        )
+        db.session.merge(GlossaryStageMappings(glossary_url=url, stage_name=stage))
     for cs in CASE_STUDIES:
         content_json = None
         try:
@@ -161,31 +165,27 @@ def seed_reference_data(conn) -> None:
             print(f"  ok fetched {cs['slug']}_content.json")
         except Exception as exc:
             print(f"  x could not fetch {cs['slug']}: {exc}")
-        conn.execute(
-            """INSERT OR REPLACE INTO case_studies
-               (slug, title, description, image_src, image_alt, content_json)
-               VALUES (?, ?, ?, ?, ?, ?)""",
-            (
-                cs["slug"],
-                cs["title"],
-                cs["description"],
-                cs.get("image_src"),
-                cs.get("image_alt"),
-                content_json,
-            ),
+        db.session.merge(
+            CaseStudy(
+                slug=cs["slug"],
+                title=cs["title"],
+                description=cs["description"],
+                image_src=cs.get("image_src"),
+                image_alt=cs.get("image_alt"),
+                content_json=content_json,
+            )
         )
-    conn.commit()
+    db.session.commit()
     print("ok reference data seeded")
 
 
-def seed_tools(conn) -> None:
+def seed_tools() -> None:
     resp = requests.get(SERVICES_URL, timeout=15)
     resp.raise_for_status()
     data = resp.json()
 
     # Build glossary lookup
-    cur = conn.execute("SELECT glossary_url, stage_name FROM glossary_stage_mappings")
-    glossary = {r["glossary_url"]: r["stage_name"] for r in cur}
+    glossary = {g.glossary_url: g.stage_name for g in GlossaryStageMappings.query.all()}
 
     now = _now()
     for tool_id, raw in data.items():
@@ -194,113 +194,112 @@ def seed_tools(conn) -> None:
         if stage in ("NA", "Unknown"):
             stage = "Other"
 
-        conn.execute(
-            """INSERT OR REPLACE INTO tools
-               (id, service, description, stage, html_name, md_file_name,
-                png_file_name, main_url, inst_url,
-                reg_q_1a, reg_q_1b, reg_q_2a, reg_q_2b, reg_q_3a, reg_q_3b,
-                login, api_type, casestudy, provider, provider_email,
-                citation, version, license, sourcecode, docker,
-                bio_tools, tess, raw_json, updated_at)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-            (
-                tool_id,
-                raw.get("service", tool_id),
-                raw.get("description"),
-                stage,
-                raw.get("html_name"),
-                raw.get("md_file_name"),
-                raw.get("png_file_name"),
-                raw.get("main_url"),
-                raw.get("inst_url") or None,
-                _bool_flag(raw.get("reg_q_1a")),
-                _bool_flag(raw.get("reg_q_1b")),
-                _bool_flag(raw.get("reg_q_2a")),
-                _bool_flag(raw.get("reg_q_2b")),
-                _bool_flag(raw.get("reg_q_3a")),
-                _bool_flag(raw.get("reg_q_3b")),
-                raw.get("login"),
-                raw.get("api"),
-                raw.get("casestudy"),
-                raw.get("provider"),
-                raw.get("provider-email"),
-                raw.get("citation"),
-                raw.get("version"),
-                raw.get("license"),
-                raw.get("sourcecode"),
-                raw.get("docker"),
-                raw.get("bioTools"),
-                raw.get("tess"),
-                json.dumps(raw),
-                now,
-            ),
+        db.session.merge(
+            Tool(
+                id=tool_id,
+                service=raw.get("service", tool_id),
+                description=raw.get("description"),
+                stage=stage,
+                html_name=raw.get("html_name"),
+                md_file_name=raw.get("md_file_name"),
+                png_file_name=raw.get("png_file_name"),
+                main_url=raw.get("main_url"),
+                inst_url=raw.get("inst_url") or None,
+                reg_q_1a=_bool_flag(raw.get("reg_q_1a")),
+                reg_q_1b=_bool_flag(raw.get("reg_q_1b")),
+                reg_q_2a=_bool_flag(raw.get("reg_q_2a")),
+                reg_q_2b=_bool_flag(raw.get("reg_q_2b")),
+                reg_q_3a=_bool_flag(raw.get("reg_q_3a")),
+                reg_q_3b=_bool_flag(raw.get("reg_q_3b")),
+                login=raw.get("login"),
+                api_type=raw.get("api"),
+                casestudy=raw.get("casestudy"),
+                provider=raw.get("provider"),
+                provider_email=raw.get("provider-email"),
+                citation=raw.get("citation"),
+                version=raw.get("version"),
+                license=raw.get("license"),
+                sourcecode=raw.get("sourcecode"),
+                docker=raw.get("docker"),
+                bio_tools=raw.get("bioTools"),
+                tess=raw.get("tess"),
+                raw_json=json.dumps(raw),
+                updated_at=now,
+            )
         )
-    conn.commit()
+    db.session.commit()
     print(f"ok {len(data)} tools seeded")
 
 
-def seed_methods(conn) -> None:
+def seed_methods() -> None:
     resp = requests.get(METHODS_URL, timeout=15)
     resp.raise_for_status()
     data = resp.json()
 
     now = _now()
     for method_id, raw in data.items():
-        conn.execute(
-            """INSERT OR REPLACE INTO methods
-               (id, method, issue_number, description, stage, substage,
-                catalog_webpage_url, case_study, regulatory_question,
-                reg_q_1a, reg_q_1b, reg_q_2a, reg_q_2b, reg_q_3a, reg_q_3b,
-                data_producer, sop, vendor, catalog_number, citation,
-                type_iri, ontology, key_event_id, aop_id,
-                raw_json, updated_at)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-            (
-                method_id,
-                raw.get("method") or raw.get("method_name_content", method_id),
-                raw.get("issue_number"),
-                raw.get("method_description_content"),
-                raw.get("vhp4safety_workflow_stage_content"),
-                raw.get("workflow_substage_content"),
-                raw.get("catalog_webpage_url"),
-                raw.get("case_study_content"),
-                raw.get("regulatory_question_content"),
-                _bool_flag(raw.get("reg_q_1a")),
-                _bool_flag(raw.get("reg_q_1b")),
-                _bool_flag(raw.get("reg_q_2a")),
-                _bool_flag(raw.get("reg_q_2b")),
-                _bool_flag(raw.get("reg_q_3a")),
-                _bool_flag(raw.get("reg_q_3b")),
-                raw.get("data_producer_content"),
-                raw.get("available_sop_or_protocol_content"),
-                raw.get("vendor_content"),
-                raw.get("catalog_number_content"),
-                raw.get("citation_content"),
-                raw.get("ontology_term_content"),
-                raw.get("type_content"),
-                raw.get("relevant_aop_wiki_key_event(s)_to_the_assay_content"),
-                raw.get(
+        db.session.merge(
+            Method(
+                id=method_id,
+                method=raw.get("method") or raw.get("method_name_content", method_id),
+                issue_number=raw.get("issue_number"),
+                description=raw.get("method_description_content"),
+                stage=raw.get("vhp4safety_workflow_stage_content"),
+                substage=raw.get("workflow_substage_content"),
+                catalog_webpage_url=raw.get("catalog_webpage_url"),
+                case_study=raw.get("case_study_content"),
+                regulatory_question=raw.get("regulatory_question_content"),
+                reg_q_1a=_bool_flag(raw.get("reg_q_1a")),
+                reg_q_1b=_bool_flag(raw.get("reg_q_1b")),
+                reg_q_2a=_bool_flag(raw.get("reg_q_2a")),
+                reg_q_2b=_bool_flag(raw.get("reg_q_2b")),
+                reg_q_3a=_bool_flag(raw.get("reg_q_3a")),
+                reg_q_3b=_bool_flag(raw.get("reg_q_3b")),
+                data_producer=raw.get("data_producer_content"),
+                sop=raw.get("available_sop_or_protocol_content"),
+                vendor=raw.get("vendor_content"),
+                catalog_number=raw.get("catalog_number_content"),
+                citation=raw.get("citation_content"),
+                type_iri=raw.get("ontology_term_content"),
+                ontology=raw.get("type_content"),
+                key_event_id=raw.get(
+                    "relevant_aop_wiki_key_event(s)_to_the_assay_content"
+                ),
+                aop_id=raw.get(
                     "relevant_aop_wiki_adverse_outcome_pathway(s)_to_the_assay_content"
                 ),
-                json.dumps(raw),
-                now,
-            ),
+                raw_json=json.dumps(raw),
+                updated_at=now,
+            )
         )
-    conn.commit()
+    db.session.commit()
     print(f"ok {len(data)} methods seeded")
 
 
-def seed_all() -> None:
-    init_db()
-    conn = get_conn()
+def seed_all(app=None) -> None:
+    """Seed all tables.  Pass a Flask app instance when called outside a
+    request context (e.g. from the CLI or a background thread).
+    """
+    if app is not None:
+        ctx = app.app_context()
+        ctx.push()
+    else:
+        ctx = None
+
     try:
-        seed_reference_data(conn)
-        seed_tools(conn)
-        seed_methods(conn)
+        init_db(app) if app is not None else None
+        seed_reference_data()
+        seed_tools()
+        seed_methods()
         print("ok seeding complete")
     finally:
-        conn.close()
+        if ctx is not None:
+            ctx.pop()
 
 
 if __name__ == "__main__":
-    seed_all()
+    # CLI entry point: create a minimal Flask app to provide the app context
+    from flask import Flask as _Flask
+
+    _app = _Flask(__name__)
+    seed_all(_app)

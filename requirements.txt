@@ -26,4 +26,5 @@ urllib3==2.6.3
 werkzeug==3.1.8
 wikibaseintegrator==0.12.15
 flask-openapi3[swagger,redoc]>=4.0
+Flask-SQLAlchemy>=3.1,<4
 APScheduler>=3.10,<4

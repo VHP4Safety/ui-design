@@ -115,14 +115,20 @@ class ToolChecker:
                 issues.append(("png_file_name", "fallback logo placeholder"))
         else:
             # fallback checks on raw data
-            if data.get("stage") and not str(data.get("stage")).startswith(_STAGE_URI_PREFIX):
-                issues.append(("stage", f"not a glossary URI (got {data.get('stage')!r})"))
+            if data.get("stage") and not str(data.get("stage")).startswith(
+                _STAGE_URI_PREFIX
+            ):
+                issues.append(
+                    ("stage", f"not a glossary URI (got {data.get('stage')!r})")
+                )
 
             for field in ("main_url", "inst_url"):
                 if data.get(field) == _NO_URL:
                     issues.append((field, "URL not yet set"))
 
-            if data.get("png_file_name") and _FALLBACK_LOGO in str(data.get("png_file_name")):
+            if data.get("png_file_name") and _FALLBACK_LOGO in str(
+                data.get("png_file_name")
+            ):
                 issues.append(("png_file_name", "fallback logo placeholder"))
 
         return issues
@@ -237,8 +243,13 @@ class DataHitChecker:
 
     # Fields that are genuinely optional — silence them
     _OPTIONAL = {
-        "version", "conceptdoi", "conceptdoi_url", "funding",
-        "publications", "files", "ReleaseDate",
+        "version",
+        "conceptdoi",
+        "conceptdoi_url",
+        "funding",
+        "publications",
+        "files",
+        "ReleaseDate",
     }
 
     @classmethod
@@ -266,6 +277,8 @@ class DataHitChecker:
             if isinstance(v, str) and _HTML_RE.search(v):
                 issues.append((k, "raw HTML / entities"))
         return issues
+
+
 # registry (used by the test runner)
 # Maps API path to (checker, id_field, label_field)
 

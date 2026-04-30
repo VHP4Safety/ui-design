@@ -14,11 +14,20 @@ from datetime import datetime, timezone
 from typing import Any, Optional
 
 from flask import jsonify, request
-from flask_openapi3 import APIBlueprint, OpenAPI, Tag
+from flask_openapi3.blueprint import APIBlueprint
+from flask_openapi3.openapi import OpenAPI
+from flask_openapi3.models.tag import Tag
+
 from pydantic import BaseModel, ConfigDict, Field, RootModel
 
 from src import repo
-from src.db import get_conn
+from src.db import (
+    Tool as ToolORM,
+    Method as MethodORM,
+    CaseStudy as CaseStudyORM,
+    RegulatoryQuestion as RegulatoryQuestionORM,
+    StageExplanation as StageExplanationORM,
+)
 from src.models.casestudy import CaseStudyCard as CSModel
 
 
@@ -30,13 +39,16 @@ class ErrorResponse(BaseModel):
     path: str = Field(..., description="Request path that triggered the error.")
 
     model_config = ConfigDict(
-        json_schema_extra={"example": {"error": "Not found", "status": 404, "path": "/api/tools/foo"}}
+        json_schema_extra={
+            "example": {"error": "Not found", "status": 404, "path": "/api/tools/foo"}
+        }
     )
 
 
 def _api_error(status: int, message: str):
     """Return a plain JSON error response — never the HTML error page."""
     return jsonify({"error": message, "status": status, "path": request.path}), status
+
 
 from src.models.cloud.method import ServiceIndexEntry as ToolModel
 from src.models.cloud.tool import Method as MethodModel
@@ -523,7 +535,9 @@ def list_case_studies():
     return out
 
 
-@casestudies_bp.get("/<name>", responses={200: CaseStudyDetailResponse, 404: ErrorResponse})
+@casestudies_bp.get(
+    "/<name>", responses={200: CaseStudyDetailResponse, 404: ErrorResponse}
+)
 def get_case_study(path: CaseStudyPath):
     """Get a case study by name, including its full content JSON."""
     case = repo.get_case_study(path.name)
@@ -539,7 +553,9 @@ def get_case_study(path: CaseStudyPath):
 #  Compounds
 
 
-@compounds_bp.get("/<cwid>", responses={200: CompoundDetail, 400: ErrorResponse, 502: ErrorResponse})
+@compounds_bp.get(
+    "/<cwid>", responses={200: CompoundDetail, 400: ErrorResponse, 502: ErrorResponse}
+)
 def get_compound(path: CompoundPath):
     """Get full compound data from Compound Wiki via SPARQL."""
     if not is_valid_qid(path.cwid):
@@ -550,7 +566,15 @@ def get_compound(path: CompoundPath):
         return _api_error(502, "Bad gateway")
 
 
-@compounds_bp.get("/<cwid>/properties", responses={200: CompoundSummary, 400: ErrorResponse, 404: ErrorResponse, 502: ErrorResponse})
+@compounds_bp.get(
+    "/<cwid>/properties",
+    responses={
+        200: CompoundSummary,
+        400: ErrorResponse,
+        404: ErrorResponse,
+        502: ErrorResponse,
+    },
+)
 def get_compound_properties(path: CompoundPath):
     """Get core compound properties (formula, mass, InChI, SMILES)."""
     if not is_valid_qid(path.cwid):
@@ -564,7 +588,10 @@ def get_compound_properties(path: CompoundPath):
         return _api_error(502, "Bad gateway")
 
 
-@compounds_bp.get("/<cwid>/identifiers", responses={200: CompoundIdentifierList, 400: ErrorResponse, 502: ErrorResponse})
+@compounds_bp.get(
+    "/<cwid>/identifiers",
+    responses={200: CompoundIdentifierList, 400: ErrorResponse, 502: ErrorResponse},
+)
 def get_compound_identifiers(path: CompoundPath):
     """Get external database identifiers (CAS, PubChem, ChEBI, etc.)."""
     if not is_valid_qid(path.cwid):
@@ -575,7 +602,10 @@ def get_compound_identifiers(path: CompoundPath):
         return _api_error(502, "Bad gateway")
 
 
-@compounds_bp.get("/<cwid>/toxicology", responses={200: CompoundToxicologyList, 400: ErrorResponse, 502: ErrorResponse})
+@compounds_bp.get(
+    "/<cwid>/toxicology",
+    responses={200: CompoundToxicologyList, 400: ErrorResponse, 502: ErrorResponse},
+)
 def get_compound_toxicology(path: CompoundPath):
     """Get toxicology data (LD50, LC50, etc.)."""
     if not is_valid_qid(path.cwid):
@@ -587,7 +617,12 @@ def get_compound_toxicology(path: CompoundPath):
 
 
 @compounds_bp.get(
-    "/<cwid>/experimental-data", responses={200: CompoundExperimentalDatumList, 400: ErrorResponse, 502: ErrorResponse}
+    "/<cwid>/experimental-data",
+    responses={
+        200: CompoundExperimentalDatumList,
+        400: ErrorResponse,
+        502: ErrorResponse,
+    },
 )
 def get_compound_exp_data(path: CompoundPath):
     """Get experimental measurements (EC50, IC50, etc.)."""
@@ -659,26 +694,28 @@ def get_data_detail(path: DataDetailPath):
 
 #  Validation
 
-_SKIP_FIELDS = {
-    "raw_json",
-    "updated_at",
-    "model_config",
-    "timestamp",
-    "https",
-    "reg_q_1a",
-    "reg_q_1b",
-    "reg_q_2a",
-    "reg_q_2b",
-    "reg_q_3a",
-    "reg_q_3b",
-}
+#  _SKIP_FIELDS = {
+#      "raw_json",
+#      "updated_at",
+#      "model_config",
+#      "timestamp",
+#      "https",
+#      "reg_q_1a",
+#      "reg_q_1b",
+#      "reg_q_2a",
+#      "reg_q_2b",
+#      "reg_q_3a",
+#      "reg_q_3b",
+#  }
+
+_SKIP_FIELDS = {}
 
 _ENTITY_REGISTRY = {
-    "tools": ("tools", ToolModel, "id", "service"),
-    "methods": ("methods", MethodModel, "id", "method"),
-    "case_studies": ("case_studies", CSModel, "slug", "title"),
-    "regulatory_questions": ("regulatory_questions", RQModel, "key", "label"),
-    "stage_explanations": ("stage_explanations", SEModel, "name", "name"),
+    "tools": (ToolORM, ToolModel, "id", "service"),
+    "methods": (MethodORM, MethodModel, "id", "method"),
+    "case_studies": (CaseStudyORM, CSModel, "slug", "title"),
+    "regulatory_questions": (RegulatoryQuestionORM, RQModel, "key", "label"),
+    "stage_explanations": (StageExplanationORM, SEModel, "name", "name"),
 }
 
 
@@ -697,18 +734,14 @@ def _preview(val, max_len: int = 80):
     return s[:max_len] + ("..." if len(s) > max_len else "")
 
 
-def _validate_entity(entity_name, table, pydantic_model, id_attr, label_attr):
+def _validate_entity(entity_name, orm_cls, pydantic_model, id_attr, label_attr):
     check_fields = [f for f in pydantic_model.model_fields if f not in _SKIP_FIELDS]
-    conn = get_conn()
-    rows = conn.execute(f"SELECT * FROM {table}").fetchall()
-    conn.close()
 
     entries = []
-    for row in rows:
-        d = dict(row)
+    for row in orm_cls.query.all():
         details, filled, missing = [], 0, []
         for f in check_fields:
-            val = d.get(f)
+            val = getattr(row, f, None)
             ok = _is_filled(val)
             filled += ok
             if not ok:
@@ -717,10 +750,11 @@ def _validate_entity(entity_name, table, pydantic_model, id_attr, label_attr):
 
         total = len(check_fields)
         pct = round(filled / total * 100, 1) if total else 100.0
+        id_val = str(getattr(row, id_attr, "?"))
         entries.append(
             {
-                "id": str(d.get(id_attr, "?")),
-                "label": str(d.get(label_attr) or d.get(id_attr, "?")),
+                "id": id_val,
+                "label": str(getattr(row, label_attr, None) or id_val),
                 "fields_total": total,
                 "fields_filled": filled,
                 "completeness_pct": pct,
@@ -750,19 +784,21 @@ def validate_all():
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "entities": [
-            _validate_entity(name, tbl, model, id_a, lbl_a)
-            for name, (tbl, model, id_a, lbl_a) in _ENTITY_REGISTRY.items()
+            _validate_entity(name, orm_cls, model, id_a, lbl_a)
+            for name, (orm_cls, model, id_a, lbl_a) in _ENTITY_REGISTRY.items()
         ],
     }
 
 
-@validation_bp.get("/<entity>", responses={200: EntitySummaryResponse, 404: ErrorResponse})
+@validation_bp.get(
+    "/<entity>", responses={200: EntitySummaryResponse, 404: ErrorResponse}
+)
 def validate_entity(path: EntityPath):
     """Data completeness report for a single entity type."""
     if path.entity not in _ENTITY_REGISTRY:
         return _api_error(404, "Not found")
-    tbl, model, id_a, lbl_a = _ENTITY_REGISTRY[path.entity]
-    return _validate_entity(path.entity, tbl, model, id_a, lbl_a)
+    orm_cls, model, id_a, lbl_a = _ENTITY_REGISTRY[path.entity]
+    return _validate_entity(path.entity, orm_cls, model, id_a, lbl_a)
 
 
 #  App factory
