@@ -20,15 +20,15 @@ def _reseed_job() -> None:
     """Idempotently re-seed all tables from upstream GitHub JSON sources."""
     from src.seed import seed_all  # late import to avoid circular deps
 
-    log.info("⏳ Nightly re-seed started …")
+    log.info("Nightly re-seed started …")
     try:
         seed_all()
-        log.info("✅ Nightly re-seed complete")
+        log.info("Nightly re-seed complete")
     except Exception:
-        log.exception("❌ Nightly re-seed failed")
+        log.exception("Nightly re-seed failed")
 
 
-def init_scheduler(app=None) -> BackgroundScheduler:
+def init_scheduler(app=None) -> BackgroundScheduler | None:
     """
     Start (or return) the background scheduler.
 
@@ -43,7 +43,7 @@ def init_scheduler(app=None) -> BackgroundScheduler:
 
     enabled = os.environ.get("RESEED_ENABLED", "true").lower()
     if enabled == "false":
-        log.info("🔕 Nightly re-seed disabled (RESEED_ENABLED=false)")
+        log.info("Nightly re-seed disabled (RESEED_ENABLED=false)")
         return None
 
     hour = int(os.environ.get("RESEED_HOUR", "3"))
@@ -58,5 +58,5 @@ def init_scheduler(app=None) -> BackgroundScheduler:
         replace_existing=True,
     )
     _scheduler.start()
-    log.info("🕐 Nightly re-seed scheduled at %02d:%02d UTC", hour, minute)
+    log.info("Nightly re-seed scheduled at %02d:%02d UTC", hour, minute)
     return _scheduler

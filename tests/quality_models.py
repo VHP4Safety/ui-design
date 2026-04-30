@@ -29,8 +29,8 @@ _FALLBACK_LOGO = "github.com/VHP4Safety/ui-design"
 
 _PLACEHOLDER_RE = re.compile(
     r"\{\{.*?\}\}"
-    r"|\[.*?(todo|tbd|laceholder|fixme|insert).*?\]"
-    r"|\btodo\b|\btbd\b|\bfixme\b|\blorem\s+ipsum\b",
+    r"|\[.*?(todo|tbd|laceholder|fixme|lacehholder|Input and resulting output).*?\]"
+    r"|\btodo\b|\btbd\b|\bfixme\b|\blacehholder\b|\bInput and resulting output\b",
     re.IGNORECASE,
 )
 _HTML_RE = re.compile(r"<[a-zA-Z][^>]*>|&[a-z]+;", re.IGNORECASE)
