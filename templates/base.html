@@ -33,28 +33,6 @@
       type="image/x-icon"
     />
 
-    <!-- Main JavaScript functions for UI interactions -->
-    <script>
-   
-      // Hide the scroll-down arrow when user nears bottom
-      document.addEventListener("scroll", () => {
-        const arrow = document.querySelector(".scroll-down-arrow");
-        if (!arrow) return;
-
-        const bottomOffset = 100; // px tolerance before actual bottom
-        const isAtBottom =
-          window.innerHeight + window.scrollY >= document.body.offsetHeight - bottomOffset;
-
-        arrow.classList.toggle("d-none", isAtBottom);
-      });
-
-     
-      // Scroll to next section (used for navigation)
-      function scrollToNextSection() {
-        window.scrollBy({ top: window.innerHeight / 1.5, behavior: "smooth" });
-      }
-
-    </script>
   </head>
 
   <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top">

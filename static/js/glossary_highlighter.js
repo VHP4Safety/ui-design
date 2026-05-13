@@ -26,7 +26,6 @@
     'card-button', 'card-header', 'card-footer', 'card-title',
     'visually-hidden',
     'search-results',
-    'scroll-down-arrow',
     'vhp-highlight', 'highlighted',
   ];
 

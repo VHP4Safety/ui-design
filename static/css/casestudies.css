@@ -174,27 +174,6 @@ nav.navbar {
     color: #fff;
 }
 
-.scroll-down-arrow {
-  position: fixed; 
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 2em;
-  color: grey;
-  cursor: pointer;
-  z-index: 1001;
-  width: 0; 
-  height: 0;
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  border-top: 20px solid grey;
-}
-
-.scroll-down-arrow:hover {
-  border-top-color: black;
-  transition: border-top-color 0.3s;
-}
-
 /* General settings for mobile screens ≤ 375px */
 @media (max-width: 408px) {
 
@@ -209,27 +188,6 @@ nav.navbar {
     margin: 0;
     padding-right: 8px;
     box-sizing: border-box;
-}
-
-.scroll-down-arrow {
-  position: fixed; 
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 2em;
-  color: grey;
-  cursor: pointer;
-  z-index: 1001;
-  width: 0; 
-  height: 0;
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  border-top: 20px solid grey;
-}
-
-.scroll-down-arrow:hover {
-  border-top-color: black;
-  transition: border-top-color 0.3s;
 }
 
 .search-header {
