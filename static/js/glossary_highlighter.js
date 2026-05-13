@@ -159,6 +159,7 @@
       if (!title || !title.trim() || title === 'null' || title === 'undefined') return;
 
       const tip = new bootstrap.Tooltip(el, {
+        html:        true,
         trigger:     'click',
         container:   'body',
         placement:   'bottom',
