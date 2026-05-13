@@ -190,7 +190,7 @@
     content = cite.format('bibliography', {
       format: 'html', template : 'apa',
       prepend: function (entry) {
-        return '<li><i class="fa-solid fa-file fa-xs"></i>&nbsp;'
+        return '<li><i class="bi bi-file-earmark"></i>&nbsp;'
       },
       append: function (entry) {
         return '<a href="https://doi.org/' + entry.DOI + '">CrossRef</a> <a href="https://scholia.toolforge.org/doi/' + entry.DOI + '">Scholia</a></li>'
