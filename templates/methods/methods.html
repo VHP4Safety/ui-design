@@ -10,12 +10,12 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 
-<section class="container py-md-5 py-3">
+<section class="container py-md-5 py-3 d-flex flex-column min-vh-100">
     <!-- Page Title and Description -->
     <div class="">
-        <h1><span class="text-vhppink" id="collection-name">Methods</span></h1>
+        <h1><span class="text-vhpdarkpurple" id="collection-name">Methods</span></h1>
         <p class="text-secondary fs-5"> Explore methods developed by and/or used in VHP4Safety. </p>
-        <p>You can search for a method that you know using the search box below. Alternatively, you can filter the methods with respect to the <a class="link-vhppink text-decoration-none" href="{{ url_for('workflows') }}#about-section">case studies' flow step</a> that they belong to and/or the regulatory question that they are associated with. Use the "Filters" button to show filter options, then "Apply Filter" to see results, and click "Clear Filter" to reset the filters.</p>
+        <p>You can search for a method that you know using the search box below. Alternatively, you can filter the methods with respect to the <a class="link-vhpdarkpurple text-decoration-none" href="{{ url_for('workflows') }}#about-section">case studies' flow step</a> that they belong to and/or the regulatory question that they are associated with. Use the "Filters" button to show filter options, then "Apply Filter" to see results, and click "Clear Filter" to reset the filters.</p>
 
     </div>
 
@@ -26,7 +26,7 @@
             <input type="hidden" name="stage" id="filter_stage" value="{{ request.args.get('stage', '') }}" />
             <input type="hidden" name="reg_q" id="filter_reg_q" value="{{ request.args.get('reg_q', '') }}" />
             <div class="btn-group" role="group" aria-label="Search and filter buttons">
-                <button type="submit" class="btn btn-outline-vhppink">Search</button>
+                <button type="submit" class="btn btn-outline-vhpdarkpurple">Search</button>
                 <a href="{{ url_for('methods') }}" class="btn btn-outline-danger text-nowrap">Clear</a>
                 <button type="button" id="filter-toggle-btn" class="btn btn-outline-secondary">Filters</button>
             </div>
@@ -68,7 +68,7 @@
                     <ul class="dropdown-menu">
                         {% for stage in stages %}
                         <li><a class="dropdown-item " href="#" data-filter-type="flow-step" data-filter-value="{{ stage }}"{% if stage in stage_explanations %} data-bs-toggle="methodtip" data-bs-placement="right" data-bs-title="{{ stage_explanations[stage] }}"{% endif %}>
-                            {{ stage }}{% if stage in stage_explanations %} <i class="text-vhppink bi bi-question-circle"></i>{% endif %}
+                            {{ stage }}{% if stage in stage_explanations %} <i class="text-vhpdarkpurple bi bi-question-circle"></i>{% endif %}
                         </a></li>
                         {% endfor %}
                     </ul>
@@ -82,7 +82,7 @@
                     <ul class="dropdown-menu">
                         {% for question in reg_questions.keys() %}
                         <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="{{ question }}"{% if question in reg_question_explanations %} data-bs-toggle="methodtip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations[question] }}"{% endif %}>
-                            {{ question }}{% if question in reg_question_explanations %} <i class="text-vhppink bi bi-question-circle"></i>{% endif %}
+                            {{ question }}{% if question in reg_question_explanations %} <i class="text-vhpdarkpurple bi bi-question-circle"></i>{% endif %}
                         </a></li>
                         {% endfor %}
                     </ul>
@@ -100,7 +100,7 @@
             </div>
             
             <div class="">
-                <button id="apply-filter-btn" class="btn btn-sm btn-vhppink mt-2">Apply</button>
+                <button id="apply-filter-btn" class="btn btn-sm btn-vhpdarkpurple mt-2">Apply</button>
                 <button id="clear-filter-btn" class="btn btn-sm btn-outline-danger mt-2">Clear</button>
             </div>
         </div>
@@ -111,11 +111,6 @@
         <ul class="results-list p-0">
             {% for item in methods %}
                 <div class="card">
-                    <div class="card-img-top overflow-hidden" style="aspect-ratio: 21/9;">
-                    {% if item.png %}
-                        <img src="{{ item.png }}" alt="Method logo" class="w-100 h-100 d-block" style="object-fit: cover; object-position: left;">
-                    {% endif %}
-                    </div>
                     <div class="card-body">
                         <h2 class="card-title">{{ item.service }}</h2>
                         <p id="desc" class="card-text">{{ item.description }}</p>
@@ -125,16 +120,14 @@
                         <div class="btn-group d-flex" role="group" aria-label="Method example">
 
                              <!-- Catalog Page -->
-                            <a href="{{ url_for('methods') }}/{{ item.id }}"  class="btn btn-vhppink flex-grow-1"  data-bs-toggle="methodtip" data-bs-title="View method details"><i class="bi bi-info-circle"></i></a>
+                            <a href="{{ url_for('methods') }}/{{ item.id }}"  class="btn btn-vhpdarkpurple flex-grow-1"  data-bs-toggle="methodtip" data-bs-title="View method details"><i class="bi bi-info-circle"></i></a>
                  
 
                             <!-- Method Webpage -->
                             {% if item.main_url == "no_url" %}
-                                <a type="button" class="btn btn-outline-secondary disabled" data-bs-toggle="methodtip" data-bs-title="No webpage available"><i class="bi bi-box-arrow-up-right"></i>
-</a> 
+                                <a type="button" class="btn btn-outline-vhpdarkpurple disabled" data-bs-toggle="methodtip" data-bs-title="No webpage available"><i class="bi bi-box-arrow-up-right"></i></a>
                             {% else %}
-                                <a type="button" href="{{ item.main_url }}" class="btn btn-outline-secondary" target="_blank" data-bs-toggle="methodtip" data-bs-title="Visit main webpage"><i class="bi bi-box-arrow-up-right"></i>
-</a>
+                                <a type="button" href="{{ item.main_url }}" class="btn btn-outline-vhpdarkpurple" target="_blank" data-bs-toggle="methodtip" data-bs-title="Visit main webpage"><i class="bi bi-box-arrow-up-right"></i></a>
                             {% endif %}
 
                             <!-- Meta-Data 
@@ -146,6 +139,13 @@
                 <li>No methods found.</li>
             {% endfor %}
         </ul>
+    </div>
+
+    <!-- Pagination at bottom -->
+    <div class="pagination-container mt-auto d-flex justify-content-center gap-2 py-3">
+        <a href="{{ url_for('methods', page=page-1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" class="btn btn-sm btn-secondary {% if not has_prev %} disabled {% endif %}">Previous</a>
+        <span class="align-self-center small text-secondary">Page {{ page }}</span>
+        <a href="{{ url_for('methods', page=page+1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" class="btn btn-sm btn-secondary {% if not has_next %} disabled {% endif %}">Next</a>
     </div>
 </section>
 
@@ -169,7 +169,7 @@
                 'flow-step': 'Flow Step',
                 'reg-question': 'Reg. Q'
             },
-            badgeClass: 'badge rounded-pill text-bg-vhppink',
+            badgeClass: 'badge rounded-pill text-bg-vhpdarkpurple',
             tooltipSelector: '[data-bs-toggle="methodtip"]',
             showFilterPanel: {% if selected_stages or selected_questions %}true{% else %}false{% endif %}
         });
