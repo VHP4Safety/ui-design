@@ -120,18 +120,20 @@
 	<p>The Virtual Human Platform (VHP) is a digital infrastructure that supports human-relevant risk assessment of chemicals and pharmaceuticals. By integrating  human-derived data, advanced in vitro models, and  computational tools, the VHP enables transparent, reproducible and mechanistically informed safety assessment moving beyond traditional animal testing. </p>
 	<p>Through structured, <a data-bs-toggle="collapse" href="#workflowTeaser" role="button" aria-expanded="false" aria-controls="workflowTeaser">interactive workflows</a> and a user-friendly interface, the platform tackles real-word regulatory questions (<a href="/casestudies">'case studies'</a>) by connecting <a href="/tools">tools</a>, <a href="/methods">methods</a> and <a href="/data">data</a>.</p>
 
-	<!-- Workflow teaser (collapsible) -->
-	<div class="my-4 text-center">
-	  <a class="btn btn-sm btn-outline-secondary rounded-pill collapsed"
+	<!-- Workflow teaser toggle (fatter chevron, no pill chrome) -->
+	<div class="text-center my-4">
+	  <a class="text-decoration-none text-secondary collapsed"
 	     data-bs-toggle="collapse" href="#workflowTeaser" role="button"
-	     aria-expanded="false" aria-controls="workflowTeaser">
-	    Show the workflow <i class="bi bi-chevron-down ms-1" aria-hidden="true"></i>
+	     aria-expanded="false" aria-controls="workflowTeaser"
+	     aria-label="Show Safety Assessment Workflow">
+	    <i class="bi bi-caret-down-fill fs-3" aria-hidden="true"></i>
 	  </a>
+	</div>
 
-	  <div class="collapse mt-3 text-start" id="workflowTeaser">
+	<div class="collapse" id="workflowTeaser">
 	    <h2 class="mb-3"><strong>Safety Assessment Workflow</strong></h2>
 	    <p class="mb-4">
-	      The Virtual Human Platform uses a generic safety assessment workflow as a six-step process to collect information critical for risk characterisation. For more information on the workflow, visit our <a href="{{ url_for('SafetyAssessmentWorkflow') }}">Safety Assessment Workflow page</a>.
+	      The Virtual Human Platform uses a generic safety assessment workflow as a six-step process to collect information critical for risk characterisation.
 	    </p>
 
 	    <div class="row align-items-stretch g-3">
@@ -206,38 +208,20 @@
 	<div class="row row-cols-1 row-cols-md-3 g-4">
 	  <div class="col">
 	    <a href="{{ url_for('explore_our_work') }}#about-section"
-	       class="d-flex align-items-start gap-3 text-decoration-none text-body">
-	      <div class="bg-light rounded-3 p-3 flex-shrink-0">
-	        <i class="bi bi-diagram-3 fs-3 text-vhppurple" aria-hidden="true"></i>
-	      </div>
-	      <div>
-	        <h5 class="fw-bold mb-1">Project</h5>
-	        <p class="mb-0 small text-secondary">About the VHP4Safety consortium.</p>
-	      </div>
+	       class="btn btn-vhppurple w-100 py-3 fs-5 d-flex align-items-center justify-content-center gap-2">
+	      <i class="bi bi-diagram-3" aria-hidden="true"></i>Project
 	    </a>
 	  </div>
 	  <div class="col">
 	    <a href="{{ url_for('training') }}#partners-section"
-	       class="d-flex align-items-start gap-3 text-decoration-none text-body">
-	      <div class="bg-light rounded-3 p-3 flex-shrink-0">
-	        <i class="bi bi-mortarboard fs-3 text-vhppurple" aria-hidden="true"></i>
-	      </div>
-	      <div>
-	        <h5 class="fw-bold mb-1">Training</h5>
-	        <p class="mb-0 small text-secondary">Workshops, materials and events.</p>
-	      </div>
+	       class="btn btn-vhppurple w-100 py-3 fs-5 d-flex align-items-center justify-content-center gap-2">
+	      <i class="bi bi-mortarboard" aria-hidden="true"></i>Training
 	    </a>
 	  </div>
 	  <div class="col">
 	    <a href="{{ url_for('impact') }}#contact-section"
-	       class="d-flex align-items-start gap-3 text-decoration-none text-body">
-	      <div class="bg-light rounded-3 p-3 flex-shrink-0">
-	        <i class="bi bi-graph-up-arrow fs-3 text-vhppurple" aria-hidden="true"></i>
-	      </div>
-	      <div>
-	        <h5 class="fw-bold mb-1">Impact</h5>
-	        <p class="mb-0 small text-secondary">Outcomes and reach of the project.</p>
-	      </div>
+	       class="btn btn-vhppurple w-100 py-3 fs-5 d-flex align-items-center justify-content-center gap-2">
+	      <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>Impact
 	    </a>
 	  </div>
 	</div>
