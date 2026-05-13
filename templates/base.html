@@ -80,19 +80,6 @@
 
   <!-- Desktop buttons (hidden on mobile) -->
   <div class="d-none d-lg-flex align-items-center gap-3">
-
-  <!-- Collapsible implementation menu -->
-	 <div class="btn-group" role="group" >
-      <button class="toggler bg-white border-secondary rounded" type="button" style="min-width:30px"  data-bs-toggle="dropdown" aria-expanded="false">
-		<span class="navbar-toggler-icon"></span>
-		<span class="visually-hidden">Toggle Dropdown</span>
-      </button>
-      <ul class="dropdown-menu dropdown-menu-end">
-        <li><a class="dropdown-item" href="/explore_our_work">Explore our work</a></li>
-        <li><a class="dropdown-item" href="/training">Training</a></li>
-        <li><a class="dropdown-item" href="/impact">Impact</a></li>
-      </ul>
-    </div>
     
     <!-- Glossary Toggle Switch -->
     <div class="form-check form-switch mb-0 text-nowrap" data-vhp-glossary-skip>
@@ -135,6 +122,19 @@
       </form>
     </div>
 
+    <!-- Collapsible implementation menu -->
+	 <div class="btn-group" role="group" >
+      <button class="btn btn-outline-secondary text-nowrap" style="width:120px" onclick="location.href='{{ url_for('home') }}#about-section'" type="button">About</button>
+      <button type="button" style="min-width:30px" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+		<span class="visually-hidden">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="/explore_our_work">Process</a></li>
+        <li><a class="dropdown-item" href="/training">Training</a></li>
+        <li><a class="dropdown-item" href="/impact">Impact</a></li>
+      </ul>
+    </div>
+
      <!-- Case Studies Button Group -->
     <div class="btn-group" role="group">
       <button class="btn btn-vhppink-distinct text-white text-nowrap" style="width:120px" onclick="location.href='/casestudies'" type="button">Case Studies</button>
@@ -152,8 +152,8 @@
     <!-- Tools Button Group -->
  
     <div class="btn-group"  role="group">
-      <button class="btn btn-vhpblue text-nowrap" style="width:120px" onclick="location.href='/tools'" type="button">Tools</button>
-      <button class="btn btn-vhpblue dropdown-toggle-split dropdown-toggle" style="width:30px" type="button" id="toolsMenuBtn" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="btn btn-vhpblue text-nowrap text-white" style="width:120px" onclick="location.href='/tools'" type="button">Tools</button>
+      <button class="btn btn-vhpblue dropdown-toggle-split dropdown-toggle text-white" style="width:30px" type="button" id="toolsMenuBtn" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu dropdown-menu-end" id="toolsMenu" aria-labelledby="toolsMenuBtn" data-page-size="12">
@@ -175,6 +175,7 @@
 
     <!-- Data Button -->
     <button class="btn btn-vhpteal text-nowrap" style="width: 150px;" onclick="location.href='/data'" type="button">Data</button>
+
   </div>
 </nav>
 
@@ -185,7 +186,7 @@
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
-    <div class="d-flex flex-column gap-2">
+    <div class="d-flex flex-column gap-2 h-100">
 
       <!-- Search -->
       <div class="" >
@@ -238,8 +239,8 @@
 
       <!-- Tools collapse menu -->
       <div class="btn-group">
-        <button class="btn btn-vhpblue " onclick="location.href='/tools'" data-bs-dismiss="offcanvas">Tools</button>
-        <button class="btn btn-vhpblue dropdown-toggle dropdown-toggle-split flex-grow-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTools" aria-expanded="false" aria-controls="collapseTools" style="width: 3rem;"></button>
+        <button class="btn btn-vhpblue text-white" onclick="location.href='/tools'" data-bs-dismiss="offcanvas">Tools</button>
+        <button class="btn btn-vhpblue dropdown-toggle dropdown-toggle-split text-white flex-grow-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTools" aria-expanded="false" aria-controls="collapseTools" style="width: 3rem;"></button>
       </div>
       <div class="collapse" id="collapseTools">
         <div class="d-flex flex-column ps-3 gap-2">
@@ -279,16 +280,18 @@
                          this.closest('.offcanvas') && bootstrap.Offcanvas.getInstance(this.closest('.offcanvas'))?.hide();">
         <label class="form-check-label" for="glossary-toggle-mobile">Glossary</label>
       </div>
-      <!-- Implementation links (mobile) -->
-	    <div class="btn-group">
-        <button class="btn bg-secondary text-light" data-bs-dismiss="offcanvas">Towards a virtual human</button>
-        <button class="btn bg-secondary text-light dropdown-toggle dropdown-toggle-split" type="button" data-bs-toggle="collapse" data-bs-target="#collapseImplementation" aria-expanded="false" aria-controls="collapseImplementation" style="max-width: 30vw;"></button>
-      </div>
-      <div class="collapse" id="collapseImplementation">
-        <div class="d-flex flex-column ps-3 gap-2">
-          <button class="btn btn-light text-start" onclick="location.href='/explore_our_work'" data-bs-dismiss="offcanvas">Explore our work</button>
-          <button class="btn btn-light text-start" onclick="location.href='/training'" data-bs-dismiss="offcanvas">Training</button>
-          <button class="btn btn-light text-start" onclick="location.href='/impact'" data-bs-dismiss="offcanvas">Impact</button>
+      <!-- Implementation links (mobile) — pinned to bottom, collapse expands upward -->
+      <div class="mt-auto">
+        <div class="collapse" id="collapseImplementation">
+          <div class="d-flex flex-column ps-3 gap-2 mb-2">
+            <button class="btn btn-light text-start" onclick="location.href='/explore_our_work'" data-bs-dismiss="offcanvas">Process</button>
+            <button class="btn btn-light text-start" onclick="location.href='/training'" data-bs-dismiss="offcanvas">Training</button>
+            <button class="btn btn-light text-start" onclick="location.href='/impact'" data-bs-dismiss="offcanvas">Impact</button>
+          </div>
+        </div>
+        <div class="btn-group w-100">
+          <button class="btn btn-outline-secondary" onclick="location.href='{{ url_for('home') }}#about-section'" data-bs-dismiss="offcanvas">About</button>
+          <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split flex-grow-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseImplementation" aria-expanded="false" aria-controls="collapseImplementation" style="width: 3rem;"></button>
         </div>
       </div>
     <!-- end of implementation links (mobile) -->
@@ -309,7 +312,7 @@
               <li><a href="/tools" class="text-decoration-none link-vhppink fs-7 small">Tools</a></li>
               <li><a href="/casestudies" class="text-decoration-none link-vhppink fs-7 small">Case Studies</a></li>
               <li><a href="/data" class="text-decoration-none link-vhppink fs-7 small">Data</a></li>
-              <li><a href="/explore_our_work" class="text-decoration-none link-vhppink fs-7 small">Explore our work</a></li>
+              <li><a href="/explore_our_work" class="text-decoration-none link-vhppink fs-7 small">Process</a></li>
               <li><a href="/training" class="text-decoration-none link-vhppink fs-7 small">Training</a></li>
               <li><a href="/impact" class="text-decoration-none link-vhppink fs-7 small">Impact</a></li>
             </ul>

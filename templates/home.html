@@ -43,27 +43,42 @@
     <div class="col-12 mb-3">
       <h3 class="text-vhpblue">Safety Assessment Workflow </h3>
       <p class="text-muted">
-        The Virtual Human Platform implements a generic safety assessment as a five-step process.
+        The Virtual Human Platform implements a generic safety assessment as a six-step process.
       </p>
     </div>
 
     <div class="col-12">
-      <div class="row row-cols-1 row-cols-md-6 gap-3 mx-auto mt-1">
-          <div class="btn btn-primary btn-vhpblue card-button-vhpblue">
-          Exposure
+      <div class="row row-cols-1 row-cols-md-6 g-3">
+        <div class="col d-grid">
+          <div class="btn btn-vhpblue text-white d-flex align-items-center justify-content-center text-center">
+            Hazard & Chemical Characterization
           </div>
-          <div class="btn btn-primary btn-vhpblue card-button-vhpblue">
-          Toxicokinetics
+        </div>
+        <div class="col d-grid">
+          <div class="btn btn-vhpblue text-white d-flex align-items-center justify-content-center text-center">
+            External Exposure
           </div>
-          <div class="btn btn-primary btn-vhpblue card-button-vhpblue">
-          Toxicodynamics
+        </div>
+        <div class="col d-grid">
+          <div class="btn btn-vhpblue text-white d-flex align-items-center justify-content-center text-center">
+            Toxicokinetics
           </div>
-          <div class="btn btn-primary btn-vhpblue card-button-vhpblue">
-          Adverse Outcome
+        </div>
+        <div class="col d-grid">
+          <div class="btn btn-vhpblue text-white d-flex align-items-center justify-content-center text-center">
+            Internal Exposure
           </div>
-          <div class="btn btn-primary btn-vhpblue card-button-vhpblue">
-          Chemical Characteristics and Hazard Identification
+        </div>
+        <div class="col d-grid">
+          <div class="btn btn-vhpblue text-white d-flex align-items-center justify-content-center text-center">
+            AOP
           </div>
+        </div>
+        <div class="col d-grid">
+          <div class="btn btn-vhpblue text-white d-flex align-items-center justify-content-center text-center">
+            Adverse Outcome
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -149,8 +164,8 @@
 
 </section>
 <!-- About section: project description and mission -->
-<section class="container py-5" id="about-section">
-  <h2 class="mb-4"><strong>About the Virtual Human Platform</strong></h2>
+<section class="container py-5">
+  <h2 id="about-section" class="mb-4" style="scroll-margin-top: 6rem;"><strong>About the Virtual Human Platform</strong></h2>
 	<div>
 	<!---<h4>What is the Virtual Human Platform?</h4>-->
 	<p>The Virtual Human Platform (VHP) is a digital infrastructure that supports human-relevant risk assessment of chemicals and pharmaceuticals. By integrating  human-derived data, advanced in vitro models, and  computational tools, the VHP enables transparent, reproducible and mechanistically informed safety assessment moving beyond traditional animal testing. </p>
@@ -163,7 +178,13 @@
 	</ul></p>
 	<p>These case studies show how multiple New Approach Methodologies (NAMs) can be combined to address regulatory challenges and illustrate practices concerning data, model assumptions, and interpretation. </p>
 	<p>Developed in co-creation with academic, industrial, regulatory, and societal partners, the VHP supports the transition to animal-free, human-relevant safety assessment. We invite all stakeholders to explore, contribute, and help shape the future of risk assessment with us.</p>
-	<p>Learn more about VHP4Safety, the project behind the VHP, in <a href="/explore_our_work">“Explore our work”</a>. </p>
+	<emph>Learn more about VHP4Safety, the project behind the VHP in the following sections:</emph>
+  <div>
+    <div class="d-flex gap-3 mt-4">
+      <a href="{{ url_for('explore_our_work') }}#about-section" class="btn btn-outline-secondary">Process</a>
+      <a href="{{ url_for('training') }}#partners-section" class="btn btn-outline-secondary">Training</a>
+      <a href="{{ url_for('impact') }}#contact-section" class="btn btn-outline-secondary">Impact</a>
+    </div>
 	</div>
 </section>
 <!--<section class="container py-5" id="about-section">
