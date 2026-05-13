@@ -122,11 +122,10 @@
 
 	<!-- Workflow teaser (collapsible) -->
 	<div class="my-4 text-center">
-	  <a class="text-decoration-none text-secondary collapsed"
+	  <a class="btn btn-sm btn-outline-secondary rounded-pill collapsed"
 	     data-bs-toggle="collapse" href="#workflowTeaser" role="button"
-	     aria-expanded="false" aria-controls="workflowTeaser"
-	     aria-label="Show Safety Assessment Workflow">
-	    <i class="bi bi-chevron-down fs-3" aria-hidden="true"></i>
+	     aria-expanded="false" aria-controls="workflowTeaser">
+	    Show the workflow <i class="bi bi-chevron-down ms-1" aria-hidden="true"></i>
 	  </a>
 
 	  <div class="collapse mt-3 text-start" id="workflowTeaser">
@@ -203,13 +202,44 @@
 	</ul></p>
 	<p>These case studies show how multiple New Approach Methodologies (NAMs) can be combined to address regulatory challenges and illustrate practices concerning data, model assumptions, and interpretation. </p>
 	<p>Developed in co-creation with academic, industrial, regulatory, and societal partners, the VHP supports the transition to animal-free, human-relevant safety assessment. We invite all stakeholders to explore, contribute, and help shape the future of risk assessment with us.</p>
-	<emph>Learn more about VHP4Safety, the project behind the VHP in the following sections:</emph>
-  <div>
-    <div class="d-inline-flex gap-3 mt-4 align-items-center">
-      <a href="{{ url_for('explore_our_work') }}#about-section" class="btn btn-secondary">Project</a>
-      <a href="{{ url_for('training') }}#partners-section" class="btn btn-secondary">Training</a>
-      <a href="{{ url_for('impact') }}#contact-section" class="btn btn-secondary">Impact</a>
-    </div>
+	<p class="mt-5 mb-4 fw-semibold">Learn more about VHP4Safety, the project behind the VHP:</p>
+	<div class="row row-cols-1 row-cols-md-3 g-4">
+	  <div class="col">
+	    <a href="{{ url_for('explore_our_work') }}#about-section"
+	       class="d-flex align-items-start gap-3 text-decoration-none text-body">
+	      <div class="bg-light rounded-3 p-3 flex-shrink-0">
+	        <i class="bi bi-diagram-3 fs-3 text-vhppurple" aria-hidden="true"></i>
+	      </div>
+	      <div>
+	        <h5 class="fw-bold mb-1">Project</h5>
+	        <p class="mb-0 small text-secondary">About the VHP4Safety consortium.</p>
+	      </div>
+	    </a>
+	  </div>
+	  <div class="col">
+	    <a href="{{ url_for('training') }}#partners-section"
+	       class="d-flex align-items-start gap-3 text-decoration-none text-body">
+	      <div class="bg-light rounded-3 p-3 flex-shrink-0">
+	        <i class="bi bi-mortarboard fs-3 text-vhppurple" aria-hidden="true"></i>
+	      </div>
+	      <div>
+	        <h5 class="fw-bold mb-1">Training</h5>
+	        <p class="mb-0 small text-secondary">Workshops, materials and events.</p>
+	      </div>
+	    </a>
+	  </div>
+	  <div class="col">
+	    <a href="{{ url_for('impact') }}#contact-section"
+	       class="d-flex align-items-start gap-3 text-decoration-none text-body">
+	      <div class="bg-light rounded-3 p-3 flex-shrink-0">
+	        <i class="bi bi-graph-up-arrow fs-3 text-vhppurple" aria-hidden="true"></i>
+	      </div>
+	      <div>
+	        <h5 class="fw-bold mb-1">Impact</h5>
+	        <p class="mb-0 small text-secondary">Outcomes and reach of the project.</p>
+	      </div>
+	    </a>
+	  </div>
 	</div>
 </section>
 <!--<section class="container py-5" id="about-section">
