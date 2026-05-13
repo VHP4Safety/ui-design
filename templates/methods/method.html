@@ -39,7 +39,7 @@
     {% set description = get('method_description_content', '') or get('method_description', '') or get('description', '—') %}
     
     <div class="pb-2">
-        <h1><span class="text-vhppink" id="collection-name">{{ title }}</span></h1>
+        <h1><span class="text-vhpdarkpurple" id="collection-name">{{ title }}</span></h1>
         <p class="text-secondary">{{ description }}</p>
     </div>
     
@@ -47,15 +47,15 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs" role="tablist">
       <li class="nav-item" role="presentation">
-        <a class="nav-link text-vhppink active" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab" aria-controls="simple-tabpanel-0" aria-selected="true">Overview</a>
+        <a class="nav-link text-vhpdarkpurple active" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab" aria-controls="simple-tabpanel-0" aria-selected="true">Overview</a>
       </li>
       <li class="nav-item" role="presentation">
-        <a class="nav-link text-vhppink" id="simple-tab-5" data-bs-toggle="tab" href="#simple-tabpanel-5" role="tab" aria-controls="simple-tabpanel-5" aria-selected="false">Publications</a>
+        <a class="nav-link text-vhpdarkpurple" id="simple-tab-5" data-bs-toggle="tab" href="#simple-tabpanel-5" role="tab" aria-controls="simple-tabpanel-5" aria-selected="false">Publications</a>
       </li>
       {% set ontology_iri_nav = (method_json.get('ontology_term_content') or method_details.get('ontology_term_content') or '') %}
       {% if ontology_iri_nav and ontology_iri_nav.startswith('http') %}
       <li class="nav-item" role="presentation">
-        <a class="nav-link text-vhppink" id="simple-tab-6" data-bs-toggle="tab" href="#simple-tabpanel-6" role="tab" aria-controls="simple-tabpanel-6" aria-selected="false">Ontology</a>
+        <a class="nav-link text-vhpdarkpurple" id="simple-tab-6" data-bs-toggle="tab" href="#simple-tabpanel-6" role="tab" aria-controls="simple-tabpanel-6" aria-selected="false">Ontology</a>
       </li>
       {% endif %}
     </ul>
@@ -130,11 +130,11 @@
             <div class="mt-3">
               <!-- Run / Instance button -->
               {% if method_json.get('instance') and method_json.instance.get('url') %}
-                <a href="{{ method_json.instance.url }}" class="btn btn-vhppink w-100 mb-2" target="_blank">Run the method</a>
+                <a href="{{ method_json.instance.url }}" class="btn btn-vhpdarkpurple w-100 mb-2" target="_blank">Run the method</a>
               {% elif method_details.get('instance') and method_details.instance.get('url') %}
-                <a href="{{ method_details.instance.url }}" class="btn btn-vhppink w-100 mb-2" target="_blank">Run the method</a>
+                <a href="{{ method_details.instance.url }}" class="btn btn-vhpdarkpurple w-100 mb-2" target="_blank">Run the method</a>
               {% elif method_json.get('catalog_webpage_url') or method_details.get('catalog_webpage_url') %}
-                <a href="{{ method_json.get('catalog_webpage_url') or method_details.get('catalog_webpage_url') }}" class="btn btn-outline-vhppink w-100 mb-2" target="_blank">Method webpage</a>
+                <a href="{{ method_json.get('catalog_webpage_url') or method_details.get('catalog_webpage_url') }}" class="btn btn-outline-vhpdarkpurple w-100 mb-2" target="_blank">Method webpage</a>
               {% else %}
                 <button class="btn btn-outline-secondary w-100 mb-2" disabled>No instance available</button>
               {% endif %}

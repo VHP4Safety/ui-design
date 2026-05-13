@@ -285,7 +285,7 @@ def home():
     num_tools = len(tools)
     num_case_studies = len(CASESTUDIES)
     bs_res, zen_res = get_repository_data(search_query="")
-    num_datasets = bs_res["total"] + zen_res["total"]
+    num_datasets = bs_res.get("total", 0) + zen_res.get("total", 0)
     return render_template(
         "home.html",
         num_tools=num_tools,
@@ -326,7 +326,7 @@ def sitemap():
 def data():
     # Get query parameters for pagination and search
     page = request.args.get("page", 1, type=int)
-    page_size = request.args.get("page_size", 18, type=int)
+    page_size = min(request.args.get("page_size", 6, type=int), 6)
     search_query = request.args.get("query", "", type=str)
 
     # Get filter parameters
@@ -345,8 +345,11 @@ def data():
     if filter_flow_step:
         filters.append(("flow_step", filter_flow_step))
 
+    # Split page budget between the two repositories so the combined output
+    # respects page_size (e.g. page_size=6 -> 3 from each source).
+    per_source = max(page_size // 2, 1)
     bs_results, zen_results = get_repository_data(
-        search_query, page, page_size, filters=filters
+        search_query, page, per_source, filters=filters
     )
 
     # Extract studies and metadata
@@ -656,6 +659,16 @@ def tools():
                 if search_query in tool.get("service", "").lower()
             ]
 
+        # Pagination
+        page = request.args.get("page", 1, type=int)
+        page_size = min(request.args.get("page_size", 6, type=int), 6)
+        total = len(tools)
+        start = (page - 1) * page_size
+        end = start + page_size
+        tools = tools[start:end]
+        has_prev = page > 1
+        has_next = end < total
+
         return render_template(
             "tools/tools.html",
             tools=tools,
@@ -665,6 +678,12 @@ def tools():
             selected_questions=selected_questions,
             stage_explanations=STAGE_EXPLANATIONS,
             reg_question_explanations=REG_QUESTION_EXPLANATIONS,
+            page=page,
+            page_size=page_size,
+            total=total,
+            has_prev=has_prev,
+            has_next=has_next,
+            search_query=search_query,
         )
 
     except Exception as e:
@@ -768,16 +787,32 @@ def methods():
             stages.remove("Other")
             stages.append("Other")
 
+        # Pagination
+        page = request.args.get("page", 1, type=int)
+        page_size = min(request.args.get("page_size", 6, type=int), 6)
+        total = len(methods_filtered)
+        start = (page - 1) * page_size
+        end = start + page_size
+        methods_page = methods_filtered[start:end]
+        has_prev = page > 1
+        has_next = end < total
+
         # Pass everything the template expects
         return render_template(
             "methods/methods.html",
-            methods=methods_filtered,
+            methods=methods_page,
             stages=stages,
             selected_stages=selected_stages,
             reg_questions=reg_questions,
             selected_questions=selected_questions,
             stage_explanations=STAGE_EXPLANATIONS,
             reg_question_explanations=REG_QUESTION_EXPLANATIONS,
+            page=page,
+            page_size=page_size,
+            total=total,
+            has_prev=has_prev,
+            has_next=has_next,
+            search_query=search_query,
         )
 
     except Exception as e:

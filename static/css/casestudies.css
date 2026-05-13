@@ -25,7 +25,11 @@ nav.navbar {
 }
 
 .breadcrumb-item a:hover {
-    color: var(--bs-vhpblue);
+    color: var(--bs-vhppink-distinct);
+}
+
+.breadcrumb-item.active {
+    color: var(--bs-vhppink-distinct);
 }
 
 /* --- setting for dropdownmenu in casestudies pages --- */
@@ -131,7 +135,7 @@ nav.navbar {
 
 .case-section.active {
     background-color: #f0f8ff;
-    border-left: 4px solid #007bff;
+    border-left: 4px solid var(--bs-vhppink-distinct);
 }
 
 /* Non-active or non-completed steps are greyed out */

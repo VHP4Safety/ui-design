@@ -78,6 +78,20 @@ $link-decoration: none;
 // 5️⃣ Import the rest of Bootstrap (it now uses your colors)
 @import "bootstrap/scss/bootstrap";
 
+// Force white text on vhpblue solid buttons (override Bootstrap's auto-calculated contrast)
+.btn-vhpblue {
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+  --bs-btn-disabled-color: #fff;
+}
+
+// Force white text on vhpblue outline buttons when hovered/active (filled state)
+.btn-outline-vhpblue {
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+}
+
 /* Grid layout for Search/Filter Results */
 .results-section {
   min-height: 400px;
