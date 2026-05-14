@@ -111,14 +111,14 @@
 
 <!-- About section: project description and mission -->
 <section class="container py-5">
-  <h1 id="about-section" class="" style="scroll-margin-top: 6rem;">Virtual Human Platform</h1>
+  <h1 id="main-text-section" class="" >Virtual Human Platform</h1>
   <p class="text-secondary fs-5">A digital infrastructure for animal-free safety assessment.</p>
 	<div>
 	<!---<h4>What is the Virtual Human Platform?</h4>-->
 	<p>The Virtual Human Platform (VHP) is a digital infrastructure that supports human-relevant risk assessment of chemicals and pharmaceuticals. By integrating  human-derived data, advanced in vitro models, and  computational tools, the VHP enables transparent, reproducible and mechanistically informed safety assessment moving beyond traditional animal testing. </p>
 	<p>Through structured, interactive workflows and a user-friendly interface, the platform tackles real-word regulatory questions (<a href="/casestudies">'case studies'</a>) by connecting <a href="/tools">tools</a>, <a href="/methods">methods</a> and <a href="/data">data</a>.</p>
 
-	<hr class="my-5">
+	<hr class="my-3">
 
 	<!-- Workflow teaser: heading is the toggle -->
 	<p class="text-secondary fs-5">
@@ -126,72 +126,49 @@
   </p>
 
 	<div id="workflowTeaser">
-	    <p class="mb-4">
+	    <p class="">
 	      The Virtual Human Platform uses a generic safety assessment workflow as a five-step process to collect information critical for risk characterisation.
 	    </p>
 
 	    <div class="row align-items-stretch g-3">
 
 	      <!-- Regulatory question (input) -->
-	      <div class="col-12 col-md-3 d-flex">
+	      <div class="col-12 col-md-3 d-flex mt-0">
 	        <div class="bg-vhppink-distinct text-white rounded-pill px-3 py-2 text-center w-100 small fw-semibold align-self-center">
 	          Regulatory question
 	        </div>
 	      </div>
 
 	      <!-- Arrow connector -->
-	      <div class="col-12 col-md-1 d-flex align-items-center justify-content-center text-secondary fs-4 lh-1">
+	      <div class="col-12 col-md-1 d-flex align-items-center justify-content-center text-secondary mt-0 fs-4 lh-1">
 	        <i class="bi bi-caret-right-fill d-none d-md-inline" aria-hidden="true"></i>
 	        <i class="bi bi-caret-down-fill d-md-none" aria-hidden="true"></i>
 	      </div>
 
-	      <!-- Risk Characterisation frame: 5 assessment steps -->
-	      <div class="col-12 col-md-8">
-	        <div class="border border-2 border-vhpblue rounded-3 p-3 pt-4 position-relative h-100">
-	          <span class="position-absolute top-0 start-50 translate-middle bg-white px-2 text-vhpblue small fw-semibold">
-	            Risk Characterisation
-	          </span>
-	          <div class="row row-cols-1 row-cols-md-2 g-2">
-	            <div class="col d-grid">
-	              <div class="bg-vhpblue text-white rounded-pill px-3 py-2 text-center small fw-semibold">
-	                Hazard Characterisation
-	              </div>
-	            </div>
-	            <div class="col d-grid">
-	              <div class="bg-vhpblue text-white rounded-pill px-3 py-2 text-center small fw-semibold">
-	                External Exposure
-	              </div>
-	            </div>
-	            <div class="col d-grid">
-	              <div class="bg-vhpblue text-white rounded-pill px-3 py-2 text-center small fw-semibold">
-	                Toxicokinetics
-	              </div>
-	            </div>
-	            <div class="col d-grid">
-	              <div class="bg-vhpblue text-white rounded-pill px-3 py-2 text-center small fw-semibold">
-	                Toxicodynamics
-	              </div>
-	            </div>
-	            <div class="col col-md-12 d-grid">
-	              <div class="bg-vhpblue text-white rounded-pill px-3 py-2 text-center small fw-semibold">
-	                Adverse Outcome for Human Health
-	              </div>
-	            </div>
-	          </div>
-	        </div>
+	      <!-- Risk Characterisation frame: 5 workflow steps -->
+	      <div class="col-12 col-md-8 mt-0 ">
+	            <!-- Risk Characterisation visualization -->
+          <div class="border border-2 border-vhpblue rounded-3 p-3 pt-4 position-relative my-4">
+            <span class="position-absolute top-0 start-50 translate-middle bg-white px-2 text-vhpblue small fw-semibold">Risk Characterisation</span>
+            <div class="row row-cols-1 row-cols-md-2 g-2">
+              {% set is_odd = (process_flow_steps | length) % 2 == 1 %}
+              {% for k, v in process_flow_steps.items() %}
+                <div class="col d-grid{% if loop.first and is_odd %} col-md-12{% endif %}">
+                  <a href="{{ url_for('SafetyAssessmentWorkflow') }}#definition-{{ v.slug }}" class="text-decoration-none">
+                    <div class="bg-vhpblue text-white rounded-pill px-3 py-2 text-center small fw-semibold">{{ v.label }}</div>
+                  </a>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
 	      </div>
 
 	    </div>
 
-	    <div class="mt-3 text-end">
-	      <a href="{{ url_for('SafetyAssessmentWorkflow') }}" class="small text-decoration-none">
-	        Learn more <i class="bi bi-arrow-right"></i>
-	      </a>
-	    </div>
 	  </div>
 	</div>
 
-	<hr class="my-5">
+	<hr class="my-3">
 
 	<p class="fs-5 text-secondary">Case studies</p>
     On the platform, three human relevant case studies are used as demonstrators:
@@ -202,9 +179,9 @@
 	</ul>
 	<p>These case studies show how multiple New Approach Methodologies (NAMs) can be combined to address regulatory challenges and illustrate practices concerning data, model assumptions, and interpretation. </p>
 
-	<hr class="my-5">
+	<hr class="my-3">
 
-	<p class="text-secondary fs-5">Learn more about VHP4Safety, the project behind the VHP</p>
+	<p class="text-secondary fs-5" id="about-section">Learn more about VHP4Safety, the project behind the VHP</p>
   <p>Developed in co-creation with academic, industrial, regulatory, and societal partners, the VHP supports the transition to animal-free, human-relevant safety assessment. We invite all stakeholders to explore, contribute, and help shape the future of risk assessment with us.</p>
 
 	<div class="row row-cols-1 row-cols-md-3 g-4">

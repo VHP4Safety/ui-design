@@ -33,15 +33,12 @@ ZENODO_RECORD_TYPE = "dataset"  # only show datasets
 
 CASESTUDIES = ["thyroid", "kidney", "parkinson"]  # List of valid case studies
 
-###Shared explanation dictionaries for filters (used in both tools and data page)
-STAGE_EXPLANATIONS = {
-    "Chemical Characteristics and Hazard Identification": "A Safety Assessment Workflow Step that categorizes services that use molecular structures, chemical descriptors, and databases to predict or analyze the properties, behavior, and potential risks of chemical substances.",
-    "Exposure": "A Safety Assessment Workflow Step which categorizes services that evaluate and analyze the route, duration, magnitude and frequency of exposure of an organism or (sub)population to one or multiple chemicals.",
-    "Toxicokinetics": "A Safety Assessment Workflow Step which categorizes services that analyze the kinetics (absorption, distribution, metabolism and excretion) of chemicals and how these processes influence the internal dose.",
-    "Toxicodynamics": "A Safety Assessment Workflow Step which categorizes services that use or extend the (quantitative) AOP framework to analyze and assess the interaction of chemicals with biological targets.",
-    "Adverse Outcome": "A Safety Assessment Workflow Step which specifically refers to clinical and epidemiological effects. It categorizes services that provide information on the toxicological endpoints and adverse outcomes at a clinical or epidemiological level of chemical exposures.",
+# Non-glossary "stage" labels. The five Process Flow Step stages are resolved
+# from the VHP glossary at runtime (see get_process_flow_steps); these legacy
+# labels stay hardcoded because the data/models pages still reference them by
+# literal key and their data sources have not migrated to the glossary URIs.
+STAGE_EXPLANATIONS_LEGACY = {
     "Other": "Other or unknown category.",
-    # Legacy labels (kept for the data/methods pages until their data sources migrate)
     "ADME": "Absorption, distribution, metabolism, and excretion of a substance (toxic or not) in a living organism, following exposure to this substance.",
     "Hazard Assessment": "The process of assessing the intrinsic hazard a substance poses to human health and/or the environment",
     "Chemical Information": "Information about chemical properties and identity.",
@@ -49,9 +46,21 @@ STAGE_EXPLANATIONS = {
     "(External) exposure": "External exposure assessment.",
     "Generic": "Generic category.",
 }
+
+# Legacy glossary-URI -> stage-label mappings, superseded by the Process Flow
+# Step URIs that get_process_flow_steps() resolves from the glossary.
+STAGE_MAPPING_LEGACY = {
+    "https://vhp4safety.github.io/glossary#VHP0000056": "ADME",
+    "https://vhp4safety.github.io/glossary#VHP0000102": "Hazard Assessment",
+    "https://vhp4safety.github.io/glossary#VHP0000148": "Chemical Information",
+    "https://vhp4safety.github.io/glossary#VHP0000149": "General",
+}
 METHODS_URL = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/methods_index.json"
 # TOOLS and SERVICES are synonymous
 SERVICES_URL = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/service_index.json"
+GLOSSARY_URL = (
+    "https://raw.githubusercontent.com/VHP4Safety/glossary/refs/heads/main/glossary.owl"
+)
 
 REG_QUESTIONS = {
     "reg_q_1a": {
@@ -148,6 +157,74 @@ def get_json_dict_service(url: str, timeout: int = 5) -> dict:
             return {}
     except Exception:
         return {}
+
+
+# Suffix the VHP glossary uses to mark an owl:Class as a Process Flow Step stage.
+_PROCESS_FLOW_STEP_SUFFIX = " (Process Flow Step)"
+# Matches a Turtle quoted literal, tolerating backslash escapes.
+_TTL_QUOTED = r'"((?:[^"\\]|\\.)*)"'
+
+
+@cache.memoize(timeout=CACHE_TIMEOUT)
+def get_process_flow_steps() -> dict:
+    """Fetch the VHP glossary and return its Process Flow Step stages.
+
+    Returns {glossary_uri: {"label": str, "slug": str, "description": str}} for
+    every owl:Class whose rdfs:label ends with " (Process Flow Step)". The
+    glossary has no formal typing for these, so they are identified by that
+    label convention. Returns an empty dict on any error so callers degrade
+    safely.
+    """
+    try:
+        resp = requests.get(GLOSSARY_URL, timeout=5)
+        if resp.status_code != 200:
+            return {}
+        ttl = resp.text
+    except Exception:
+        return {}
+
+    steps = {}
+    # The glossary is Turtle with one blank-line-separated block per subject.
+    for block in ttl.split("\n\n"):
+        m_subj = re.match(r"\s*<([^>]+)>", block)
+        m_label = re.search(r"rdfs:label\s+" + _TTL_QUOTED, block)
+        if not (m_subj and m_label):
+            continue
+        label = m_label.group(1)
+        if not label.endswith(_PROCESS_FLOW_STEP_SUFFIX):
+            continue
+        m_desc = re.search(r"dc:description\s+" + _TTL_QUOTED, block)
+        clean_label = label[: -len(_PROCESS_FLOW_STEP_SUFFIX)].strip()
+        steps[m_subj.group(1)] = {
+            "label": clean_label,
+            # URL/id-safe anchor slug, computed once here so the templates that
+            # link to it (home.html) and define it (the accordion) can't drift.
+            "slug": clean_label.lower().replace(" ", "-"),
+            "description": (m_desc.group(1) if m_desc else "").strip(),
+        }
+    # sort by length of label descening
+    steps = dict(
+        sorted(steps.items(), key=lambda item: len(item[1]["label"]), reverse=True)
+    )
+    return steps
+
+
+def get_stage_explanations() -> dict:
+    """Stage label -> explanation: the glossary Process Flow Steps merged with
+    the non-glossary legacy labels still used by the data/models pages.
+    """
+    glossary = {
+        step["label"]: step["description"] for step in get_process_flow_steps().values()
+    }
+    return {**glossary, **STAGE_EXPLANATIONS_LEGACY}
+
+
+def get_stage_mapping() -> dict:
+    """Glossary URI -> stage label: the Process Flow Step URIs resolved from the
+    glossary merged with the legacy URI mappings.
+    """
+    glossary = {uri: step["label"] for uri, step in get_process_flow_steps().items()}
+    return {**glossary, **STAGE_MAPPING_LEGACY}
 
 
 @cache.memoize(timeout=CACHE_TIMEOUT)
@@ -291,6 +368,7 @@ def home():
         num_tools=num_tools,
         num_case_studies=num_case_studies,
         num_datasets=num_datasets,
+        process_flow_steps=get_process_flow_steps(),
     )
 
 
@@ -400,7 +478,7 @@ def data():
         hits_returned=hits_returned,
         pages_fetched=pages_fetched,
         page_size_met=page_size_met,
-        stage_explanations=STAGE_EXPLANATIONS,
+        stage_explanations=get_stage_explanations(),
         reg_question_explanations=REG_QUESTION_EXPLANATIONS,
     )
 
@@ -530,7 +608,7 @@ def models():
         hits_returned=hits_returned,
         pages_fetched=pages_fetched,
         page_size_met=page_size_met,
-        stage_explanations=STAGE_EXPLANATIONS,
+        stage_explanations=get_stage_explanations(),
         reg_question_explanations=REG_QUESTION_EXPLANATIONS,
     )
 
@@ -548,19 +626,9 @@ def tools():
         )  # Geting the service_list.json in the dictionary format.
         tools = list(tools.values())  # Converting the dictionary to a list object.
 
-        # Mapping the URLs with glossary IDs to their text values.
-        stage_mapping = {
-            "https://vhp4safety.github.io/glossary#VHP0000153": "Chemical Characteristics and Hazard Identification",
-            "https://vhp4safety.github.io/glossary#VHP0000154": "Exposure",
-            "https://vhp4safety.github.io/glossary#VHP0000155": "Toxicokinetics",
-            "https://vhp4safety.github.io/glossary#VHP0000156": "Toxicodynamics",
-            "https://vhp4safety.github.io/glossary#VHP0000158": "Adverse Outcome",
-            # Legacy mappings (superseded by the Process Flow Step URIs above)
-            "https://vhp4safety.github.io/glossary#VHP0000056": "ADME",
-            "https://vhp4safety.github.io/glossary#VHP0000102": "Hazard Assessment",
-            "https://vhp4safety.github.io/glossary#VHP0000148": "Chemical Information",
-            "https://vhp4safety.github.io/glossary#VHP0000149": "General",
-        }
+        # Glossary URI -> stage label: Process Flow Steps resolved from the VHP
+        # glossary, merged with the legacy URI mappings.
+        stage_mapping = get_stage_mapping()
 
         for tool in tools:
             full_stage_url = tool.get("stage", "")
@@ -676,7 +744,7 @@ def tools():
             selected_stages=selected_stages,
             reg_questions=reg_questions,
             selected_questions=selected_questions,
-            stage_explanations=STAGE_EXPLANATIONS,
+            stage_explanations=get_stage_explanations(),
             reg_question_explanations=REG_QUESTION_EXPLANATIONS,
             page=page,
             page_size=page_size,
@@ -805,7 +873,7 @@ def methods():
             selected_stages=selected_stages,
             reg_questions=reg_questions,
             selected_questions=selected_questions,
-            stage_explanations=STAGE_EXPLANATIONS,
+            stage_explanations=get_stage_explanations(),
             reg_question_explanations=REG_QUESTION_EXPLANATIONS,
             page=page,
             page_size=page_size,
@@ -924,9 +992,11 @@ def impact():
 
 
 # General Safety Assessment Workflow page
-@app.route("/Safety_Assessment_Workflow")
+@app.route("/safety_assessment_workflow")
 def SafetyAssessmentWorkflow():
-    return render_template("Safety_Assessment_Workflow.html")
+    return render_template(
+        "safety_assessment_workflow.html", process_flow_steps=get_process_flow_steps()
+    )
 
 
 ################################################################################
