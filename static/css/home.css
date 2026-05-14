@@ -1,20 +1,18 @@
 /* This CSS file is used for home.html, it builds upon custom_bootstrap.css */
 
 .partner-logo {
-  
-  width: 200px;
-  height: 200px;
-  object-fit: contain; 
+  object-fit: contain;
   background-color: white;
-  border-radius: 20px; 
-  padding: 10px; 
+  border-radius: 20px;
+  padding: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease; 
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
 }
 
 .partner-logo:hover {
-  transform: scale(1.1); 
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2); 
+  transform: scale(1.1);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+  filter: grayscale(0);
 }
 
 

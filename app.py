@@ -1,6 +1,7 @@
 ################################################################################
 ### Loading the required modules
 import json
+import os
 import re
 
 import requests
@@ -148,6 +149,66 @@ def get_json_dict_service(url: str, timeout: int = 5) -> dict:
             return {}
     except Exception:
         return {}
+
+
+# --- Partner logos ----------------------------------------------------------
+PARTNERS_DIR = os.path.join(app.static_folder, "images", "partners")
+PARTNERS_FILE = os.path.join(PARTNERS_DIR, "partners.txt")
+_PARTNER_IMAGE_EXTS = (".png", ".jpg", ".jpeg", ".svg", ".gif", ".webp")
+
+
+def get_partner_logos() -> list:
+    """Return partner logos from static/images/partners/.
+
+    Each item is a dict {"file": ..., "name": ..., "url": ...}. Order, names
+    and links come from partners.txt, whose entries are
+    "filename | Organization name | https://link" (name and link optional);
+    blank lines and '#' comments are ignored. Any image in the directory not
+    listed there is appended afterwards, alphabetically, with its filename
+    stem as the name and no link. Returns an empty list if the directory
+    cannot be read.
+    """
+    try:
+        images = {
+            f
+            for f in os.listdir(PARTNERS_DIR)
+            if f.lower().endswith(_PARTNER_IMAGE_EXTS)
+        }
+    except OSError:
+        return []
+
+    logos = []
+    used = set()
+    try:
+        with open(PARTNERS_FILE, encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                parts = [p.strip() for p in line.split("|")]
+                fname = parts[0]
+                if fname in images and fname not in used:
+                    used.add(fname)
+                    logos.append(
+                        {
+                            "file": fname,
+                            "name": (
+                                parts[1]
+                                if len(parts) > 1 and parts[1]
+                                else os.path.splitext(fname)[0]
+                            ),
+                            "url": parts[2] if len(parts) > 2 else "",
+                        }
+                    )
+    except OSError:
+        pass
+
+    # Any images not listed in partners.txt are shown last, alphabetically.
+    for fname in sorted(images - used):
+        logos.append(
+            {"file": fname, "name": os.path.splitext(fname)[0], "url": ""}
+        )
+    return logos
 
 
 @cache.memoize(timeout=CACHE_TIMEOUT)
@@ -307,6 +368,7 @@ def home():
         num_tools=num_tools,
         num_case_studies=num_case_studies,
         num_datasets=num_datasets,
+        partner_logos=get_partner_logos(),
     )
 
 

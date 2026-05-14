@@ -269,269 +269,21 @@
     </h2>
     <p class="text-muted mb-5">Collaboration in innovation.</p>
 
-    <!-- XXL carousel (3 items per slide) -->
-    <div id="partnerCarousel" class="carousel slide d-none d-xxl-flex" data-bs-ride="carousel" data-bs-interval="3000">
-      <div class="carousel-inner text-center">
-
-        <!-- Slide 1 -->
-        <div class="carousel-item active">
-          <div class="container">
-            <div class="row justify-content-center g-3 align-items-center">
-
-              <div class="col-12 col-md-4">
-                <a href="https://www.amsterdamumc.org/nl.htm" target="_blank" rel="noopener">
-                  <img src="/static/images/partners/AUMC.png"
-                       class="partner-logo cursor-pointer d-block mx-auto"
-                       alt="AUMC Logo">
-                </a>
-                <div class="d-none pt-3 d-md-inline-block rounded bg-opacity-50">
-                  <div class="small">Amsterdam University Medical Center</div>
-                </div>
-              </div>
-
-              <div class="col-12 col-md-4">
-                <a href="https://www.hu.nl/" target="_blank" rel="noopener">
-                  <img src="/static/images/partners/HU.png"
-                       class="partner-logo cursor-pointer d-block mx-auto"
-                       alt="HU Logo">
-                </a>
-                <div class="d-none pt-3 d-md-inline-block rounded bg-opacity-50">
-                  <div class="small">University of Applied Sciences Utrecht</div>
-                </div>
-              </div>
-
-              <div class="col-12 col-md-4">
-                <a href="https://www.rivm.nl/" target="_blank" rel="noopener">
-                  <img src="/static/images/partners/RIVM.jpg"
-                       class="partner-logo cursor-pointer d-block mx-auto"
-                       alt="RIVM Logo">
-                </a>
-                <div style="min-height=3.2rem" class="d-none pt-3 d-md-inline-block rounded bg-opacity-50">
-                  <div class="small">
-                    National Institute for Public Health and the Environment
-                  </div>
-                </div>
-              </div>
-
+    <!-- Partner logo grid: grayscale, full colour on hover. Order, names and
+         links come from static/images/partners/partners.txt (get_partner_logos). -->
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-3">
+      {% for logo in partner_logos %}
+        <div class="col">
+          {% if logo.url %}<a href="{{ logo.url }}" target="_blank" rel="noopener" class="d-block">{% endif %}
+            <div class="ratio ratio-1x1" data-bs-toggle="tooltip" data-bs-title="{{ logo.name }}">
+              <img src="{{ url_for('static', filename='images/partners/' ~ logo.file) }}"
+                   class="partner-logo"
+                   alt="{{ logo.name }}"
+                   loading="lazy">
             </div>
-          </div>
+          {% if logo.url %}</a>{% endif %}
         </div>
-
-        <!-- Slide 2 -->
-        <div class="carousel-item">
-          <div class="container">
-            <div class="row justify-content-center g-3 align-items-center">
-
-              <div class="col-12 col-md-4">
-                <a href="https://www.maastrichtuniversity.nl/" target="_blank" rel="noopener">
-                  <img src="/static/images/partners/UM.png"
-                       class="partner-logo cursor-pointer d-block mx-auto"
-                       alt="UM Logo">
-                </a>
-                <div class="d-none pt-3 d-md-inline-block rounded bg-opacity-50">
-                  <div class="small">Maastricht University</div>
-                </div>
-              </div>
-
-              <div class="col-12 col-md-4">
-                <a href="https://www.uu.nl/en" target="_blank" rel="noopener">
-                  <img src="/static/images/partners/UU.png"
-                       class="partner-logo cursor-pointer d-block mx-auto"
-                       alt="UU Logo">
-                </a>
-                <div class="d-none pt-3 d-md-inline-block rounded bg-opacity-50">
-                  <div class="small">University Utrecht</div>
-                </div>
-              </div>
-
-              <div class="col-12 col-md-4">
-                <a href="https://brandwondenstichting.nl/" target="_blank" rel="noopener">
-                  <img src="/static/images/partners/NBS_basis_NL_UK.jpg"
-                       class="partner-logo cursor-pointer d-block mx-auto"
-                       alt="NBS Logo">
-                </a>
-                <div class="d-none pt-3 d-md-inline-block rounded bg-opacity-50">
-                  <div class="small">Dutch Burns Foundation</div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        <!-- Slide 3 -->
-        <div class="carousel-item">
-          <div class="container">
-            <div class="row justify-content-center g-3 align-items-center">
-
-              <div class="col-12 col-md-4">
-                <a href="https://www.kwrwater.nl/" target="_blank" rel="noopener">
-                  <img src="/static/images/partners/KWR_logo.png"
-                       class="partner-logo cursor-pointer d-block mx-auto"
-                       alt="KWR Logo">
-                </a>
-                <div class="d-none pt-3 d-md-inline-block rounded bg-opacity-50">
-                  <div class="small">Water Research Institute</div>
-                </div>
-              </div>
-
-              <div class="col-12 col-md-4">
-                <a href="https://criver.com/" target="_blank" rel="noopener">
-                  <img src="/static/images/partners/charles_river_logo.jpg"
-                       class="partner-logo cursor-pointer d-block mx-auto"
-                       alt="CR Logo">
-                </a>
-                <div class="d-none pt-3 d-md-inline-block rounded bg-opacity-50">
-                  <div class="small">Charles River</div>
-                </div>
-              </div>
-
-              <div class="col-12 col-md-4">
-                <a href="https://logiqcare.com/" target="_blank" rel="noopener">
-                  <img src="/static/images/partners/ORTECLogiqcare_logo_CMYK.png"
-                       class="partner-logo cursor-pointer d-block mx-auto"
-                       alt="RT Logo">
-                </a>
-                <div class="d-none pt-3 d-md-inline-block rounded bg-opacity-50">
-                  <div class="small">ORTEC Logiqcare</div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        <!-- Slide 4 -->
-        <div class="carousel-item">
-          <div class="container">
-            <div class="row justify-content-center g-3 align-items-center">
-
-              <div class="col-12 col-md-6">
-                <a href="https://nwo.nl/" target="_blank" rel="noopener">
-                  <img src="/static/images/partners/NWO logo - full colour - RGB - transparent background - clear space included.png"
-                       class="partner-logo cursor-pointer d-block mx-auto"
-                       alt="NWO Logo">
-                </a>
-                <div class="d-none pt-3 d-md-inline-block rounded bg-opacity-50">
-                  <div class="small">Dutch Research Council</div>
-                </div>
-              </div>
-
-              <div class="col-12 col-md-6">
-                <a href="https://proefdiervrij.nl/" target="_blank" rel="noopener">
-                  <img src="/static/images/partners/proefdiervrij_standaardlogo_vector.png"
-                       class="partner-logo cursor-pointer d-block mx-auto"
-                       alt="PR Logo">
-                </a>
-                <div class="d-none pt-3 d-md-inline-block rounded bg-opacity-50">
-                  <div class="small">
-                    Dutch Society for the Replacement of Animal Testing
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <button class="carousel-control-prev" type="button" data-bs-target="#partnerCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-
-      <button class="carousel-control-next" type="button" data-bs-target="#partnerCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
-    </div>
-
-    <!-- Non-XXL carousel (single item) -->
-    <div id="partnerCarousel" class="carousel slide d-xxl-none" data-bs-ride="carousel" data-bs-interval="3000">
-      <div class="carousel-inner text-center">
-
-        <div class="carousel-item active">
-          <a href="https://www.amsterdamumc.org/nl.htm" target="_blank" rel="noopener">
-            <img src="/static/images/partners/AUMC.png" class="partner-logo cursor-pointer d-block mx-auto" alt="AUMC Logo">
-          </a>
-        </div>
-
-        <div class="carousel-item">
-          <a href="https://www.hu.nl/" target="_blank" rel="noopener">
-            <img src="/static/images/partners/HU.png" class="partner-logo cursor-pointer d-block mx-auto" alt="HU Logo">
-          </a>
-        </div>
-
-        <div class="carousel-item">
-          <a href="https://www.rivm.nl/" target="_blank" rel="noopener">
-            <img src="/static/images/partners/RIVM.jpg" class="partner-logo cursor-pointer d-block mx-auto" alt="RIVM Logo">
-          </a>
-        </div>
-
-        <div class="carousel-item">
-          <a href="https://www.maastrichtuniversity.nl/" target="_blank" rel="noopener">
-            <img src="/static/images/partners/UM.png" class="partner-logo cursor-pointer d-block mx-auto" alt="UM Logo">
-          </a>
-        </div>
-
-        <div class="carousel-item">
-          <a href="https://www.uu.nl/en" target="_blank" rel="noopener">
-            <img src="/static/images/partners/UU.png" class="partner-logo cursor-pointer d-block mx-auto" alt="UU Logo">
-          </a>
-        </div>
-
-        <div class="carousel-item">
-          <a href="https://brandwondenstichting.nl/" target="_blank" rel="noopener">
-            <img src="/static/images/partners/NBS_basis_NL_UK.jpg" class="partner-logo cursor-pointer d-block mx-auto" alt="NBS Logo">
-          </a>
-        </div>
-
-        <div class="carousel-item">
-          <a href="https://www.kwrwater.nl/" target="_blank" rel="noopener">
-            <img src="/static/images/partners/KWR_logo.png" class="partner-logo cursor-pointer d-block mx-auto" alt="KWR Logo">
-          </a>
-        </div>
-
-        <div class="carousel-item">
-          <a href="https://criver.com/" target="_blank" rel="noopener">
-            <img src="/static/images/partners/charles_river_logo.jpg" class="partner-logo cursor-pointer d-block mx-auto" alt="CR Logo">
-          </a>
-        </div>
-
-        <div class="carousel-item">
-          <a href="https://logiqcare.com/" target="_blank" rel="noopener">
-            <img src="/static/images/partners/ORTECLogiqcare_logo_CMYK.png" class="partner-logo cursor-pointer d-block mx-auto" alt="RT Logo">
-          </a>
-        </div>
-
-        <div class="carousel-item">
-          <a href="https://nwo.nl/" target="_blank" rel="noopener">
-            <img src="/static/images/partners/NWO logo - full colour - RGB - transparent background - clear space included.png"
-                 class="partner-logo cursor-pointer d-block mx-auto"
-                 alt="NWO Logo">
-          </a>
-        </div>
-
-        <div class="carousel-item">
-          <a href="https://proefdiervrij.nl/" target="_blank" rel="noopener">
-            <img src="/static/images/partners/proefdiervrij_standaardlogo_vector.png"
-                 class="partner-logo cursor-pointer d-block mx-auto"
-                 alt="PR Logo">
-          </a>
-        </div>
-
-      </div>
-
-      <button class="carousel-control-prev" type="button" data-bs-target="#partnerCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-
-      <button class="carousel-control-next" type="button" data-bs-target="#partnerCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
+      {% endfor %}
     </div>
 
   </div>
@@ -610,4 +362,13 @@
 </section>
 <!-- Scroll down arrow for navigation -->
 <div class="scroll-down-arrow" style="border-top: 20px solid var(--bs-vhppink);" onclick="scrollToNextSection()"></div>
+
+<!-- Initialise Bootstrap tooltips on the partner logo grid -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document
+      .querySelectorAll('#partners-section [data-bs-toggle="tooltip"]')
+      .forEach(function (el) { new bootstrap.Tooltip(el); });
+  });
+</script>
 {% endblock %}
