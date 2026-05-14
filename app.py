@@ -207,6 +207,22 @@ def get_repository_data(
     return bs_results, zen_result
 
 
+def data_hit_id(hit: dict) -> str:
+    """Return the identifier to use in a /data/<id> URL for a repository hit.
+
+    BioStudies hits resolve to their accession; Zenodo hits to their numeric
+    recid. doi_url is intentionally never used -- it contains slashes the
+    /data/<dataid> route's string converter cannot match.
+    """
+    return (
+        hit.get("accession")
+        or hit.get("accno")
+        or hit.get("id")
+        or hit.get("recid")
+        or ""
+    )
+
+
 # Provide methods list to all templates for the Methods dropdown in the navbar
 @app.context_processor
 def inject_methods_menu():
@@ -261,7 +277,7 @@ def inject_data_menu():
         items = []
         for hit in hits:
             title = hit.get("title")
-            id = hit.get("accession", "") or hit.get("doi_url", "") or hit.get("id", "")
+            id = data_hit_id(hit)
             url = hit.get("url", "") or hit.get("doi_url")
             items.append({"id": id, "title": title, "url": url})
         # sort by title
@@ -285,7 +301,7 @@ def home():
     num_tools = len(tools)
     num_case_studies = len(CASESTUDIES)
     bs_res, zen_res = get_repository_data(search_query="")
-    num_datasets = bs_res["total"] + zen_res["total"]
+    num_datasets = bs_res.get("total", 0) + zen_res.get("total", 0)
     return render_template(
         "home.html",
         num_tools=num_tools,
@@ -300,8 +316,16 @@ def home():
 def sitemap():
     BASE = "https://platform.vhp4safety.nl"
 
-    # Static top-level pages
-    paths = ["/", "/casestudies", "/tools", "/methods", "/data"]
+    # Static, parameter-less GET pages, derived from the URL map so new pages
+    # are picked up automatically. Machine endpoints are excluded. Routes with <params> are skipped and handled below.
+    EXCLUDED_ENDPOINTS = {"sitemap", "robots", "static"}
+    paths = sorted(
+        rule.rule.rstrip("/") or "/"
+        for rule in app.url_map.iter_rules()
+        if not rule.arguments
+        and rule.endpoint not in EXCLUDED_ENDPOINTS
+        and "GET" in (rule.methods or set())
+    )
 
     # Tool detail pages
     tools = get_json_dict_service(SERVICES_URL)
@@ -313,8 +337,8 @@ def sitemap():
     if isinstance(methods, dict):
         paths += [f"/methods/{urllib.parse.quote(str(k))}" for k in methods]
 
-    # Dataset detail pages (BioStudies + Zenodo). Fetched in pages of 25 -- the
-    # Zenodo API rejects larger page sizes -- and looped until both sources are
+    # Dataset detail pages (BioStudies + Zenodo). Fetched in pages of 25 (the
+    # Zenodo API rejects larger page sizes) and looped until both sources are
     # exhausted. load_metadata=False keeps this cheap (no per-file HEAD requests).
     # A repo failure must never 500 the sitemap; tools/methods/case studies still
     # serve.
@@ -330,15 +354,10 @@ def sitemap():
             )
             bs_hits = (bs_results or {}).get("hits", [])
             zen_hits = (zen_results or {}).get("hits", [])
-            for hit in bs_hits:
-                acc = hit.get("accession") or hit.get("accno")
-                if acc:
-                    paths.append(f"/data/{urllib.parse.quote(str(acc))}")
-            for hit in zen_hits:
-                # numeric recid -- doi_url has slashes the route can't match.
-                recid = hit.get("id") or hit.get("recid")
-                if recid:
-                    paths.append(f"/data/{urllib.parse.quote(str(recid))}")
+            for hit in bs_hits + zen_hits:
+                hit_id = data_hit_id(hit)
+                if hit_id:
+                    paths.append(f"/data/{urllib.parse.quote(str(hit_id))}")
             total = max(
                 (bs_results or {}).get("total") or 0,
                 (zen_results or {}).get("total") or 0,
