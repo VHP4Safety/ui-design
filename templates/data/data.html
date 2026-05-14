@@ -102,7 +102,7 @@
     {% endif %}
 
     <!-- Pagination (top) -->
-    <nav aria-label="Page navigation" class="pagination-container d-flex justify-content-center pt-2 pb-3">
+    <nav aria-label="Page navigation" class="pagination-container d-flex justify-content-center pt-3 pt-sm-2 pb-3">
         <ul class="pagination mb-0">
             <li class="page-item {% if not has_prev %}disabled{% endif %}">
                 <a class="page-link" href="{{ url_for('data', page=page-1, page_size=page_size, query=search_query, filter_case_study=filter_case_study, filter_regulatory_question=filter_regulatory_question, filter_flow_step=filter_flow_step) }}" aria-label="Previous">

@@ -107,7 +107,7 @@
     </nav>
 
     <!-- Icon Legend -->
-    <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+    <div class="d-flex flex-wrap align-items-center justify-content-center py-2 gap-2 ">
         <span class="d-inline-flex align-items-center gap-2 bg-body-tertiary border rounded-pill ps-1 pe-3 py-1 small text-secondary">
             <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_HexaHead_300.png" alt="" style="width:24px;height:24px;">
             Developed by VHP
@@ -119,7 +119,7 @@
     </div>
 
     <!-- Pagination (top) -->
-    <nav aria-label="Page navigation" class="pagination-container d-flex justify-content-center pt-2 pb-3">
+    <nav aria-label="Page navigation" class="pagination-container d-flex justify-content-center pt-3 pt-sm-2 pb-3">
         <ul class="pagination mb-0">
             <li class="page-item {% if not has_prev %}disabled{% endif %}">
                 <a class="page-link" href="{{ url_for('tools', page=page-1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Previous">

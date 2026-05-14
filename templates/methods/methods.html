@@ -107,7 +107,7 @@
     </nav>
 
     <!-- Pagination (top) -->
-    <nav aria-label="Page navigation" class="pagination-container d-flex justify-content-center pt-2 pb-3">
+    <nav aria-label="Page navigation" class="pagination-container d-flex justify-content-center pt-3 pt-sm-2 pb-3">
         <ul class="pagination mb-0">
             <li class="page-item {% if not has_prev %}disabled{% endif %}">
                 <a class="page-link" href="{{ url_for('methods', page=page-1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Previous">
