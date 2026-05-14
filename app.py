@@ -19,11 +19,8 @@ from data.zenodo.search import ZenodoExtractor
 from data.mapping import normalize_all
 
 ################################################################################
-CACHE_TIMEOUT = 60 * 60 * 24 * 5  # 5 days -- [Ozan] I created a separate
-# timeout object for the tools page because
-# a 5-day caching is too long for it.
-CACHE_TIMEOUT_SERVICE = 60  # Separate timeout for the tools page -- 60
-# seconds.
+CACHE_TIMEOUT = 60 * 60 * 24 * 5  # 5 days
+CACHE_TIMEOUT_SERVICE = CACHE_TIMEOUT  # tools page now uses the same 5-day cache
 ### Configuration for BioStudies Integration
 # Change these variables to switch between collections
 BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
@@ -111,6 +108,17 @@ cache_config = {
 app = Flask(__name__)
 app.config.from_mapping(cache_config)
 cache = Cache(app)
+
+
+@app.before_request
+def handle_cache_reset():
+    """Allow bypassing the cache for development/debugging purposes.
+
+    Appending ?reset_cache to any URL clears all cached data, so the current
+    request (and any after it) fetches fresh data from the source repositories.
+    """
+    if "reset_cache" in request.args:
+        cache.clear()
 
 
 @cache.memoize(timeout=CACHE_TIMEOUT)
@@ -562,64 +570,15 @@ def tools():
             "https://vhp4safety.github.io/glossary#VHP0000149": "General",
         }
 
+        # Map stage URLs to readable labels up front -- needed for filtering
+        # and for building the stage dropdown.
         for tool in tools:
             full_stage_url = tool.get("stage", "")
-
-            # Writing the service name and stage values in the logs for troubleshooting.
-            # print(f"Tool: {tool['service']}, Stage URL: {full_stage_url}")  # Log the full URL
-
-            # Checking if the full URL is in the mapping and updating the stage.
             if full_stage_url in stage_mapping:
-                # print(f"Mapping stage URL {full_stage_url} to {stage_mapping[full_stage_url]}")  # Log the mapping
                 tool["stage"] = stage_mapping[full_stage_url]
             elif tool["stage"] in ["NA", "Unknown"]:
-                tool["stage"] = (
-                    "Other"  # Combining "NA" and "Unknown" stages in a single stage-type, "Other".
-                )
-
-            html_name = tool.get("html_name")
-            md_name = tool.get("md_file_name")
-            png_name = tool.get("png_file_name")
-
-            tool["url"] = f"https://cloud.vhp4safety.nl/service/{html_name}"
-            tool["meta_data"] = (
-                f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{md_name}"
-                if md_name
-                else "md file not found"
-            )
-
-            # Check if the tool has the placeholder logo
-            placeholder_logo = "https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png"
-            if png_name == placeholder_logo:
-                tool["png"] = None  # set to None if it's the common placeholder
-            else:
-                tool["png"] = (
-                    f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}"
-                    if not png_name.startswith("http")
-                    else png_name
-                )
-
-            inst_url = tool.get("inst_url", "no_url")
-            if not inst_url:  # catches "" as well
-                inst_url = "no_url"
-            tool["inst_url"] = inst_url
-
-            # Fetch per-tool detail JSON to check hosting status
-            tool_id = tool.get("id", "")
-            vhp_hosted = False
-            if inst_url != "no_url" and tool_id:
-                try:
-                    detail_url = f"https://cloud.vhp4safety.nl/service/{tool_id}.json"
-                    detail_resp = requests.get(detail_url, timeout=5)
-                    if detail_resp.status_code == 200:
-                        detail = detail_resp.json()
-                        vhp_platform = (
-                            detail.get("instance", {}).get("vhp-platform", "").lower()
-                        )
-                        vhp_hosted = vhp_platform not in ("external", "independent", "")
-                except Exception:
-                    pass
-            tool["vhp_hosted"] = vhp_hosted
+                # Combining "NA" and "Unknown" stages in a single stage-type, "Other".
+                tool["stage"] = "Other"
 
         # Getting selected stages from the URL.
         selected_stages = request.args.getlist("stage")
@@ -669,6 +628,54 @@ def tools():
         has_prev = page > 1
         has_next = end < total
 
+        # Enrich only the tools on the current page. The per-tool detail fetch
+        # below makes one HTTP request per tool, so doing it after pagination
+        # keeps it to ~page_size requests instead of one for every tool.
+        placeholder_logo = "https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png"
+        for tool in tools:
+            html_name = tool.get("html_name")
+            md_name = tool.get("md_file_name")
+            png_name = tool.get("png_file_name")
+
+            tool["url"] = f"https://cloud.vhp4safety.nl/service/{html_name}"
+            tool["meta_data"] = (
+                f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{md_name}"
+                if md_name
+                else "md file not found"
+            )
+
+            # Check if the tool has the placeholder logo
+            if png_name == placeholder_logo:
+                tool["png"] = None  # set to None if it's the common placeholder
+            else:
+                tool["png"] = (
+                    f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}"
+                    if not png_name.startswith("http")
+                    else png_name
+                )
+
+            inst_url = tool.get("inst_url", "no_url")
+            if not inst_url:  # catches "" as well
+                inst_url = "no_url"
+            tool["inst_url"] = inst_url
+
+            # Fetch per-tool detail JSON to check hosting status
+            tool_id = tool.get("id", "")
+            vhp_hosted = False
+            if inst_url != "no_url" and tool_id:
+                try:
+                    detail_url = f"https://cloud.vhp4safety.nl/service/{tool_id}.json"
+                    detail_resp = requests.get(detail_url, timeout=5)
+                    if detail_resp.status_code == 200:
+                        detail = detail_resp.json()
+                        vhp_platform = (
+                            detail.get("instance", {}).get("vhp-platform", "").lower()
+                        )
+                        vhp_hosted = vhp_platform not in ("external", "independent", "")
+                except Exception:
+                    pass
+            tool["vhp_hosted"] = vhp_hosted
+
         return render_template(
             "tools/tools.html",
             tools=tools,
@@ -695,14 +702,12 @@ def tools():
 @app.route("/methods/")
 def methods():
     """Fetch methods_index.json from the cloud repo, normalize fields and render a methods list page."""
-    url = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/methods_index.json"
-    response = requests.get(url)
+    methods = get_json_dict(METHODS_URL)  # cached for CACHE_TIMEOUT (5 days)
 
-    if response.status_code != 200:
-        return f"Error fetching methods list: {response.status_code}", 503
+    if not methods:
+        return "Error fetching methods list", 503
 
     try:
-        methods = response.json()
         methods = list(methods.values())  # convert dict to list
 
         # Normalize fields for the template and collect stages
