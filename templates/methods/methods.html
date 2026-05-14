@@ -19,7 +19,7 @@
 
     </div>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3 d-inline">
+    <nav class="navbar navbar-expand-lg d-inline">
         <form method="GET" action="{{ url_for('methods') }}" class="d-flex" role="search" id="search-form">
             <input type="text" class="form-control me-2" name="search" id="search-input" value="{{ request.args.get('search', '') }}" placeholder="Search by method name..." />
             <!-- Hidden inputs for filters -->
@@ -106,9 +106,16 @@
         </div>
     </nav>
 
+    <!-- Pagination (top) -->
+    <div class="pagination-container d-flex justify-content-center gap-2 pt-2 pb-3">
+        <a href="{{ url_for('methods', page=page-1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" class="btn btn-sm btn-secondary {% if not has_prev %} disabled {% endif %}">Previous</a>
+        <span class="align-self-center small text-secondary">Page {{ page }}</span>
+        <a href="{{ url_for('methods', page=page+1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" class="btn btn-sm btn-secondary {% if not has_next %} disabled {% endif %}">Next</a>
+    </div>
+
     <!-- Methods List -->
-    <div class="results-section mt-2 pt-3">
-        <ul class="results-list p-0">
+    <div class="results-section">
+        <ul class="results-list p-0 mb-0">
             {% for item in methods %}
                 <div class="card">
                     <div class="card-body">

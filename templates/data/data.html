@@ -9,7 +9,7 @@
         <p class="text-secondary fs-5">Explore datasets generated or used in <span id="collection-name-sub">{{ collection_name }} and hosted on BioStudies or Zenodo archives.</span></p>
     </div>
 
-    <nav class="navbar navbar-expand-lg  mb-3 d-inline">
+    <nav class="navbar navbar-expand-lg d-inline">
         <form method="GET" action="{{ url_for('data') }}" class="d-flex" role="search" id="search-form">
             <input type="text" class="form-control me-2" name="query" id="search-input" value="{{ search_query or '' }}" placeholder="Search for datasets (e.g., S-ONTX26, toxicity, liver...)" />
             <!-- Hidden inputs for filters -->
@@ -100,6 +100,13 @@
         {% if filter_regulatory_question %}<span class="badge bg-vhpteal">Regulatory Question: {{ filter_regulatory_question }}</span> {% endif %}
     </div>
     {% endif %}
+
+    <!-- Pagination (top) -->
+    <div class="pagination-container d-flex justify-content-center gap-2 pt-2 pb-3">
+        <a href="{{ url_for('data', page=page-1, page_size=page_size, query=search_query, filter_case_study=filter_case_study, filter_regulatory_question=filter_regulatory_question, filter_flow_step=filter_flow_step) }}" class="btn btn-sm btn-secondary {% if not has_prev %} disabled {% endif %}">Previous</a>
+        <span class="align-self-center small text-secondary">Page {{ page }}</span>
+        <a href="{{ url_for('data', page=page+1, page_size=page_size, query=search_query, filter_case_study=filter_case_study, filter_regulatory_question=filter_regulatory_question, filter_flow_step=filter_flow_step) }}" class="btn btn-sm btn-secondary {% if not has_next %} disabled {% endif %}">Next</a>
+    </div>
 
     <div class="results-section">
         <div id="results-list" class="results-list">
