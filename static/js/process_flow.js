@@ -1,5 +1,5 @@
 /**
- * Process Flow Page - Dynamic loading of Process Flow Steps
+ * Safety Assessment Workflow Page - Dynamic loading of Workflow Steps
  * Fetches the glossary OWL and extracts terms that have a dct:relation.
  */
 
@@ -8,16 +8,26 @@
 
   const GLOSSARY_URL = 'https://raw.githubusercontent.com/VHP4Safety/glossary/refs/heads/main/glossary.owl';
 
-  /** Desired display order for process flow steps. */
+  /** Desired display order for workflow steps (keys are raw glossary labels). */
   const STEP_ORDER = [
+    'Chemical Characteristics and Hazard identification',
     'Exposure',
-    'Chemical Characteristics and Hazard Identification',
     'Toxicokinetics',
     'Toxicodynamics',
     'Adverse Outcome',
   ];
 
-  /** Remove the "(Process Flow Step)" suffix from a label. */
+  // Why: glossary OWL labels lag behind the platform UI naming. Until the upstream
+  // glossary is updated (see VHP4Safety/glossary issue), override the displayed
+  // labels client-side so the accordion matches the home-page workflow visualization.
+  const DISPLAY_LABEL = {
+    'Chemical Characteristics and Hazard identification': 'Hazard Characterisation',
+    'Exposure': 'External Exposure',
+    'Adverse Outcome': 'Adverse Outcome for Human Health',
+  };
+
+  // Why: upstream glossary still suffixes terms with "(Process Flow Step)";
+  // remove until the OWL is renamed to "(Workflow Step)".
   const cleanLabel = (label) => label.replace(/\s*\(Process Flow Step\)\s*$/i, '').trim();
 
   // ── Parsing ────────────────────────────────────────────────────────────────
@@ -52,7 +62,8 @@
 
   function createAccordionItem(term, index) {
     const id = `about-${index}`;
-    const title = cleanLabel(term.label);
+    const cleaned = cleanLabel(term.label);
+    const title = DISPLAY_LABEL[cleaned] ?? cleaned;
     const body = term.definition || 'No definition available.';
 
     return `
@@ -88,7 +99,7 @@
 
       const terms = parseTermsWithRelations(await resp.text());
       if (terms.length === 0) {
-        container.innerHTML = '<p class="text-muted">No process flow steps found.</p>';
+        container.innerHTML = '<p class="text-muted">No workflow steps found.</p>';
         return;
       }
 
@@ -101,10 +112,10 @@
 
       container.innerHTML = terms.map(createAccordionItem).join('');
     } catch (err) {
-      console.error('[Process Flow]', err);
+      console.error('[Workflow Steps]', err);
       container.innerHTML =
         '<div class="alert alert-warning" role="alert">' +
-        '<strong>Unable to load process flow steps.</strong><br>' +
+        '<strong>Unable to load workflow steps.</strong><br>' +
         'Please try refreshing the page or check back later.</div>';
     }
   }
