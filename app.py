@@ -298,26 +298,87 @@ def home():
 ### The sitemap.xml for search engines
 @app.route("/sitemap.xml")
 def sitemap():
-    sitemapContent = """<?xml version="1.0" encoding="utf-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://platform.vhp4safety.nl/</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/casestudies</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/tools</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/methods</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/data</loc>
-  </url>
-</urlset>
-"""
+    BASE = "https://platform.vhp4safety.nl"
+
+    # Static top-level pages
+    paths = ["/", "/casestudies", "/tools", "/methods", "/data"]
+
+    # Tool detail pages
+    tools = get_json_dict_service(SERVICES_URL)
+    if isinstance(tools, dict):
+        paths += [f"/tools/{urllib.parse.quote(str(k))}" for k in tools]
+
+    # Method detail pages
+    methods = get_json_dict(METHODS_URL)
+    if isinstance(methods, dict):
+        paths += [f"/methods/{urllib.parse.quote(str(k))}" for k in methods]
+
+    # Dataset detail pages (BioStudies + Zenodo). Fetched in pages of 25 -- the
+    # Zenodo API rejects larger page sizes -- and looped until both sources are
+    # exhausted. load_metadata=False keeps this cheap (no per-file HEAD requests).
+    # A repo failure must never 500 the sitemap; tools/methods/case studies still
+    # serve.
+    DATA_PAGE_SIZE = 25
+    try:
+        page = 1
+        while True:
+            bs_results, zen_results = get_repository_data(
+                search_query="",
+                page=page,
+                page_size=DATA_PAGE_SIZE,
+                load_metadata=False,
+            )
+            bs_hits = (bs_results or {}).get("hits", [])
+            zen_hits = (zen_results or {}).get("hits", [])
+            for hit in bs_hits:
+                acc = hit.get("accession") or hit.get("accno")
+                if acc:
+                    paths.append(f"/data/{urllib.parse.quote(str(acc))}")
+            for hit in zen_hits:
+                # numeric recid -- doi_url has slashes the route can't match.
+                recid = hit.get("id") or hit.get("recid")
+                if recid:
+                    paths.append(f"/data/{urllib.parse.quote(str(recid))}")
+            total = max(
+                (bs_results or {}).get("total") or 0,
+                (zen_results or {}).get("total") or 0,
+            )
+            if (not bs_hits and not zen_hits) or page * DATA_PAGE_SIZE >= total:
+                break
+            page += 1
+    except Exception:
+        pass
+
+    # Case study detail pages
+    paths += [f"/casestudies/{urllib.parse.quote(c)}" for c in CASESTUDIES]
+
+    # Dedupe while preserving order
+    seen = set()
+    unique_paths = [p for p in paths if not (p in seen or seen.add(p))]
+
+    url_entries = "\n".join(
+        f"  <url>\n    <loc>{BASE}{p}</loc>\n  </url>" for p in unique_paths
+    )
+    sitemapContent = (
+        '<?xml version="1.0" encoding="utf-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{url_entries}\n"
+        "</urlset>\n"
+    )
     return Response(sitemapContent, mimetype="text/xml")
+
+
+################################################################################
+### robots.txt points crawlers at the sitemap so the detail pages get indexed
+@app.route("/robots.txt")
+def robots():
+    robotsContent = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "\n"
+        "Sitemap: https://platform.vhp4safety.nl/sitemap.xml\n"
+    )
+    return Response(robotsContent, mimetype="text/plain")
 
 
 ################################################################################
