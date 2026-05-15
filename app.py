@@ -1,7 +1,9 @@
 ################################################################################
 ### Loading the required modules
 import json
+import os
 import re
+import secrets
 
 import requests
 import urllib.parse
@@ -20,7 +22,7 @@ from data.mapping import normalize_all
 
 ################################################################################
 CACHE_TIMEOUT = 60 * 60 * 24 * 5  # 5 days
-CACHE_TIMEOUT_SERVICE = CACHE_TIMEOUT  # tools page now uses the same 5-day cache
+CACHE_RESET_TOKEN = os.getenv("CACHE_RESET_TOKEN")
 ### Configuration for BioStudies Integration
 # Change these variables to switch between collections
 BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
@@ -103,7 +105,6 @@ class RegexConverter(BaseConverter):
 cache_config = {
     "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
     "CACHE_DEFAULT_TIMEOUT": CACHE_TIMEOUT,  # 60 min chaching
-    "CACHE_SERVICE_TIMEOUT": CACHE_TIMEOUT_SERVICE,
 }
 app = Flask(__name__)
 app.config.from_mapping(cache_config)
@@ -112,48 +113,58 @@ cache = Cache(app)
 
 @app.before_request
 def handle_cache_reset():
-    """Allow bypassing the cache for development/debugging purposes.
+    """Allow bypassing the cache only in trusted/dev contexts."""
+    if "reset_cache" not in request.args:
+        return
 
-    Appending ?reset_cache to any URL clears all cached data, so the current
-    request (and any after it) fetches fresh data from the source repositories.
-    """
-    if "reset_cache" in request.args:
+    is_localhost = request.remote_addr in {"127.0.0.1", "::1"}
+    provided_token = request.args.get("reset_cache")
+    valid_token = bool(
+        CACHE_RESET_TOKEN
+        and provided_token
+        and secrets.compare_digest(provided_token, CACHE_RESET_TOKEN)
+    )
+    if app.debug or is_localhost or valid_token:
         cache.clear()
+        return
+    abort(403)
 
 
 @cache.memoize(timeout=CACHE_TIMEOUT)
+def _get_json_dict_cached(url: str, timeout: int = 5) -> dict:
+    """Fetch xxxx_index.json from the cloud repo and return as a dictionary."""
+    resp = requests.get(url, timeout=timeout)
+    if resp.status_code != 200:
+        raise ValueError(f"Unexpected status code {resp.status_code} for {url}")
+    data = resp.json()
+    if not isinstance(data, dict):
+        raise ValueError(f"Unexpected JSON type for {url}")
+    return data
+
+
 def get_json_dict(url: str, timeout: int = 5) -> dict:
     """Fetch xxxx_index.json from the cloud repo and return as a dictionary.
     Return an empty dict on any error to avoid breaking pages that depend on it.
     """
     try:
-        resp = requests.get(url, timeout=timeout)
-        if resp.status_code != 200:
-            return {}
-        data = resp.json()
-        if isinstance(data, dict):
-            return data
-        else:
-            return {}
+        return _get_json_dict_cached(url, timeout=timeout)
     except Exception:
         return {}
 
 
-# A separate get_json_dict function for the tools page with its own timeout.
-@cache.memoize(timeout=CACHE_TIMEOUT_SERVICE)
-def get_json_dict_service(url: str, timeout: int = 5) -> dict:
-    """Fetch xxxx_index.json from the cloud repo and return as a dictionary.
-    Return an empty dict on any error to avoid breaking pages that depend on it.
-    """
+@cache.memoize(timeout=CACHE_TIMEOUT)
+def _get_service_detail_cached(tool_id: str, timeout: int = 5) -> dict:
+    """Fetch a tool/service detail JSON from the cloud repo."""
+    detail_url = f"https://cloud.vhp4safety.nl/service/{tool_id}.json"
+    return _get_json_dict_cached(detail_url, timeout=timeout)
+
+
+def get_service_detail(tool_id: str, timeout: int = 5) -> dict:
+    """Fetch service detail and return an empty dict on any error."""
+    if not tool_id:
+        return {}
     try:
-        resp = requests.get(url, timeout=timeout)
-        if resp.status_code != 200:
-            return {}
-        data = resp.json()
-        if isinstance(data, dict):
-            return data
-        else:
-            return {}
+        return _get_service_detail_cached(tool_id, timeout=timeout)
     except Exception:
         return {}
 
@@ -244,7 +255,7 @@ def inject_tools_menu():
     """Fetch methods_index.json and expose a simple list of {id, title} to templates.
     Return an empty list on any error to avoid breaking pages.
     """
-    data = get_json_dict_service(SERVICES_URL)
+    data = get_json_dict(SERVICES_URL)
     if data:
         items = []
         for key, val in data.items() if isinstance(data, dict) else []:
@@ -284,7 +295,7 @@ def inject_data_menu():
 @app.route("/")
 def home():
     try:
-        tools = get_json_dict_service(
+        tools = get_json_dict(
             SERVICES_URL
         )  # Geting the service_list.json in the dictionary format.
         tools = list(tools.values())  # Converting the dictionary to a list object.
@@ -551,7 +562,7 @@ def models():
 @app.route("/tools")
 def tools():
     try:
-        tools = get_json_dict_service(
+        tools = get_json_dict(
             SERVICES_URL
         )  # Geting the service_list.json in the dictionary format.
         tools = list(tools.values())  # Converting the dictionary to a list object.
@@ -663,17 +674,9 @@ def tools():
             tool_id = tool.get("id", "")
             vhp_hosted = False
             if inst_url != "no_url" and tool_id:
-                try:
-                    detail_url = f"https://cloud.vhp4safety.nl/service/{tool_id}.json"
-                    detail_resp = requests.get(detail_url, timeout=5)
-                    if detail_resp.status_code == 200:
-                        detail = detail_resp.json()
-                        vhp_platform = (
-                            detail.get("instance", {}).get("vhp-platform", "").lower()
-                        )
-                        vhp_hosted = vhp_platform not in ("external", "independent", "")
-                except Exception:
-                    pass
+                detail = get_service_detail(tool_id)
+                vhp_platform = detail.get("instance", {}).get("vhp-platform", "").lower()
+                vhp_hosted = vhp_platform not in ("external", "independent", "")
             tool["vhp_hosted"] = vhp_hosted
 
         return render_template(
@@ -870,7 +873,7 @@ def method_page(methodid):
 def tool_page(toolname):
     # get the tools metadata:
     try:
-        tools = get_json_dict_service(SERVICES_URL)
+        tools = get_json_dict(SERVICES_URL)
         tools = dict(tools)
         # Geting the service_list.json in the dictionary format.
         # Converting the dictionary to a list object.

@@ -181,6 +181,8 @@ For development and debugging you can force fresh data by appending the `reset_c
 http://localhost:5050/tools?reset_cache
 ```
 
+On non-debug deployments this endpoint is protected. Cache resets are only allowed from localhost or when `reset_cache` matches the `CACHE_RESET_TOKEN` environment variable.
+
 This clears the entire server-side cache; the current request and all subsequent ones repopulate it with fresh data from the source repositories.
 
 ## Contributing
