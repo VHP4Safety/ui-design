@@ -274,8 +274,8 @@
     <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-3">
       {% for logo in partner_logos %}
         <div class="col">
-          {% if logo.url %}<a href="{{ logo.url }}" target="_blank" rel="noopener" class="d-block">{% endif %}
-            <div class="ratio ratio-1x1" data-bs-toggle="tooltip" data-bs-title="{{ logo.name }}">
+          {% if logo.url %}<a href="{{ logo.url }}" target="_blank" rel="noopener" class="d-block" data-bs-toggle="tooltip" data-bs-title="{{ logo.name }}">{% endif %}
+            <div class="ratio ratio-1x1"{% if not logo.url %} data-bs-toggle="tooltip" data-bs-title="{{ logo.name }}" tabindex="0"{% endif %}>
               <img src="{{ url_for('static', filename='images/partners/' ~ logo.file) }}"
                    class="partner-logo"
                    alt="{{ logo.name }}"
