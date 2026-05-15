@@ -22,7 +22,7 @@ from data.mapping import normalize_all
 
 ################################################################################
 CACHE_TIMEOUT = 60 * 60 * 24 * 5  # 5 days
-CACHE_RESET_TOKEN = os.getenv("CACHE_RESET_TOKEN")
+CACHE_RESET_TOKEN = (os.getenv("CACHE_RESET_TOKEN") or "").strip()
 ### Configuration for BioStudies Integration
 # Change these variables to switch between collections
 BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
@@ -162,6 +162,8 @@ def _get_service_detail_cached(tool_id: str, timeout: int = 5) -> dict:
 def get_service_detail(tool_id: str, timeout: int = 5) -> dict:
     """Fetch service detail and return an empty dict on any error."""
     if not tool_id:
+        return {}
+    if not re.match(r"^[A-Za-z0-9._-]+$", tool_id):
         return {}
     try:
         return _get_service_detail_cached(tool_id, timeout=timeout)
