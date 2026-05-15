@@ -34,4 +34,4 @@ PDV.png | Stichting Proefdiervrij | https://proefdiervrij.nl/
 Galapagos.svg | Galapagos | https://glpg.com
 
 # Funder
-NWO | Dutch Research Council | https://nwo.nl/en
+NWO.png | Dutch Research Council | https://nwo.nl/en
