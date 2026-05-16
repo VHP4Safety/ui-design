@@ -569,6 +569,19 @@ def sitemap():
 
 
 ################################################################################
+### robots.txt points crawlers at the sitemap so the detail pages get indexed
+@app.route("/robots.txt")
+def robots():
+    robotsContent = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "\n"
+        "Sitemap: https://platform.vhp4safety.nl/sitemap.xml\n"
+    )
+    return Response(robotsContent, mimetype="text/plain")
+
+
+################################################################################
 ### Pages under 'Data'
 @app.route("/data")
 def data():
