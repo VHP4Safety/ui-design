@@ -224,9 +224,10 @@ def get_process_flow_steps() -> dict:
             "slug": clean_label.lower().replace(" ", "-"),
             "description": (m_desc.group(1) if m_desc else "").strip(),
         }
-    # sort by length of label descening
+    # sort by id 
+    sort_ids = ["https://vhp4safety.github.io/glossary#VHP0000153","https://vhp4safety.github.io/glossary#VHP0000154","https://vhp4safety.github.io/glossary#VHP0000155","https://vhp4safety.github.io/glossary#VHP0000156","https://vhp4safety.github.io/glossary#VHP0000158"]
     steps = dict(
-        sorted(steps.items(), key=lambda item: len(item[1]["label"]), reverse=True)
+        sorted(steps.items(), key=lambda item: sort_ids.index(item[0]) if item[0] in sort_ids else len(sort_ids))
     )
     return steps
 
