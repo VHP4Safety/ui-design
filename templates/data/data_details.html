@@ -62,7 +62,7 @@
    --------------------------- #}
 <section class="container py-5">
   <div class="pb-2">
-    <h1><span class="text-vhpteal">{{ val(record.title, 'Dataset') }}</span></h1>
+    <h1><span class="text-vhpblue">{{ val(record.title, 'Dataset') }}</span></h1>
     {% if record.description %}
       <p class="text-secondary">{{ record.description }}</p>
     {% endif %}
@@ -72,7 +72,7 @@
     <div class="card-header">
       <ul class="nav nav-tabs card-header-tabs" role="tablist">
         <li class="nav-item" role="presentation">
-          <a class="nav-link text-vhpteal  active"
+          <a class="nav-link text-vhpblue  active"
              id="tab-general-link"
              data-bs-toggle="tab"
              href="#tab-general"
@@ -82,7 +82,7 @@
         </li>
     {% if record.type == "study" %}
         <li class="nav-item" role="presentation">
-          <a class="nav-link text-vhpteal "
+          <a class="nav-link text-vhpblue "
              id="tab-biomodel-link"
              data-bs-toggle="tab"
              href="#tab-biomodel"
@@ -92,7 +92,7 @@
         </li>
 
         <li class="nav-item" role="presentation">
-          <a class="nav-link text-vhpteal "
+          <a class="nav-link text-vhpblue "
              id="tab-chemical-link"
              data-bs-toggle="tab"
              href="#tab-chemical"
@@ -102,7 +102,7 @@
         </li>
 
         <li class="nav-item" role="presentation">
-          <a class="nav-link text-vhpteal "
+          <a class="nav-link text-vhpblue "
              id="tab-exposure-link"
              data-bs-toggle="tab"
              href="#tab-exposure"
@@ -112,7 +112,7 @@
         </li>
 
         <li class="nav-item" role="presentation">
-          <a class="nav-link text-vhpteal "
+          <a class="nav-link text-vhpblue "
              id="tab-endpoint-link"
              data-bs-toggle="tab"
              href="#tab-endpoint"
@@ -122,7 +122,7 @@
         </li>
 
         <li class="nav-item" role="presentation">
-          <a class="nav-link text-vhpteal "
+          <a class="nav-link text-vhpblue "
              id="tab-analysis-link"
              data-bs-toggle="tab"
              href="#tab-analysis"
@@ -134,7 +134,7 @@
     {%endif%}
 
         <li class="nav-item" role="presentation">
-          <a class="nav-link text-vhpteal "
+          <a class="nav-link text-vhpblue "
              id="tab-pubs-link"
              data-bs-toggle="tab"
              href="#tab-publications"
@@ -143,7 +143,7 @@
              aria-selected="false">Publications</a>
         </li>
         <li class="nav-item" role="presentation">
-          <a class="nav-link text-vhpteal "
+          <a class="nav-link text-vhpblue "
              id="tab-how-to-cite-link"
              data-bs-toggle="tab"
              href="#tab-how-to-cite"
@@ -272,7 +272,7 @@
                     <ul class="list-group list-group-flush">
                       {% for f in record.files %}
                         <li class="list-group-item d-flex align-items-start gap-2">
-                          <i class="bi bi-file-earmark text-vhpteal"></i>
+                          <i class="bi bi-file-earmark text-vhpblue"></i>
                           <span>
                           {% if f.url %}
                             <a href="{{ f.url }}" target="_blank" rel="noopener">{{ val(f.name) }}</a>
@@ -305,7 +305,7 @@
                     <ul class="list-group list-group-flush">
                       {% for a in record.authors %}
                         <li class="list-group-item  d-flex align-items-start gap-2">
-                          <i class="bi bi-person-circle text-vhpteal"></i>
+                          <i class="bi bi-person-circle text-vhpblue"></i>
 
                           <span class="small">
                             <span class="fw-semibold">{{ val(a.name) }}</span>
@@ -353,7 +353,7 @@
                     <ul class="list-group list-group-flush">
                       {% for f in record.funding %}
                         <li class="list-group-item d-flex align-items-start gap-2">
-                          <i class="bi bi-bank text-vhpteal"></i>
+                          <i class="bi bi-bank text-vhpblue"></i>
 
                           <span class="small">
                             <span class="fw-semibold">{{ val(f.funder) }}</span>
@@ -417,7 +417,7 @@
                     <div class="d-flex align-items-start gap-3">
 
                       <div class="flex-shrink-0 pt-1">
-                        <i class="bi bi-tag text-vhpteal fs-4"></i>
+                        <i class="bi bi-tag text-vhpblue fs-4"></i>
                       </div>
 
                       <div class="w-100">
@@ -432,7 +432,7 @@
                             <span class="text-muted">RRID:</span>
                             {% if ns_bm.rrid_url %}
                               <a href="{{ ns_bm.rrid_url }}" target="_blank" rel="noopener" class="text-decoration-none">
-                                <i class="bi bi-link-45deg text-vhpteal"></i> {{ ns_bm.rrid }}
+                                <i class="bi bi-link-45deg text-vhpblue"></i> {{ ns_bm.rrid }}
                               </a>
                             {% else %}
                               {{ ns_bm.rrid }}
@@ -555,7 +555,7 @@
                         </div>
                       {% else %}
                         <div class="flex-shrink-0 pt-1">
-                          <i class="bi bi-droplet-fill text-vhpteal fs-4"></i>
+                          <i class="bi bi-droplet-fill text-vhpblue fs-4"></i>
                         </div>
                       {% endif %}
 
@@ -580,7 +580,7 @@
                             <span class="text-muted">CAS:</span>
                             <a href="https://commonchemistry.cas.org/results?q={{ ns.cas|urlencode }}"
                               target="_blank" rel="noopener" class="text-decoration-none">
-                              <i class="bi bi-link-45deg text-vhpteal"></i> {{ ns.cas }}
+                              <i class="bi bi-link-45deg text-vhpblue"></i> {{ ns.cas }}
                             </a>
                           {% endif %}
 
@@ -590,7 +590,7 @@
                             <span class="text-muted">PubChem:</span>
                             <a href="https://pubchem.ncbi.nlm.nih.gov/compound/{{ ns.cid|urlencode }}"
                               target="_blank" rel="noopener" class="text-decoration-none">
-                              <i class="bi bi-link-45deg text-vhpteal"></i> CID {{ ns.cid }}
+                              <i class="bi bi-link-45deg text-vhpblue"></i> CID {{ ns.cid }}
                             </a>
                           {% endif %}
 
@@ -600,7 +600,7 @@
                             <span class="text-muted">CompoundCloud:</span>
                             {% if ns.cc_url %}
                               <a href="{{ ns.cc_url }}" target="_blank" rel="noopener" class="text-decoration-none">
-                                <i class="bi bi-link-45deg text-vhpteal"></i> {{ ns.cc_id }}
+                                <i class="bi bi-link-45deg text-vhpblue"></i> {{ ns.cc_id }}
                               </a>
                             {% else %}
                               {{ ns.cc_id }}
@@ -652,7 +652,7 @@
                     <div class="d-flex align-items-start gap-3">
 
                       <div class="flex-shrink-0 pt-1">
-                        <i class="bi bi-clock-history text-vhpteal fs-4"></i>
+                        <i class="bi bi-clock-history text-vhpblue fs-4"></i>
                       </div>
 
                       <div class="w-100">
@@ -704,7 +704,7 @@
                 {{ ns_bio.bioassay }}
               {% endif %}
               {% if ns_bio.bioassay_ontology %}
-                <span class="badge bg-vhpteal rounded-pill ms-1" style="font-size:0.7em;">{{ ns_bio.bioassay_ontology }}</span>
+                <span class="badge bg-vhpblue rounded-pill ms-1" style="font-size:0.7em;">{{ ns_bio.bioassay_ontology }}</span>
               {% endif %}
             </div>
           </div>
@@ -733,7 +733,7 @@
                     <div class="d-flex align-items-start gap-3">
 
                       <div class="flex-shrink-0 pt-1">
-                        <i class="bi bi-pc-display-horizontal text-vhpteal fs-4"></i>
+                        <i class="bi bi-pc-display-horizontal text-vhpblue fs-4"></i>
                       </div>
 
                       <div class="w-100">
@@ -791,7 +791,7 @@
               <ul class="list-group list-group-flush">
                 {% for ev in ns_bio.aop_events %}
                   <li class="list-group-item d-flex align-items-start gap-2">
-                    <i class="bi bi-arrow-right-circle text-vhpteal"></i>
+                    <i class="bi bi-arrow-right-circle text-vhpblue"></i>
                     <span class="small">
                       {% if ev.url %}
                         <a href="{{ ev.url }}" target="_blank" rel="noopener">{{ ev.value }}</a>
@@ -824,7 +824,7 @@
                   <div class="card-body p-3">
                     <div class="d-flex align-items-start gap-3">
                       <div class="flex-shrink-0 pt-1">
-                        <i class="bi bi-book text-vhpteal fs-4"></i>
+                        <i class="bi bi-book text-vhpblue fs-4"></i>
                       </div>
                       <div class="w-100">
                         <div class="pub-citation small">
@@ -832,7 +832,7 @@
                         </div>
                         {% if pub.doi %}
                           <div class="small text-muted mt-1">
-                            <i class="bi bi-link-45deg text-vhpteal"></i>
+                            <i class="bi bi-link-45deg text-vhpblue"></i>
                             <a href="https://doi.org/{{ pub.doi }}" target="_blank" rel="noopener">
                               https://doi.org/{{ pub.doi }}
                             </a>
@@ -863,7 +863,7 @@
             <div class="card-body p-3">
               <div class="d-flex align-items-start gap-3">
                 <div class="flex-shrink-0 pt-1">
-                  <i class="bi bi-quote text-vhpteal fs-4"></i>
+                  <i class="bi bi-quote text-vhpblue fs-4"></i>
                 </div>
                 <div class="w-100">
                   <div class="d-flex align-items-start gap-2">
@@ -895,9 +895,9 @@
      {% if record.type=="study"%}
     <div class="card-footer">
      
-        {% if data.metadata.case_study%}<a role="button" href="{{url_for('casestudy', case=data.metadata.case_study|lower)}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhpteal rounded-pill border border-vhpteal d-inline-flex align-items-center text-wrap">Case Study: {{data.metadata.case_study|capitalize }}</a>{%endif%}
-        {% if data.metadata.regulatory_question%}<a role="button" href="{{url_for('casestudy', case=data.metadata.case_study|lower, question=data.metadata.regulatory_question )}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhpteal rounded-pill border border-vhpteal d-inline-flex align-items-center text-wrap">Regulatory Question: {{data.metadata.regulatory_question}}</a>{%endif%}
-        {% if data.metadata.flow_step%}<a role="button" href="{{url_for('casestudy', case=data.metadata.case_study|lower, question=data.metadata.regulatory_question, step=data.metadata.flow_step )}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhpteal rounded-pill border border-vhpteal d-inline-flex align-items-center text-wrap">Flow Step: {{data.metadata.flow_step}}</a>{%endif%}
+        {% if data.metadata.case_study%}<a role="button" href="{{url_for('casestudy', case=data.metadata.case_study|lower)}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">Case Study: BLUE {{data.metadata.case_study|capitalize }}</a>{%endif%}
+        {% if data.metadata.regulatory_question%}<a role="button" href="{{url_for('casestudy', case=data.metadata.case_study|lower, question=data.metadata.regulatory_question )}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">Regulatory Question: {{data.metadata.regulatory_question}}</a>{%endif%}
+        {% if data.metadata.flow_step%}<a role="button" href="{{url_for('casestudy', case=data.metadata.case_study|lower, question=data.metadata.regulatory_question, step=data.metadata.flow_step )}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppurple rounded-pill border border-vhppurple d-inline-flex align-items-center text-wrap">Flow Step: {{data.metadata.flow_step}}</a>{%endif%}
 
     </div>
       {% endif %}

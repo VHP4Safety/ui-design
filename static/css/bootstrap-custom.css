@@ -13154,6 +13154,18 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+.btn-vhpblue {
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+  --bs-btn-disabled-color: #fff;
+}
+
+.btn-outline-vhpblue {
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+}
+
 /* Grid layout for Search/Filter Results */
 .results-section {
   min-height: 400px;
