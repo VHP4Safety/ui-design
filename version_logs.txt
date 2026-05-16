@@ -1,3 +1,10 @@
+Version 0.9-2 (2026-05-16)
+--------------------------------------------------------------------------------
+- Harmonized styling and pagination across the tools, methods, and data catalogs.
+- Uniform server-side caching for the catalog pages, with a ?reset_cache override.
+- Restored the dynamic sitemap.xml and robots.txt.
+- Fixed the compound page Wikidata lookups.
+
 Version 0.9-1 (2026-05-15)
 --------------------------------------------------------------------------------
 - Formatting of files
