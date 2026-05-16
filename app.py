@@ -474,29 +474,97 @@ def home():
     )
 
 
+def data_hit_id(hit: dict) -> str:
+    """Return the identifier to use in a /data/<id> URL for a repository hit.
+
+    BioStudies hits resolve to their accession; Zenodo hits to their numeric
+    recid. doi_url is intentionally never used -- it contains slashes the
+    /data/<dataid> route's string converter cannot match.
+    """
+    return (
+        hit.get("accession")
+        or hit.get("accno")
+        or hit.get("id")
+        or hit.get("recid")
+        or ""
+    )
+
+
 ################################################################################
 ### The sitemap.xml for search engines
 @app.route("/sitemap.xml")
 def sitemap():
-    sitemapContent = """<?xml version="1.0" encoding="utf-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://platform.vhp4safety.nl/</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/casestudies</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/tools</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/methods</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/data</loc>
-  </url>
-</urlset>
-"""
+    BASE = "https://platform.vhp4safety.nl"
+
+    # Static, parameter-less GET pages, derived from the URL map so new pages
+    # are picked up automatically. Machine endpoints are excluded. Routes with
+    # <params> are skipped and handled below.
+    EXCLUDED_ENDPOINTS = {"sitemap", "robots", "static"}
+    paths = sorted(
+        rule.rule.rstrip("/") or "/"
+        for rule in app.url_map.iter_rules()
+        if not rule.arguments
+        and rule.endpoint not in EXCLUDED_ENDPOINTS
+        and "GET" in (rule.methods or set())
+    )
+
+    # Tool detail pages
+    tools = get_json_dict(SERVICES_URL)
+    if isinstance(tools, dict):
+        paths += [f"/tools/{urllib.parse.quote(str(k))}" for k in tools]
+
+    # Method detail pages
+    methods = get_json_dict(METHODS_URL)
+    if isinstance(methods, dict):
+        paths += [f"/methods/{urllib.parse.quote(str(k))}" for k in methods]
+
+    # Dataset detail pages (BioStudies + Zenodo). Fetched in pages of 25 (the
+    # Zenodo API rejects larger page sizes) and looped until both sources are
+    # exhausted. load_metadata=False keeps this cheap (no per-file HEAD requests).
+    # A repo failure must never 500 the sitemap; tools/methods/case studies still
+    # serve.
+    DATA_PAGE_SIZE = 25
+    try:
+        page = 1
+        while True:
+            bs_results, zen_results = get_repository_data(
+                search_query="",
+                page=page,
+                page_size=DATA_PAGE_SIZE,
+                load_metadata=False,
+            )
+            bs_hits = (bs_results or {}).get("hits", [])
+            zen_hits = (zen_results or {}).get("hits", [])
+            for hit in bs_hits + zen_hits:
+                hit_id = data_hit_id(hit)
+                if hit_id:
+                    paths.append(f"/data/{urllib.parse.quote(str(hit_id))}")
+            total = max(
+                (bs_results or {}).get("total") or 0,
+                (zen_results or {}).get("total") or 0,
+            )
+            if (not bs_hits and not zen_hits) or page * DATA_PAGE_SIZE >= total:
+                break
+            page += 1
+    except Exception:
+        pass
+
+    # Case study detail pages
+    paths += [f"/casestudies/{urllib.parse.quote(c)}" for c in CASESTUDIES]
+
+    # Dedupe while preserving order
+    seen = set()
+    unique_paths = [p for p in paths if not (p in seen or seen.add(p))]
+
+    url_entries = "\n".join(
+        f"  <url>\n    <loc>{BASE}{p}</loc>\n  </url>" for p in unique_paths
+    )
+    sitemapContent = (
+        '<?xml version="1.0" encoding="utf-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{url_entries}\n"
+        "</urlset>\n"
+    )
     return Response(sitemapContent, mimetype="text/xml")
 
 
@@ -555,8 +623,9 @@ def data():
     pages_fetched = bs_results.get("pages_fetched", 1)
     page_size_met = bs_results.get("page_size_met", True)
 
-    # Calculate pagination info
-    has_next = (page * page_size) < total
+    # Calculate pagination info per source so that if one source is empty or
+    # filtered out, pagination still advances through the active source.
+    has_next = (page * per_source < bs_total) or (page * per_source < zen_total)
     has_prev = page > 1
 
     # Pass data to template
