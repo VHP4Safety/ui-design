@@ -492,6 +492,7 @@ def data_hit_id(hit: dict) -> str:
 
 ################################################################################
 ### The sitemap.xml for search engines
+@cache.memoize(timeout=CACHE_TIMEOUT)
 @app.route("/sitemap.xml")
 def sitemap():
     BASE = "https://platform.vhp4safety.nl"
