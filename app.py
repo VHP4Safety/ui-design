@@ -2,7 +2,9 @@
 ### Loading the required modules
 import json
 import os
+import os
 import re
+import secrets
 
 import requests
 import urllib.parse
@@ -20,11 +22,8 @@ from data.zenodo.search import ZenodoExtractor
 from data.mapping import normalize_all
 
 ################################################################################
-CACHE_TIMEOUT = 60 * 60 * 24 * 5  # 5 days -- [Ozan] I created a separate
-# timeout object for the tools page because
-# a 5-day caching is too long for it.
-CACHE_TIMEOUT_SERVICE = 60  # Separate timeout for the tools page -- 60
-# seconds.
+CACHE_TIMEOUT = 60 * 60 * 24 * 5  # 5 days
+CACHE_RESET_TOKEN = (os.getenv("CACHE_RESET_TOKEN") or "").strip()
 ### Configuration for BioStudies Integration
 # Change these variables to switch between collections
 BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
@@ -34,15 +33,12 @@ ZENODO_RECORD_TYPE = "dataset"  # only show datasets
 
 CASESTUDIES = ["thyroid", "kidney", "parkinson"]  # List of valid case studies
 
-###Shared explanation dictionaries for filters (used in both tools and data page)
-STAGE_EXPLANATIONS = {
-    "Chemical Characteristics and Hazard Identification": "A Safety Assessment Workflow Step that categorizes services that use molecular structures, chemical descriptors, and databases to predict or analyze the properties, behavior, and potential risks of chemical substances.",
-    "Exposure": "A Safety Assessment Workflow Step which categorizes services that evaluate and analyze the route, duration, magnitude and frequency of exposure of an organism or (sub)population to one or multiple chemicals.",
-    "Toxicokinetics": "A Safety Assessment Workflow Step which categorizes services that analyze the kinetics (absorption, distribution, metabolism and excretion) of chemicals and how these processes influence the internal dose.",
-    "Toxicodynamics": "A Safety Assessment Workflow Step which categorizes services that use or extend the (quantitative) AOP framework to analyze and assess the interaction of chemicals with biological targets.",
-    "Adverse Outcome": "A Safety Assessment Workflow Step which specifically refers to clinical and epidemiological effects. It categorizes services that provide information on the toxicological endpoints and adverse outcomes at a clinical or epidemiological level of chemical exposures.",
+# Non-glossary "stage" labels. The five Process Flow Step stages are resolved
+# from the VHP glossary at runtime (see get_process_flow_steps); these legacy
+# labels stay hardcoded because the data/models pages still reference them by
+# literal key and their data sources have not migrated to the glossary URIs.
+STAGE_EXPLANATIONS_LEGACY = {
     "Other": "Other or unknown category.",
-    # Legacy labels (kept for the data/methods pages until their data sources migrate)
     "ADME": "Absorption, distribution, metabolism, and excretion of a substance (toxic or not) in a living organism, following exposure to this substance.",
     "Hazard Assessment": "The process of assessing the intrinsic hazard a substance poses to human health and/or the environment",
     "Chemical Information": "Information about chemical properties and identity.",
@@ -50,9 +46,21 @@ STAGE_EXPLANATIONS = {
     "(External) exposure": "External exposure assessment.",
     "Generic": "Generic category.",
 }
+
+# Legacy glossary-URI -> stage-label mappings, superseded by the Process Flow
+# Step URIs that get_process_flow_steps() resolves from the glossary.
+STAGE_MAPPING_LEGACY = {
+    "https://vhp4safety.github.io/glossary#VHP0000056": "ADME",
+    "https://vhp4safety.github.io/glossary#VHP0000102": "Hazard Assessment",
+    "https://vhp4safety.github.io/glossary#VHP0000148": "Chemical Information",
+    "https://vhp4safety.github.io/glossary#VHP0000149": "General",
+}
 METHODS_URL = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/methods_index.json"
 # TOOLS and SERVICES are synonymous
 SERVICES_URL = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/service_index.json"
+GLOSSARY_URL = (
+    "https://raw.githubusercontent.com/VHP4Safety/glossary/refs/heads/main/glossary.owl"
+)
 
 REG_QUESTIONS = {
     "reg_q_1a": {
@@ -107,48 +115,138 @@ class RegexConverter(BaseConverter):
 cache_config = {
     "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
     "CACHE_DEFAULT_TIMEOUT": CACHE_TIMEOUT,  # 60 min chaching
-    "CACHE_SERVICE_TIMEOUT": CACHE_TIMEOUT_SERVICE,
 }
 app = Flask(__name__)
 app.config.from_mapping(cache_config)
 cache = Cache(app)
 
 
+@app.before_request
+def handle_cache_reset():
+    """Allow bypassing the cache only in trusted/dev contexts."""
+    if "reset_cache" not in request.args:
+        return
+
+    is_localhost = request.remote_addr in {"127.0.0.1", "::1"}
+    provided_token = request.args.get("reset_cache")
+    valid_token = bool(
+        CACHE_RESET_TOKEN
+        and provided_token
+        and secrets.compare_digest(provided_token, CACHE_RESET_TOKEN)
+    )
+    if app.debug or is_localhost or valid_token:
+        cache.clear()
+        return
+    abort(403)
+
+
 @cache.memoize(timeout=CACHE_TIMEOUT)
+def _get_json_dict_cached(url: str, timeout: int = 5) -> dict:
+    """Fetch xxxx_index.json from the cloud repo and return as a dictionary."""
+    resp = requests.get(url, timeout=timeout)
+    if resp.status_code != 200:
+        raise ValueError(f"Unexpected status code {resp.status_code} for {url}")
+    data = resp.json()
+    if not isinstance(data, dict):
+        raise ValueError(f"Unexpected JSON type for {url}")
+    return data
+
+
 def get_json_dict(url: str, timeout: int = 5) -> dict:
     """Fetch xxxx_index.json from the cloud repo and return as a dictionary.
     Return an empty dict on any error to avoid breaking pages that depend on it.
     """
     try:
-        resp = requests.get(url, timeout=timeout)
-        if resp.status_code != 200:
-            return {}
-        data = resp.json()
-        if isinstance(data, dict):
-            return data
-        else:
-            return {}
+        return _get_json_dict_cached(url, timeout=timeout)
     except Exception:
         return {}
 
 
-# A separate get_json_dict function for the tools page with its own timeout.
-@cache.memoize(timeout=CACHE_TIMEOUT_SERVICE)
-def get_json_dict_service(url: str, timeout: int = 5) -> dict:
-    """Fetch xxxx_index.json from the cloud repo and return as a dictionary.
-    Return an empty dict on any error to avoid breaking pages that depend on it.
+@cache.memoize(timeout=CACHE_TIMEOUT)
+def _get_service_detail_cached(tool_id: str, timeout: int = 5) -> dict:
+    """Fetch a tool/service detail JSON from the cloud repo."""
+    detail_url = f"https://cloud.vhp4safety.nl/service/{tool_id}.json"
+    return _get_json_dict_cached(detail_url, timeout=timeout)
+
+
+def get_service_detail(tool_id: str, timeout: int = 5) -> dict:
+    """Fetch service detail and return an empty dict on any error."""
+    if not tool_id:
+        return {}
+    if not re.match(r"^[A-Za-z0-9._-]+$", tool_id):
+        return {}
+    try:
+        return _get_service_detail_cached(tool_id, timeout=timeout)
+    except Exception:
+        return {}
+
+
+# Suffix the VHP glossary uses to mark an owl:Class as a Process Flow Step stage.
+_PROCESS_FLOW_STEP_SUFFIX = " (Process Flow Step)"
+# Matches a Turtle quoted literal, tolerating backslash escapes.
+_TTL_QUOTED = r'"((?:[^"\\]|\\.)*)"'
+
+
+@cache.memoize(timeout=CACHE_TIMEOUT)
+def get_process_flow_steps() -> dict:
+    """Fetch the VHP glossary and return its Process Flow Step stages.
+
+    Returns {glossary_uri: {"label": str, "slug": str, "description": str}} for
+    every owl:Class whose rdfs:label ends with " (Process Flow Step)". The
+    glossary has no formal typing for these, so they are identified by that
+    label convention. Returns an empty dict on any error so callers degrade
+    safely.
     """
     try:
-        resp = requests.get(url, timeout=timeout)
+        resp = requests.get(GLOSSARY_URL, timeout=5)
         if resp.status_code != 200:
             return {}
-        data = resp.json()
-        if isinstance(data, dict):
-            return data
-        else:
-            return {}
+        ttl = resp.text
     except Exception:
         return {}
+
+    steps = {}
+    # The glossary is Turtle with one blank-line-separated block per subject.
+    for block in ttl.split("\n\n"):
+        m_subj = re.match(r"\s*<([^>]+)>", block)
+        m_label = re.search(r"rdfs:label\s+" + _TTL_QUOTED, block)
+        if not (m_subj and m_label):
+            continue
+        label = m_label.group(1)
+        if not label.endswith(_PROCESS_FLOW_STEP_SUFFIX):
+            continue
+        m_desc = re.search(r"dc:description\s+" + _TTL_QUOTED, block)
+        clean_label = label[: -len(_PROCESS_FLOW_STEP_SUFFIX)].strip()
+        steps[m_subj.group(1)] = {
+            "label": clean_label,
+            # URL/id-safe anchor slug, computed once here so the templates that
+            # link to it (home.html) and define it (the accordion) can't drift.
+            "slug": clean_label.lower().replace(" ", "-"),
+            "description": (m_desc.group(1) if m_desc else "").strip(),
+        }
+    # sort by length of label descening
+    steps = dict(
+        sorted(steps.items(), key=lambda item: len(item[1]["label"]), reverse=True)
+    )
+    return steps
+
+
+def get_stage_explanations() -> dict:
+    """Stage label -> explanation: the glossary Process Flow Steps merged with
+    the non-glossary legacy labels still used by the data/models pages.
+    """
+    glossary = {
+        step["label"]: step["description"] for step in get_process_flow_steps().values()
+    }
+    return {**glossary, **STAGE_EXPLANATIONS_LEGACY}
+
+
+def get_stage_mapping() -> dict:
+    """Glossary URI -> stage label: the Process Flow Step URIs resolved from the
+    glossary merged with the legacy URI mappings.
+    """
+    glossary = {uri: step["label"] for uri, step in get_process_flow_steps().items()}
+    return {**glossary, **STAGE_MAPPING_LEGACY}
 
 
 # --- Partner logos ----------------------------------------------------------
@@ -268,22 +366,6 @@ def get_repository_data(
     return bs_results, zen_result
 
 
-def data_hit_id(hit: dict) -> str:
-    """Return the identifier to use in a /data/<id> URL for a repository hit.
-
-    BioStudies hits resolve to their accession; Zenodo hits to their numeric
-    recid. doi_url is intentionally never used -- it contains slashes the
-    /data/<dataid> route's string converter cannot match.
-    """
-    return (
-        hit.get("accession")
-        or hit.get("accno")
-        or hit.get("id")
-        or hit.get("recid")
-        or ""
-    )
-
-
 # Provide methods list to all templates for the Methods dropdown in the navbar
 @app.context_processor
 def inject_methods_menu():
@@ -313,7 +395,7 @@ def inject_tools_menu():
     """Fetch methods_index.json and expose a simple list of {id, title} to templates.
     Return an empty list on any error to avoid breaking pages.
     """
-    data = get_json_dict_service(SERVICES_URL)
+    data = get_json_dict(SERVICES_URL)
     if data:
         items = []
         for key, val in data.items() if isinstance(data, dict) else []:
@@ -338,7 +420,7 @@ def inject_data_menu():
         items = []
         for hit in hits:
             title = hit.get("title")
-            id = data_hit_id(hit)
+            id = hit.get("accession", "") or hit.get("doi_url", "") or hit.get("id", "")
             url = hit.get("url", "") or hit.get("doi_url")
             items.append({"id": id, "title": title, "url": url})
         # sort by title
@@ -353,7 +435,7 @@ def inject_data_menu():
 @app.route("/")
 def home():
     try:
-        tools = get_json_dict_service(
+        tools = get_json_dict(
             SERVICES_URL
         )  # Geting the service_list.json in the dictionary format.
         tools = list(tools.values())  # Converting the dictionary to a list object.
@@ -368,6 +450,7 @@ def home():
         num_tools=num_tools,
         num_case_studies=num_case_studies,
         num_datasets=num_datasets,
+        process_flow_steps=get_process_flow_steps(),
         partner_logos=get_partner_logos(),
     )
 
@@ -376,90 +459,26 @@ def home():
 ### The sitemap.xml for search engines
 @app.route("/sitemap.xml")
 def sitemap():
-    BASE = "https://platform.vhp4safety.nl"
-
-    # Static, parameter-less GET pages, derived from the URL map so new pages
-    # are picked up automatically. Machine endpoints are excluded. Routes with <params> are skipped and handled below.
-    EXCLUDED_ENDPOINTS = {"sitemap", "robots", "static"}
-    paths = sorted(
-        rule.rule.rstrip("/") or "/"
-        for rule in app.url_map.iter_rules()
-        if not rule.arguments
-        and rule.endpoint not in EXCLUDED_ENDPOINTS
-        and "GET" in (rule.methods or set())
-    )
-
-    # Tool detail pages
-    tools = get_json_dict_service(SERVICES_URL)
-    if isinstance(tools, dict):
-        paths += [f"/tools/{urllib.parse.quote(str(k))}" for k in tools]
-
-    # Method detail pages
-    methods = get_json_dict(METHODS_URL)
-    if isinstance(methods, dict):
-        paths += [f"/methods/{urllib.parse.quote(str(k))}" for k in methods]
-
-    # Dataset detail pages (BioStudies + Zenodo). Fetched in pages of 25 (the
-    # Zenodo API rejects larger page sizes) and looped until both sources are
-    # exhausted. load_metadata=False keeps this cheap (no per-file HEAD requests).
-    # A repo failure must never 500 the sitemap; tools/methods/case studies still
-    # serve.
-    DATA_PAGE_SIZE = 25
-    try:
-        page = 1
-        while True:
-            bs_results, zen_results = get_repository_data(
-                search_query="",
-                page=page,
-                page_size=DATA_PAGE_SIZE,
-                load_metadata=False,
-            )
-            bs_hits = (bs_results or {}).get("hits", [])
-            zen_hits = (zen_results or {}).get("hits", [])
-            for hit in bs_hits + zen_hits:
-                hit_id = data_hit_id(hit)
-                if hit_id:
-                    paths.append(f"/data/{urllib.parse.quote(str(hit_id))}")
-            total = max(
-                (bs_results or {}).get("total") or 0,
-                (zen_results or {}).get("total") or 0,
-            )
-            if (not bs_hits and not zen_hits) or page * DATA_PAGE_SIZE >= total:
-                break
-            page += 1
-    except Exception:
-        pass
-
-    # Case study detail pages
-    paths += [f"/casestudies/{urllib.parse.quote(c)}" for c in CASESTUDIES]
-
-    # Dedupe while preserving order
-    seen = set()
-    unique_paths = [p for p in paths if not (p in seen or seen.add(p))]
-
-    url_entries = "\n".join(
-        f"  <url>\n    <loc>{BASE}{p}</loc>\n  </url>" for p in unique_paths
-    )
-    sitemapContent = (
-        '<?xml version="1.0" encoding="utf-8"?>\n'
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-        f"{url_entries}\n"
-        "</urlset>\n"
-    )
+    sitemapContent = """<?xml version="1.0" encoding="utf-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://platform.vhp4safety.nl/</loc>
+  </url>
+  <url>
+    <loc>https://platform.vhp4safety.nl/casestudies</loc>
+  </url>
+  <url>
+    <loc>https://platform.vhp4safety.nl/tools</loc>
+  </url>
+  <url>
+    <loc>https://platform.vhp4safety.nl/methods</loc>
+  </url>
+  <url>
+    <loc>https://platform.vhp4safety.nl/data</loc>
+  </url>
+</urlset>
+"""
     return Response(sitemapContent, mimetype="text/xml")
-
-
-################################################################################
-### robots.txt points crawlers at the sitemap so the detail pages get indexed
-@app.route("/robots.txt")
-def robots():
-    robotsContent = (
-        "User-agent: *\n"
-        "Allow: /\n"
-        "\n"
-        "Sitemap: https://platform.vhp4safety.nl/sitemap.xml\n"
-    )
-    return Response(robotsContent, mimetype="text/plain")
 
 
 ################################################################################
@@ -468,7 +487,7 @@ def robots():
 def data():
     # Get query parameters for pagination and search
     page = request.args.get("page", 1, type=int)
-    page_size = request.args.get("page_size", 18, type=int)
+    page_size = min(request.args.get("page_size", 6, type=int), 6)
     search_query = request.args.get("query", "", type=str)
 
     # Get filter parameters
@@ -487,8 +506,11 @@ def data():
     if filter_flow_step:
         filters.append(("flow_step", filter_flow_step))
 
+    # Split page budget between the two repositories so the combined output
+    # respects page_size (e.g. page_size=6 -> 3 from each source).
+    per_source = max(page_size // 2, 1)
     bs_results, zen_results = get_repository_data(
-        search_query, page, page_size, filters=filters
+        search_query, page, per_source, filters=filters
     )
 
     # Extract studies and metadata
@@ -539,7 +561,7 @@ def data():
         hits_returned=hits_returned,
         pages_fetched=pages_fetched,
         page_size_met=page_size_met,
-        stage_explanations=STAGE_EXPLANATIONS,
+        stage_explanations=get_stage_explanations(),
         reg_question_explanations=REG_QUESTION_EXPLANATIONS,
     )
 
@@ -669,7 +691,7 @@ def models():
         hits_returned=hits_returned,
         pages_fetched=pages_fetched,
         page_size_met=page_size_met,
-        stage_explanations=STAGE_EXPLANATIONS,
+        stage_explanations=get_stage_explanations(),
         reg_question_explanations=REG_QUESTION_EXPLANATIONS,
     )
 
@@ -682,83 +704,24 @@ def models():
 @app.route("/tools")
 def tools():
     try:
-        tools = get_json_dict_service(
+        tools = get_json_dict(
             SERVICES_URL
         )  # Geting the service_list.json in the dictionary format.
         tools = list(tools.values())  # Converting the dictionary to a list object.
 
-        # Mapping the URLs with glossary IDs to their text values.
-        stage_mapping = {
-            "https://vhp4safety.github.io/glossary#VHP0000153": "Chemical Characteristics and Hazard Identification",
-            "https://vhp4safety.github.io/glossary#VHP0000154": "Exposure",
-            "https://vhp4safety.github.io/glossary#VHP0000155": "Toxicokinetics",
-            "https://vhp4safety.github.io/glossary#VHP0000156": "Toxicodynamics",
-            "https://vhp4safety.github.io/glossary#VHP0000158": "Adverse Outcome",
-            # Legacy mappings (superseded by the Process Flow Step URIs above)
-            "https://vhp4safety.github.io/glossary#VHP0000056": "ADME",
-            "https://vhp4safety.github.io/glossary#VHP0000102": "Hazard Assessment",
-            "https://vhp4safety.github.io/glossary#VHP0000148": "Chemical Information",
-            "https://vhp4safety.github.io/glossary#VHP0000149": "General",
-        }
+        # Glossary URI -> stage label: Process Flow Steps resolved from the VHP
+        # glossary, merged with the legacy URI mappings.
+        stage_mapping = get_stage_mapping()
 
+        # Map stage URLs to readable labels up front -- needed for filtering
+        # and for building the stage dropdown.
         for tool in tools:
             full_stage_url = tool.get("stage", "")
-
-            # Writing the service name and stage values in the logs for troubleshooting.
-            # print(f"Tool: {tool['service']}, Stage URL: {full_stage_url}")  # Log the full URL
-
-            # Checking if the full URL is in the mapping and updating the stage.
             if full_stage_url in stage_mapping:
-                # print(f"Mapping stage URL {full_stage_url} to {stage_mapping[full_stage_url]}")  # Log the mapping
                 tool["stage"] = stage_mapping[full_stage_url]
             elif tool["stage"] in ["NA", "Unknown"]:
-                tool["stage"] = (
-                    "Other"  # Combining "NA" and "Unknown" stages in a single stage-type, "Other".
-                )
-
-            html_name = tool.get("html_name")
-            md_name = tool.get("md_file_name")
-            png_name = tool.get("png_file_name")
-
-            tool["url"] = f"https://cloud.vhp4safety.nl/service/{html_name}"
-            tool["meta_data"] = (
-                f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{md_name}"
-                if md_name
-                else "md file not found"
-            )
-
-            # Check if the tool has the placeholder logo
-            placeholder_logo = "https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png"
-            if png_name == placeholder_logo:
-                tool["png"] = None  # set to None if it's the common placeholder
-            else:
-                tool["png"] = (
-                    f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}"
-                    if not png_name.startswith("http")
-                    else png_name
-                )
-
-            inst_url = tool.get("inst_url", "no_url")
-            if not inst_url:  # catches "" as well
-                inst_url = "no_url"
-            tool["inst_url"] = inst_url
-
-            # Fetch per-tool detail JSON to check hosting status
-            tool_id = tool.get("id", "")
-            vhp_hosted = False
-            if inst_url != "no_url" and tool_id:
-                try:
-                    detail_url = f"https://cloud.vhp4safety.nl/service/{tool_id}.json"
-                    detail_resp = requests.get(detail_url, timeout=5)
-                    if detail_resp.status_code == 200:
-                        detail = detail_resp.json()
-                        vhp_platform = (
-                            detail.get("instance", {}).get("vhp-platform", "").lower()
-                        )
-                        vhp_hosted = vhp_platform not in ("external", "independent", "")
-                except Exception:
-                    pass
-            tool["vhp_hosted"] = vhp_hosted
+                # Combining "NA" and "Unknown" stages in a single stage-type, "Other".
+                tool["stage"] = "Other"
 
         # Getting selected stages from the URL.
         selected_stages = request.args.getlist("stage")
@@ -798,6 +761,56 @@ def tools():
                 if search_query in tool.get("service", "").lower()
             ]
 
+        # Pagination
+        page = request.args.get("page", 1, type=int)
+        page_size = min(request.args.get("page_size", 6, type=int), 6)
+        total = len(tools)
+        start = (page - 1) * page_size
+        end = start + page_size
+        tools = tools[start:end]
+        has_prev = page > 1
+        has_next = end < total
+
+        # Enrich only the tools on the current page. The per-tool detail fetch
+        # below makes one HTTP request per tool, so doing it after pagination
+        # keeps it to ~page_size requests instead of one for every tool.
+        placeholder_logo = "https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png"
+        for tool in tools:
+            html_name = tool.get("html_name")
+            md_name = tool.get("md_file_name")
+            png_name = tool.get("png_file_name")
+
+            tool["url"] = f"https://cloud.vhp4safety.nl/service/{html_name}"
+            tool["meta_data"] = (
+                f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{md_name}"
+                if md_name
+                else "md file not found"
+            )
+
+            # Check if the tool has the placeholder logo
+            if png_name == placeholder_logo:
+                tool["png"] = None  # set to None if it's the common placeholder
+            else:
+                tool["png"] = (
+                    f"https://raw.githubusercontent.com/VHP4Safety/cloud/main/docs/service/{png_name}"
+                    if not png_name.startswith("http")
+                    else png_name
+                )
+
+            inst_url = tool.get("inst_url", "no_url")
+            if not inst_url:  # catches "" as well
+                inst_url = "no_url"
+            tool["inst_url"] = inst_url
+
+            # Fetch per-tool detail JSON to check hosting status
+            tool_id = tool.get("id", "")
+            vhp_hosted = False
+            if inst_url != "no_url" and tool_id:
+                detail = get_service_detail(tool_id)
+                vhp_platform = detail.get("instance", {}).get("vhp-platform", "").lower()
+                vhp_hosted = vhp_platform not in ("external", "independent", "")
+            tool["vhp_hosted"] = vhp_hosted
+
         return render_template(
             "tools/tools.html",
             tools=tools,
@@ -805,8 +818,14 @@ def tools():
             selected_stages=selected_stages,
             reg_questions=reg_questions,
             selected_questions=selected_questions,
-            stage_explanations=STAGE_EXPLANATIONS,
+            stage_explanations=get_stage_explanations(),
             reg_question_explanations=REG_QUESTION_EXPLANATIONS,
+            page=page,
+            page_size=page_size,
+            total=total,
+            has_prev=has_prev,
+            has_next=has_next,
+            search_query=search_query,
         )
 
     except Exception as e:
@@ -818,14 +837,12 @@ def tools():
 @app.route("/methods/")
 def methods():
     """Fetch methods_index.json from the cloud repo, normalize fields and render a methods list page."""
-    url = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/main/cap/methods_index.json"
-    response = requests.get(url)
+    methods = get_json_dict(METHODS_URL)  # cached for CACHE_TIMEOUT (5 days)
 
-    if response.status_code != 200:
-        return f"Error fetching methods list: {response.status_code}", 503
+    if not methods:
+        return "Error fetching methods list", 503
 
     try:
-        methods = response.json()
         methods = list(methods.values())  # convert dict to list
 
         # Normalize fields for the template and collect stages
@@ -910,16 +927,32 @@ def methods():
             stages.remove("Other")
             stages.append("Other")
 
+        # Pagination
+        page = request.args.get("page", 1, type=int)
+        page_size = min(request.args.get("page_size", 6, type=int), 6)
+        total = len(methods_filtered)
+        start = (page - 1) * page_size
+        end = start + page_size
+        methods_page = methods_filtered[start:end]
+        has_prev = page > 1
+        has_next = end < total
+
         # Pass everything the template expects
         return render_template(
             "methods/methods.html",
-            methods=methods_filtered,
+            methods=methods_page,
             stages=stages,
             selected_stages=selected_stages,
             reg_questions=reg_questions,
             selected_questions=selected_questions,
-            stage_explanations=STAGE_EXPLANATIONS,
+            stage_explanations=get_stage_explanations(),
             reg_question_explanations=REG_QUESTION_EXPLANATIONS,
+            page=page,
+            page_size=page_size,
+            total=total,
+            has_prev=has_prev,
+            has_next=has_next,
+            search_query=search_query,
         )
 
     except Exception as e:
@@ -972,7 +1005,7 @@ def method_page(methodid):
 def tool_page(toolname):
     # get the tools metadata:
     try:
-        tools = get_json_dict_service(SERVICES_URL)
+        tools = get_json_dict(SERVICES_URL)
         tools = dict(tools)
         # Geting the service_list.json in the dictionary format.
         # Converting the dictionary to a list object.
@@ -1031,9 +1064,11 @@ def impact():
 
 
 # General Safety Assessment Workflow page
-@app.route("/Safety_Assessment_Workflow")
+@app.route("/safety_assessment_workflow")
 def SafetyAssessmentWorkflow():
-    return render_template("Safety_Assessment_Workflow.html")
+    return render_template(
+        "safety_assessment_workflow.html", process_flow_steps=get_process_flow_steps()
+    )
 
 
 ################################################################################
