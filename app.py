@@ -12,7 +12,7 @@ from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
 
 # from wikidataintegrator import wdi_core
-# from wikibaseintegrator import wbi_helpers
+from wikibaseintegrator import wbi_helpers
 
 # Import BioStudies extractor
 from data.biostudies.search import BioStudiesExtractor
