@@ -1,10 +1,11 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
 
+{% block head %}
 <!-- Page-specific CSS for home page -->
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/home.css') }}"
-/>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}" />
+{% endblock %}
+
+{% block content %}
 
 <!-- Hero section: main title and image -->
 <section class="container pt-md-5 pb-md-5 py-3">
@@ -116,7 +117,7 @@
 	<div>
 	<!---<h4>What is the Virtual Human Platform?</h4>-->
 	<p>The Virtual Human Platform (VHP) is a digital infrastructure that supports human-relevant risk assessment of chemicals and pharmaceuticals. By integrating  human-derived data, advanced in vitro models, and  computational tools, the VHP enables transparent, reproducible and mechanistically informed safety assessment moving beyond traditional animal testing. </p>
-	<p>Through structured, interactive workflows and a user-friendly interface, the platform tackles real-word regulatory questions (<a href="/casestudies">'case studies'</a>) by connecting <a href="/tools">tools</a>, <a href="/methods">methods</a> and <a href="/data">data</a>.</p>
+	<p>Through structured, interactive workflows and a user-friendly interface, the platform tackles real-world regulatory questions (<a href="/casestudies">'case studies'</a>) by connecting <a href="/tools">tools</a>, <a href="/methods">methods</a> and <a href="/data">data</a>.</p>
 
 	<hr class="my-3">
 

@@ -205,6 +205,9 @@ def get_process_flow_steps() -> dict:
     except Exception:
         return {}
 
+    # Normalise line endings so the split works regardless of CRLF / LF
+    ttl = ttl.replace("\r\n", "\n")
+
     steps = {}
     # The glossary is Turtle with one blank-line-separated block per subject.
     for block in ttl.split("\n\n"):
@@ -409,6 +412,22 @@ def inject_tools_menu():
         return {"tools_menu": []}
 
 
+def data_hit_id(hit: dict) -> str:
+    """Return the identifier to use in a /data/<id> URL for a repository hit.
+
+    BioStudies hits resolve to their accession; Zenodo hits to their numeric
+    recid. doi_url is intentionally never used -- it contains slashes the
+    /data/<dataid> route's string converter cannot match.
+    """
+    return (
+        hit.get("accession")
+        or hit.get("accno")
+        or hit.get("id")
+        or hit.get("recid")
+        or ""
+    )
+
+
 @app.context_processor
 def inject_data_menu():
     """Fetch methods_index.json and expose a simple list of {id, title} to templates.
@@ -421,7 +440,7 @@ def inject_data_menu():
         items = []
         for hit in hits:
             title = hit.get("title")
-            id = hit.get("accession", "") or hit.get("doi_url", "") or hit.get("id", "")
+            id = data_hit_id(hit)
             url = hit.get("url", "") or hit.get("doi_url")
             items.append({"id": id, "title": title, "url": url})
         # sort by title
@@ -483,12 +502,25 @@ def sitemap():
 
 
 ################################################################################
+### robots.txt points crawlers at the sitemap so the detail pages get indexed
+@app.route("/robots.txt")
+def robots():
+    robotsContent = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "\n"
+        "Sitemap: https://platform.vhp4safety.nl/sitemap.xml\n"
+    )
+    return Response(robotsContent, mimetype="text/plain")
+
+
+################################################################################
 ### Pages under 'Data'
 @app.route("/data")
 def data():
     # Get query parameters for pagination and search
     page = request.args.get("page", 1, type=int)
-    page_size = min(request.args.get("page_size", 6, type=int), 6)
+    page_size = request.args.get("page_size", 6, type=int)
     search_query = request.args.get("query", "", type=str)
 
     # Get filter parameters
@@ -764,7 +796,7 @@ def tools():
 
         # Pagination
         page = request.args.get("page", 1, type=int)
-        page_size = min(request.args.get("page_size", 6, type=int), 6)
+        page_size = request.args.get("page_size", 6, type=int)
         total = len(tools)
         start = (page - 1) * page_size
         end = start + page_size
@@ -789,7 +821,7 @@ def tools():
             )
 
             # Check if the tool has the placeholder logo
-            if png_name == placeholder_logo:
+            if not png_name or png_name == placeholder_logo:
                 tool["png"] = None  # set to None if it's the common placeholder
             else:
                 tool["png"] = (
@@ -930,7 +962,7 @@ def methods():
 
         # Pagination
         page = request.args.get("page", 1, type=int)
-        page_size = min(request.args.get("page_size", 6, type=int), 6)
+        page_size = request.args.get("page_size", 6, type=int)
         total = len(methods_filtered)
         start = (page - 1) * page_size
         end = start + page_size

@@ -1,49 +1,77 @@
-{% extends "base.html" %} {% block content %}
+{% extends 'base.html' %}
 
-<!-- Page-specific CSS for home page -->
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/home.css') }}"
-/>
-
-<!-- Font Awesome Icons for social/contact icons -->
-<link
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-  rel="stylesheet"
-/>
-<!-- Tab section: navigation to Tools, Case Studies, Data -->
-<section class="bg-vhpblue img-fluid py-5">
-  <div class="container">
-    <div class="py-4">
-      <div class="row gy-4">
-</section> 
-<!-- Process flow description -->
-<section class="container py-5" id="about-section">
-  <h2 class="mb-4"><strong>The Safety Assessment Workflow</strong></h2>
-  <p>
-    The Safety Assessment Workflow is a combination of tools and data selected and integrated to perform generic risk assessment.
-    The Flow consists of five Steps.
-  </p>
-<h2 class="mb-4"><strong>The five Safety Assessment Workflow Steps</strong></h2>
-  <p>
-    Each step is one of the components of the Safety Assessment Workflow and categorizes processes that users can perform with the Virtual Human Platform.
-    Each step is named after a term from the VHP4Safety Glossary.
-    The five Safety Assessment Workflow are not sequential.
-</p>
-  <div class="accordion accordion-flush" id="process-flow-accordion">
-    <!-- Process flow steps will be dynamically loaded here -->
-    <div class="text-center py-4">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- Scroll down arrow for navigation -->
-<div class="scroll-down-arrow" style="border-top: 20px solid var(--bs-vhppink);" onclick="scrollToNextSection()"></div>
-
-<!-- Process Flow Script -->
-<script src="{{ url_for('static', filename='js/process_flow.js') }}"></script>
-
+{% block head %}
+  <!-- Page-specific CSS for safety assessment workflow page -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}" />
 {% endblock %}
 
+{% block content %}
+  <!-- Workflow description -->
+  <section class="container py-md-5 py-3" id="about-section">
+    <h1 class="text-vhppurple">Safety Assessment Workflow</h1>
+    <p class="text-secondary fs-5">
+      The Virtual Human Platform uses a generic safety assessment workflow as a five-step process to collect information critical for risk characterisation.
+    </p>
+
+    <h2 class="h4 mt-5">Safety Assessment Workflow Steps</h2>
+    <p>
+      Each step is one of the components of the Safety Assessment Workflow and categorizes processes that users can perform with the Virtual Human Platform. Each step is named after a term from the VHP4Safety Glossary. The five Safety Assessment Workflow steps are not sequential. Expand a step below to learn more.
+    </p>
+
+    <div class="accordion accordion-flush" id="process-flow-accordion">
+      {% for v in process_flow_steps.values() %}
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="definition-{{ v.slug }}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ v.slug }}" aria-expanded="false" aria-controls="collapse-{{ v.slug }}">{{ v.label }}</button>
+          </h2>
+          <div id="collapse-{{ v.slug }}" class="accordion-collapse collapse" aria-labelledby="definition-{{ v.slug }}" data-bs-parent="#process-flow-accordion">
+            <div class="accordion-body">{{ v.description }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}
+
+{# Open the accordion item referenced by the URL hash (e.g. #definition-exposure),
+   using the native Bootstrap Collapse API. Runs on load and on hash changes. #}
+{% block scripts %}
+  <script>
+    (function () {
+      function openAccordionFromHash() {
+        const hash = window.location.hash;
+        if (!hash) return;
+        let target;
+        try {
+          target = document.querySelector(hash);
+        } catch (e) {
+          return; // malformed selector in the hash
+        }
+        if (!target) return;
+
+        // Resolve the .accordion-collapse panel whether the hash points at the
+        // header, the toggle button, or the panel itself.
+        let panel = target.closest(".accordion-collapse");
+        if (!panel) {
+          const button = target.matches('[data-bs-toggle="collapse"]')
+            ? target
+            : target.querySelector('[data-bs-toggle="collapse"]');
+          if (button) {
+            panel = document.querySelector(button.getAttribute("data-bs-target"));
+          }
+        }
+        if (panel) {
+          // After the panel finishes expanding, scroll the header into view.
+          // The html { scroll-padding-top } rule keeps it clear of the navbar.
+          panel.addEventListener("shown.bs.collapse", function onShown() {
+            panel.removeEventListener("shown.bs.collapse", onShown);
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, { once: true });
+          bootstrap.Collapse.getOrCreateInstance(panel).show();
+        }
+      }
+      window.addEventListener("DOMContentLoaded", openAccordionFromHash);
+      window.addEventListener("hashchange", openAccordionFromHash);
+    })();
+  </script>
+{% endblock %}

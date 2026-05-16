@@ -32,6 +32,8 @@
       href="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png"
       type="image/x-icon"
     />
+
+    {% block head %}{% endblock %}
   </head>
 
   <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top">
@@ -348,5 +350,7 @@
       window.DATA_MENU = (function(){ try { return {{ data_menu | tojson | safe }}; } catch(e) { return []; } })();
       window.DATA_MENU = Array.isArray(window.DATA_MENU) ? window.DATA_MENU : [];
     </script>
+
+    {% block scripts %}{% endblock %}
   </body>
 </html>

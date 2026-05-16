@@ -16,10 +16,6 @@ body {
   scrollbar-width: none;  /* Firefox */
 }
 
-/* Cap container width site-wide for consistent reading width */
-/* .container {
-  max-width: 900px !important;
-} */
 body::-webkit-scrollbar {
   display: none;
 }
