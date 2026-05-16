@@ -137,7 +137,7 @@
         {% if tool_details.instance %}
           {% if tool_details.instance.url %}
           <div style="margin-top: 5px">
-            <a type="button" href="{{ tool_details.instance.url }}" class="btn btn-vhpblue flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Try VHP-hosted instance">Run the tool</a>
+            <a type="button" href="{{ tool_details.instance.url }}" class="btn btn-vhpblue flex-grow-1" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-title="Try VHP-hosted instance">Run the tool</a>
           </div>
           {% endif %}
         {% elif tool_details.url %}

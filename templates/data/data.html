@@ -129,7 +129,7 @@
                     <div class="card-footer btn-group bg-white border-0 py-3" role="group">
                             <a href="{{ url_for('data_detail', dataid=study.accession) }}" style="min-width:70px" class="btn btn-vhpblue" role="button" data-bs-toggle="tooltip" data-bs-title="View details"><i class="bi bi-info-circle"></i></a>
                             {% if study.url%}
-                            <a href="{{ study.url}}" class="btn btn-outline-vhpblue d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View in BioStudies</a>
+                            <a href="{{ study.url}}" class="btn btn-outline-vhpblue d-inline" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right pe-1"></i> View in BioStudies</a>
                             {% endif%}
 
                             {% if study.metadata.rocrate_url %}
@@ -171,7 +171,7 @@
                     <div class="card-footer btn-group bg-white border-0 py-3" role="group">
                             <a href="{{ url_for('data_detail', dataid=dataset.id) }}" style="min-width:70px" class="btn btn-vhpblue" role="button" data-bs-toggle="tooltip" data-bs-title="View details"><i class="bi bi-info-circle"></i></a>
                             {% if dataset.doi_url%}
-                            <a href="{{ dataset.doi_url}}" class="btn btn-outline-vhpblue d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View on Zenodo</a>
+                            <a href="{{ dataset.doi_url}}" class="btn btn-outline-vhpblue d-inline" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right pe-1"></i> View on Zenodo</a>
                             {% endif%}
                             {% if dataset.links.archive%}
                             <a href="{{ dataset.links.archive}}" class="btn btn-outline-secondary d-inline view-details-btn"><i class="bi bi-box-fill pe-1"></i>{%if dataset.parsed_metadata.is_rocrate %}RO-Crate{% else %}Archive{% endif %}</a>

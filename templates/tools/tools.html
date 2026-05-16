@@ -150,9 +150,9 @@
 
                              <!-- Go to tool -->
                             {% if item.inst_url != "no_url" %}
-                                <a type="button" href="{{ item.inst_url }}" class="btn btn-vhpblue flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Go to tool">Go to tool</a>
+                                <a type="button" href="{{ item.inst_url }}" class="btn btn-vhpblue flex-grow-1" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-title="Go to tool">Go to tool</a>
                             {% elif item.main_url != "no_url" %}
-                                <a type="button" href="{{ item.main_url }}" class="btn btn-vhpblue flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Go to tool">Go to tool</a>
+                                <a type="button" href="{{ item.main_url }}" class="btn btn-vhpblue flex-grow-1" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-title="Go to tool">Go to tool</a>
                             {% else %}
                                 <a type="button" class="btn btn-outline-vhpblue disabled flex-grow-1" data-bs-toggle="tooltip" data-bs-title="No webpage available">Go to tool</a>
                             {% endif %}
