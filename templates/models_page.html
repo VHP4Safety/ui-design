@@ -6,7 +6,7 @@
 <section class="container py-md-5 py-3 d-flex flex-column min-vh-100">
     <!-- Page Title and Description -->
     <div class="">
-        <h1><span class="text-vhpteal" id="collection-name">{{ collection_name or 'Data catalog' }} Models</span></h1>
+        <h1><span class="text-vhpblue" id="collection-name">{{ collection_name or 'Data catalog' }} Models</span></h1>
         <p class="text-secondary fs-5">Explore models generated or used in <span id="collection-name-sub">{{ collection_name }} and hosted on FAIRdom or BioModels archive.</span></p>
     </div>
 
@@ -18,7 +18,7 @@
             <input type="hidden" name="filter_regulatory_question" id="filter_regulatory_question" value="{{ filter_regulatory_question or '' }}" />
             <input type="hidden" name="filter_flow_step" id="filter_flow_step" value="{{ filter_flow_step or '' }}" />
             <div class="btn-group" role="group" aria-label="Search and filter buttons">
-                <button type="submit" class="btn btn-outline-vhpteal">Search</button>
+                <button type="submit" class="btn btn-outline-vhpblue">Search</button>
                 <a href="{{ url_for('data') }}" class="btn btn-outline-danger text-nowrap">Clear</a>
                 <button type="button" id="filter-toggle-btn" class="btn btn-outline-secondary">Filters</button>
             </div>
@@ -45,13 +45,13 @@
                         Flow Step
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="ADME" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['ADME'] }}">ADME <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Chemical Information" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Chemical Information'] }}">Chemical Information <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="General" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['General'] }}">General <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Hazard Assessment" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Hazard Assessment'] }}">Hazard Assessment <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="External exposure" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['External exposure'] }}">External exposure <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Generic" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Generic'] }}">Generic <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Other" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Other'] }}">Other <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="ADME" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['ADME'] }}">ADME <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Chemical Information" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Chemical Information'] }}">Chemical Information <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="General" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['General'] }}">General <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Hazard Assessment" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Hazard Assessment'] }}">Hazard Assessment <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="External exposure" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['External exposure'] }}">External exposure <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Generic" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Generic'] }}">Generic <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Other" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Other'] }}">Other <i class="bi bi-question-circle text-vhpblue"></i></a></li>
                     </ul>
                 </div>
                 
@@ -61,12 +61,12 @@
                         Regulatory Question
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Kidney Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Kidney Case Study (a)'] }}">Kidney Case Study (a) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Kidney Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Kidney Case Study (b)'] }}">Kidney Case Study (b) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Parkinson Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Parkinson Case Study (a)'] }}">Parkinson Case Study (a) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Parkinson Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Parkinson Case Study (b)'] }}">Parkinson Case Study (b) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Thyroid Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Thyroid Case Study (a)'] }}">Thyroid Case Study (a) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Thyroid Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Thyroid Case Study (b)'] }}">Thyroid Case Study (b) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Kidney Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Kidney Case Study (a)'] }}">Kidney Case Study (a) <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Kidney Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Kidney Case Study (b)'] }}">Kidney Case Study (b) <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Parkinson Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Parkinson Case Study (a)'] }}">Parkinson Case Study (a) <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Parkinson Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Parkinson Case Study (b)'] }}">Parkinson Case Study (b) <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Thyroid Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Thyroid Case Study (a)'] }}">Thyroid Case Study (a) <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Thyroid Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Thyroid Case Study (b)'] }}">Thyroid Case Study (b) <i class="bi bi-question-circle text-vhpblue"></i></a></li>
                     </ul>
                 </div>
             </div>
@@ -82,7 +82,7 @@
             </div>
             
             <div class="">
-                <button id="apply-filter-btn" class="btn btn-sm btn-vhpteal mt-2">Apply</button>
+                <button id="apply-filter-btn" class="btn btn-sm btn-vhpblue mt-2">Apply</button>
                 <button id="clear-filter-btn" class="btn btn-sm btn-outline-danger mt-2">Clear</button>
             </div>
         </div>
@@ -96,9 +96,9 @@
         <strong>Filters Active:</strong> Showing {{ hits_returned }} results
         {% if not page_size_met %}(fetched {{ pages_fetched }} page(s), timeout reached){% endif %}
         | 
-        {% if filter_case_study %}<span class="badge bg-vhpteal">Case Study: {{ filter_case_study }}</span> {% endif %}
-        {% if filter_flow_step %}<span class="badge bg-vhpteal">Flow Step: {{ filter_flow_step }}</span> {% endif %}
-        {% if filter_regulatory_question %}<span class="badge bg-vhpteal">Regulatory Question: {{ filter_regulatory_question }}</span> {% endif %}
+        {% if filter_case_study %}<span class="badge bg-vhpblue">Case Study: {{ filter_case_study }}</span> {% endif %}
+        {% if filter_flow_step %}<span class="badge bg-vhpblue">Flow Step: {{ filter_flow_step }}</span> {% endif %}
+        {% if filter_regulatory_question %}<span class="badge bg-vhpblue">Regulatory Question: {{ filter_regulatory_question }}</span> {% endif %}
     </div>
     {% endif %}
 
@@ -137,7 +137,7 @@
                          style="grid-template-columns: repeat(3, 1fr); gap: 0.4rem;">
                         <!-- This URL link should be changed to URL location of models -->
                         <a href="{{ study.url or '#' }}" 
-                           class="btn btn-sm btn-outline-vhpteal"
+                           class="btn btn-sm btn-outline-vhpblue"
                            target="_blank">
                             <i class="bi bi-box-arrow-up-right pe-1"></i>
                             View 
@@ -149,7 +149,7 @@
                         </a>
                         <!-- Button to show metadata on the modelpage itself -->
                         <button type="button"
-                            class="btn btn-sm btn-outline-vhpteal"
+                            class="btn btn-sm btn-outline-vhpblue"
                             data-bs-toggle="tooltip"
                             data-bs-title="View metadata (.md)"
                             onclick="showMetadata('{{ study.meta_data }}', '{{ study.title }}')">
@@ -205,7 +205,7 @@
                 'flow-step': 'Flow Step',
                 'reg-question': 'Reg. Question'
             },
-            badgeClass: 'badge rounded-pill text-bg-vhpteal',
+            badgeClass: 'badge rounded-pill text-bg-vhpblue',
             showFilterPanel: {% if filter_case_study or filter_flow_step or filter_regulatory_question %}true{% else %}false{% endif %}
         });
     });
@@ -224,7 +224,7 @@
       </div>
       <div class="modal-body">
         <div id="metadata-loading" class="text-center py-4">
-          <div class="spinner-border text-vhpteal" role="status">
+          <div class="spinner-border text-vhpblue" role="status">
             <span class="visually-hidden">Loading...</span>
           </div>
           <p class="mt-2">Loading metadata...</p>
@@ -234,7 +234,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-vhpteal" onclick="downloadMetadata()">
+        <button type="button" class="btn btn-vhpblue" onclick="downloadMetadata()">
           <i class="bi bi-download me-1"></i>Download MD file
         </button>
       </div>

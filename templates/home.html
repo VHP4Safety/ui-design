@@ -1,17 +1,11 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
 
+{% block head %}
 <!-- Page-specific CSS for home page -->
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/home.css') }}"
-/>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}" />
+{% endblock %}
 
-<!-- Font Awesome Icons for social/contact icons -->
-<link
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-  rel="stylesheet"
-/>
-
+{% block content %}
 
 <!-- Hero section: main title and image -->
 <section class="container pt-md-5 pb-md-5 py-3">
@@ -26,60 +20,15 @@
     </div>
 
     <div class="col-md-8">
-      <h1 class="display-3 fw-bold text-uppercase text-vhppurple mb-4" style="color: #29235c;">
+      <h1 class="display-3 fw-bold text-uppercase text-vhppurple mb-4">
         The Virtual <br />
         Human Platform
       </h1>
 
-      <p class="lead text-uppercase text-secondary">
-        safety assessment of chemicals and pharmaceuticals using
-        human data-driven tools and case studies
+      <p class="lead text-secondary" style="letter-spacing: 0.05em;">
+        Safety assessment of chemicals and pharmaceuticals using
+        human data-driven tools and case studies.
       </p>
-    </div>
-  </div>
-
-  <!-- Workflow section -->
-  <div class="row mt-5 text-justify">
-    <div class="col-12 mb-3">
-      <h3 class="text-vhppurple">Safety Assessment Workflow </h3>
-      <p class="text-muted">
-        The Virtual Human Platform implements a generic safety assessment as a six-step process.
-      </p>
-    </div>
-
-    <div class="col-12">
-      <div class="row row-cols-1 row-cols-md-6 g-3">
-        <div class="col d-grid">
-          <div class="btn btn-vhppurple text-white d-flex align-items-center justify-content-center text-center">
-            Hazard & Chemical Characterization
-          </div>
-        </div>
-        <div class="col d-grid">
-          <div class="btn btn-vhppurple text-white d-flex align-items-center justify-content-center text-center">
-            External Exposure
-          </div>
-        </div>
-        <div class="col d-grid">
-          <div class="btn btn-vhppurple text-white d-flex align-items-center justify-content-center text-center">
-            Toxicokinetics
-          </div>
-        </div>
-        <div class="col d-grid">
-          <div class="btn btn-vhppurple text-white d-flex align-items-center justify-content-center text-center">
-            Internal Exposure
-          </div>
-        </div>
-        <div class="col d-grid">
-          <div class="btn btn-vhppurple text-white d-flex align-items-center justify-content-center text-center">
-            AOP
-          </div>
-        </div>
-        <div class="col d-grid">
-          <div class="btn btn-vhppurple text-white d-flex align-items-center justify-content-center text-center">
-            Adverse Outcome
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -94,13 +43,12 @@
         <!-- Case Studies card -->
         <div class="col-md-3">
 
-          <div class="card text-center card-button card-button-vhppink-distinct h-100 shadow-sm" onclick="location.href='/casestudies'">
-            <div class="card-header bg-vhppink-distinct ">
+          <div class="card text-center border-2 rounded-2 card-button card-button-vhppink-distinct h-100 shadow-sm" onclick="location.href='/casestudies'">
+            <div class="card-header rounded-top-1 bg-vhppink-distinct ">
               <h5 class="card-title text-white m-0">Case Studies</h5>
             </div>
             <div class="card-body">
-              Have a look at our case studies to see how different tools, methods and data can be
-              combined to answer your regulatory question.
+              See how tools, methods and data combine to answer regulatory questions.
             </div>
             <div class="card-footer text-body-secondary">
               <span class="badge rounded-pill bg-vhppink-distinct text-white">{{num_case_studies}}</span> case studies 
@@ -111,13 +59,12 @@
          <!-- Tools card -->
         <div class="col-md-3">
 
-          <div class="card text-center  card-button card-button-vhpblue h-100 shadow-sm" onclick="location.href='/tools'">
-            <div class="card-header bg-vhpblue ">
+          <div class="card text-center border-2 rounded-2 card-button-vhpblue h-100 shadow-sm" onclick="location.href='/tools'">
+            <div class="card-header rounded-top-1 bg-vhpblue ">
               <h5 class="card-title text-white m-0">Tools</h5>
             </div>
             <div class="card-body">
-              Select our <i>in silico</i> tools to streamline your safety assessment process
-                and get results relevant to your research.
+              Select an <i>in silico</i> tool to streamline your safety assessment.
             </div>
             <div class="card-footer text-body-secondary">
               <span class="badge rounded-pill bg-vhpblue text-white">{{num_tools}}</span> tools
@@ -128,12 +75,12 @@
         <!-- Methods card -->
         <div class="col-md-3">
 
-          <div class="card text-center  card-button card-button-vhpblue h-100 shadow-sm" onclick="location.href='/methods'">
-            <div class="card-header bg-vhpblue ">
+          <div class="card text-center border-2 rounded-2 card-button card-button-vhpblue h-100 shadow-sm" onclick="location.href='/methods'">
+            <div class="card-header rounded-top-1 bg-vhpblue ">
               <h5 class="card-title text-white m-0">Methods</h5>
             </div>
             <div class="card-body">
-            Select an in vitro method to perform your safety assessment.
+            Select an <i>in vitro</i> method to perform your safety assessment.
             </div>
             <div class="card-footer text-body-secondary">
               <span class="badge rounded-pill bg-vhpblue text-white">{{18}}</span> methods
@@ -145,16 +92,15 @@
         <!-- Data card -->
         <div class="col-md-3">
 
-          <div class="card text-center card-button card-button-vhpblue h-100 shadow-sm" onclick="location.href='/data'">
-            <div class="card-header bg-vhpblue ">
+          <div class="card text-center border-2 rounded-2 card-button card-button-vhpblue h-100 shadow-sm" onclick="location.href='/data'">
+            <div class="card-header rounded-top-1 bg-vhpblue ">
               <h5 class="card-title text-white m-0">Data</h5>
             </div>
-            <div class="card-body"  style="text-align: justify;">
-               Find all the (meta)data you need to use the VHP tools and run
-                workflows as efficiently as possible.
+            <div class="card-body">
+              Find the (meta)data you need for tools and workflows.
             </div>
             <div class="card-footer text-body-secondary">
-              <span class="badge rounded-pill bg-vhpblue text-white">{{num_datasets}}</span> datasets 
+              <span class="badge rounded-pill bg-vhpblue text-white">{{num_datasets}}</span> datasets
             </div>
           </div>
         </div>
@@ -163,28 +109,101 @@
   </div>
 
 </section>
+
 <!-- About section: project description and mission -->
 <section class="container py-5">
-  <h2 id="about-section" class="mb-4" style="scroll-margin-top: 6rem;"><strong>About the Virtual Human Platform</strong></h2>
+  <h1 id="main-text-section" class="" >Virtual Human Platform</h1>
+  <p class="text-secondary fs-5">A digital infrastructure for animal-free safety assessment.</p>
 	<div>
 	<!---<h4>What is the Virtual Human Platform?</h4>-->
 	<p>The Virtual Human Platform (VHP) is a digital infrastructure that supports human-relevant risk assessment of chemicals and pharmaceuticals. By integrating  human-derived data, advanced in vitro models, and  computational tools, the VHP enables transparent, reproducible and mechanistically informed safety assessment moving beyond traditional animal testing. </p>
-	<p>Through structured, interactive workflows and a user-friendly interface, the platform connects data, models, and analytical tools to address real-word regulatory questions. Every step, data source, and underlying assumption remains visible, supporting expert reasoning and building trust in next generation risk assessment.</p>
-	<p>On the platform, three human relevant case studies are used as demonstrators:
+	<p>Through structured, interactive workflows and a user-friendly interface, the platform tackles real-world regulatory questions (<a href="/casestudies">'case studies'</a>) by connecting <a href="/tools">tools</a>, <a href="/methods">methods</a> and <a href="/data">data</a>.</p>
+
+	<hr class="my-3">
+
+	<!-- Workflow teaser: heading is the toggle -->
+	<p class="text-secondary fs-5">
+	    Safety Assessment Workflow
+  </p>
+
+	<div id="workflowTeaser">
+	    <p class="">
+	      The Virtual Human Platform uses a generic safety assessment workflow as a five-step process to collect information critical for risk characterisation.
+	    </p>
+
+	    <div class="row align-items-stretch g-3">
+
+	      <!-- Regulatory question (input) -->
+	      <div class="col-12 col-md-3 d-flex mt-0">
+	        <div class="bg-vhppink-distinct text-white rounded-pill px-3 py-2 text-center w-100 small fw-semibold align-self-center">
+	          Regulatory question
+	        </div>
+	      </div>
+
+	      <!-- Arrow connector -->
+	      <div class="col-12 col-md-1 d-flex align-items-center justify-content-center text-secondary mt-0 fs-4 lh-1">
+	        <i class="bi bi-caret-right-fill d-none d-md-inline" aria-hidden="true"></i>
+	        <i class="bi bi-caret-down-fill d-md-none" aria-hidden="true"></i>
+	      </div>
+
+	      <!-- Risk Characterisation frame: 5 workflow steps -->
+	      <div class="col-12 col-md-8 mt-0 ">
+	            <!-- Risk Characterisation visualization -->
+          <div class="border border-2 border-vhppurple rounded-3 p-3 pt-4 position-relative my-4">
+            <span class="position-absolute top-0 start-50 translate-middle bg-white px-2 text-vhppurple small fw-semibold">Risk Characterisation</span>
+            <div class="row row-cols-1 row-cols-md-2 g-2">
+              {% set is_odd = (process_flow_steps | length) % 2 == 1 %}
+              {% for k, v in process_flow_steps.items() %}
+                <div class="col d-grid{% if loop.first and is_odd %} col-md-12{% endif %}">
+                  <a href="{{ url_for('SafetyAssessmentWorkflow') }}#definition-{{ v.slug }}" class="text-decoration-none">
+                    <div class="bg-vhppurple text-white rounded-pill px-3 py-2 text-center small fw-semibold">{{ v.label }}</div>
+                  </a>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+	      </div>
+
+	    </div>
+
+	  </div>
+	</div>
+
+	<hr class="my-3">
+
+	<p class="fs-5 text-secondary">Case studies</p>
+    On the platform, three human relevant case studies are used as demonstrators:
 	<ul>
 	<li>Medication induced kidney toxicity, addressing disease state.</li>
 	<li>Neurodegeneration following lifelong pesticide exposure, addressing life course exposure.</li>
 	<li>Disruption of thyroid hormone mediated brain development due to chemical exposure, addressing sex and age specific differences.</li>
-	</ul></p>
+	</ul>
 	<p>These case studies show how multiple New Approach Methodologies (NAMs) can be combined to address regulatory challenges and illustrate practices concerning data, model assumptions, and interpretation. </p>
-	<p>Developed in co-creation with academic, industrial, regulatory, and societal partners, the VHP supports the transition to animal-free, human-relevant safety assessment. We invite all stakeholders to explore, contribute, and help shape the future of risk assessment with us.</p>
-	<emph>Learn more about VHP4Safety, the project behind the VHP in the following sections:</emph>
-  <div>
-    <div class="d-flex gap-3 mt-4">
-      <a href="{{ url_for('explore_our_work') }}#about-section" class="btn btn-outline-secondary">Process</a>
-      <a href="{{ url_for('training') }}#partners-section" class="btn btn-outline-secondary">Training</a>
-      <a href="{{ url_for('impact') }}#contact-section" class="btn btn-outline-secondary">Impact</a>
-    </div>
+
+	<hr class="my-3">
+
+	<p class="text-secondary fs-5" id="about-section">Learn more about VHP4Safety, the project behind the VHP</p>
+  <p>Developed in co-creation with academic, industrial, regulatory, and societal partners, the VHP supports the transition to animal-free, human-relevant safety assessment. We invite all stakeholders to explore, contribute, and help shape the future of risk assessment with us.</p>
+
+	<div class="row row-cols-1 row-cols-md-3 g-4">
+	  <div class="col">
+	    <a href="{{ url_for('explore_our_work') }}#about-section"
+	       class="btn btn-outline-secondary w-100  d-flex align-items-center justify-content-center gap-2">
+	      <i class="bi bi-diagram-3" aria-hidden="true"></i>Project
+	    </a>
+	  </div>
+	  <div class="col">
+	    <a href="{{ url_for('training') }}#partners-section"
+	       class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2">
+	      <i class="bi bi-mortarboard" aria-hidden="true"></i>Training
+	    </a>
+	  </div>
+	  <div class="col">
+	    <a href="{{ url_for('impact') }}#contact-section"
+	       class="btn btn-outline-secondary w-100  d-flex align-items-center justify-content-center gap-2">
+	      <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>Impact
+	    </a>
+	  </div>
 	</div>
 </section>
 <!--<section class="container py-5" id="about-section">
@@ -264,10 +283,10 @@
 </section>-->
 <section class="bg-vhplight-blue img-fluid" id="partners-section">
   <div class="container py-5">
-    <h2 class="mb-4">
-      <strong>Supported by</strong>
-    </h2>
-    <p class="text-muted mb-5">Collaboration in innovation.</p>
+    <h1 class="">
+      Supported by
+    </h1>
+    <p class="text-secondary fs-5">Collaboration in innovation.</p>
 
     <!-- Partner logo grid: grayscale, full colour on hover. Order, names and
          links come from static/images/partners/partners.txt (get_partner_logos). -->
@@ -297,21 +316,24 @@
       <!-- Left column: text and icons -->
       <div class="col-md-6">
         <div class="content">
-          <h2 class="mb-3"><strong>Connect with us for a chat or support</strong></h2>
-          <p class="mb-4">
-            Got questions or just want to connect? Use the form below, or contact us on LinkedIn, GitHub, or via email 
-            and we’ll get back to you as soon as possible.
+          <h1 class="">Connect with us</h1>
+          <p class="text-secondary fs-5">
+            Got questions, need support or just want to chat? 
           </p>
+          <div>
+            Use the form below, or contact us on LinkedIn, GitHub, or via email 
+            and we’ll get back to you as soon as possible.
+            </div>
 
           <div class="d-flex gap-3">
             <a href="mailto:vhp4safety@uu.nl" class="contact-icon fs-3 link-vhppink">
-              <i class="fas fa-envelope"></i>
+              <i class="bi bi-envelope-fill"></i>
             </a>
             <a href="https://www.linkedin.com/company/vhp4safety/posts/?feedView=all" class="contact-icon fs-3 link-vhppink">
-              <i class="fab fa-linkedin"></i>
+              <i class="bi bi-linkedin"></i>
             </a>
             <a href="https://github.com/VHP4Safety" class="contact-icon fs-3 link-vhppink">
-              <i class="fab fa-github"></i>
+              <i class="bi bi-github"></i>
             </a>
           </div>
         </div>
@@ -350,7 +372,7 @@
           </div>
 
           <div class="d-grid">
-            <button type="submit" class="btn btn-vhppink">Send</button>
+            <button type="submit" class="btn btn-vhppink-distinct">Send</button>
           </div>
         </form>
       </div>
@@ -360,15 +382,4 @@
 
 
 </section>
-<!-- Scroll down arrow for navigation -->
-<div class="scroll-down-arrow" style="border-top: 20px solid var(--bs-vhppink);" onclick="scrollToNextSection()"></div>
-
-<!-- Initialise Bootstrap tooltips on the partner logo grid -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    document
-      .querySelectorAll('#partners-section [data-bs-toggle="tooltip"]')
-      .forEach(function (el) { new bootstrap.Tooltip(el); });
-  });
-</script>
 {% endblock %}

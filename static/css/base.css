@@ -1,14 +1,21 @@
 /* Font Import */
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap");
 
+/* Offset anchor-link / scrollIntoView jumps so targets clear the fixed navbar
+   (matches the body padding-top below, which reserves space for the navbar). */
+html {
+  scroll-padding-top: 100px;
+}
+
 /* Apply Open Sans globally */
 body {
   font-family: "Open Sans", Arial, sans-serif;
   scroll-behavior: smooth;
-  padding-top: 100px; 
+  padding-top: 100px;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
 body::-webkit-scrollbar {
   display: none;
 }
@@ -55,49 +62,6 @@ body::-webkit-scrollbar {
     cursor: pointer;
 }
 
-.card-button-vhppink:hover, .card-button-vhppink:focus{
-      color: white;
-      background-color: var(--bs-vhppink);
-      border-color: var(--bs-vhppink);
-}
-
-.card-button-vhppink-distinct:hover, .card-button-vhppink-distinct:focus{
-      color: white;
-      background-color: var(--bs-vhppink-distinct);
-      border-color: var(--bs-vhppink-distinct);
-
-}
-
-.card-button-vhpblue:hover, .card-button-vhpblue:focus{
-      color: white;
-      background-color: var(--bs-vhpblue);
-      border-color: var(--bs-vhpblue);
-}
-.card-button-vhporange:hover,  .card-button-vhporange:focus{
-      color: white;
-      background-color: var(--bs-vhporange);
-      border-color: var(--bs-vhporange);
-}   
-.card-button-vhpteal:hover,  .card-button-vhpteal:focus{
-      color: white;
-      background-color: var(--bs-vhpteal);
-      border-color: var(--bs-vhpteal);
-}  
-.card-button-vhplight-green:hover,  .card-button-vhplight-green:focus{
-      color: white;
-      background-color: var(--bs-vhplight-green);
-      border-color: var(--bs-vhplight-green);
-}  
-.card-button-vhplight-purple:hover,  .card-button-vhplight-purple:focus{
-      color: white;
-      background-color: var(--bs-vhplight-purple);
-      border-color: var(--bs-vhplight-purple);
-}  
-.card-button-vhplight-blue:hover,  .card-button-vhplight-blue:focus{
-      color: white;
-      background-color: var(--bs-vhplight-blue);
-      border-color: var(--bs-vhplight-blue);
-}  
 
 /* Default accordion button (collapsed) stays standard */
 .accordion-button {
