@@ -19,6 +19,7 @@ Central HTML-based web application for the VHP4Safety project, providing access 
     - [Deployment with Docker](#deployment-with-docker)
   - [Techniques](#techniques)
     - [Dynamic Page Filling: `tool.html` and `casestudy.html`](#dynamic-page-filling-toolhtml-and-casestudyhtml)
+    - [Caching](#caching)
   - [Contributing](#contributing)
 
 ## Features
@@ -169,6 +170,18 @@ This web app uses a dynamic content loading approach for both the tool and case 
   - The JavaScript reads these files and populates the HTML elements, enabling a single template to serve multiple tools or case studies.
 
 This technique allows for easy expansion and maintenance: new tools or case studies can be added simply by creating new JSON files, without modifying the HTML or Python backend.
+
+### Caching
+
+Index data fetched from the cloud repositories (tools, methods, data) is cached server-side for 5 days using Flask-Caching (`SimpleCache`, in-memory per worker process — also wiped on every restart). Most page loads therefore do not hit the source repositories.
+
+You can force fresh data at any time by appending the `reset_cache` query parameter to any URL:
+
+```
+http://localhost:5050/tools?reset_cache
+```
+
+This clears the entire server-side cache; the current request and every subsequent one repopulate it with fresh data. No token or env var is required — the trigger is intentionally unprotected. Worst case, a stranger forces the cache to repopulate from the upstream indexes (low impact, slightly slower next requests).
 
 ## Contributing
 

@@ -10,7 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 
-<section class="container py-md-5 py-3">
+<section class="container py-md-5 py-3 d-flex flex-column min-vh-100">
     <!-- Page Title and Description -->
     <div class="">
         <h1><span class="text-vhpblue" id="collection-name">Methods</span></h1>
@@ -19,7 +19,7 @@
 
     </div>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3 d-inline">
+    <nav class="navbar navbar-expand-lg d-inline">
         <form method="GET" action="{{ url_for('methods') }}" class="d-flex" role="search" id="search-form">
             <input type="text" class="form-control me-2" name="search" id="search-input" value="{{ request.args.get('search', '') }}" placeholder="Search by method name..." />
             <!-- Hidden inputs for filters -->
@@ -106,16 +106,30 @@
         </div>
     </nav>
 
+    <!-- Pagination (top) -->
+    <nav aria-label="Page navigation" class="pagination-container d-flex justify-content-center pt-3 pt-sm-2 pb-3">
+        <ul class="pagination mb-0">
+            <li class="page-item {% if not has_prev %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('methods', page=page-1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Previous">
+                    <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
+                </a>
+            </li>
+            <li class="page-item active" aria-current="page">
+                <span class="page-link bg-secondary border-secondary">{{ page }}</span>
+            </li>
+            <li class="page-item {% if not has_next %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('methods', page=page+1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Next">
+                    <i class="bi bi-caret-right-fill" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
     <!-- Methods List -->
-    <div class="results-section mt-2 pt-3">
-        <ul class="results-list p-0">
+    <div class="results-section">
+        <ul class="results-list p-0 mb-0">
             {% for item in methods %}
                 <div class="card">
-                    <div class="card-img-top overflow-hidden" style="aspect-ratio: 21/9;">
-                    {% if item.png %}
-                        <img src="{{ item.png }}" alt="Method logo" class="w-100 h-100 d-block" style="object-fit: cover; object-position: left;">
-                    {% endif %}
-                    </div>
                     <div class="card-body">
                         <h2 class="card-title">{{ item.service }}</h2>
                         <p id="desc" class="card-text">{{ item.description }}</p>
@@ -130,11 +144,9 @@
 
                             <!-- Method Webpage -->
                             {% if item.main_url == "no_url" %}
-                                <a type="button" class="btn btn-outline-secondary disabled" data-bs-toggle="methodtip" data-bs-title="No webpage available"><i class="bi bi-box-arrow-up-right"></i>
-</a> 
+                                <a type="button" class="btn btn-outline-vhppink disabled" data-bs-toggle="methodtip" data-bs-title="No webpage available"><i class="bi bi-box-arrow-up-right"></i></a>
                             {% else %}
-                                <a type="button" href="{{ item.main_url }}" class="btn btn-outline-secondary" target="_blank" data-bs-toggle="methodtip" data-bs-title="Visit main webpage"><i class="bi bi-box-arrow-up-right"></i>
-</a>
+                                <a type="button" href="{{ item.main_url }}" class="btn btn-outline-vhppink" target="_blank" data-bs-toggle="methodtip" data-bs-title="Visit main webpage"><i class="bi bi-box-arrow-up-right"></i></a>
                             {% endif %}
 
                             <!-- Meta-Data 
@@ -147,6 +159,25 @@
             {% endfor %}
         </ul>
     </div>
+
+    <!-- Pagination at bottom -->
+    <nav aria-label="Page navigation" class="pagination-container mt-auto d-flex justify-content-center py-3">
+        <ul class="pagination mb-0">
+            <li class="page-item {% if not has_prev %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('methods', page=page-1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Previous">
+                    <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
+                </a>
+            </li>
+            <li class="page-item active" aria-current="page">
+                <span class="page-link bg-secondary border-secondary">{{ page }}</span>
+            </li>
+            <li class="page-item {% if not has_next %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('methods', page=page+1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Next">
+                    <i class="bi bi-caret-right-fill" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </section>
 
 <script src="/static/js/search_filter.js"></script>

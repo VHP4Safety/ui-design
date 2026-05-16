@@ -2,9 +2,7 @@
 ### Loading the required modules
 import json
 import os
-import os
 import re
-import secrets
 
 import requests
 import urllib.parse
@@ -14,7 +12,7 @@ from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
 
 # from wikidataintegrator import wdi_core
-from wikibaseintegrator import wbi_helpers
+# from wikibaseintegrator import wbi_helpers
 
 # Import BioStudies extractor
 from data.biostudies.search import BioStudiesExtractor
@@ -23,7 +21,6 @@ from data.mapping import normalize_all
 
 ################################################################################
 CACHE_TIMEOUT = 60 * 60 * 24 * 5  # 5 days
-CACHE_RESET_TOKEN = (os.getenv("CACHE_RESET_TOKEN") or "").strip()
 ### Configuration for BioStudies Integration
 # Change these variables to switch between collections
 BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
@@ -123,21 +120,14 @@ cache = Cache(app)
 
 @app.before_request
 def handle_cache_reset():
-    """Allow bypassing the cache only in trusted/dev contexts."""
-    if "reset_cache" not in request.args:
-        return
+    """Clear the entire server-side cache when ?reset_cache is in the URL.
 
-    is_localhost = request.remote_addr in {"127.0.0.1", "::1"}
-    provided_token = request.args.get("reset_cache")
-    valid_token = bool(
-        CACHE_RESET_TOKEN
-        and provided_token
-        and secrets.compare_digest(provided_token, CACHE_RESET_TOKEN)
-    )
-    if app.debug or is_localhost or valid_token:
+    Unprotected by design: a stranger forcing a refetch is low-impact (just
+    repopulates the cache from the upstream indexes), and keeping it open
+    removes a config knob (no CACHE_RESET_TOKEN env var needed).
+    """
+    if "reset_cache" in request.args:
         cache.clear()
-        return
-    abort(403)
 
 
 @cache.memoize(timeout=CACHE_TIMEOUT)
@@ -227,10 +217,21 @@ def get_process_flow_steps() -> dict:
             "slug": clean_label.lower().replace(" ", "-"),
             "description": (m_desc.group(1) if m_desc else "").strip(),
         }
-    # sort by id 
-    sort_ids = ["https://vhp4safety.github.io/glossary#VHP0000153","https://vhp4safety.github.io/glossary#VHP0000154","https://vhp4safety.github.io/glossary#VHP0000155","https://vhp4safety.github.io/glossary#VHP0000156","https://vhp4safety.github.io/glossary#VHP0000158"]
+    # sort by id
+    sort_ids = [
+        "https://vhp4safety.github.io/glossary#VHP0000153",
+        "https://vhp4safety.github.io/glossary#VHP0000154",
+        "https://vhp4safety.github.io/glossary#VHP0000155",
+        "https://vhp4safety.github.io/glossary#VHP0000156",
+        "https://vhp4safety.github.io/glossary#VHP0000158",
+    ]
     steps = dict(
-        sorted(steps.items(), key=lambda item: sort_ids.index(item[0]) if item[0] in sort_ids else len(sort_ids))
+        sorted(
+            steps.items(),
+            key=lambda item: (
+                sort_ids.index(item[0]) if item[0] in sort_ids else len(sort_ids)
+            ),
+        )
     )
     return steps
 
@@ -307,9 +308,7 @@ def get_partner_logos() -> list:
 
     # Any images not listed in partners.txt are shown last, alphabetically.
     for fname in sorted(images - used):
-        logos.append(
-            {"file": fname, "name": os.path.splitext(fname)[0], "url": ""}
-        )
+        logos.append({"file": fname, "name": os.path.splitext(fname)[0], "url": ""})
     return logos
 
 
@@ -440,7 +439,7 @@ def inject_data_menu():
         items = []
         for hit in hits:
             title = hit.get("title")
-            id = data_hit_id(hit)
+            id = hit.get("accession", "") or hit.get("doi_url", "") or hit.get("id", "")
             url = hit.get("url", "") or hit.get("doi_url")
             items.append({"id": id, "title": title, "url": url})
         # sort by title
@@ -499,19 +498,6 @@ def sitemap():
 </urlset>
 """
     return Response(sitemapContent, mimetype="text/xml")
-
-
-################################################################################
-### robots.txt points crawlers at the sitemap so the detail pages get indexed
-@app.route("/robots.txt")
-def robots():
-    robotsContent = (
-        "User-agent: *\n"
-        "Allow: /\n"
-        "\n"
-        "Sitemap: https://platform.vhp4safety.nl/sitemap.xml\n"
-    )
-    return Response(robotsContent, mimetype="text/plain")
 
 
 ################################################################################
@@ -807,7 +793,9 @@ def tools():
         # Enrich only the tools on the current page. The per-tool detail fetch
         # below makes one HTTP request per tool, so doing it after pagination
         # keeps it to ~page_size requests instead of one for every tool.
-        placeholder_logo = "https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png"
+        placeholder_logo = (
+            "https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png"
+        )
         for tool in tools:
             html_name = tool.get("html_name")
             md_name = tool.get("md_file_name")
@@ -840,7 +828,9 @@ def tools():
             vhp_hosted = False
             if inst_url != "no_url" and tool_id:
                 detail = get_service_detail(tool_id)
-                vhp_platform = detail.get("instance", {}).get("vhp-platform", "").lower()
+                vhp_platform = (
+                    detail.get("instance", {}).get("vhp-platform", "").lower()
+                )
                 vhp_hosted = vhp_platform not in ("external", "independent", "")
             tool["vhp_hosted"] = vhp_hosted
 
