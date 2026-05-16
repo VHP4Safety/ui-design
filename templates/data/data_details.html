@@ -895,7 +895,7 @@
      {% if record.type=="study"%}
     <div class="card-footer">
      
-        {% if data.metadata.case_study%}<a role="button" href="{{url_for('casestudy', case=data.metadata.case_study|lower)}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">Case Study: BLUE {{data.metadata.case_study|capitalize }}</a>{%endif%}
+        {% if data.metadata.case_study%}<a role="button" href="{{url_for('casestudy', case=data.metadata.case_study|lower)}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">Case Study: {{data.metadata.case_study|capitalize }}</a>{%endif%}
         {% if data.metadata.regulatory_question%}<a role="button" href="{{url_for('casestudy', case=data.metadata.case_study|lower, question=data.metadata.regulatory_question )}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">Regulatory Question: {{data.metadata.regulatory_question}}</a>{%endif%}
         {% if data.metadata.flow_step%}<a role="button" href="{{url_for('casestudy', case=data.metadata.case_study|lower, question=data.metadata.regulatory_question, step=data.metadata.flow_step )}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppurple rounded-pill border border-vhppurple d-inline-flex align-items-center text-wrap">Flow Step: {{data.metadata.flow_step}}</a>{%endif%}
 

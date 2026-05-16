@@ -130,11 +130,11 @@
             <div class="mt-3">
               <!-- Run / Instance button -->
               {% if method_json.get('instance') and method_json.instance.get('url') %}
-                <a href="{{ method_json.instance.url }}" class="btn btn-vhpblue w-100 mb-2" target="_blank">Run the method</a>
+                <a href="{{ method_json.instance.url }}" class="btn btn-vhpblue w-100 mb-2" target="_blank" rel="noopener">Run the method</a>
               {% elif method_details.get('instance') and method_details.instance.get('url') %}
-                <a href="{{ method_details.instance.url }}" class="btn btn-vhpblue w-100 mb-2" target="_blank">Run the method</a>
+                <a href="{{ method_details.instance.url }}" class="btn btn-vhpblue w-100 mb-2" target="_blank" rel="noopener">Run the method</a>
               {% elif method_json.get('catalog_webpage_url') or method_details.get('catalog_webpage_url') %}
-                <a href="{{ method_json.get('catalog_webpage_url') or method_details.get('catalog_webpage_url') }}" class="btn btn-outline-vhpblue w-100 mb-2" target="_blank">Method webpage</a>
+                <a href="{{ method_json.get('catalog_webpage_url') or method_details.get('catalog_webpage_url') }}" class="btn btn-outline-vhpblue w-100 mb-2" target="_blank" rel="noopener">Method webpage</a>
               {% else %}
                 <button class="btn btn-outline-secondary w-100 mb-2" disabled>No instance available</button>
               {% endif %}
