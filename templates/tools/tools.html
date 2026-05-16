@@ -81,7 +81,7 @@
                     </button>
                     <ul class="dropdown-menu">
                         {% for question in reg_questions.keys() %}
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="{{ question }}"{% if question in reg_question_explanations %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations[question] }}"{% endif %}>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="{{ question }}" data-applies-to-case-slug="{{ reg_question_cases.get(question, '') }}"{% if question in reg_question_explanations %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations[question] }}"{% endif %}>
                             {{ question }}{% if question in reg_question_explanations %} <i class="text-vhpblue bi bi-question-circle"></i>{% endif %}
                         </a></li>
                         {% endfor %}
@@ -186,7 +186,9 @@
                     </div>
                 </div>
             {% else %}
-                <li>No tools found.</li>
+                <li style="list-style: none;">
+                    <div class="card alert alert-warning mb-0 justify-content-center align-items-center">No tools found</div>
+                </li>
             {% endfor %}
         </ul>
     </div>
@@ -232,6 +234,11 @@
                 'reg-question': 'Reg. Q'
             },
             badgeClass: 'badge rounded-pill text-bg-vhpblue',
+            filterColors: {
+                'case-study': 'vhppink-distinct',
+                'reg-question': 'vhppink-distinct',
+                'flow-step': 'vhppurple',
+            },
             showFilterPanel: {% if selected_stages or selected_questions %}true{% else %}false{% endif %}
         });
     });
