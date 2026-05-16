@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 
-<section class="container py-md-5 py-3">
+<section class="container py-md-5 py-3 d-flex flex-column min-vh-100">
     <!-- Page Title and Description -->
     <div class="">
         <h1><span class="text-vhpblue" id="collection-name">Tools</span></h1>
@@ -19,7 +19,7 @@
         <p>We welcome and appreciate any feedback on this catalog of tools or the individual tools listed in it. We also appreciate receiving requests for other tools that you are aware of and deem relevant to this catalog. For these contribution and feedback, please feel free to create <a class="link-vhpblue text-decoration-none" href="https://github.com/VHP4Safety/virtual-human-platform/issues">an issue at our repository</a>.
     </div>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3 d-inline">
+    <nav class="navbar navbar-expand-lg d-inline">
         <form method="GET" action="{{ url_for('tools') }}" class="d-flex" role="search" id="search-form">
             <input type="text" class="form-control me-2" name="search" id="search-input" value="{{ request.args.get('search', '') }}" placeholder="Search by tool name..." />
             <!-- Hidden inputs for filters -->
@@ -107,26 +107,49 @@
     </nav>
 
     <!-- Icon Legend -->
-    <div class="d-flex align-items-center gap-4 mt-3 ms-2">
-        <strong>Legend:</strong>
-        <span class="d-flex align-items-center gap-1">
-            <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_HexaHead_300.png" alt="Developed by VHP" style="width:28px;height:28px;">
-            = Developed by VHP
+    <div class="d-flex flex-wrap align-items-center justify-content-center py-2 gap-2 ">
+        <span class="d-inline-flex align-items-center gap-2 bg-body-tertiary border rounded-pill ps-1 pe-3 py-1 small text-secondary">
+            <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_HexaHead_300.png" alt="" style="width:24px;height:24px;">
+            Developed by VHP
         </span>
-        <span class="d-flex align-items-center gap-1">
-            <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" style="width:28px;height:28px;">
-            = Hosted by VHP
+        <span class="d-inline-flex align-items-center gap-1 bg-body-tertiary border rounded-pill ps-1 pe-3 py-1 small text-secondary">
+            <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="" style="width:24px;height:24px;">
+            Hosted by VHP
         </span>
     </div>
 
+    <!-- Pagination (top) -->
+    <nav aria-label="Page navigation" class="pagination-container d-flex justify-content-center pt-3 pt-sm-2 pb-3">
+        <ul class="pagination mb-0">
+            <li class="page-item {% if not has_prev %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('tools', page=page-1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Previous">
+                    <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
+                </a>
+            </li>
+            <li class="page-item active" aria-current="page">
+                <span class="page-link bg-secondary border-secondary">{{ page }}</span>
+            </li>
+            <li class="page-item {% if not has_next %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('tools', page=page+1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Next">
+                    <i class="bi bi-caret-right-fill" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
     <!-- Tools List -->
-    <div class="results-section mt-2 pt-3">
-        <ul class="results-list p-0">
+    <div class="results-section">
+        <ul class="results-list p-0 mb-0">
             {% for item in tools %}
                 <div class="card">
                     <div class="card-img-top overflow-hidden" style="aspect-ratio: 21/9;">
                     {% if item.png %}
                         <img src="{{ item.png }}" alt="Tool logo" class="w-100 h-100 d-block" style="object-fit: cover; object-position: left;">
+                    {% else %}
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-body-tertiary text-secondary">
+                            <i class="bi bi-image fs-2" aria-hidden="true"></i>
+                            <span class="visually-hidden">No preview available</span>
+                        </div>
                     {% endif %}
                     </div>
                     <div class="card-body">
@@ -146,19 +169,19 @@
                         <div class="btn-group d-flex" role="group" aria-label="Tool example">
 
                              <!-- Catalog Page -->
-                            <a href="{{ url_for('tools') }}/{{ item.id }}" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-title="View tool details"><i class="bi bi-info-circle"></i></a>
+                            <a href="{{ url_for('tools') }}/{{ item.id }}" class="btn btn-vhpblue" data-bs-toggle="tooltip" data-bs-title="View tool details"><i class="bi bi-info-circle"></i></a>
 
                              <!-- Go to tool -->
                             {% if item.inst_url != "no_url" %}
-                                <a type="button" href="{{ item.inst_url }}" class="btn btn-vhpblue flex-grow-1" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-title="Go to tool">Go to tool</a>
+                                <a type="button" href="{{ item.inst_url }}" class="btn btn-outline-vhpblue flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Go to tool"><i class="bi bi-terminal pe-2"></i>Go to tool</a>
                             {% elif item.main_url != "no_url" %}
-                                <a type="button" href="{{ item.main_url }}" class="btn btn-vhpblue flex-grow-1" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-title="Go to tool">Go to tool</a>
+                                <a type="button" href="{{ item.main_url }}" class="btn btn-outline-vhpblue flex-grow-1" target="_blank" data-bs-toggle="tooltip" data-bs-title="Go to tool"><i class="bi bi-terminal pe-2"></i>Go to tool</a>
                             {% else %}
-                                <a type="button" class="btn btn-outline-vhpblue disabled flex-grow-1" data-bs-toggle="tooltip" data-bs-title="No webpage available">Go to tool</a>
+                                <a type="button" class="btn btn-outline-vhpblue disabled flex-grow-1" data-bs-toggle="tooltip" data-bs-title="No webpage available"><i class="bi bi-terminal pe-2"></i>Go to tool</a>
                             {% endif %}
 
                             <!-- Meta-Data -->
-                            <button type="button" class="btn btn-outline-vhpblue" data-bs-toggle="tooltip" data-bs-title="View metadata (.md)" onclick="showMetadata('{{ item.meta_data }}', '{{ item.service }}')"><i class="bi bi-list-ul"></i></button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-title="View metadata (.md)" onclick="showMetadata('{{ item.meta_data }}', '{{ item.service }}')"><i class="bi bi-list-ul"></i></button>
                         </div>
                     </div>
                 </div>
@@ -167,6 +190,25 @@
             {% endfor %}
         </ul>
     </div>
+
+    <!-- Pagination at bottom -->
+    <nav aria-label="Page navigation" class="pagination-container mt-auto d-flex justify-content-center py-3">
+        <ul class="pagination mb-0">
+            <li class="page-item {% if not has_prev %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('tools', page=page-1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Previous">
+                    <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
+                </a>
+            </li>
+            <li class="page-item active" aria-current="page">
+                <span class="page-link bg-secondary border-secondary">{{ page }}</span>
+            </li>
+            <li class="page-item {% if not has_next %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('tools', page=page+1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Next">
+                    <i class="bi bi-caret-right-fill" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </section>
 
 <script src="/static/js/search_filter.js"></script>

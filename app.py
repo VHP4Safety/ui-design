@@ -2,9 +2,7 @@
 ### Loading the required modules
 import json
 import os
-import os
 import re
-import secrets
 
 import requests
 import urllib.parse
@@ -23,7 +21,6 @@ from data.mapping import normalize_all
 
 ################################################################################
 CACHE_TIMEOUT = 60 * 60 * 24 * 5  # 5 days
-CACHE_RESET_TOKEN = (os.getenv("CACHE_RESET_TOKEN") or "").strip()
 ### Configuration for BioStudies Integration
 # Change these variables to switch between collections
 BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
@@ -123,21 +120,14 @@ cache = Cache(app)
 
 @app.before_request
 def handle_cache_reset():
-    """Allow bypassing the cache only in trusted/dev contexts."""
-    if "reset_cache" not in request.args:
-        return
+    """Clear the entire server-side cache when ?reset_cache is in the URL.
 
-    is_localhost = request.remote_addr in {"127.0.0.1", "::1"}
-    provided_token = request.args.get("reset_cache")
-    valid_token = bool(
-        CACHE_RESET_TOKEN
-        and provided_token
-        and secrets.compare_digest(provided_token, CACHE_RESET_TOKEN)
-    )
-    if app.debug or is_localhost or valid_token:
+    Unprotected by design: a stranger forcing a refetch is low-impact (just
+    repopulates the cache from the upstream indexes), and keeping it open
+    removes a config knob (no CACHE_RESET_TOKEN env var needed).
+    """
+    if "reset_cache" in request.args:
         cache.clear()
-        return
-    abort(403)
 
 
 @cache.memoize(timeout=CACHE_TIMEOUT)
@@ -227,10 +217,21 @@ def get_process_flow_steps() -> dict:
             "slug": clean_label.lower().replace(" ", "-"),
             "description": (m_desc.group(1) if m_desc else "").strip(),
         }
-    # sort by id 
-    sort_ids = ["https://vhp4safety.github.io/glossary#VHP0000153","https://vhp4safety.github.io/glossary#VHP0000154","https://vhp4safety.github.io/glossary#VHP0000155","https://vhp4safety.github.io/glossary#VHP0000156","https://vhp4safety.github.io/glossary#VHP0000158"]
+    # sort by id
+    sort_ids = [
+        "https://vhp4safety.github.io/glossary#VHP0000153",
+        "https://vhp4safety.github.io/glossary#VHP0000154",
+        "https://vhp4safety.github.io/glossary#VHP0000155",
+        "https://vhp4safety.github.io/glossary#VHP0000156",
+        "https://vhp4safety.github.io/glossary#VHP0000158",
+    ]
     steps = dict(
-        sorted(steps.items(), key=lambda item: sort_ids.index(item[0]) if item[0] in sort_ids else len(sort_ids))
+        sorted(
+            steps.items(),
+            key=lambda item: (
+                sort_ids.index(item[0]) if item[0] in sort_ids else len(sort_ids)
+            ),
+        )
     )
     return steps
 
@@ -307,9 +308,7 @@ def get_partner_logos() -> list:
 
     # Any images not listed in partners.txt are shown last, alphabetically.
     for fname in sorted(images - used):
-        logos.append(
-            {"file": fname, "name": os.path.splitext(fname)[0], "url": ""}
-        )
+        logos.append({"file": fname, "name": os.path.splitext(fname)[0], "url": ""})
     return logos
 
 
@@ -440,7 +439,7 @@ def inject_data_menu():
         items = []
         for hit in hits:
             title = hit.get("title")
-            id = data_hit_id(hit)
+            id = hit.get("accession", "") or hit.get("doi_url", "") or hit.get("id", "")
             url = hit.get("url", "") or hit.get("doi_url")
             items.append({"id": id, "title": title, "url": url})
         # sort by title
@@ -475,29 +474,98 @@ def home():
     )
 
 
+def data_hit_id(hit: dict) -> str:
+    """Return the identifier to use in a /data/<id> URL for a repository hit.
+
+    BioStudies hits resolve to their accession; Zenodo hits to their numeric
+    recid. doi_url is intentionally never used -- it contains slashes the
+    /data/<dataid> route's string converter cannot match.
+    """
+    return (
+        hit.get("accession")
+        or hit.get("accno")
+        or hit.get("id")
+        or hit.get("recid")
+        or ""
+    )
+
+
 ################################################################################
 ### The sitemap.xml for search engines
+@cache.memoize(timeout=CACHE_TIMEOUT)
 @app.route("/sitemap.xml")
 def sitemap():
-    sitemapContent = """<?xml version="1.0" encoding="utf-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://platform.vhp4safety.nl/</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/casestudies</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/tools</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/methods</loc>
-  </url>
-  <url>
-    <loc>https://platform.vhp4safety.nl/data</loc>
-  </url>
-</urlset>
-"""
+    BASE = "https://platform.vhp4safety.nl"
+
+    # Static, parameter-less GET pages, derived from the URL map so new pages
+    # are picked up automatically. Machine endpoints are excluded. Routes with
+    # <params> are skipped and handled below.
+    EXCLUDED_ENDPOINTS = {"sitemap", "robots", "static"}
+    paths = sorted(
+        rule.rule.rstrip("/") or "/"
+        for rule in app.url_map.iter_rules()
+        if not rule.arguments
+        and rule.endpoint not in EXCLUDED_ENDPOINTS
+        and "GET" in (rule.methods or set())
+    )
+
+    # Tool detail pages
+    tools = get_json_dict(SERVICES_URL)
+    if isinstance(tools, dict):
+        paths += [f"/tools/{urllib.parse.quote(str(k))}" for k in tools]
+
+    # Method detail pages
+    methods = get_json_dict(METHODS_URL)
+    if isinstance(methods, dict):
+        paths += [f"/methods/{urllib.parse.quote(str(k))}" for k in methods]
+
+    # Dataset detail pages (BioStudies + Zenodo). Fetched in pages of 25 (the
+    # Zenodo API rejects larger page sizes) and looped until both sources are
+    # exhausted. load_metadata=False keeps this cheap (no per-file HEAD requests).
+    # A repo failure must never 500 the sitemap; tools/methods/case studies still
+    # serve.
+    DATA_PAGE_SIZE = 25
+    try:
+        page = 1
+        while True:
+            bs_results, zen_results = get_repository_data(
+                search_query="",
+                page=page,
+                page_size=DATA_PAGE_SIZE,
+                load_metadata=False,
+            )
+            bs_hits = (bs_results or {}).get("hits", [])
+            zen_hits = (zen_results or {}).get("hits", [])
+            for hit in bs_hits + zen_hits:
+                hit_id = data_hit_id(hit)
+                if hit_id:
+                    paths.append(f"/data/{urllib.parse.quote(str(hit_id))}")
+            total = max(
+                (bs_results or {}).get("total") or 0,
+                (zen_results or {}).get("total") or 0,
+            )
+            if (not bs_hits and not zen_hits) or page * DATA_PAGE_SIZE >= total:
+                break
+            page += 1
+    except Exception:
+        pass
+
+    # Case study detail pages
+    paths += [f"/casestudies/{urllib.parse.quote(c)}" for c in CASESTUDIES]
+
+    # Dedupe while preserving order
+    seen = set()
+    unique_paths = [p for p in paths if not (p in seen or seen.add(p))]
+
+    url_entries = "\n".join(
+        f"  <url>\n    <loc>{BASE}{p}</loc>\n  </url>" for p in unique_paths
+    )
+    sitemapContent = (
+        '<?xml version="1.0" encoding="utf-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{url_entries}\n"
+        "</urlset>\n"
+    )
     return Response(sitemapContent, mimetype="text/xml")
 
 
@@ -569,8 +637,9 @@ def data():
     pages_fetched = bs_results.get("pages_fetched", 1)
     page_size_met = bs_results.get("page_size_met", True)
 
-    # Calculate pagination info
-    has_next = (page * page_size) < total
+    # Calculate pagination info per source so that if one source is empty or
+    # filtered out, pagination still advances through the active source.
+    has_next = (page * per_source < bs_total) or (page * per_source < zen_total)
     has_prev = page > 1
 
     # Pass data to template
@@ -807,7 +876,9 @@ def tools():
         # Enrich only the tools on the current page. The per-tool detail fetch
         # below makes one HTTP request per tool, so doing it after pagination
         # keeps it to ~page_size requests instead of one for every tool.
-        placeholder_logo = "https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png"
+        placeholder_logo = (
+            "https://github.com/VHP4Safety/ui-design/blob/main/static/images/logo.png"
+        )
         for tool in tools:
             html_name = tool.get("html_name")
             md_name = tool.get("md_file_name")
@@ -840,7 +911,9 @@ def tools():
             vhp_hosted = False
             if inst_url != "no_url" and tool_id:
                 detail = get_service_detail(tool_id)
-                vhp_platform = detail.get("instance", {}).get("vhp-platform", "").lower()
+                vhp_platform = (
+                    detail.get("instance", {}).get("vhp-platform", "").lower()
+                )
                 vhp_hosted = vhp_platform not in ("external", "independent", "")
             tool["vhp_hosted"] = vhp_hosted
 
