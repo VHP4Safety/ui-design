@@ -12,7 +12,7 @@ from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
 
 # from wikidataintegrator import wdi_core
-from wikibaseintegrator import wbi_helpers
+# from wikibaseintegrator import wbi_helpers
 
 # Import BioStudies extractor
 from data.biostudies.search import BioStudiesExtractor
@@ -27,8 +27,6 @@ BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
 BIOSTUDIES_COLLECTION_NAME = "VHP4Safety"  # Display name for the page
 ZENODO_COMMUNITY = "vhp4safety"  # zenodo community
 ZENODO_RECORD_TYPE = "dataset"  # only show datasets
-
-CASESTUDIES = ["thyroid", "kidney", "parkinson"]  # List of valid case studies
 
 # Non-glossary "stage" labels. The five Process Flow Step stages are resolved
 # from the VHP glossary at runtime (see get_process_flow_steps); these legacy
@@ -58,39 +56,10 @@ SERVICES_URL = "https://raw.githubusercontent.com/VHP4Safety/cloud/refs/heads/ma
 GLOSSARY_URL = (
     "https://raw.githubusercontent.com/VHP4Safety/glossary/refs/heads/main/glossary.owl"
 )
-
-REG_QUESTIONS = {
-    "reg_q_1a": {
-        "label": "Kidney Case Study (a)",
-        "explanation": "What is the safe cisplatin dose in cancer patients?",
-    },
-    "reg_q_1b": {
-        "label": "Kidney Case Study (b)",
-        "explanation": "What is the intrinsic hazard of tacrolimus for nephrotoxicity?",
-    },
-    "reg_q_2a": {
-        "label": "Parkinson Case Study (a)",
-        "explanation": "Can compound Dinoseb cause Parkinson's Disease?",
-    },
-    "reg_q_2b": {
-        "label": "Parkinson Case Study (b)",
-        "explanation": "What level of exposure to compound Dinoseb leads to risk for developing Parkinson’s disease?",
-    },
-    "reg_q_3a": {
-        "label": "Thyroid Case Study (a)",
-        "explanation": "What information about silychristin do we need to give an advice to women in their early pregnancy to decide whether the substance can be used?",
-    },
-    "reg_q_3b": {
-        "label": "Thyroid Case Study (b)",
-        "explanation": "Does silychristin influence the thyroid-mediated brain development in the fetus resulting in cognitive impairment in children?",
-    },
-}
-
-# Derived: keep the old structure available for templates expecting {label: explanation}
-REG_QUESTION_EXPLANATIONS = {
-    v["label"]: v["explanation"] for v in REG_QUESTIONS.values()
-}
-
+CASESTUDIES_URL = (
+    "https://raw.githubusercontent.com/VHP4Safety/ui-casestudy-config/"
+    "refs/heads/main/casestudies.jsonld"
+)
 
 ################################################################################
 class RegexConverter(BaseConverter):
@@ -169,6 +138,96 @@ def get_service_detail(tool_id: str, timeout: int = 5) -> dict:
         return _get_service_detail_cached(tool_id, timeout=timeout)
     except Exception:
         return {}
+
+
+# --- Case studies & regulatory questions -----------------------------------
+# (case slug, question index) -> reg_q_Xy upstream field name. This is the
+# only remaining hardcoded artifact: the keys must match upstream tool/method
+# index field names (used to filter records) and the casestudy config files
+# do not currently record them. If a field like `upstreamField` were added to
+# each question in <case>_content.json's step1Contents.questions[], this map
+# could be derived from the config too.
+_REG_QUESTION_KEYS = {
+    ("kidney", 0): "reg_q_1a",
+    ("kidney", 1): "reg_q_1b",
+    ("parkinson", 0): "reg_q_2a",
+    ("parkinson", 1): "reg_q_2b",
+    ("thyroid", 0): "reg_q_3a",
+    ("thyroid", 1): "reg_q_3b",
+}
+
+
+@cache.memoize(timeout=CACHE_TIMEOUT)
+def get_casestudies() -> dict:
+    """Return case studies from VHP4Safety/ui-casestudy-config's JSON-LD index.
+
+    Returns {slug: {"name", "description", "content_url"}}. Iteration yields
+    slugs, so callers that just need the slug list can do `for c in
+    get_casestudies()`. Returns an empty dict on any error so callers degrade
+    safely.
+    """
+    try:
+        resp = requests.get(CASESTUDIES_URL, timeout=5)
+        if resp.status_code != 200:
+            return {}
+        data = resp.json()
+    except Exception:
+        return {}
+
+    studies = {}
+    for entry in data.get("dataset", []):
+        slug = entry.get("slug")
+        if not slug:
+            continue
+        studies[slug] = {
+            "name": entry.get("name", ""),
+            "description": entry.get("description", ""),
+            "content_url": (entry.get("distribution") or {}).get("contentUrl", ""),
+        }
+    return studies
+
+
+@cache.memoize(timeout=CACHE_TIMEOUT)
+def get_casestudy_content(slug: str) -> dict:
+    """Fetch the per-case `<slug>_content.json` from the config repo."""
+    url = get_casestudies().get(slug, {}).get("content_url")
+    if not url:
+        return {}
+    try:
+        resp = requests.get(url, timeout=5)
+        if resp.status_code != 200:
+            return {}
+        return resp.json() or {}
+    except Exception:
+        return {}
+
+
+def get_reg_questions() -> dict:
+    """Build {reg_q_Xy: {"label", "explanation"}} from per-case content JSONs.
+
+    Keys come from _REG_QUESTION_KEYS (upstream field names). Labels and
+    explanations come from each case's step1Contents.questions[] entries in
+    the remote casestudy config (label and description fields respectively).
+    """
+    result = {}
+    for slug in get_casestudies():
+        content = get_casestudy_content(slug)
+        questions = (content.get("step1Contents") or {}).get("questions") or []
+        for i, q in enumerate(questions[:2]):
+            key = _REG_QUESTION_KEYS.get((slug, i))
+            if not key:
+                continue
+            result[key] = {
+                "label": q.get("label") or f"{slug.title()} Q{i + 1}",
+                "explanation": q.get("description", ""),
+                "case": slug,
+            }
+    return result
+
+
+def get_reg_question_explanations() -> dict:
+    """{label: explanation} for templates that look up by hardcoded label."""
+    return {v["label"]: v["explanation"] for v in get_reg_questions().values()}
 
 
 # Suffix the VHP glossary uses to mark an owl:Class as a Process Flow Step stage.
@@ -461,7 +520,7 @@ def home():
     except Exception as e:
         return f"Error processing service data: {e}", 500
     num_tools = len(tools)
-    num_case_studies = len(CASESTUDIES)
+    num_case_studies = len(get_casestudies())
     bs_res, zen_res = get_repository_data(search_query="")
     num_datasets = bs_res.get("total", 0) + zen_res.get("total", 0)
     return render_template(
@@ -551,7 +610,7 @@ def sitemap():
         pass
 
     # Case study detail pages
-    paths += [f"/casestudies/{urllib.parse.quote(c)}" for c in CASESTUDIES]
+    paths += [f"/casestudies/{urllib.parse.quote(c)}" for c in get_casestudies()]
 
     # Dedupe while preserving order
     seen = set()
@@ -664,7 +723,10 @@ def data():
         pages_fetched=pages_fetched,
         page_size_met=page_size_met,
         stage_explanations=get_stage_explanations(),
-        reg_question_explanations=REG_QUESTION_EXPLANATIONS,
+        reg_question_explanations=get_reg_question_explanations(),
+        reg_question_cases={v["label"]: v.get("case", "") for v in get_reg_questions().values()},
+        reg_questions={v["label"]: k for k, v in get_reg_questions().items()},
+        case_studies=list(get_casestudies()),
     )
 
 
@@ -794,7 +856,10 @@ def models():
         pages_fetched=pages_fetched,
         page_size_met=page_size_met,
         stage_explanations=get_stage_explanations(),
-        reg_question_explanations=REG_QUESTION_EXPLANATIONS,
+        reg_question_explanations=get_reg_question_explanations(),
+        reg_question_cases={v["label"]: v.get("case", "") for v in get_reg_questions().values()},
+        reg_questions={v["label"]: k for k, v in get_reg_questions().items()},
+        case_studies=list(get_casestudies()),
     )
 
 
@@ -841,7 +906,7 @@ def tools():
             stages.append("Other")
 
         # Filtering over the regulatory questions.
-        reg_questions = {v["label"]: k for k, v in REG_QUESTIONS.items()}
+        reg_questions = {v["label"]: k for k, v in get_reg_questions().items()}
 
         selected_questions = request.args.getlist("reg_q")
 
@@ -925,7 +990,8 @@ def tools():
             reg_questions=reg_questions,
             selected_questions=selected_questions,
             stage_explanations=get_stage_explanations(),
-            reg_question_explanations=REG_QUESTION_EXPLANATIONS,
+            reg_question_explanations=get_reg_question_explanations(),
+        reg_question_cases={v["label"]: v.get("case", "") for v in get_reg_questions().values()},
             page=page,
             page_size=page_size,
             total=total,
@@ -1009,8 +1075,8 @@ def methods():
                 )
             ]
 
-        # Filter by regulatory questions if provided (REG_QUESTIONS keys map to internal fields)
-        reg_questions = {v["label"]: k for k, v in REG_QUESTIONS.items()}
+        # Filter by regulatory questions if provided (reg_q_Xy keys are upstream field names)
+        reg_questions = {v["label"]: k for k, v in get_reg_questions().items()}
         if selected_questions:
             for question in selected_questions:
                 field = reg_questions.get(question)
@@ -1052,7 +1118,8 @@ def methods():
             reg_questions=reg_questions,
             selected_questions=selected_questions,
             stage_explanations=get_stage_explanations(),
-            reg_question_explanations=REG_QUESTION_EXPLANATIONS,
+            reg_question_explanations=get_reg_question_explanations(),
+        reg_question_cases={v["label"]: v.get("case", "") for v in get_reg_questions().values()},
             page=page,
             page_size=page_size,
             total=total,
@@ -1193,7 +1260,7 @@ def workflows():
 @app.route("/casestudies/<case>/<question>/<step>")
 # additional routes are parsed client side via js to allow smooth animation
 def casestudy(case: str = "", question: str = "", step: str = ""):
-    if case not in CASESTUDIES:
+    if case not in get_casestudies():
         abort(404)
     # JS will handle steps via the URL
     return render_template("case_studies/casestudy.html", case=case)

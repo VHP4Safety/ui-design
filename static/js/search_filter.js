@@ -63,6 +63,10 @@
         filterFieldMap: options.filterFieldMap || {},
         filterLabels: options.filterLabels || {},
         badgeClass: options.badgeClass || 'badge rounded-pill text-bg-vhpteal',
+        // Per-filter-type pill colour, e.g. { 'case-study': 'vhppink-distinct' }.
+        // The value is just the VHP colour token; JS builds `text-bg-<token>`.
+        // Falls back to `badgeClass` for any type not listed here.
+        filterColors: options.filterColors || {},
         initTooltips: options.initTooltips !== undefined ? options.initTooltips : true,
         tooltipSelector: options.tooltipSelector || '[data-bs-toggle="tooltip"]',
         showFilterPanel: options.showFilterPanel || false,
@@ -97,13 +101,22 @@
         this.initializeTooltips();
       }
 
-      // Show filter panel if filters are active
-      if (this.config.showFilterPanel && this.elements.filterPanel) {
+      // Show filter panel if filters are active, OR if the previous navigation
+      // was a Clear (sessionStorage flag set in clearFilters); restoring the
+      // panel lets the user pick different filters without re-opening it.
+      let shouldShowPanel = this.config.showFilterPanel;
+      try {
+        if (sessionStorage.getItem('vhp-filter-panel-open') === '1') {
+          shouldShowPanel = true;
+          sessionStorage.removeItem('vhp-filter-panel-open');
+        }
+      } catch (e) { /* sessionStorage unavailable (e.g. private mode) */ }
+      if (shouldShowPanel && this.elements.filterPanel) {
         this.elements.filterPanel.style.display = 'block';
       }
 
       // Update display
-      this.updateFilterDisplay();
+      this.refreshConditionalItems();
     },
 
     /**
@@ -215,7 +228,7 @@
     setFilter(type, value) {
       if (!this.selectedFilters.hasOwnProperty(type)) return;
       this.selectedFilters[type] = value;
-      this.updateFilterDisplay();
+      this.refreshConditionalItems();
     },
 
     /**
@@ -224,7 +237,7 @@
     removeFilterSingle(type) {
       if (!this.selectedFilters.hasOwnProperty(type)) return;
       this.selectedFilters[type] = '';
-      this.updateFilterDisplay();
+      this.refreshConditionalItems();
     },
 
     /**
@@ -240,7 +253,7 @@
         this.selectedFilters[type].push(value);
       }
       
-      this.updateFilterDisplay();
+      this.refreshConditionalItems();
       this.updateDropdownVisuals();
     },
 
@@ -255,7 +268,7 @@
         this.selectedFilters[type].splice(index, 1);
       }
       
-      this.updateFilterDisplay();
+      this.refreshConditionalItems();
       this.updateDropdownVisuals();
     },
 
@@ -334,7 +347,11 @@
      */
     createFilterTag(type, value) {
       const tag = document.createElement('span');
-      tag.className = `${this.config.badgeClass} d-inline-flex align-items-center text-wrap`;
+      const colorToken = this.config.filterColors[type];
+      const baseClass = colorToken
+        ? `badge rounded-pill text-bg-${colorToken}`
+        : this.config.badgeClass;
+      tag.className = `${baseClass} d-inline-flex align-items-center text-wrap`;
       
       const label = this.config.filterLabels[type] || type;
       const removeHandler = this.config.multiSelect ? 
@@ -374,8 +391,36 @@
         });
       }
 
+      // Show a small inline spinner inside the search bar so users see
+      // *something* during the 1-5s server round-trip. With ~10-20 users/month
+      // the result cache rarely hits, so most submits are cold-path.
+      this.showLoadingIndicator();
+
       // Submit the form
       this.elements.form.submit();
+    },
+
+    /**
+     * Swap the Search submit button's content to a Bootstrap spinner +
+     * "Searching…" label and disable it. Standard Bootstrap pattern -- no
+     * absolute positioning, no overlay, no template changes. The page is
+     * about to navigate, so the original button content is restored on its
+     * own when the new HTML replaces the document.
+     */
+    showLoadingIndicator() {
+      if (!this.elements.form) return;
+      const submitBtn = this.elements.form.querySelector('button[type="submit"]');
+      if (!submitBtn || submitBtn.dataset.vhpLoading === '1') return;
+      // Lock the button's current size so swapping its content for the
+      // (narrower) spinner doesn't cause a layout shift.
+      const rect = submitBtn.getBoundingClientRect();
+      submitBtn.style.width = `${rect.width}px`;
+      submitBtn.style.height = `${rect.height}px`;
+      submitBtn.dataset.vhpLoading = '1';
+      submitBtn.disabled = true;
+      submitBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm align-middle" role="status" aria-hidden="true"></span>' +
+        '<span class="visually-hidden">Searching…</span>';
     },
 
     /**
@@ -424,9 +469,85 @@
     },
 
     /**
+     * Refresh visibility of dependent filter items based on currently-selected
+     * parent filter values. Generic: any item carrying `data-applies-to-<kind>`
+     * is shown only when at least one currently-selected item has a matching
+     * `data-<kind>` value (or when no item with `data-<kind>` is selected at
+     * all — i.e. no parent restriction). Items that become hidden while
+     * selected are auto-deselected so they don't leak into the next submit.
+     * Driven purely by data attributes; no filter-type pairing baked into JS.
+     */
+    refreshConditionalItems() {
+      const allItems = document.querySelectorAll('.dropdown-item[data-filter-type]');
+
+      // 1) Discover which "kinds" any dependent items rely on.
+      const kinds = new Set();
+      allItems.forEach(item => {
+        for (const attr of item.attributes) {
+          if (attr.name.startsWith('data-applies-to-')) {
+            kinds.add(attr.name.slice('data-applies-to-'.length));
+          }
+        }
+      });
+
+      // 2) For each kind, collect the set of values for which a parent item is
+      // currently selected.
+      const parentSelections = {};
+      kinds.forEach(k => { parentSelections[k] = new Set(); });
+      allItems.forEach(item => {
+        const type = item.dataset.filterType;
+        const val = item.dataset.filterValue;
+        const sel = this.selectedFilters[type];
+        const isSelected = Array.isArray(sel) ? sel.includes(val) : sel === val;
+        if (!isSelected) return;
+        kinds.forEach(k => {
+          const v = item.getAttribute(`data-${k}`);
+          if (v) parentSelections[k].add(v);
+        });
+      });
+
+      // 3) Apply visibility + auto-deselect items hidden while selected.
+      allItems.forEach(item => {
+        let visible = true;
+        for (const attr of item.attributes) {
+          if (!attr.name.startsWith('data-applies-to-')) continue;
+          const kind = attr.name.slice('data-applies-to-'.length);
+          const required = attr.value;
+          if (!required) continue;             // empty dependency = no restriction
+          const sel = parentSelections[kind];
+          if (!sel || sel.size === 0) continue; // no parent of this kind selected
+          if (!sel.has(required)) { visible = false; break; }
+        }
+        item.parentElement.style.display = visible ? '' : 'none';
+        if (!visible) {
+          const type = item.dataset.filterType;
+          const val = item.dataset.filterValue;
+          const cur = this.selectedFilters[type];
+          if (Array.isArray(cur)) {
+            const idx = cur.indexOf(val);
+            if (idx > -1) cur.splice(idx, 1);
+          } else if (cur === val) {
+            this.selectedFilters[type] = '';
+          }
+        }
+      });
+
+      // 4) Reflect any state changes in the badge/dropdown UI.
+      this.updateFilterDisplay();
+      if (this.config.multiSelect) this.updateDropdownVisuals();
+    },
+
+    /**
      * Clear all filters
      */
     clearFilters() {
+      // Track whether any filter was actually set, so we only trigger a
+      // navigation when there's something to clear (idempotent otherwise).
+      const hadAny = this.config.filterTypes.some(type => {
+        const v = this.selectedFilters[type];
+        return Array.isArray(v) ? v.length > 0 : !!v;
+      });
+
       // Reset all filters
       this.config.filterTypes.forEach(type => {
         if (this.config.multiSelect) {
@@ -436,10 +557,24 @@
         }
       });
 
-      this.updateFilterDisplay();
-      
+      this.refreshConditionalItems();
+
       if (this.config.multiSelect) {
         this.updateDropdownVisuals();
+      }
+
+      // Re-apply with the (now empty) filters so the page navigates to a
+      // clean state. Mirrors the Apply button's behaviour so Clear is a
+      // single user action instead of clear-then-apply. Persist a
+      // "panel was open" flag in sessionStorage so the new page restores it
+      // (otherwise the user can't pick different filters without re-opening
+      // the panel). On the no-op path (nothing was set), just close the
+      // panel as a soft UI hint.
+      if (hadAny) {
+        try { sessionStorage.setItem('vhp-filter-panel-open', '1'); } catch (e) {}
+        this.applyFilters();
+      } else if (this.elements.filterPanel) {
+        this.elements.filterPanel.style.display = 'none';
       }
     }
   };
