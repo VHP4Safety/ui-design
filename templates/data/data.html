@@ -5,7 +5,7 @@
 <section class="container py-md-5 py-3 d-flex flex-column min-vh-100">
     <!-- Page Title and Description -->
     <div data-vhp-glossary-skip class="">
-        <h1><span class="text-vhpteal" id="collection-name">{{ collection_name or 'Data catalog' }} Data</span></h1>
+        <h1><span class="text-vhpblue" id="collection-name">{{ collection_name or 'Data catalog' }} Data</span></h1>
         <p class="text-secondary fs-5">Explore datasets generated or used in <span id="collection-name-sub">{{ collection_name }} and hosted on BioStudies or Zenodo archives.</span></p>
     </div>
 
@@ -17,7 +17,7 @@
             <input type="hidden" name="filter_regulatory_question" id="filter_regulatory_question" value="{{ filter_regulatory_question or '' }}" />
             <input type="hidden" name="filter_flow_step" id="filter_flow_step" value="{{ filter_flow_step or '' }}" />
             <div class="btn-group" role="group" aria-label="Search and filter buttons">
-                <button type="submit" class="btn btn-outline-vhpteal">Search</button>
+                <button type="submit" class="btn btn-outline-vhpblue">Search</button>
                 <a href="{{ url_for('data') }}" class="btn btn-outline-danger text-nowrap">Clear</a>
                 <button type="button" id="filter-toggle-btn" class="btn btn-outline-secondary">Filters</button>
             </div>
@@ -44,13 +44,13 @@
                         Flow Step
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="ADME" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['ADME'] }}">ADME <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Chemical Information" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Chemical Information'] }}">Chemical Information <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="General" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['General'] }}">General <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Hazard Assessment" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Hazard Assessment'] }}">Hazard Assessment <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="External exposure" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['External exposure'] }}">External exposure <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Generic" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Generic'] }}">Generic <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Other" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Other'] }}">Other <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="ADME" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['ADME'] }}">ADME <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Chemical Information" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Chemical Information'] }}">Chemical Information <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="General" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['General'] }}">General <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Hazard Assessment" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Hazard Assessment'] }}">Hazard Assessment <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="External exposure" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['External exposure'] }}">External exposure <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Generic" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Generic'] }}">Generic <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="Other" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Other'] }}">Other <i class="bi bi-question-circle text-vhpblue"></i></a></li>
                     </ul>
                 </div>
                 
@@ -60,12 +60,12 @@
                         Regulatory Question
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Kidney Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Kidney Case Study (a)'] }}">Kidney Case Study (a) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Kidney Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Kidney Case Study (b)'] }}">Kidney Case Study (b) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Parkinson Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Parkinson Case Study (a)'] }}">Parkinson Case Study (a) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Parkinson Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Parkinson Case Study (b)'] }}">Parkinson Case Study (b) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Thyroid Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Thyroid Case Study (a)'] }}">Thyroid Case Study (a) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Thyroid Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Thyroid Case Study (b)'] }}">Thyroid Case Study (b) <i class="bi bi-question-circle text-vhpteal"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Kidney Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Kidney Case Study (a)'] }}">Kidney Case Study (a) <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Kidney Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Kidney Case Study (b)'] }}">Kidney Case Study (b) <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Parkinson Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Parkinson Case Study (a)'] }}">Parkinson Case Study (a) <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Parkinson Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Parkinson Case Study (b)'] }}">Parkinson Case Study (b) <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Thyroid Case Study (a)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Thyroid Case Study (a)'] }}">Thyroid Case Study (a) <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="Thyroid Case Study (b)" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations['Thyroid Case Study (b)'] }}">Thyroid Case Study (b) <i class="bi bi-question-circle text-vhpblue"></i></a></li>
                     </ul>
                 </div>
             </div>
@@ -81,7 +81,7 @@
             </div>
             
             <div class="">
-                <button id="apply-filter-btn" class="btn btn-sm btn-vhpteal mt-2">Apply</button>
+                <button id="apply-filter-btn" class="btn btn-sm btn-vhpblue mt-2">Apply</button>
                 <button id="clear-filter-btn" class="btn btn-sm btn-outline-danger mt-2">Clear</button>
             </div>
         </div>
@@ -95,9 +95,9 @@
         <strong>Filters Active:</strong> Showing {{ hits_returned }} results
         {% if not page_size_met %}(fetched {{ pages_fetched }} page(s), timeout reached){% endif %}
         | 
-        {% if filter_case_study %}<span class="badge bg-vhpteal">Case Study: {{ filter_case_study }}</span> {% endif %}
-        {% if filter_flow_step %}<span class="badge bg-vhpteal">Flow Step: {{ filter_flow_step }}</span> {% endif %}
-        {% if filter_regulatory_question %}<span class="badge bg-vhpteal">Regulatory Question: {{ filter_regulatory_question }}</span> {% endif %}
+        {% if filter_case_study %}<span class="badge bg-vhppink-distinct text-white">Case Study: {{ filter_case_study }}</span> {% endif %}
+        {% if filter_flow_step %}<span class="badge bg-vhppurple">Flow Step: {{ filter_flow_step }}</span> {% endif %}
+        {% if filter_regulatory_question %}<span class="badge bg-vhppink-distinct">Regulatory Question: {{ filter_regulatory_question }}</span> {% endif %}
     </div>
     {% endif %}
 
@@ -114,9 +114,9 @@
                         <span class="badge bg-vhplight-blue text-secondary rounded-pill align-content-center">{{ study.type or 'unknown' }}</span>
                     </div>
                     <div class = "card-header bg-white align-items-center">
-                            {% if study.metadata.case_study%}<a role="button" href="{{url_for('casestudy', case=study.metadata.case_study|lower)}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhpteal rounded-pill border border-vhpteal d-inline-flex align-items-center text-wrap">Case Study: {{study.metadata.case_study|capitalize }}</a>{%endif%}
-                            {% if study.metadata.regulatory_question%}<a role="button" href="{{url_for('casestudy', case=study.metadata.case_study|lower, question=study.metadata.regulatory_question )}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhpteal rounded-pill border border-vhpteal d-inline-flex align-items-center text-wrap">Regulatory Question: {{study.metadata.regulatory_question}}</a>{%endif%}
-                            {% if study.metadata.flow_step%}<a role="button" href="{{url_for('casestudy', case=study.metadata.case_study|lower, question=study.metadata.regulatory_question, step=study.metadata.flow_step )}}"  style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhpteal rounded-pill border border-vhpteal d-inline-flex align-items-center text-wrap">Flow Step: {{study.metadata.flow_step}}</a>{%endif%}
+                            {% if study.metadata.case_study%}<a role="button" href="{{url_for('casestudy', case=study.metadata.case_study|lower)}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">Case Study: {{study.metadata.case_study|capitalize }}</a>{%endif%}
+                            {% if study.metadata.regulatory_question%}<a role="button" href="{{url_for('casestudy', case=study.metadata.case_study|lower, question=study.metadata.regulatory_question )}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">Regulatory Question: {{study.metadata.regulatory_question}}</a>{%endif%}
+                            {% if study.metadata.flow_step%}<a role="button" href="{{url_for('casestudy', case=study.metadata.case_study|lower, question=study.metadata.regulatory_question, step=study.metadata.flow_step )}}"  style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppurple rounded-pill border border-vhppurple d-inline-flex align-items-center text-wrap">Flow Step: {{study.metadata.flow_step}}</a>{%endif%}
                     </div>
                     <div class="card-body">
                         <h5 class="card-title" style="word-break: break-word;">
@@ -127,9 +127,9 @@
                         </div>
                     </div>
                     <div class="card-footer btn-group bg-white border-0 py-3" role="group">
-                            <a href="{{ url_for('data_detail', dataid=study.accession) }}" style="min-width:70px" class="btn btn-vhpteal" role="button" data-bs-toggle="tooltip" data-bs-title="View details"><i class="bi bi-info-circle"></i></a>
+                            <a href="{{ url_for('data_detail', dataid=study.accession) }}" style="min-width:70px" class="btn btn-vhpblue" role="button" data-bs-toggle="tooltip" data-bs-title="View details"><i class="bi bi-info-circle"></i></a>
                             {% if study.url%}
-                            <a href="{{ study.url}}" class="btn btn-outline-vhpteal d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View in BioStudies</a>
+                            <a href="{{ study.url}}" class="btn btn-outline-vhpblue d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View in BioStudies</a>
                             {% endif%}
 
                             {% if study.metadata.rocrate_url %}
@@ -169,9 +169,9 @@
                         </div>
                     </div>
                     <div class="card-footer btn-group bg-white border-0 py-3" role="group">
-                            <a href="{{ url_for('data_detail', dataid=dataset.id) }}" style="min-width:70px" class="btn btn-vhpteal" role="button" data-bs-toggle="tooltip" data-bs-title="View details"><i class="bi bi-info-circle"></i></a>
+                            <a href="{{ url_for('data_detail', dataid=dataset.id) }}" style="min-width:70px" class="btn btn-vhpblue" role="button" data-bs-toggle="tooltip" data-bs-title="View details"><i class="bi bi-info-circle"></i></a>
                             {% if dataset.doi_url%}
-                            <a href="{{ dataset.doi_url}}" class="btn btn-outline-vhpteal d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View on Zenodo</a>
+                            <a href="{{ dataset.doi_url}}" class="btn btn-outline-vhpblue d-inline" target="_blank"><i class="bi bi-box-arrow-up-right pe-1"></i> View on Zenodo</a>
                             {% endif%}
                             {% if dataset.links.archive%}
                             <a href="{{ dataset.links.archive}}" class="btn btn-outline-secondary d-inline view-details-btn"><i class="bi bi-box-fill pe-1"></i>{%if dataset.parsed_metadata.is_rocrate %}RO-Crate{% else %}Archive{% endif %}</a>
@@ -228,7 +228,7 @@
                 'flow-step': 'Flow Step',
                 'reg-question': 'Reg. Question'
             },
-            badgeClass: 'badge rounded-pill text-bg-vhpteal',
+            badgeClass: 'badge rounded-pill text-bg-vhpblue',
             showFilterPanel: {% if filter_case_study or filter_flow_step or filter_regulatory_question %}true{% else %}false{% endif %}
         });
     });
