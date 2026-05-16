@@ -61,13 +61,11 @@
           }
         }
         if (panel) {
-          // After the panel finishes expanding, scroll the header into view.
-          // The html { scroll-padding-top } rule keeps it clear of the navbar.
-          panel.addEventListener("shown.bs.collapse", function onShown() {
-            panel.removeEventListener("shown.bs.collapse", onShown);
-            target.scrollIntoView({ behavior: "smooth", block: "start" });
-          }, { once: true });
-          bootstrap.Collapse.getOrCreateInstance(panel).show();
+          // Scroll the accordion header into view after the panel has expanded
+          panel.addEventListener('shown.bs.collapse', function () {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }, { once: true })
+          bootstrap.Collapse.getOrCreateInstance(panel).show()
         }
       }
       window.addEventListener("DOMContentLoaded", openAccordionFromHash);

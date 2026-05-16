@@ -820,7 +820,7 @@ def tools():
                 else "md file not found"
             )
 
-            # Check if the tool has the placeholder logo
+            # Check if the tool has the placeholder logo; also guard against None
             if not png_name or png_name == placeholder_logo:
                 tool["png"] = None  # set to None if it's the common placeholder
             else:
