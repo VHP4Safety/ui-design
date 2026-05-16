@@ -5,9 +5,9 @@
 # See get_partner_logos() in app.py.
 
 # Coordination
-HU.png | University of Applied Sciences Utrecht | https://www.internationalhu.com/
-RIVM.png | National Institute for Public Health and the Environment | https://www.rivm.nl/en
 UU.png | Utrecht University | https://www.uu.nl/en
+RIVM.png | National Institute for Public Health and the Environment | https://www.rivm.nl/en
+HU.png | University of Applied Sciences Utrecht | https://www.internationalhu.com/
 
 # Co-applicants
 UM.png | Maastricht University | https://www.maastrichtuniversity.nl
