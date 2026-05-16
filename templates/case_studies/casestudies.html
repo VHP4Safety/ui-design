@@ -1,53 +1,50 @@
-{% extends "base.html" %} {% block content %}
-<link rel="stylesheet" href="/static/css/casestudies.css" />
+{% extends 'base.html' %} {% block content %}
+  <link rel="stylesheet" href="/static/css/casestudies.css" />
 
-<section class="container py-md-5 py-3">
-
-  <div class="">
-        <h1><span class="text-vhpblue" id="collection-name">Case Studies</span></h1>
-        <p class="text-secondary fs-5">The Virtual Human Platform was developed using three case studies based on human scenarios.   </p>
-        <p class="mb-4" style="text-align: justify;">
-        For each case study, two regulatory questions were defined to demonstrate how the platform supports step-by-step safety assessment. Within the Safety Assessment Steps, users can access the tools, methods, and data needed to address these regulatory questions. These steps organize the platform’s processes, guiding users through structured, transparent assessments. For more information, visit our Safety Assessment Steps <a class="link-vhpblue text-decoration-none" href="{{ url_for('SafetyAssessmentWorkflow') }}" >info page.</a>
-        </p>
+  <section class="container py-md-5 py-3">
+    <div class="">
+      <h1><span class="text-vhppink-distinct" id="collection-name">Case Studies</span></h1>
+      <p class="text-secondary fs-5">The Virtual Human Platform was developed using three case studies based on human scenarios.</p>
+      <p class="mb-4" style="text-align: justify;">
+        For each case study, two regulatory questions were defined to demonstrate how the platform supports step-by-step safety assessment. Within the Safety Assessment Steps, users can access the tools, methods, and data needed to address these regulatory questions. These steps organize the platform’s processes, guiding users through structured, transparent assessments. For more information, visit our Safety Assessment Steps <a class="link-vhppink-distinct text-decoration-none" href="{{ url_for('SafetyAssessmentWorkflow') }}">info page.</a>
+      </p>
     </div>
-  <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
-    <div class="col">        
-      <a href="/casestudies/kidney" class="text-decoration-none">
-        <div class="card h-100 text-center card-button card-button-vhpblue">
-            <img src="/static/images/image43_hexagon.svg" class="card-img-top p-4 mg-fluid" alt="Kidney case study" style="max-width: 120px; margin: 0 auto;">
-          <div class="card-body">
-            <h5 class="card-title">Kidney case study</h5>
-            <p class="card-text">To study kidney disease and pharmacovigilance.</p>
-          </div>
-        </div>
-      </a>
-    </div>
-
-    <div class="col">
-      <a href="/casestudies/parkinson" class="text-decoration-none">
-        <div class="card h-100 text-center card-button card-button-vhpblue">
-              <img src="/static/images/image45_hexagon.svg" class="card-img-top p-4 img-fluid" alt="Parkinson case study" style="max-width: 120px; margin: 0 auto;">
-            <div class="card-body">
-              <h5 class="card-title">Parkinson case study</h5>
-              <p class="card-text">To study life course pesticide exposure and neurodegenerative disease.</p>
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+      <div class="col">
+        <a href="/casestudies/kidney" class="text-decoration-none">
+          <div class="card h-100 text-center card-button card-button-vhppink-distinct border-2">
+            <img src="/static/images/image43_hexagon.svg" class="card-img-top p-4 mg-fluid" alt="Kidney case study" style="max-width: 120px; margin: 0 auto;" />
+            <div class="card-body pt-0">
+              <h5 class="card-title">Kidney case study</h5>
+              <p class="card-text fw-normal">To study kidney disease and pharmacovigilance.</p>
             </div>
-        </div>
-      </a>
-    </div>
-
-    <div class="col">
-      <a href="/casestudies/thyroid" class="text-decoration-none">
-        <div class="card h-100 text-center card-button card-button-vhpblue">
-            <img src="/static/images/image47_hexagon.svg" class="card-img-top p-4 mg-fluid" alt="Thyroid case study" style="max-width: 120px; margin: 0 auto;">
-          <div class="card-body">
-            <h5 class="card-title">Thyroid case study</h5>
-            <p class="card-text">To study health effects discriminated by age and sex on thyroid-mediated neurodevelopment.</p>
           </div>
-        </div>
-      </a>
+        </a>
+      </div>
+
+      <div class="col">
+        <a href="/casestudies/parkinson" class="text-decoration-none">
+          <div class="card h-100 text-center card-button card-button-vhppink-distinct border-2">
+            <img src="/static/images/image45_hexagon.svg" class="card-img-top p-4 img-fluid" alt="Parkinson case study" style="max-width: 120px; margin: 0 auto;" />
+            <div class="card-body pt-0">
+              <h5 class="card-title">Parkinson case study</h5>
+              <p class="card-text fw-normal">To study life course pesticide exposure and neurodegenerative disease.</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col">
+        <a href="/casestudies/thyroid" class="text-decoration-none">
+          <div class="card h-100 text-center card-button card-button-vhppink-distinct border-2">
+            <img src="/static/images/image47_hexagon.svg" class="card-img-top p-4 mg-fluid" alt="Thyroid case study" style="max-width: 120px; margin: 0 auto;" />
+            <div class="card-body pt-0">
+              <h5 class="card-title">Thyroid case study</h5>
+              <p class="card-text fw-normal">To study health effects discriminated by age and sex on thyroid-mediated neurodevelopment.</p>
+            </div>
+          </div>
+        </a>
+      </div>
     </div>
-  </div>
-
-
-</section>
+  </section>
 {% endblock %}
