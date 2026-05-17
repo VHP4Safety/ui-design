@@ -281,12 +281,23 @@
       document.querySelectorAll('.dropdown-item[data-filter-type]').forEach(item => {
         const filterType = item.dataset.filterType;
         const filterValue = item.dataset.filterValue;
-        
-        if (this.selectedFilters[filterType] && 
-            this.selectedFilters[filterType].includes(filterValue)) {
+        const isActive =
+          this.selectedFilters[filterType] &&
+          this.selectedFilters[filterType].includes(filterValue);
+
+        // Active state colour matches the filter's own pill/button colour
+        // via Bootstrap's `text-bg-<token>` utility (handles contrast text
+        // automatically). Falls back to plain `.active` when no colour token
+        // is configured for this filter type.
+        const colorToken = this.config.filterColors[filterType];
+        const colorClass = colorToken ? `text-bg-${colorToken}` : null;
+
+        if (isActive) {
           item.classList.add('active');
+          if (colorClass) item.classList.add(colorClass);
         } else {
           item.classList.remove('active');
+          if (colorClass) item.classList.remove(colorClass);
         }
       });
     },
