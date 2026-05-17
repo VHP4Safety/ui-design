@@ -25,7 +25,7 @@
         </form>
         
         <!-- Filter Panel -->
-        <div id="filter-panel" class="card bg-secondary-subtle p-3 mt-2" style="display: none;">
+        <div id="filter-panel" class="card bg-light p-3 mt-2" style="display: none;">
             <div class="gap-2 pb-1">
                 <!-- Case Study Dropdown -->
                 <div class="btn-group mb-1">
@@ -76,11 +76,8 @@
                     aria-describedby="filters_label"
                     role="group">
                 </div>
-            </div>
-            
-            <div class="">
-                <button id="apply-filter-btn" class="btn btn-sm btn-vhpblue mt-2">Apply</button>
-                <button id="clear-filter-btn" class="btn btn-sm btn-outline-danger mt-2">Clear</button>
+                <button id="apply-filter-btn" class="btn btn-vhpblue" aria-label="Apply filters" title="Apply filters"><i class="bi bi-check-lg" aria-hidden="true"></i></button>
+                <button id="clear-filter-btn" class="btn btn-outline-danger" aria-label="Clear filters" title="Clear filters"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
             </div>
         </div>
         
