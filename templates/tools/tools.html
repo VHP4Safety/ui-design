@@ -35,6 +35,18 @@
         <!-- Filter Panel -->
         <div id="filter-panel" class="card bg-secondary-subtle p-3 mt-2" style="display: none;">
             <div class="gap-2 pb-1">
+                <!-- Case Study Dropdown (derived from reg_q_Xy booleans -- tools have no case_study field) -->
+                <div class="btn-group mb-1">
+                    <button class="btn btn-sm btn-vhppink-distinct dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                        Case Study
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% for slug in case_studies %}
+                          <li><a class="dropdown-item" href="#" data-filter-type="case-study" data-filter-value="{{ slug|title }}" data-case-slug="{{ slug }}">{{ slug|title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
                 <!-- Regulatory Questions Dropdown -->
                 <div class="btn-group mb-1">
                     <button class="btn btn-sm btn-vhppink-distinct dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
@@ -189,18 +201,21 @@
     // Initialize search and filter functionality for tools catalog
     document.addEventListener('DOMContentLoaded', () => {
         SearchFilter.init({
-            filterTypes: ['flow-step', 'reg-question'],
+            filterTypes: ['case-study', 'flow-step', 'reg-question'],
             multiSelect: true, // Multiple selections per category
             multipleInputs: true, // Create separate hidden input for each value
             initialFilters: {
+                'case-study': [{% for c in selected_case_studies %}'{{ c }}'{% if not loop.last %}, {% endif %}{% endfor %}],
                 'flow-step': [{% for stage in selected_stages %}'{{ stage }}'{% if not loop.last %}, {% endif %}{% endfor %}],
                 'reg-question': [{% for question in selected_questions %}'{{ question }}'{% if not loop.last %}, {% endif %}{% endfor %}]
             },
             filterFieldMap: {
+                'case-study': 'case_study',
                 'flow-step': 'stage',
                 'reg-question': 'reg_q'
             },
             filterLabels: {
+                'case-study': 'Case Study',
                 'flow-step': 'Flow Step',
                 'reg-question': 'Reg. Q'
             },
@@ -210,7 +225,7 @@
                 'reg-question': 'vhppink-distinct',
                 'flow-step': 'vhppurple',
             },
-            showFilterPanel: {% if selected_stages or selected_questions %}true{% else %}false{% endif %}
+            showFilterPanel: {% if selected_case_studies or selected_stages or selected_questions %}true{% else %}false{% endif %}
         });
     });
 </script>

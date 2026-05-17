@@ -12,10 +12,8 @@
     <nav class="navbar navbar-expand-lg d-inline">
         <form method="GET" action="{{ url_for('data') }}" class="d-flex" role="search" id="search-form">
             <input type="text" class="form-control me-2" name="query" id="search-input" value="{{ search_query or '' }}" placeholder="Search for datasets (e.g., S-ONTX26, toxicity, liver...)" />
-            <!-- Hidden inputs for filters -->
-            <input type="hidden" name="filter_case_study" id="filter_case_study" value="{{ filter_case_study or '' }}" />
-            <input type="hidden" name="filter_regulatory_question" id="filter_regulatory_question" value="{{ filter_regulatory_question or '' }}" />
-            <input type="hidden" name="filter_flow_step" id="filter_flow_step" value="{{ filter_flow_step or '' }}" />
+            <!-- Filter hidden inputs are added dynamically by search_filter.js
+                 in multipleInputs mode (one <input> per selected value). -->
             <div class="btn-group" role="group" aria-label="Search and filter buttons">
                 <button type="submit" class="btn btn-outline-vhpblue">Search</button>
                 <a href="{{ url_for('data') }}" class="btn btn-outline-danger text-nowrap">Clear</a>
@@ -92,10 +90,10 @@
     <div class="alert alert-info">
         <strong>Filters Active:</strong> Showing {{ hits_returned }} results
         {% if not page_size_met %}(fetched {{ pages_fetched }} page(s), timeout reached){% endif %}
-        | 
-        {% if filter_case_study %}<span class="badge bg-vhppink-distinct text-white">Case Study: {{ filter_case_study }}</span> {% endif %}
-        {% if filter_flow_step %}<span class="badge bg-vhppurple">Flow Step: {{ filter_flow_step }}</span> {% endif %}
-        {% if filter_regulatory_question %}<span class="badge bg-vhppink-distinct">Regulatory Question: {{ filter_regulatory_question }}</span> {% endif %}
+        |
+        {% for v in filter_case_study %}<span class="badge bg-vhppink-distinct text-white">Case Study: {{ v }}</span> {% endfor %}
+        {% for v in filter_flow_step %}<span class="badge bg-vhppurple">Flow Step: {{ v }}</span> {% endfor %}
+        {% for v in filter_regulatory_question %}<span class="badge bg-vhppink-distinct">Regulatory Question: {{ v }}</span> {% endfor %}
     </div>
     {% endif %}
 
@@ -243,11 +241,12 @@
     document.addEventListener('DOMContentLoaded', () => {
         SearchFilter.init({
             filterTypes: ['case-study', 'flow-step', 'reg-question'],
-            multiSelect: false, // Single selection per category
+            multiSelect: true, // Multiple selections per category
+            multipleInputs: true, // Create separate hidden input for each value
             initialFilters: {
-                'case-study': '{{ filter_case_study or "" }}',
-                'flow-step': '{{ filter_flow_step or "" }}',
-                'reg-question': '{{ filter_regulatory_question or "" }}'
+                'case-study': [{% for c in filter_case_study %}'{{ c }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                'flow-step': [{% for s in filter_flow_step %}'{{ s }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                'reg-question': [{% for q in filter_regulatory_question %}'{{ q }}'{% if not loop.last %}, {% endif %}{% endfor %}]
             },
             filterFieldMap: {
                 'case-study': 'filter_case_study',
