@@ -149,17 +149,16 @@
         });
       }
 
-      // Dropdown item clicks
+      // Dropdown item clicks. Let the click bubble so Bootstrap's auto-close
+      // handler fires — the dropdown closes after each selection, and the user
+      // re-opens it to add more. Pills below show what's already selected.
       document.querySelectorAll('.dropdown-item[data-filter-type]').forEach(item => {
         item.addEventListener('click', (e) => {
           e.preventDefault();
-          if (this.config.multiSelect) {
-            e.stopPropagation(); // Keep dropdown open for multi-select
-          }
-          
+
           const filterType = item.dataset.filterType;
           const filterValue = item.dataset.filterValue;
-          
+
           if (filterType && filterValue) {
             if (this.config.multiSelect) {
               this.toggleFilter(filterType, filterValue);
