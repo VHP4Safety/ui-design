@@ -650,21 +650,22 @@ def data():
     page_size = request.args.get("page_size", 6, type=int)
     search_query = request.args.get("query", "", type=str)
 
-    # Get filter parameters
-    filter_case_study = request.args.get("filter_case_study", "", type=str)
-    filter_regulatory_question = request.args.get(
-        "filter_regulatory_question", "", type=str
-    )
-    filter_flow_step = request.args.get("filter_flow_step", "", type=str)
+    # Get filter parameters (multi-select via repeated query params, matching
+    # tools/methods). Each filter type is a list; the extractor groups by
+    # field and applies OR-within-field, AND-across-fields.
+    filter_case_study = request.args.getlist("filter_case_study")
+    filter_regulatory_question = request.args.getlist("filter_regulatory_question")
+    filter_flow_step = request.args.getlist("filter_flow_step")
 
-    # Build filter list (only include non-empty filters)
+    # Build filter list (one tuple per (field, value)); repeated field names
+    # become OR within that field downstream in _apply_filters.
     filters = []
-    if filter_case_study:
-        filters.append(("case_study", filter_case_study))
-    if filter_regulatory_question:
-        filters.append(("regulatory_question", filter_regulatory_question))
-    if filter_flow_step:
-        filters.append(("flow_step", filter_flow_step))
+    for v in filter_case_study:
+        filters.append(("case_study", v))
+    for v in filter_regulatory_question:
+        filters.append(("regulatory_question", v))
+    for v in filter_flow_step:
+        filters.append(("flow_step", v))
 
     # Split page budget between the two repositories so the combined output
     # respects page_size (e.g. page_size=6 -> 3 from each source).
@@ -907,6 +908,25 @@ def tools():
         if selected_stages:
             tools = [tool for tool in tools if tool.get("stage") in selected_stages]
 
+        # Filter by case study. Tools have no `case_study` field; membership
+        # is derived from the reg_q_Xy booleans via _REG_QUESTION_KEYS
+        # (e.g. selecting "Kidney" matches tools where reg_q_1a OR reg_q_1b
+        # is "true"). OR within type, AND across types.
+        selected_case_studies = request.args.getlist("case_study")
+        if selected_case_studies:
+            slugs_lc = {c.lower() for c in selected_case_studies}
+            case_fields = [
+                field
+                for (slug, _), field in _REG_QUESTION_KEYS.items()
+                if slug in slugs_lc
+            ]
+            if case_fields:
+                tools = [
+                    tool
+                    for tool in tools
+                    if any(str(tool.get(f, "")).lower() == "true" for f in case_fields)
+                ]
+
         # Filtering over the regulatory questions. OR within type: a tool
         # passes if any of the selected questions' reg_q_Xy field is "true".
         # Matches the convention used by every other within-type filter on
@@ -995,11 +1015,13 @@ def tools():
             tools=tools,
             stages=stages,
             selected_stages=selected_stages,
+            case_studies=list(get_casestudies()),
+            selected_case_studies=selected_case_studies,
             reg_questions=reg_questions,
             selected_questions=selected_questions,
             stage_explanations=get_stage_explanations(),
             reg_question_explanations=get_reg_question_explanations(),
-        reg_question_cases={v["label"]: v.get("case", "") for v in get_reg_questions().values()},
+            reg_question_cases={v["label"]: v.get("case", "") for v in get_reg_questions().values()},
             page=page,
             page_size=page_size,
             total=total,

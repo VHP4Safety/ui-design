@@ -314,13 +314,23 @@ class ZenodoExtractor:
     def _apply_filters(
         self, hits: list[dict[str, Any]], filters: tuple[tuple[str, str]] | None
     ) -> list[dict[str, Any]]:
-        """Apply AND-filters to hits using parsed metadata when available.
+        """Apply filters to hits using parsed metadata when available.
 
-        Field matching is case-insensitive. For list fields (keywords, creators,
-        communities) we match if any element contains the filter value.
+        Semantics: OR within the same field name (e.g. multiple case_study
+        values match any of them), AND across different field names. Matches
+        the convention used by tools/methods filters. Field matching is
+        case-insensitive. For list fields (keywords, creators, communities)
+        a record matches a field if ANY of its list elements contains ANY
+        of the accepted values.
         """
         if not filters:
             return hits
+
+        # Group accepted values by field name, lowercased for case-insensitive
+        # comparison.
+        accepted_by_field: dict[str, list[str]] = {}
+        for field, value in filters:
+            accepted_by_field.setdefault(field, []).append(value.lower())
 
         filtered: list[dict[str, Any]] = []
         for hit in hits:
@@ -328,41 +338,34 @@ class ZenodoExtractor:
             if not metadata:
                 continue
 
-            matches_all = True
-            for field, value in filters:
-                filter_value = value.lower()
+            matches_all_fields = True
+            for field, accepted in accepted_by_field.items():
                 field_value = metadata.get(field, "")
 
                 if isinstance(field_value, list):
-                    # normalize list values to strings
                     found = False
                     for item in field_value:
-                        # item may be dict (e.g., creators)
                         if isinstance(item, dict):
-                            # try to match on common text fields
                             text = " ".join(
                                 str(v) for v in item.values() if isinstance(v, str)
-                            )
+                            ).lower()
                         else:
-                            text = str(item)
-                        if filter_value in text.lower():
+                            text = str(item).lower()
+                        if any(v in text for v in accepted):
                             found = True
                             break
                     if not found:
-                        matches_all = False
+                        matches_all_fields = False
                         break
-
                 else:
                     if not isinstance(field_value, str):
                         field_value = str(field_value)
-                    if (
-                        filter_value != field_value.lower()
-                        and filter_value not in field_value.lower()
-                    ):
-                        matches_all = False
+                    fv = field_value.lower()
+                    if not any(v == fv or v in fv for v in accepted):
+                        matches_all_fields = False
                         break
 
-            if matches_all:
+            if matches_all_fields:
                 filtered.append(hit)
 
         return filtered

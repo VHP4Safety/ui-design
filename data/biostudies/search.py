@@ -488,28 +488,32 @@ class BioStudiesExtractor:
 
     def _apply_filters(self, hits: list, filters: list[tuple]) -> list:
         """
-        Filter hits based on metadata field values (case-insensitive AND logic)
+        Filter hits based on metadata field values.
+
+        Semantics: OR within the same field name (e.g. ("case_study","Kidney")
+        and ("case_study","Parkinson") together match records in either case),
+        AND across different field names. Case-insensitive. Matches the
+        convention used by tools/methods filters.
         """
         if not filters:
             return hits
+
+        # Group accepted values by field name, lowercased for case-insensitive
+        # comparison.
+        accepted_by_field: dict[str, list[str]] = {}
+        for field, value in filters:
+            accepted_by_field.setdefault(field, []).append(str(value).strip().lower())
 
         filtered = []
         for hit in hits:
             metadata = hit.get("metadata", {})
             if not metadata:
                 continue
-
-            matches_all = True
-            for field, value in filters:
-                field_value = str(metadata.get(field, "")).strip().lower()
-                filter_value = str(value).strip().lower()
-                if field_value != filter_value:
-                    matches_all = False
-                    break
-
-            if matches_all:
+            if all(
+                str(metadata.get(field, "")).strip().lower() in accepted
+                for field, accepted in accepted_by_field.items()
+            ):
                 filtered.append(hit)
-
         return filtered
 
     def _backfill_filtered_results(
