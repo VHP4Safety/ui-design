@@ -521,12 +521,18 @@ def home():
         return f"Error processing service data: {e}", 500
     num_tools = len(tools)
     num_case_studies = len(get_casestudies())
+    try:
+        methods = get_json_dict(METHODS_URL)
+        num_methods = len(methods) if isinstance(methods, dict) else 0
+    except Exception:
+        num_methods = 0
     bs_res, zen_res = get_repository_data(search_query="")
     num_datasets = bs_res.get("total", 0) + zen_res.get("total", 0)
     return render_template(
         "home.html",
         num_tools=num_tools,
         num_case_studies=num_case_studies,
+        num_methods=num_methods,
         num_datasets=num_datasets,
         process_flow_steps=get_process_flow_steps(),
         partner_logos=get_partner_logos(),

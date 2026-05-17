@@ -98,23 +98,7 @@
     {% endif %}
 
     <!-- Pagination (top) -->
-    <nav aria-label="Page navigation" class="pagination-container d-flex justify-content-center pt-3 pt-sm-2 pb-3">
-        <ul class="pagination mb-0">
-            <li class="page-item {% if not has_prev %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('data', page=page-1, page_size=page_size, query=search_query, filter_case_study=filter_case_study, filter_regulatory_question=filter_regulatory_question, filter_flow_step=filter_flow_step) }}" aria-label="Previous">
-                    <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
-                </a>
-            </li>
-            <li class="page-item active" aria-current="page">
-                <span class="page-link bg-secondary border-secondary">{{ page }}</span>
-            </li>
-            <li class="page-item {% if not has_next %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('data', page=page+1, page_size=page_size, query=search_query, filter_case_study=filter_case_study, filter_regulatory_question=filter_regulatory_question, filter_flow_step=filter_flow_step) }}" aria-label="Next">
-                    <i class="bi bi-caret-right-fill" aria-hidden="true"></i>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    {% include "_pagination.html" %}
 
     <div class="results-section">
         <div id="results-list" class="results-list">
@@ -216,23 +200,9 @@
     </div>
 
     <!-- Pagination at bottom -->
-    <nav aria-label="Page navigation" class="pagination-container mt-auto d-flex justify-content-center py-3">
-        <ul class="pagination mb-0">
-            <li class="page-item {% if not has_prev %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('data', page=page-1, page_size=page_size, query=search_query, filter_case_study=filter_case_study, filter_regulatory_question=filter_regulatory_question, filter_flow_step=filter_flow_step) }}" aria-label="Previous">
-                    <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
-                </a>
-            </li>
-            <li class="page-item active" aria-current="page">
-                <span class="page-link bg-secondary border-secondary">{{ page }}</span>
-            </li>
-            <li class="page-item {% if not has_next %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('data', page=page+1, page_size=page_size, query=search_query, filter_case_study=filter_case_study, filter_regulatory_question=filter_regulatory_question, filter_flow_step=filter_flow_step) }}" aria-label="Next">
-                    <i class="bi bi-caret-right-fill" aria-hidden="true"></i>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    {% with extra_class="mt-auto py-3" %}
+        {% include "_pagination.html" %}
+    {% endwith %}
 </section>
 
 <script src="/static/js/search_filter.js"></script>
