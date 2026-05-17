@@ -358,9 +358,13 @@
         `removeFilterTag('${type}', '${value.replace(/'/g, "\\'")}')` :
         `removeFilterTag('${type}')`;
       
+      // type="button" is critical: the badge sits inside the search form, and
+      // <button> defaults to type="submit", which would submit the form with
+      // the *old* hidden-input values (before applyFilters has written the
+      // new state in), making the X click look like a no-op page reload.
       tag.innerHTML = `
         ${label}: ${value}
-        <button class="btn-close btn-close-white ms-2" onclick="${removeHandler}" aria-label="Remove filter"></button>
+        <button type="button" class="btn-close btn-close-white ms-2" onclick="${removeHandler}" aria-label="Remove filter"></button>
       `;
       
       this.elements.filterTags.appendChild(tag);
