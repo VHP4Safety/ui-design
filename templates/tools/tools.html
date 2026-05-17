@@ -74,7 +74,7 @@
             
             <!-- Selected Filters Display -->
             <div id="selected-filters" class="input-group">
-                <span class="input-group-text" id="filters_label">Selected Filters:</span>
+                <span class="input-group-text" id="filters_label">Selected Filters (OR):</span>
                 <div id="filter-tags"
                     class="form-control d-flex flex-wrap align-items-center gap-2"
                     aria-describedby="filters_label"
@@ -105,7 +105,7 @@
     <nav aria-label="Page navigation" class="pagination-container d-flex justify-content-center pt-3 pt-sm-2 pb-3">
         <ul class="pagination mb-0">
             <li class="page-item {% if not has_prev %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('tools', page=page-1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Previous">
+                <a class="page-link" href="{{ url_for('tools', page=page-1, page_size=page_size, search=search_query, case_study=selected_case_studies, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Previous">
                     <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
                 </a>
             </li>
@@ -113,7 +113,7 @@
                 <span class="page-link bg-secondary border-secondary">{{ page }}</span>
             </li>
             <li class="page-item {% if not has_next %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('tools', page=page+1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Next">
+                <a class="page-link" href="{{ url_for('tools', page=page+1, page_size=page_size, search=search_query, case_study=selected_case_studies, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Next">
                     <i class="bi bi-caret-right-fill" aria-hidden="true"></i>
                 </a>
             </li>
@@ -180,7 +180,7 @@
     <nav aria-label="Page navigation" class="pagination-container mt-auto d-flex justify-content-center py-3">
         <ul class="pagination mb-0">
             <li class="page-item {% if not has_prev %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('tools', page=page-1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Previous">
+                <a class="page-link" href="{{ url_for('tools', page=page-1, page_size=page_size, search=search_query, case_study=selected_case_studies, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Previous">
                     <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
                 </a>
             </li>
@@ -188,7 +188,7 @@
                 <span class="page-link bg-secondary border-secondary">{{ page }}</span>
             </li>
             <li class="page-item {% if not has_next %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('tools', page=page+1, page_size=page_size, search=search_query, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Next">
+                <a class="page-link" href="{{ url_for('tools', page=page+1, page_size=page_size, search=search_query, case_study=selected_case_studies, stage=selected_stages, reg_q=selected_questions) }}" aria-label="Next">
                     <i class="bi bi-caret-right-fill" aria-hidden="true"></i>
                 </a>
             </li>
