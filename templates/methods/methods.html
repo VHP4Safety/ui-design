@@ -34,56 +34,39 @@
         
         <!-- Filter Panel -->
         <div id="filter-panel" class="card bg-secondary-subtle p-3 mt-2" style="display: none;">
-  <!-- explanation of the generic risk-assessment process flow -->
-  <div class="">
-    <h3><span class="text-vhpblue" id="collection-name">Safety Assessment Workflow Steps</span></h3>
-    <p class="mb-4">The Virtual Human Platform implements a generic safety assessment as a five-step process. For more information regarding the Safety Assessment Workflow, visit our <a class="link-vhpblue text-decoration-none" href="{{ url_for('SafetyAssessmentWorkflow') }}" >Safety Assessment Workflow info page.</a> <p>
-    </p>
-  </div>
-  <div class="row row-cols-1 row-cols-md-6 gap-2 mx-auto">
-    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
-      data-bs-toggle="methodtip" data-bs-placement="top" title="Chemical characteristics and hazard identification is a Safety Assessment Workflow Step that categorizes services that use molecular structures, chemical descriptors, and databases to predict or analyze the properties, behavior, and potential risks of chemical substances.">
-      Chemical Characteristics and hazard identification</button>
-    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
-      data-bs-toggle="methodtip" data-bs-placement="top" title="Exposure is a Safety Assessment Workflow Step which categorizes services that evaluate and analyze the route, duration, magnitude and frequency of exposure of an organism or (sub)population to one or multiple chemicals.">
-      Exposure</button>
-    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
-      data-bs-toggle="methodtip" data-bs-placement="top" title="Toxicokinetics is a Safety Assessment Workflow Step which categorizes services that analyze the kinetics (absorption, distribution, metabolism and excretion) of chemicals and how these processes influence the internal dose.">
-      Toxicokinetics </button>
-    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
-      data-bs-toggle="methodtip" data-bs-placement="top" title="Toxicodynamics is a Safety Assessment Workflow Step which categorizes services that use or extend the (quantitative) AOP framework to analyze and assess the interaction of chemicals with biological targets.">
-      Toxicodynamics</button>
-    <button class="btn btn-primary btn-vhpblue card-button-vhpblue" type="submit"
-      data-bs-toggle="methodtip" data-bs-placement="top" title="Adverse Outcome is a Safety Assessment Workflow Step which specifically refers to clinical and epidemiological effects. It categorizes services that provide information on the toxicological endpoints and adverse outcomes at a clinical or epidemiological level of chemical exposures.">
-      Adverse Outcome</button>
-  </div>
-  <div class=""><p>&nbsp;</p></div> <!-- how to do this properly?? -->
-
             <div class="gap-2 pb-1">
-                <!-- Flow Step Dropdown -->
+                <!-- Case Study Dropdown -->
                 <div class="btn-group mb-1">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
-                        Safety Assessment Workflow Step
+                    <button class="btn btn-sm btn-vhppink-distinct dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                        Case Study
                     </button>
                     <ul class="dropdown-menu">
-                        {% for stage in stages %}
-                        <li><a class="dropdown-item " href="#" data-filter-type="flow-step" data-filter-value="{{ stage }}"{% if stage in stage_explanations %} data-bs-toggle="methodtip" data-bs-placement="right" data-bs-title="{{ stage_explanations[stage] }}"{% endif %}>
-                            {{ stage }}{% if stage in stage_explanations %} <i class="text-vhpblue bi bi-question-circle"></i>{% endif %}
-                        </a></li>
+                        {% for slug in case_studies %}
+                          <li><a class="dropdown-item" href="#" data-filter-type="case-study" data-filter-value="{{ slug|title }}" data-case-slug="{{ slug }}">{{ slug|title }}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
-                
+
                 <!-- Regulatory Questions Dropdown -->
                 <div class="btn-group mb-1">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                    <button class="btn btn-sm btn-vhppink-distinct dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
                         Regulatory Question
                     </button>
                     <ul class="dropdown-menu">
                         {% for question in reg_questions.keys() %}
-                        <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="{{ question }}" data-applies-to-case-slug="{{ reg_question_cases.get(question, '') }}"{% if question in reg_question_explanations %} data-bs-toggle="methodtip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations[question] }}"{% endif %}>
-                            {{ question }}{% if question in reg_question_explanations %} <i class="text-vhpblue bi bi-question-circle"></i>{% endif %}
-                        </a></li>
+                          <li><a class="dropdown-item" href="#" data-filter-type="reg-question" data-filter-value="{{ question }}" data-applies-to-case-slug="{{ reg_question_cases.get(question, '') }}"{% if question in reg_question_explanations %} data-bs-toggle="methodtip" data-bs-placement="right" data-bs-title="{{ reg_question_explanations[question] }}"{% endif %}>{{ question }}{% if question in reg_question_explanations %} <i class="bi bi-question-circle text-vhpblue"></i>{% endif %}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Flow Step Dropdown -->
+                <div class="btn-group mb-1">
+                    <button class="btn btn-sm btn-vhppurple dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                        Flow Step
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% for stage in stages %}
+                          <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="{{ stage }}"{% if stage in stage_explanations %} data-bs-toggle="methodtip" data-bs-placement="right" data-bs-title="{{ stage_explanations[stage] }}"{% endif %}>{{ stage }}{% if stage in stage_explanations %} <i class="bi bi-question-circle text-vhpblue"></i>{% endif %}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -187,18 +170,21 @@
     // Initialize search and filter functionality for methods catalog
     document.addEventListener('DOMContentLoaded', () => {
         SearchFilter.init({
-            filterTypes: ['flow-step', 'reg-question'],
+            filterTypes: ['case-study', 'flow-step', 'reg-question'],
             multiSelect: true, // Multiple selections per category
             multipleInputs: true, // Create separate hidden input for each value
             initialFilters: {
+                'case-study': [{% for c in selected_case_studies %}'{{ c }}'{% if not loop.last %}, {% endif %}{% endfor %}],
                 'flow-step': [{% for stage in selected_stages %}'{{ stage }}'{% if not loop.last %}, {% endif %}{% endfor %}],
                 'reg-question': [{% for question in selected_questions %}'{{ question }}'{% if not loop.last %}, {% endif %}{% endfor %}]
             },
             filterFieldMap: {
+                'case-study': 'case_study',
                 'flow-step': 'stage',
                 'reg-question': 'reg_q'
             },
             filterLabels: {
+                'case-study': 'Case Study',
                 'flow-step': 'Flow Step',
                 'reg-question': 'Reg. Q'
             },
@@ -209,7 +195,7 @@
                 'flow-step': 'vhppurple',
             },
             tooltipSelector: '[data-bs-toggle="methodtip"]',
-            showFilterPanel: {% if selected_stages or selected_questions %}true{% else %}false{% endif %}
+            showFilterPanel: {% if selected_case_studies or selected_stages or selected_questions %}true{% else %}false{% endif %}
         });
     });
 </script>

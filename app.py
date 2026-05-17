@@ -12,7 +12,7 @@ from jinja2 import TemplateNotFound
 from werkzeug.routing import BaseConverter
 
 # from wikidataintegrator import wdi_core
-# from wikibaseintegrator import wbi_helpers
+from wikibaseintegrator import wbi_helpers
 
 # Import BioStudies extractor
 from data.biostudies.search import BioStudiesExtractor
@@ -1017,7 +1017,15 @@ def methods():
     try:
         methods = list(methods.values())  # convert dict to list
 
-        # Normalize fields for the template and collect stages
+        # Normalize fields for the template and collect stages.
+        # `vhp4safety_workflow_stage_content` is expected to hold glossary URIs
+        # (same convention as service_index.json), e.g.
+        # "https://vhp4safety.github.io/glossary#VHP0000156". We translate the
+        # URI to the human label via get_stage_mapping(), so the dropdown,
+        # filter, and tooltip (driven by get_stage_explanations()) all speak
+        # the same vocabulary. Values that don't match a known URI fall
+        # through as-is so legacy / typo values still render.
+        stage_mapping = get_stage_mapping()
         stages_set = set()
         normalized = []
         for m in methods:
@@ -1044,48 +1052,62 @@ def methods():
             # keep original raw data for potential details page
             norm["raw"] = m
 
-            # collect stages (split comma-separated values)
+            # Collect stages (split comma-separated values). Each part is a
+            # glossary URI -> we resolve it to the human label. Placeholder
+            # strings ("_No response_" / "No response") are skipped. The
+            # resolved labels are stored on the record so the stage filter
+            # below can match against them directly.
             stage_field = (m.get("vhp4safety_workflow_stage_content") or "").strip()
+            resolved_stages = []
             if stage_field:
                 for part in [s.strip() for s in stage_field.split(",")]:
-                    if part:
-                        stages_set.add(part)
+                    if not part or part.lower().strip("_") == "no response":
+                        continue
+                    label = stage_mapping.get(part, part)  # URI -> label, else as-is
+                    resolved_stages.append(label)
+                    stages_set.add(label)
+            norm["stages"] = resolved_stages
 
             normalized.append(norm)
 
         # Apply search and filters similar to /tools
+        selected_case_studies = request.args.getlist("case_study")
         selected_stages = request.args.getlist("stage")
         selected_questions = request.args.getlist("reg_q")
         search_query = request.args.get("search", "").strip().lower()
 
         methods_filtered = normalized
 
+        if selected_case_studies:
+            # UI sends "Thyroid" (slug.title()); records store the lowercase
+            # slug ("thyroid"). Case-insensitive match handles both ends.
+            cs_lower = {c.lower() for c in selected_case_studies}
+            methods_filtered = [
+                m for m in methods_filtered
+                if (m["raw"].get("case_study") or "").strip().lower() in cs_lower
+            ]
+
         if selected_stages:
+            # Match against the URI-resolved labels stored on `norm["stages"]`,
+            # so the filter speaks the same vocabulary as the dropdown.
+            sel = set(selected_stages)
+            methods_filtered = [
+                m for m in methods_filtered if sel & set(m.get("stages") or [])
+            ]
+
+        # Filter by regulatory questions. Methods records carry the canonical
+        # reg_q_Xy key directly in the `regulatory_question` field (e.g.
+        # "reg_q_1b"), matching the tools/data convention.
+        reg_questions = {v["label"]: k for k, v in get_reg_questions().items()}
+        if selected_questions:
+            selected_keys = {
+                reg_questions.get(q) for q in selected_questions if reg_questions.get(q)
+            }
             methods_filtered = [
                 m
                 for m in methods_filtered
-                if any(
-                    s
-                    in (
-                        (m["raw"].get("vhp4safety_workflow_stage_content") or "").split(
-                            ","
-                        )
-                    )
-                    for s in selected_stages
-                )
+                if (m["raw"].get("regulatory_question") or "").strip() in selected_keys
             ]
-
-        # Filter by regulatory questions if provided (reg_q_Xy keys are upstream field names)
-        reg_questions = {v["label"]: k for k, v in get_reg_questions().items()}
-        if selected_questions:
-            for question in selected_questions:
-                field = reg_questions.get(question)
-                if field:
-                    methods_filtered = [
-                        m
-                        for m in methods_filtered
-                        if str(m["raw"].get(field, "")).lower() == "true"
-                    ]
 
         if search_query:
             methods_filtered = [
@@ -1115,11 +1137,13 @@ def methods():
             methods=methods_page,
             stages=stages,
             selected_stages=selected_stages,
+            case_studies=list(get_casestudies()),
+            selected_case_studies=selected_case_studies,
             reg_questions=reg_questions,
             selected_questions=selected_questions,
             stage_explanations=get_stage_explanations(),
             reg_question_explanations=get_reg_question_explanations(),
-        reg_question_cases={v["label"]: v.get("case", "") for v in get_reg_questions().values()},
+            reg_question_cases={v["label"]: v.get("case", "") for v in get_reg_questions().values()},
             page=page,
             page_size=page_size,
             total=total,
