@@ -890,6 +890,16 @@ def tools():
                 # Combining "NA" and "Unknown" stages in a single stage-type, "Other".
                 tool["stage"] = "Other"
 
+        # Collect all unique stages from the UNFILTERED tools first so the
+        # Flow Step dropdown is stable -- otherwise applying a filter shrinks
+        # the dropdown to just the values present in the filtered set, and
+        # removing a filter pill (which doesn't trigger a server reload) can't
+        # restore the missing options. Matches the methods() behaviour.
+        stages = sorted(set(tool.get("stage") for tool in tools if tool.get("stage")))
+        if "Other" in stages:
+            stages.remove("Other")
+            stages.append("Other")
+
         # Getting selected stages from the URL.
         selected_stages = request.args.getlist("stage")
 
@@ -897,25 +907,23 @@ def tools():
         if selected_stages:
             tools = [tool for tool in tools if tool.get("stage") in selected_stages]
 
-        # Getting all unique stages from the tools for the filter options.
-        stages = sorted(set(tool.get("stage") for tool in tools if tool.get("stage")))
-
-        # Forcing "Other" to be the last item in the list of stages.
-        if "Other" in stages:
-            stages.remove("Other")
-            stages.append("Other")
-
-        # Filtering over the regulatory questions.
+        # Filtering over the regulatory questions. OR within type: a tool
+        # passes if any of the selected questions' reg_q_Xy field is "true".
+        # Matches the convention used by every other within-type filter on
+        # the platform (flow-step, case-study, methods reg-question).
         reg_questions = {v["label"]: k for k, v in get_reg_questions().items()}
 
         selected_questions = request.args.getlist("reg_q")
 
-        for question in selected_questions:
-            field = reg_questions.get(question)
-            if field:
-                tools = [
-                    tool for tool in tools if str(tool.get(field, "")).lower() == "true"
-                ]
+        if selected_questions:
+            fields = [
+                reg_questions.get(q) for q in selected_questions if reg_questions.get(q)
+            ]
+            tools = [
+                tool
+                for tool in tools
+                if any(str(tool.get(f, "")).lower() == "true" for f in fields)
+            ]
 
         # Getting the search query from URL to add a search bar based on tool names.
         search_query = request.args.get("search", "").strip().lower()
