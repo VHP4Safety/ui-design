@@ -182,7 +182,7 @@
     // Initialize search and filter functionality for data catalog
     document.addEventListener('DOMContentLoaded', () => {
         SearchFilter.init({
-            filterTypes: ['case-study', 'flow-step', 'reg-question'],
+            filterTypes: ['case-study', 'reg-question', 'flow-step'],
             multiSelect: false, // Single selection per category
             initialFilters: {
                 'case-study': '{{ filter_case_study or "" }}',
