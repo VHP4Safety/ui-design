@@ -361,7 +361,11 @@
       const baseClass = colorToken
         ? `badge rounded-pill text-bg-${colorToken}`
         : this.config.badgeClass;
-      tag.className = `${baseClass} d-inline-flex align-items-center text-wrap`;
+      // `mw-100` caps the pill at its container's width so a long
+       // "Label: value" string wraps inside the pill instead of overflowing
+       // the form-control. `lh-sm` overrides badge's default line-height: 1,
+       // which crams wrapped lines together.
+      tag.className = `${baseClass} d-inline-flex align-items-center text-wrap mw-100 lh-sm`;
       
       const label = this.config.filterLabels[type] || type;
       const removeHandler = this.config.multiSelect ? 
