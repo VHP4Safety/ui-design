@@ -412,21 +412,28 @@ def get_partner_logos() -> list:
     return logos
 
 
+class _RepositoryFetchAllFailed(Exception):
+    """Both extractors returned error-shaped dicts. Carries the original
+    tuple so the public wrapper can return it without re-fetching."""
+
+
 @cache.memoize(timeout=CACHE_TIMEOUT)
-def get_repository_data(
+def _get_repository_data_cached(
     search_query: str,
     page: int = 1,
     page_size: int = 18,
     filters: list | None = None,
     load_metadata: bool = True,
 ) -> tuple[dict, dict]:
+    """Fetch from BioStudies + Zenodo. The extractors swallow network failures
+    and return {"error": "..."} dicts rather than raising, so we check the
+    result here and raise if BOTH halves errored -- otherwise cache.memoize
+    would store the dual-error tuple for CACHE_TIMEOUT and every subsequent
+    request would see the same stale failure. Partial success is cacheable
+    (the errored half stays until the timeout, but the working half remains
+    usable).
     """
-    Extract data from respositories
-    """
-    # Initialize extractor for BIOSTUDIES
     bs_extractor = BioStudiesExtractor(collection=BIOSTUDIES_COLLECTION)
-
-    # Fetch data based on search query or list all
     if search_query:
         bs_results = bs_extractor.search_studies(
             search_query,
@@ -444,11 +451,9 @@ def get_repository_data(
             load_metadata=load_metadata,
         )
 
-    # Initialize extractor for Zenodo
     zen_extractor = ZenodoExtractor(
         community=ZENODO_COMMUNITY, record_type=ZENODO_RECORD_TYPE
     )
-
     if not filters:
         # We currently do no filter Zenodo datasets.
         if search_query:
@@ -466,7 +471,38 @@ def get_repository_data(
     else:
         zen_result = {"hits": [], "total": 0, "error": None}
 
+    # Both extractors errored -> bypass the cache by raising. The wrapper
+    # catches and returns the same tuple to the caller (contract preserved),
+    # but the next request will retry instead of getting the cached failure.
+    if bs_results.get("error") and zen_result.get("error"):
+        raise _RepositoryFetchAllFailed((bs_results, zen_result))
+
     return bs_results, zen_result
+
+
+def get_repository_data(
+    search_query: str,
+    page: int = 1,
+    page_size: int = 18,
+    filters: list | None = None,
+    load_metadata: bool = True,
+) -> tuple[dict, dict]:
+    """Return (bs_results, zen_result) from the two repositories.
+
+    Each half is the extractor's raw response: a {"hits", "total"} dict on
+    success or a {"error": "..."} dict on failure. A dual-failure result is
+    NOT cached so the next request retries; partial success is cached as-is.
+    """
+    try:
+        return _get_repository_data_cached(
+            search_query,
+            page=page,
+            page_size=page_size,
+            filters=filters,
+            load_metadata=load_metadata,
+        )
+    except _RepositoryFetchAllFailed as exc:
+        return exc.args[0]
 
 
 # Provide methods list to all templates for the Methods dropdown in the navbar
