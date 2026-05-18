@@ -158,26 +158,14 @@ _REG_QUESTION_KEYS = {
 
 
 @cache.memoize(timeout=CACHE_TIMEOUT)
-def get_casestudies() -> dict:
-    """Return case studies from VHP4Safety/ui-casestudy-config's RO-Crate.
-
-    The upstream metadata is an RO-Crate (`ro-crate-metadata.json`) whose
-    `@graph` lists every file in the repo. Case studies are the JSON `File`
-    entities with an `identifier` (the slug) and a `contentUrl` to the
-    per-case content JSON.
-
-    Returns {slug: {"name", "description", "content_url"}}. Iteration yields
-    slugs, so callers that just need the slug list can do `for c in
-    get_casestudies()`. Returns an empty dict on any error so callers degrade
-    safely.
+def _get_casestudies_cached() -> dict:
+    """Fetch + parse case studies. Raises on failure so the cache does not
+    store an empty/poisoned result (a transient HTTP/SSL hiccup must not stick
+    around for CACHE_TIMEOUT). Public wrapper get_casestudies() catches.
     """
-    try:
-        resp = requests.get(CASESTUDIES_URL, timeout=5)
-        if resp.status_code != 200:
-            return {}
-        data = resp.json()
-    except Exception:
-        return {}
+    resp = requests.get(CASESTUDIES_URL, timeout=5)
+    resp.raise_for_status()
+    data = resp.json()
 
     studies = {}
     for entry in data.get("@graph", []):
@@ -196,20 +184,56 @@ def get_casestudies() -> dict:
             "description": entry.get("description", ""),
             "content_url": entry.get("contentUrl", ""),
         }
+    if not studies:
+        raise ValueError("no case studies found in RO-Crate @graph")
     return studies
 
 
+def get_casestudies() -> dict:
+    """Return case studies from VHP4Safety/ui-casestudy-config's RO-Crate.
+
+    The upstream metadata is an RO-Crate (`ro-crate-metadata.json`) whose
+    `@graph` lists every file in the repo. Case studies are the JSON `File`
+    entities with an `identifier` (the slug) and a `contentUrl` to the
+    per-case content JSON.
+
+    Returns {slug: {"name", "description", "content_url"}}. Iteration yields
+    slugs, so callers that just need the slug list can do `for c in
+    get_casestudies()`. Returns an empty dict on any error so callers degrade
+    safely; failures are NOT cached so the next request retries.
+    """
+    try:
+        return _get_casestudies_cached()
+    except Exception:
+        return {}
+
+
 @cache.memoize(timeout=CACHE_TIMEOUT)
+def _get_casestudy_content_cached(url: str) -> dict:
+    """Fetch the per-case content JSON. Raises on failure so the cache does
+    not store an empty/poisoned result. Public wrapper get_casestudy_content()
+    catches.
+    """
+    resp = requests.get(url, timeout=5)
+    resp.raise_for_status()
+    data = resp.json()
+    if not data:
+        raise ValueError(f"empty case-study content at {url}")
+    return data
+
+
 def get_casestudy_content(slug: str) -> dict:
-    """Fetch the per-case `<slug>_content.json` from the config repo."""
+    """Fetch the per-case `<slug>_content.json` from the config repo.
+
+    Returns an empty dict on any error so callers degrade safely; failures
+    are NOT cached so the next request retries. The url-not-found case skips
+    the fetch entirely (returning {} without going through the cache).
+    """
     url = get_casestudies().get(slug, {}).get("content_url")
     if not url:
         return {}
     try:
-        resp = requests.get(url, timeout=5)
-        if resp.status_code != 200:
-            return {}
-        return resp.json() or {}
+        return _get_casestudy_content_cached(url)
     except Exception:
         return {}
 
@@ -249,25 +273,16 @@ _TTL_QUOTED = r'"((?:[^"\\]|\\.)*)"'
 
 
 @cache.memoize(timeout=CACHE_TIMEOUT)
-def get_process_flow_steps() -> dict:
-    """Fetch the VHP glossary and return its Process Flow Step stages.
-
-    Returns {glossary_uri: {"label": str, "slug": str, "description": str}} for
-    every owl:Class whose rdfs:label ends with " (Process Flow Step)". The
-    glossary has no formal typing for these, so they are identified by that
-    label convention. Returns an empty dict on any error so callers degrade
-    safely.
+def _get_process_flow_steps_cached() -> dict:
+    """Fetch + parse Process Flow Steps from the glossary. Raises on failure
+    so the cache does not store an empty/poisoned result (the raw.github CDN
+    intermittently resets the connection; we must not keep that empty result
+    around for CACHE_TIMEOUT). Public wrapper get_process_flow_steps() catches.
     """
-    try:
-        resp = requests.get(GLOSSARY_URL, timeout=5)
-        if resp.status_code != 200:
-            return {}
-        ttl = resp.text
-    except Exception:
-        return {}
-
-    # Normalise line endings so the split works regardless of CRLF / LF
-    ttl = ttl.replace("\r\n", "\n")
+    resp = requests.get(GLOSSARY_URL, timeout=5)
+    resp.raise_for_status()
+    # Normalise line endings so the block split works regardless of CRLF / LF
+    ttl = resp.text.replace("\r\n", "\n")
 
     steps = {}
     # The glossary is Turtle with one blank-line-separated block per subject.
@@ -304,7 +319,21 @@ def get_process_flow_steps() -> dict:
             ),
         )
     )
+    if not steps:
+        raise ValueError("no Process Flow Step entries found in glossary")
     return steps
+
+
+def get_process_flow_steps() -> dict:
+    """Return {glossary_uri: {"label", "slug", "description"}} for every
+    owl:Class whose rdfs:label ends with " (Process Flow Step)". Returns an
+    empty dict on any error so callers degrade safely; failures are NOT cached
+    so the next request retries.
+    """
+    try:
+        return _get_process_flow_steps_cached()
+    except Exception:
+        return {}
 
 
 def get_stage_explanations() -> dict:
