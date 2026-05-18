@@ -1,4 +1,4 @@
-Version 0.9-3 (2026-05-17)
+Version 0.9-4 (2026-05-18)
 --------------------------------------------------------------------------------
 - Harmonized styling and pagination across the tools, methods, and data catalogs.
 - Uniform server-side caching for the catalog pages, with a ?reset_cache override.
