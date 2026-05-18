@@ -58,7 +58,7 @@ GLOSSARY_URL = (
 )
 CASESTUDIES_URL = (
     "https://raw.githubusercontent.com/VHP4Safety/ui-casestudy-config/"
-    "refs/heads/main/casestudies.jsonld"
+    "refs/heads/main/ro-crate-metadata.json"
 )
 
 ################################################################################
@@ -159,7 +159,12 @@ _REG_QUESTION_KEYS = {
 
 @cache.memoize(timeout=CACHE_TIMEOUT)
 def get_casestudies() -> dict:
-    """Return case studies from VHP4Safety/ui-casestudy-config's JSON-LD index.
+    """Return case studies from VHP4Safety/ui-casestudy-config's RO-Crate.
+
+    The upstream metadata is an RO-Crate (`ro-crate-metadata.json`) whose
+    `@graph` lists every file in the repo. Case studies are the JSON `File`
+    entities with an `identifier` (the slug) and a `contentUrl` to the
+    per-case content JSON.
 
     Returns {slug: {"name", "description", "content_url"}}. Iteration yields
     slugs, so callers that just need the slug list can do `for c in
@@ -175,14 +180,21 @@ def get_casestudies() -> dict:
         return {}
 
     studies = {}
-    for entry in data.get("dataset", []):
-        slug = entry.get("slug")
+    for entry in data.get("@graph", []):
+        types = entry.get("@type", [])
+        if isinstance(types, str):
+            types = [types]
+        if "File" not in types:
+            continue
+        if entry.get("encodingFormat") != "application/json":
+            continue
+        slug = entry.get("identifier")
         if not slug:
             continue
         studies[slug] = {
             "name": entry.get("name", ""),
             "description": entry.get("description", ""),
-            "content_url": (entry.get("distribution") or {}).get("contentUrl", ""),
+            "content_url": entry.get("contentUrl", ""),
         }
     return studies
 
