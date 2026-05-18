@@ -25,10 +25,18 @@
 
 <section class="container py-5">
     <div class="pb-2">
-        <h1><span class="text-vhpblue" id="collection-name">{{ tool_json.service }}</span></h1>
-
+        <h1><span class="text-vhpblue" id="collection-name">{{ tool_json.service }}
+        {% if tool_details.instance.url != "no_url" %}
+            <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_HexaHead_300.png" alt="Developed by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Developed by VHP" height="45px">
+            {% if tool_details.instance.get("vhp-platform") == "Development" %}
+                <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Hosted by VHP" height="45px">
+            {% elif tool_details.instance.get("vhp-platform") == "development" %}
+                <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Hosted by VHP" height="45px">
+            {% endif %}
+        {% endif %}
+        </span></h1>
     </div>
-    
+
 <div class="card">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs" role="tablist">
