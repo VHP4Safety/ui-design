@@ -192,3 +192,16 @@ body {
   }
 }
 
+// Responsive white-space utilities. Bootstrap 5.3 ships .text-wrap and
+// .text-nowrap but not breakpoint variants; generate them mobile-first so
+// e.g. `text-wrap text-md-nowrap` wraps on phones and stops wrapping at md+.
+@each $breakpoint in map-keys($grid-breakpoints) {
+  @include media-breakpoint-up($breakpoint) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    @if $infix != "" {
+      .text#{$infix}-wrap   { white-space: normal !important; }
+      .text#{$infix}-nowrap { white-space: nowrap !important; }
+    }
+  }
+}
+
