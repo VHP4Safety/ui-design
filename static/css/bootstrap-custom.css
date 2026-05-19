@@ -13322,4 +13322,45 @@ body {
   border-radius: var(--bs-border-radius-lg);
 }
 
+@media (min-width: 576px) {
+  .text-sm-wrap {
+    white-space: normal !important;
+  }
+  .text-sm-nowrap {
+    white-space: nowrap !important;
+  }
+}
+@media (min-width: 768px) {
+  .text-md-wrap {
+    white-space: normal !important;
+  }
+  .text-md-nowrap {
+    white-space: nowrap !important;
+  }
+}
+@media (min-width: 992px) {
+  .text-lg-wrap {
+    white-space: normal !important;
+  }
+  .text-lg-nowrap {
+    white-space: nowrap !important;
+  }
+}
+@media (min-width: 1200px) {
+  .text-xl-wrap {
+    white-space: normal !important;
+  }
+  .text-xl-nowrap {
+    white-space: nowrap !important;
+  }
+}
+@media (min-width: 1400px) {
+  .text-xxl-wrap {
+    white-space: normal !important;
+  }
+  .text-xxl-nowrap {
+    white-space: nowrap !important;
+  }
+}
+
 /*# sourceMappingURL=bootstrap-custom.css.map */
