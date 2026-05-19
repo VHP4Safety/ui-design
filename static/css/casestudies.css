@@ -1,17 +1,6 @@
-/* === Page background === */
-body {
-    background-color: #ffffff;
-    color: #212529;
-    margin: 0;
-    padding: 0;
-}
-
-
 /* === Breadcrumb === */
-nav.navbar {
+nav.navbar[aria-label="breadcrumb"] {
     background-color: #e9ecef;
-    position: relative;
-    width: 100%;
 }
 
 /* Breadcrumb Items */
@@ -181,7 +170,7 @@ nav.navbar {
 /* General settings for mobile screens ≤ 375px */
 @media (max-width: 408px) {
 
-nav.navbar {
+nav.navbar[aria-label="breadcrumb"] {
     background-color: #e9ecef;
     position: sticky;
     float: left;
