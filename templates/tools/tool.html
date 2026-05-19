@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<link rel="stylesheet" href="/static/css/casestudies.css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tools.css') }}">
 <link rel="stylesheet" property="stylesheet" href="https://elixirtess.github.io/TeSS_widgets/css/tess-widget.css"/>
 
 <!-- Bioschemas / schema.org annotation -->
@@ -23,7 +23,7 @@
 </script>
 
 
-<section class="container py-5">
+<section class="container py-md-5 py-3 d-flex flex-column min-vh-100">
     <div class="pb-2">
         <h1><span class="text-vhpblue" id="collection-name">{{ tool_json.service }}</span></h1>
 

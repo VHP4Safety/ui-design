@@ -117,15 +117,14 @@
                     {% endif %}
                     </div>
                     <div class="card-body">
-                        <div class="d-flex align-items-center gap-2">
-                            <h2 class="card-title mb-0">{{ item.service }}</h2>
+                        <h2 class="card-title mb-0">{{ item.service }}
                             {% if item.inst_url != "no_url" %}
-                                <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_HexaHead_300.png" alt="Developed by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Developed by VHP">
+                                <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_HexaHead_300.png" alt="Developed by VHP" class="vhp-badge ms-1" data-bs-toggle="tooltip" data-bs-title="Developed by VHP">
                                 {% if item.vhp_hosted %}
-                                    <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Hosted by VHP">
+                                    <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" class="vhp-badge ms-1" data-bs-toggle="tooltip" data-bs-title="Hosted by VHP">
                                 {% endif %}
                             {% endif %}
-                        </div>
+                        </h2>
                         <p id="desc" class="card-text">{{ item.description }}</p>
                     </div>
                     <div class="card-footer bg-white border-0 py-3">
