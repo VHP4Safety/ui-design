@@ -205,3 +205,18 @@ body {
   }
 }
 
+// Responsive `.rounded-start-{bp}-0`. Lets us pair `rounded-start` (mobile)
+// with `rounded-start-md-0` (restore the input-group default square edge
+// at md+) when a leading addon is hidden below a breakpoint.
+@each $breakpoint in map-keys($grid-breakpoints) {
+  @include media-breakpoint-up($breakpoint) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    @if $infix != "" {
+      .rounded-start#{$infix}-0 {
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+      }
+    }
+  }
+}
+

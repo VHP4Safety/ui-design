@@ -13362,5 +13362,35 @@ body {
     white-space: nowrap !important;
   }
 }
+@media (min-width: 576px) {
+  .rounded-start-sm-0 {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
+}
+@media (min-width: 768px) {
+  .rounded-start-md-0 {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
+}
+@media (min-width: 992px) {
+  .rounded-start-lg-0 {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
+}
+@media (min-width: 1200px) {
+  .rounded-start-xl-0 {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
+}
+@media (min-width: 1400px) {
+  .rounded-start-xxl-0 {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
+}
 
 /*# sourceMappingURL=bootstrap-custom.css.map */
