@@ -84,7 +84,7 @@ function renderStepButtons(steps, btnClass, onClickFn) {
 function updateStep1Content() {
   if (!contentLoaded) return;
   document.getElementById("step1-content").innerHTML =
-    `<h1 class="text-vhpblue">${step1Contents.navTitle}</h1><p>${step1Contents.navDescription}</p>` +
+    `<h1 class="text-vhppink-distinct">${step1Contents.navTitle}</h1><p class="text-secondary fs-5">${step1Contents.navDescription}</p>` +
     renderStepButtons(step1Contents.questions, "step1", "selectStep1");
   document.getElementById("step1-bottom-content").innerHTML =
     buildAccordionHTML(step1Contents.content);
@@ -94,8 +94,8 @@ function updateStep2Content() {
   if (!step2Contents[currentStep1Value]) return;
   const nav = step2Contents[currentStep1Value];
   document.getElementById("step2-content").innerHTML =
-  `<h1 class="text-vhpblue">${nav.navTitle}</h1>
-   <p>${nav.navDescription}</p>` +
+  `<h1 class="text-vhppink-distinct">${nav.navTitle}</h1>
+   <p class="text-secondary fs-5">${nav.navDescription}</p>` +
     (nav.image ? nav.image : "") +             
   renderStepButtons(nav.steps, "step2", "selectStep2");
   document.getElementById("step2-bottom-content").innerHTML = buildAccordionHTML(nav.content);
@@ -107,11 +107,11 @@ function updateStep3Content() {
   if (!step3Contents[currentStep1Value][currentStep2Value]) return;
   if (step.steps) {
     document.getElementById("step3-content").innerHTML =
-      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      `<h1 class="text-vhppink-distinct"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc text-secondary fs-5'>${step.navDescription}</p>` +
       renderStepButtons(step.steps, "step3", "selectStep3");
   } else if (step.tools) {
     document.getElementById("step3-content").innerHTML =
-      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      `<h1 class="text-vhppink-distinct"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc text-secondary fs-5'>${step.navDescription}</p>` +
       renderStepButtons(step.tools, "step3", null);
   }
   document.getElementById("step3-bottom-content").innerHTML = buildAccordionHTML(step.content);
@@ -125,15 +125,15 @@ function updateStep4Content() {
   const step = step4Contents[currentStep1Value][currentStep2Value][currentStep3Value];
   if (step.tools) {
     document.getElementById("step4-content").innerHTML =
-      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      `<h1 class="text-vhppink-distinct"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc text-secondary fs-5'>${step.navDescription}</p>` +
       renderStepButtons(step.tools, "step4", null);
   } else if (step.steps) {
     document.getElementById("step4-content").innerHTML =
-      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      `<h1 class="text-vhppink-distinct"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc text-secondary fs-5'>${step.navDescription}</p>` +
       renderStepButtons(step.steps, "step4", "selectStep4");
   } else {
     document.getElementById("step4-content").innerHTML =
-      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
+      `<h1 class="text-vhppink-distinct"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc text-secondary fs-5'>${step.navDescription}</p>`;
   }
   document.getElementById("step4-bottom-content").innerHTML = buildAccordionHTML(step.content);
 }
@@ -147,15 +147,15 @@ function updateStep5Content() {
   const step = step5Contents[currentStep1Value][currentStep2Value][currentStep3Value][currentStep4Value];
   if (step.tools) {
     document.getElementById("step5-content").innerHTML =
-      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      `<h1 class="text-vhppink-distinct"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc text-secondary fs-5'>${step.navDescription}</p>` +
       renderStepButtons(step.tools, "step5", null);
   } else if (step.steps) {
     document.getElementById("step5-content").innerHTML =
-      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      `<h1 class="text-vhppink-distinct"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc text-secondary fs-5'>${step.navDescription}</p>` +
       renderStepButtons(step.steps, "step5", "selectStep5");
   } else {
     document.getElementById("step5-content").innerHTML =
-      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
+      `<h1 class="text-vhppink-distinct"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc text-secondary fs-5'>${step.navDescription}</p>`;
   }
   document.getElementById("step5-bottom-content").innerHTML = buildAccordionHTML(step.content);
 }
@@ -170,15 +170,15 @@ function updateStep6Content() {
   const step = step6Contents[currentStep1Value][currentStep2Value][currentStep3Value][currentStep4Value][currentStep5Value];
   if (step.tools) {
     document.getElementById("step6-content").innerHTML =
-      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      `<h1 class="text-vhppink-distinct"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc text-secondary fs-5'>${step.navDescription}</p>` +
       renderStepButtons(step.tools, "step6", null);
   } else if (step.steps) {
     document.getElementById("step6-content").innerHTML =
-      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>` +
+      `<h1 class="text-vhppink-distinct"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc text-secondary fs-5'>${step.navDescription}</p>` +
       renderStepButtons(step.steps);
   } else {
     document.getElementById("step6-content").innerHTML =
-      `<h1 class="text-vhpblue"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc'>${step.navDescription}</p>`;
+      `<h1 class="text-vhppink-distinct"><span class='kinetics-bold'>${step.navTitle}</span></h1><p class='step-desc text-secondary fs-5'>${step.navDescription}</p>`;
   }
   document.getElementById("step6-bottom-content").innerHTML = buildAccordionHTML(step.content);
 }
@@ -301,7 +301,7 @@ function updateBreadcrumb(step) {
 
     if (isActive) {
       li.classList.add("active");
-      li.classList.add("text-vhpblue")
+      li.classList.add("text-vhppink-distinct")
       li.setAttribute("aria-current", "page");
       li.textContent = label;
     } else {
