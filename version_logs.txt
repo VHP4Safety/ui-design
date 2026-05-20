@@ -1,4 +1,4 @@
-Version 0.9-4 (2026-05-18)
+Version 0.9-5 (2026-05-20)
 --------------------------------------------------------------------------------
 - Harmonized styling and pagination across the tools, methods, and data catalogs.
 - Uniform server-side caching for the catalog pages, with a ?reset_cache override.
@@ -9,6 +9,10 @@ Version 0.9-4 (2026-05-18)
 - Template and context updates.
 - Workflow stage normalization.
 - Routing and sitemap updates.
+- Adjust vhp-badge dimensions and tooltip positioning for better responsiveness.
+- Added the VHP icons conditionally to the individual tool pages.
+- Update hexagon SVG images for improved contrast with cardbutton on hover.
+- Case studies styling and content.
 
 Version 0.9-1 (2026-05-15)
 --------------------------------------------------------------------------------
