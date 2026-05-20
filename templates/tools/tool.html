@@ -156,74 +156,178 @@
       </div>
       <!-- second tab -->
       <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
-        <h2>VHP service information</h2>
-        <ul style="list-style-type:disc">
-        {% if tool_details.intro %}
-          <li>Intro: <a href={{ tool_details.intro.url }}>{{ tool_details.intro.title }}</a></li>
-        {% endif %}
-        {% if tool_details.demo %}
-          <li>Demo: <a href={{ tool_details.demo.url }}>{{ tool_details.demo.title }}</a></li>
-        {% endif %}
-        {% if tool_details.workflow %}
-          <li>Workflow: <a href={{ tool_details.workflow.url }}>{{ tool_details.workflow.title }}</a></li>
-        {% endif %}
-        </ul>
-        {% if tool_details.get('ELIXIR') and tool_details.ELIXIR.get('tess') %}
-        <h2 class="pt-2">Taxila.nl</h2>
-        <div id="taxila-widget-materials-table" class="tess-widget tess-widget-faceted-table"></div>
-        <h2 class="pt-2">ELIXIR TeSS</h2>
-        <div id="tess-widget-materials-table" class="tess-widget tess-widget-faceted-table"></div>
-        {% else %}
-        <!-- At this moment no documentation is (known to be) registered in <a href="https://taxila.nl/">Taxila.nl</a> or
-        <a href="https://tess.elixir-europe.org/">ELIXIR TeSS</a>. -->
-        {% endif %}
-        {% if tool_details.get('ELIXIR') and tool_details.ELIXIR.get('biotools') %}
-        <h2 class="pt-2">Technical documentation</h2>
-        <ul>
-          <li><a href="https://bio.tools/{{ tool_details.ELIXIR.get('biotools') }}">bio.tools</a></li>
-        </ul>
-        {% endif %}
-        {% if tool_details.doi %}
-  <div id="bibliographyDIV" style="visibility: hidden">
-  <h3 class="pt-2">References</h3>
-  <div id="bibliography"></div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/citation-js"></script>
-  <script>var Cite = require('citation-js')</script>
-  <script>
-          const cite = new Cite();
-          dois = [];
-          dois.push("{{ tool_details.doi }}");
-  Cite.async(dois).then(function(cite) {
-    content = cite.format('bibliography', {
-      format: 'html', template : 'apa',
-      prepend: function (entry) {
-        return '<li><i class="bi bi-file-earmark"></i>&nbsp;'
-      },
-      append: function (entry) {
-        return '<a href="https://doi.org/' + entry.DOI + '">CrossRef</a> <a href="https://scholia.toolforge.org/doi/' + entry.DOI + '">Scholia</a></li>'
-      }
-    })
-    document.getElementById('bibliography').innerHTML = "<ul>" + content + "</ul>"
-    document.getElementById('bibliographyDIV').style.visibility = "visible"
-  })          </script>
-        {% endif %}
-        {% if tool_details.instance %}
-        <h2>Technical information</h2>
-        <ul>
-          {% if tool_details.instance.version %}<li>Version: {{ tool_details.instance.version }}</li>{% endif %}
-          {% if tool_details.instance.license %}<li>License: {{ tool_details.instance.license }}</li>{% endif %}
-          {% if tool_details.instance.source %}<li>Source code: <a href="{{ tool_details.instance.source }}">{{ tool_details.instance.source }}</a></li>{% endif %}
-          {% if tool_details.instance.docker %}<li>Docker: <a href="{{ tool_details.instance.docker }}">{{ tool_details.instance.docker }}</a></li>{% endif %}
-        </ul>
-        {% endif %}
-        <ul>
-        {% if tool_details.Other %}
-          {% if tool_details.Other.rsd %}
-          <li>Research Software Directory: <a href="https://research-software-directory.org/software/{{ tool_details.Other.rsd }}">{{ tool_details.Other.rsd }}</a>.</p>
+        <div class="accordion accordion-flush" id="tool-documentation-accordion">
+
+          {% if tool_details.intro or tool_details.demo or tool_details.workflow %}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="doc-heading-vhp-info">
+              <button class="accordion-button collapsed" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#doc-collapse-vhp-info"
+                      aria-expanded="false" aria-controls="doc-collapse-vhp-info">
+                VHP service information
+              </button>
+            </h2>
+            <div id="doc-collapse-vhp-info" class="accordion-collapse collapse"
+                 aria-labelledby="doc-heading-vhp-info"
+                 data-bs-parent="#tool-documentation-accordion">
+              <div class="accordion-body">
+                <ul style="list-style-type:disc">
+                  {% if tool_details.intro %}
+                  <li>Intro: <a href={{ tool_details.intro.url }}>{{ tool_details.intro.title }}</a></li>
+                  {% endif %}
+                  {% if tool_details.demo %}
+                  <li>Demo: <a href={{ tool_details.demo.url }}>{{ tool_details.demo.title }}</a></li>
+                  {% endif %}
+                  {% if tool_details.workflow %}
+                  <li>Workflow: <a href={{ tool_details.workflow.url }}>{{ tool_details.workflow.title }}</a></li>
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          </div>
           {% endif %}
-        {% endif %}
-        </ul>
+
+          {% if tool_details.get('ELIXIR') and tool_details.ELIXIR.get('tess') %}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="doc-heading-taxila">
+              <button class="accordion-button collapsed" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#doc-collapse-taxila"
+                      aria-expanded="false" aria-controls="doc-collapse-taxila">
+                Taxila.nl
+              </button>
+            </h2>
+            <div id="doc-collapse-taxila" class="accordion-collapse collapse"
+                 aria-labelledby="doc-heading-taxila"
+                 data-bs-parent="#tool-documentation-accordion">
+              <div class="accordion-body">
+                <div id="taxila-widget-materials-table" class="tess-widget tess-widget-faceted-table"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="doc-heading-tess">
+              <button class="accordion-button collapsed" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#doc-collapse-tess"
+                      aria-expanded="false" aria-controls="doc-collapse-tess">
+                ELIXIR TeSS
+              </button>
+            </h2>
+            <div id="doc-collapse-tess" class="accordion-collapse collapse"
+                 aria-labelledby="doc-heading-tess"
+                 data-bs-parent="#tool-documentation-accordion">
+              <div class="accordion-body">
+                <div id="tess-widget-materials-table" class="tess-widget tess-widget-faceted-table"></div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          {% if tool_details.get('ELIXIR') and tool_details.ELIXIR.get('biotools') %}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="doc-heading-biotools">
+              <button class="accordion-button collapsed" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#doc-collapse-biotools"
+                      aria-expanded="false" aria-controls="doc-collapse-biotools">
+                Technical documentation
+              </button>
+            </h2>
+            <div id="doc-collapse-biotools" class="accordion-collapse collapse"
+                 aria-labelledby="doc-heading-biotools"
+                 data-bs-parent="#tool-documentation-accordion">
+              <div class="accordion-body">
+                <ul>
+                  <li><a href="https://bio.tools/{{ tool_details.ELIXIR.get('biotools') }}">bio.tools</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          {% if tool_details.doi %}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="doc-heading-references">
+              <button class="accordion-button collapsed" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#doc-collapse-references"
+                      aria-expanded="false" aria-controls="doc-collapse-references">
+                References
+              </button>
+            </h2>
+            <div id="doc-collapse-references" class="accordion-collapse collapse"
+                 aria-labelledby="doc-heading-references"
+                 data-bs-parent="#tool-documentation-accordion">
+              <div class="accordion-body">
+                <div id="bibliography"></div>
+              </div>
+            </div>
+          </div>
+          <script src="https://cdn.jsdelivr.net/npm/citation-js"></script>
+          <script>var Cite = require('citation-js')</script>
+          <script>
+            const cite = new Cite();
+            dois = [];
+            dois.push("{{ tool_details.doi }}");
+            Cite.async(dois).then(function(cite) {
+              content = cite.format('bibliography', {
+                format: 'html', template : 'apa',
+                prepend: function (entry) {
+                  return '<li><i class="bi bi-file-earmark"></i>&nbsp;'
+                },
+                append: function (entry) {
+                  return '<a href="https://doi.org/' + entry.DOI + '">CrossRef</a> <a href="https://scholia.toolforge.org/doi/' + entry.DOI + '">Scholia</a></li>'
+                }
+              })
+              document.getElementById('bibliography').innerHTML = "<ul>" + content + "</ul>"
+            })
+          </script>
+          {% endif %}
+
+          {% if tool_details.instance %}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="doc-heading-technical">
+              <button class="accordion-button collapsed" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#doc-collapse-technical"
+                      aria-expanded="false" aria-controls="doc-collapse-technical">
+                Technical information
+              </button>
+            </h2>
+            <div id="doc-collapse-technical" class="accordion-collapse collapse"
+                 aria-labelledby="doc-heading-technical"
+                 data-bs-parent="#tool-documentation-accordion">
+              <div class="accordion-body">
+                <ul>
+                  {% if tool_details.instance.version %}<li>Version: {{ tool_details.instance.version }}</li>{% endif %}
+                  {% if tool_details.instance.license %}<li>License: {{ tool_details.instance.license }}</li>{% endif %}
+                  {% if tool_details.instance.source %}<li>Source code: <a href="{{ tool_details.instance.source }}">{{ tool_details.instance.source }}</a></li>{% endif %}
+                  {% if tool_details.instance.docker %}<li>Docker: <a href="{{ tool_details.instance.docker }}">{{ tool_details.instance.docker }}</a></li>{% endif %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          {% if tool_details.Other and tool_details.Other.rsd %}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="doc-heading-other">
+              <button class="accordion-button collapsed" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#doc-collapse-other"
+                      aria-expanded="false" aria-controls="doc-collapse-other">
+                Other links
+              </button>
+            </h2>
+            <div id="doc-collapse-other" class="accordion-collapse collapse"
+                 aria-labelledby="doc-heading-other"
+                 data-bs-parent="#tool-documentation-accordion">
+              <div class="accordion-body">
+                <ul>
+                  <li>Research Software Directory: <a href="https://research-software-directory.org/software/{{ tool_details.Other.rsd }}">{{ tool_details.Other.rsd }}</a>.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+        </div>
       </div>
       <!-- third tab -->
       <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-3">
