@@ -742,11 +742,14 @@ def data():
 
     # Build filter list (one tuple per (field, value)); repeated field names
     # become OR within that field downstream in _apply_filters.
+    # The reg-question dropdown sends the question label; records store the
+    # canonical reg_q_Xy key, so convert label -> key (same map methods uses).
+    reg_q_label_to_key = {v["label"]: k for k, v in get_reg_questions().items()}
     filters = []
     for v in filter_case_study:
         filters.append(("case_study", v))
     for v in filter_regulatory_question:
-        filters.append(("regulatory_question", v))
+        filters.append(("regulatory_question", reg_q_label_to_key.get(v, v)))
     for v in filter_flow_step:
         filters.append(("flow_step", v))
 
@@ -810,6 +813,8 @@ def data():
         reg_question_explanations=get_reg_question_explanations(),
         reg_question_cases={v["label"]: v.get("case", "") for v in get_reg_questions().values()},
         reg_questions={v["label"]: k for k, v in get_reg_questions().items()},
+        reg_q_labels={k: v["label"] for k, v in get_reg_questions().items()},
+        process_flow_steps=get_process_flow_steps(),
         case_studies=list(get_casestudies()),
     )
 
@@ -859,10 +864,17 @@ def data_detail(dataid):
     elif zen_error and not bs_error:
         if bs_total != 1:
             return abort(404)
+    # reg-question records store the canonical reg_q_Xy key; map key -> label so
+    # the badges show the human-readable question.
+    reg_q_labels = {k: v["label"] for k, v in get_reg_questions().items()}
     if studies:
-        return render_template("data/data_details.html", data=studies[0])
+        return render_template(
+            "data/data_details.html", data=studies[0], reg_q_labels=reg_q_labels
+        )
     elif datasets:
-        return render_template("data/data_details.html", data=datasets[0])
+        return render_template(
+            "data/data_details.html", data=datasets[0], reg_q_labels=reg_q_labels
+        )
     return abort(404)
 
 
