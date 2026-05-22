@@ -55,13 +55,9 @@
                         Flow Step
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item text-wrap text-md-nowrap" href="#" data-filter-type="flow-step" data-filter-value="ADME" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['ADME'] }}">ADME <i class="bi bi-question-circle text-vhpblue"></i></a></li>
-                        <li><a class="dropdown-item text-wrap text-md-nowrap" href="#" data-filter-type="flow-step" data-filter-value="Chemical Information" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Chemical Information'] }}">Chemical Information <i class="bi bi-question-circle text-vhpblue"></i></a></li>
-                        <li><a class="dropdown-item text-wrap text-md-nowrap" href="#" data-filter-type="flow-step" data-filter-value="General" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['General'] }}">General <i class="bi bi-question-circle text-vhpblue"></i></a></li>
-                        <li><a class="dropdown-item text-wrap text-md-nowrap" href="#" data-filter-type="flow-step" data-filter-value="Hazard Assessment" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Hazard Assessment'] }}">Hazard Assessment <i class="bi bi-question-circle text-vhpblue"></i></a></li>
-                        <li><a class="dropdown-item text-wrap text-md-nowrap" href="#" data-filter-type="flow-step" data-filter-value="External exposure" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['External exposure'] }}">External exposure <i class="bi bi-question-circle text-vhpblue"></i></a></li>
-                        <li><a class="dropdown-item text-wrap text-md-nowrap" href="#" data-filter-type="flow-step" data-filter-value="Generic" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Generic'] }}">Generic <i class="bi bi-question-circle text-vhpblue"></i></a></li>
-                        <li><a class="dropdown-item text-wrap text-md-nowrap" href="#" data-filter-type="flow-step" data-filter-value="Other" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ stage_explanations['Other'] }}">Other <i class="bi bi-question-circle text-vhpblue"></i></a></li>
+                        {% for step in process_flow_steps.values() %}
+                        <li><a class="dropdown-item" href="#" data-filter-type="flow-step" data-filter-value="{{ step.label }}"{% if step.description %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{ step.description }}"{% endif %}>{{ step.label }}{% if step.description %} <i class="bi bi-question-circle text-vhpblue"></i>{% endif %}</a></li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>
@@ -111,9 +107,9 @@
                     </div>
                     <div class = "card-header bg-white align-items-center">
                             {% set cs0 = study.metadata.case_study[0] if study.metadata.case_study else '' %}
-                            {% set rq0 = study.metadata.regulatory_question[0] if study.metadata.regulatory_question else '' %}
+                            {% set rq0 = reg_q_labels.get(study.metadata.regulatory_question[0], study.metadata.regulatory_question[0]) if study.metadata.regulatory_question else '' %}
                             {% for cs in study.metadata.case_study %}<a role="button" href="{{url_for('casestudy', case=cs|lower)}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">{{cs|capitalize }}</a> {% endfor %}
-                            {% for rq in study.metadata.regulatory_question %}<a role="button" href="{{url_for('casestudy', case=cs0|lower, question=rq )}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">{{rq}}</a> {% endfor %}
+                            {% for rq in study.metadata.regulatory_question %}<a role="button" href="{{url_for('casestudy', case=cs0|lower, question=reg_q_labels.get(rq, rq) )}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">{{ reg_q_labels.get(rq, rq) }}</a> {% endfor %}
                             {% for fs in study.metadata.flow_step %}<a role="button" href="{{url_for('casestudy', case=cs0|lower, question=rq0, step=fs )}}"  style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppurple rounded-pill border border-vhppurple d-inline-flex align-items-center text-wrap">{{fs}}</a> {% endfor %}
                     </div>
                     <div class="card-body">
