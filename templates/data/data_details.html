@@ -710,12 +710,13 @@
               <ul class="list-group list-group-flush">
               {% for ep in endpoint_subs %}
 
-                {% set ns_ep = namespace(bioassay_name=None, aop_event=None, aop_event_url=None, instrument=None, manufacturer=None, measured_entity=None, readout=None, readout_unit=None, time_point=None, time_point_unit=None, replicates=None, extra=[]) %}
+                {% set ns_ep = namespace(bioassay_name=None, aop_events=[], instrument=None, manufacturer=None, measured_entity=None, readout=None, readout_unit=None, time_point=None, time_point_unit=None, replicates=None, description=None, extra=[]) %}
                 {% for a in ep.attributes or [] %}
                   {% if a.name == 'Bioassay' %}{% set ns_ep.bioassay_name = a.value %}
                   {% elif a.name == 'AOP event' %}
-                    {% set ns_ep.aop_event = a.value %}
-                    {% for q in a.valqual or [] %}{% if q.name == 'URL' %}{% set ns_ep.aop_event_url = q.value %}{% endif %}{% endfor %}
+                    {% set ev = namespace(url=None) %}
+                    {% for q in a.valqual or [] %}{% if q.name == 'URL' %}{% set ev.url = q.value %}{% endif %}{% endfor %}
+                    {% set _ = ns_ep.aop_events.append({'value': a.value, 'url': ev.url}) %}
                   {% elif a.name == 'Detection instrument' %}{% set ns_ep.instrument = a.value %}
                   {% elif a.name == 'Instrument manufacturer' %}{% set ns_ep.manufacturer = a.value %}
                   {% elif a.name == 'Measured entity' %}{% set ns_ep.measured_entity = a.value %}
@@ -724,6 +725,7 @@
                   {% elif a.name == 'Time point' %}{% set ns_ep.time_point = a.value %}
                   {% elif a.name == 'Time point_unit' %}{% set ns_ep.time_point_unit = a.value %}
                   {% elif a.name == 'Replicates' %}{% set ns_ep.replicates = a.value %}
+                  {% elif a.name and a.name|lower == 'description' %}{% set ns_ep.description = a.value %}
                   {% else %}{% if a.value %}{% set _ = ns_ep.extra.append(a) %}{% endif %}
                   {% endif %}
                 {% endfor %}
@@ -771,14 +773,10 @@
                           {% endif %}
                         </div>
 
-                        {% if ns_ep.aop_event %}
+                        {% if ns_ep.aop_events %}
                           <div class="small mt-1">
-                            <span class="text-muted">AOP event:</span>
-                            {% if ns_ep.aop_event_url %}
-                              <a href="{{ ns_ep.aop_event_url }}" target="_blank" rel="noopener">{{ ns_ep.aop_event }}</a>
-                            {% else %}
-                              {{ ns_ep.aop_event }}
-                            {% endif %}
+                            <span class="text-muted">AOP event{{ 's' if ns_ep.aop_events|length > 1 else '' }}:</span>
+                            {% for ev in ns_ep.aop_events %}{% if not loop.first %} &middot; {% endif %}{% if ev.url %}<a href="{{ ev.url }}" target="_blank" rel="noopener">{{ ev.value }}</a>{% else %}{{ ev.value }}{% endif %}{% endfor %}
                           </div>
                         {% endif %}
 
