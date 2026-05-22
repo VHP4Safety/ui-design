@@ -11,7 +11,7 @@
 
     <nav class="navbar navbar-expand-lg d-inline">
         <form method="GET" action="{{ url_for('data') }}" class="d-flex" role="search" id="search-form">
-            <input type="text" class="form-control me-2" name="query" id="search-input" value="{{ search_query or '' }}" placeholder="Search for datasets (e.g., S-ONTX26, toxicity, liver...)" />
+            <input type="text" class="form-control me-2" name="search" id="search-input" value="{{ search_query or '' }}" placeholder="Search for datasets (e.g., S-VHPS28, dinoseb, liver...)" />
             <!-- Filter hidden inputs are added dynamically by search_filter.js
                  in multipleInputs mode (one <input> per selected value). -->
             <div class="btn-group" role="group" aria-label="Search and filter buttons">
@@ -214,9 +214,9 @@
                 'reg-question': [{% for q in filter_regulatory_question %}'{{ q }}'{% if not loop.last %}, {% endif %}{% endfor %}]
             },
             filterFieldMap: {
-                'case-study': 'filter_case_study',
-                'flow-step': 'filter_flow_step',
-                'reg-question': 'filter_regulatory_question'
+                'case-study': 'case_study',
+                'flow-step': 'stage',
+                'reg-question': 'reg_q'
             },
             filterLabels: {
                 'case-study': 'Case Study',

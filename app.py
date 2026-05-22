@@ -731,14 +731,15 @@ def data():
     # Get query parameters for pagination and search
     page = request.args.get("page", 1, type=int)
     page_size = request.args.get("page_size", 6, type=int)
-    search_query = request.args.get("query", "", type=str)
+    search_query = request.args.get("search", "", type=str)
 
-    # Get filter parameters (multi-select via repeated query params, matching
-    # tools/methods). Each filter type is a list; the extractor groups by
-    # field and applies OR-within-field, AND-across-fields.
-    filter_case_study = request.args.getlist("filter_case_study")
-    filter_regulatory_question = request.args.getlist("filter_regulatory_question")
-    filter_flow_step = request.args.getlist("filter_flow_step")
+    # Get filter parameters (multi-select via repeated query params). Param
+    # names match tools/methods: ?case_study=, ?reg_q=, ?stage=, ?search=.
+    # Each filter type is a list; the extractor groups by field and applies
+    # OR-within-field, AND-across-fields.
+    filter_case_study = request.args.getlist("case_study")
+    filter_regulatory_question = request.args.getlist("reg_q")
+    filter_flow_step = request.args.getlist("stage")
 
     # Build filter list (one tuple per (field, value)); repeated field names
     # become OR within that field downstream in _apply_filters.
