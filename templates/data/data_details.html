@@ -161,8 +161,7 @@
          --------------------------- #}
       {% set subs_bio = [] %}
       {% set bio_models = [] %}
-      {% set ns_bio = namespace(organisms=[], organ=None, organ_url=None, tissue=None, tissue_url=None, bioassays=[], aop_events=[]) %}
-
+      {% set ns_bio = namespace(organisms=[], organ=None, organ_url=None, tissue=None, tissue_url=None, bioassays=[], aop_name=None, aop_url=None) %}
       {% if record.type == "study" %}
         {% set sec_attrs = data.metadata.raw_data.section.attributes
           if data.metadata and data.metadata.raw_data and data.metadata.raw_data.section else [] %}
@@ -200,12 +199,13 @@
             {% endfor %}
             {% set _ = ns_bio.bioassays.append({'value': a.value, 'url': ba.url, 'bao_url': ba.bao_url, 'ontology': ba.ontology}) %}
 
-          {% elif a.name == 'AOP event' %}
-            {% set aop_url = namespace(url=None) %}
+          {% elif a.name == 'AOP' %}
+            {% set aop_q = namespace(url=None) %}
             {% for q in a.valqual or [] %}
-              {% if q.name == 'URL' %}{% set aop_url.url = q.value %}{% endif %}
+              {% if q.name == 'URL' %}{% set aop_q.url = q.value %}{% endif %}
             {% endfor %}
-            {% set _ = ns_bio.aop_events.append({'value': a.value, 'url': aop_url.url}) %}
+            {% set ns_bio.aop_name = a.value %}
+            {% set ns_bio.aop_url = aop_q.url %}
           {% endif %}
         {% endfor %}
 
@@ -696,10 +696,11 @@
             {% endif %}
           {% endfor %}
 
-          {% set ns_used = namespace(names=[]) %}
-
           {% if endpoint_subs %}
-            <div class="mt-3">
+          <div class="card mt-3">
+            <div class="card-header py-2"><h5 class="m-0">Bioassays</h5></div>
+            <div class="card-body p-0">
+              <ul class="list-group list-group-flush">
               {% for ep in endpoint_subs %}
 
                 {% set ns_ep = namespace(bioassay_name=None, aop_event=None, aop_event_url=None, instrument=None, manufacturer=None, measured_entity=None, readout=None, readout_unit=None, time_point=None, time_point_unit=None, replicates=None, extra=[]) %}
@@ -738,10 +739,8 @@
                   {% set ns_ba.bao_url = ns_bio.bioassays[0].bao_url %}
                   {% set ns_ba.ontology = ns_bio.bioassays[0].ontology %}
                 {% endif %}
-                {% if ns_ba.value %}{% set _ = ns_used.names.append(ns_ba.value|lower|trim) %}{% endif %}
 
-                <div class="card mb-3">
-                  <div class="card-body p-3">
+                <li class="list-group-item">
                     <div class="d-flex align-items-start gap-3">
 
                       <div class="flex-shrink-0 pt-1">
@@ -758,7 +757,7 @@
                               {{ ns_ba.value }}
                             {% endif %}
                             {% if ns_ba.ontology %}
-                              <span class="badge bg-vhpblue rounded-pill ms-1" style="font-size:0.7em;">{{ ns_ba.ontology }}</span>
+                              <span class="badge bg-vhpblue rounded-pill ms-1">{{ ns_ba.ontology }}</span>
                             {% endif %}
                           {% else %}
                             {{ ns_ep.instrument or '—' }}
@@ -820,37 +819,10 @@
 
                       </div>
                     </div>
-                  </div>
-                </div>
+                </li>
 
               {% endfor %}
-            </div>
-          {% endif %}
-
-          {# Bioassays declared at study level but not linked to any readout block #}
-          {% set ns_left = namespace(items=[]) %}
-          {% for b in ns_bio.bioassays %}
-            {% if b.value and (b.value|lower|trim) not in ns_used.names %}
-              {% set _ = ns_left.items.append(b) %}
-            {% endif %}
-          {% endfor %}
-          {% if ns_left.items %}
-          <div class="card mt-3">
-            <div class="card-header py-2"><h5 class="m-0">Bioassay{{ 's' if ns_left.items|length > 1 else '' }}</h5></div>
-            <div class="card-body py-2 px-3">
-              {% for b in ns_left.items %}
-                <div{% if not loop.first %} class="mt-1"{% endif %}>
-                  {% set b_link = b.url or b.bao_url %}
-                  {% if b_link %}
-                    <a href="{{ b_link }}" target="_blank" rel="noopener">{{ b.value }}</a>
-                  {% else %}
-                    {{ b.value }}
-                  {% endif %}
-                  {% if b.ontology %}
-                    <span class="badge bg-vhpblue rounded-pill ms-1" style="font-size:0.7em;">{{ b.ontology }}</span>
-                  {% endif %}
-                </div>
-              {% endfor %}
+              </ul>
             </div>
           </div>
           {% endif %}
@@ -859,24 +831,20 @@
             <p class="text-muted mt-3">No endpoint readout information available.</p>
           {% endif %}
 
-          {% if ns_bio.aop_events %}
+          {% if ns_bio.aop_name %}
           <div class="card mt-3">
             <div class="card-header py-2"><h5 class="m-0">AOP Linkage</h5></div>
-            <div class="card-body p-0">
-              <ul class="list-group list-group-flush">
-                {% for ev in ns_bio.aop_events %}
-                  <li class="list-group-item d-flex align-items-start gap-2">
-                    <i class="bi bi-arrow-right-circle text-vhpblue"></i>
-                    <span class="small">
-                      {% if ev.url %}
-                        <a href="{{ ev.url }}" target="_blank" rel="noopener">{{ ev.value }}</a>
-                      {% else %}
-                        {{ ev.value }}
-                      {% endif %}
-                    </span>
-                  </li>
-                {% endfor %}
-              </ul>
+            <div class="card-body py-2 px-3">
+              <div class="d-flex align-items-start gap-2">
+                <i class="bi bi-diagram-3 text-vhpblue"></i>
+                <span class="small">
+                  {% if ns_bio.aop_url %}
+                    <a href="{{ ns_bio.aop_url }}" target="_blank" rel="noopener">{{ ns_bio.aop_name }}</a>
+                  {% else %}
+                    {{ ns_bio.aop_name }}
+                  {% endif %}
+                </span>
+              </div>
             </div>
           </div>
           {% endif %}
