@@ -504,13 +504,22 @@ class BioStudiesExtractor:
         for field, value in filters:
             accepted_by_field.setdefault(field, []).append(str(value).strip().lower())
 
+        def _field_values(metadata: dict, field: str) -> list[str]:
+            # A field may be a list (case_study/regulatory_question/flow_step)
+            # or a plain string; normalise to a lowercased list for matching.
+            raw = metadata.get(field, "")
+            values = raw if isinstance(raw, (list, tuple)) else [raw]
+            return [str(v).strip().lower() for v in values if v]
+
         filtered = []
         for hit in hits:
             metadata = hit.get("metadata", {})
             if not metadata:
                 continue
+            # AND across fields; within a field the record matches if any of its
+            # values is among the accepted ones (OR).
             if all(
-                str(metadata.get(field, "")).strip().lower() in accepted
+                any(v in accepted for v in _field_values(metadata, field))
                 for field, accepted in accepted_by_field.items()
             ):
                 filtered.append(hit)
@@ -593,10 +602,11 @@ class BioStudiesExtractor:
                 ),
                 "modification_date": raw_data.get("mdate", "N/A"),
                 "type": raw_data.get("type", "N/A"),
-                # VHP4Safety filterable fields
-                "case_study": "",
-                "regulatory_question": "",
-                "flow_step": "",
+                # VHP4Safety filterable fields (a record may carry several of
+                # each, so these are lists)
+                "case_study": [],
+                "regulatory_question": [],
+                "flow_step": [],
                 "collection": "",
                 "attributes": [],
                 "authors": [],
@@ -620,14 +630,18 @@ class BioStudiesExtractor:
                 return "" if v is None else str(v)
 
             def _capture_vhp_fields(attr_name: str, attr_value: str):
+                # case study / regulatory question / process flow step can each
+                # appear multiple times in a submission; collect all (deduped,
+                # order-preserving).
+                field = {
+                    "case study": "case_study",
+                    "regulatory question": "regulatory_question",
+                    "process flow step": "flow_step",
+                }.get(attr_name)
                 if attr_name == "attachto":
                     metadata["collection"] = attr_value
-                elif attr_name == "case study":
-                    metadata["case_study"] = attr_value
-                elif attr_name == "regulatory question":
-                    metadata["regulatory_question"] = attr_value
-                elif attr_name == "process flow step":
-                    metadata["flow_step"] = attr_value
+                elif field and attr_value and attr_value not in metadata[field]:
+                    metadata[field].append(attr_value)
 
             BIO_KEYS = {
                 "organism",
