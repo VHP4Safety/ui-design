@@ -651,7 +651,8 @@
                 {% for a in ex.attributes or [] %}
                   {% if a.name == 'Exposure type' %}{% set ns_ex.exp_type = a.value %}
                   {% elif a.name == 'Exposure duration' %}{% set ns_ex.duration = a.value %}
-                  {% elif a.name == 'Exposure duration_unit' %}{% set ns_ex.duration_unit = a.value %}
+                    {% set du = (a.valqual | selectattr('name','equalto','Unit') | map(attribute='value') | list) if a.valqual else [] %}
+                    {% set ns_ex.duration_unit = du[0] if du else None %}
                   {% else %}{% if a.value %}{% set _ = ns_ex.extra.append(a) %}{% endif %}
                   {% endif %}
                 {% endfor %}
@@ -678,7 +679,7 @@
                           <div class="small text-muted mt-2">
                             {% for a in ns_ex.extra %}
                               {% if not loop.first %} &middot; {% endif %}
-                              {{ a.name }}: {{ a.value }}
+                              {{ a.name }}: {{ a.value }}{% set eu = (a.valqual | selectattr('name','equalto','Unit') | map(attribute='value') | list) if a.valqual else [] %}{% if eu %} {{ eu[0] }}{% endif %}
                             {% endfor %}
                           </div>
                         {% endif %}
@@ -721,9 +722,11 @@
                   {% elif a.name == 'Instrument manufacturer' %}{% set ns_ep.manufacturer = a.value %}
                   {% elif a.name == 'Measured entity' %}{% set ns_ep.measured_entity = a.value %}
                   {% elif a.name == 'Endpoint readout' %}{% set ns_ep.readout = a.value %}
-                  {% elif a.name == 'Endpoint readout_unit' %}{% set ns_ep.readout_unit = a.value %}
+                    {% set ru = (a.valqual | selectattr('name','equalto','Unit') | map(attribute='value') | list) if a.valqual else [] %}
+                    {% set ns_ep.readout_unit = ru[0] if ru else None %}
                   {% elif a.name == 'Time point' %}{% set ns_ep.time_point = a.value %}
-                  {% elif a.name == 'Time point_unit' %}{% set ns_ep.time_point_unit = a.value %}
+                    {% set tu = (a.valqual | selectattr('name','equalto','Unit') | map(attribute='value') | list) if a.valqual else [] %}
+                    {% set ns_ep.time_point_unit = tu[0] if tu else None %}
                   {% elif a.name == 'Replicates' %}{% set ns_ep.replicates = a.value %}
                   {% elif a.name and a.name|lower == 'description' %}{% set ns_ep.description = a.value %}
                   {% else %}{% if a.value %}{% set _ = ns_ep.extra.append(a) %}{% endif %}
@@ -818,7 +821,7 @@
                           {% endif %}
 
                           {% for a in ns_ep.extra %}
-                            <br>{{ a.name }}: {{ a.value }}
+                            <br>{{ a.name }}: {{ a.value }}{% set eu = (a.valqual | selectattr('name','equalto','Unit') | map(attribute='value') | list) if a.valqual else [] %}{% if eu %} {{ eu[0] }}{% endif %}
                           {% endfor %}
                         </div>
 
