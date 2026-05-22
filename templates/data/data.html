@@ -110,9 +110,11 @@
                         <span class="badge bg-vhplight-blue text-secondary rounded-pill align-content-center">{{ study.type or 'unknown' }}</span>
                     </div>
                     <div class = "card-header bg-white align-items-center">
-                            {% if study.metadata.case_study%}<a role="button" href="{{url_for('casestudy', case=study.metadata.case_study|lower)}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">Case Study: {{study.metadata.case_study|capitalize }}</a>{%endif%}
-                            {% if study.metadata.regulatory_question%}<a role="button" href="{{url_for('casestudy', case=study.metadata.case_study|lower, question=study.metadata.regulatory_question )}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">Regulatory Question: {{study.metadata.regulatory_question}}</a>{%endif%}
-                            {% if study.metadata.flow_step%}<a role="button" href="{{url_for('casestudy', case=study.metadata.case_study|lower, question=study.metadata.regulatory_question, step=study.metadata.flow_step )}}"  style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppurple rounded-pill border border-vhppurple d-inline-flex align-items-center text-wrap">Flow Step: {{study.metadata.flow_step}}</a>{%endif%}
+                            {% set cs0 = study.metadata.case_study[0] if study.metadata.case_study else '' %}
+                            {% set rq0 = study.metadata.regulatory_question[0] if study.metadata.regulatory_question else '' %}
+                            {% for cs in study.metadata.case_study %}<a role="button" href="{{url_for('casestudy', case=cs|lower)}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">{{cs|capitalize }}</a> {% endfor %}
+                            {% for rq in study.metadata.regulatory_question %}<a role="button" href="{{url_for('casestudy', case=cs0|lower, question=rq )}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">{{rq}}</a> {% endfor %}
+                            {% for fs in study.metadata.flow_step %}<a role="button" href="{{url_for('casestudy', case=cs0|lower, question=rq0, step=fs )}}"  style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppurple rounded-pill border border-vhppurple d-inline-flex align-items-center text-wrap">{{fs}}</a> {% endfor %}
                     </div>
                     <div class="card-body">
                         <h5 class="card-title" style="word-break: break-word;">
