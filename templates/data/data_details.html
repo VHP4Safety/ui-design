@@ -161,7 +161,7 @@
          --------------------------- #}
       {% set subs_bio = [] %}
       {% set bio_models = [] %}
-      {% set ns_bio = namespace(organisms=[], organ=None, organ_url=None, tissue=None, tissue_url=None, bioassay=None, bioassay_url=None, bioassay_ontology=None, aop_events=[]) %}
+      {% set ns_bio = namespace(organisms=[], organ=None, organ_url=None, tissue=None, tissue_url=None, bioassays=[], aop_events=[]) %}
 
       {% if record.type == "study" %}
         {% set sec_attrs = data.metadata.raw_data.section.attributes
@@ -192,11 +192,13 @@
             {% set ns_bio.tissue = a.value %}
 
           {% elif a.name == 'Bioassay' %}
+            {% set ba = namespace(url=None, bao_url=None, ontology=None) %}
             {% for q in a.valqual or [] %}
-              {% if q.name == 'TermId' %}{% set ns_bio.bioassay_url = 'https://www.bioassayontology.org/bao#' ~ q.value %}{% endif %}
-              {% if q.name == 'Ontology' %}{% set ns_bio.bioassay_ontology = q.value %}{% endif %}
+              {% if q.name == 'URL' %}{% set ba.url = q.value %}{% endif %}
+              {% if q.name == 'TermId' %}{% set ba.bao_url = 'https://www.bioassayontology.org/bao#' ~ q.value %}{% endif %}
+              {% if q.name == 'Ontology' %}{% set ba.ontology = q.value %}{% endif %}
             {% endfor %}
-            {% set ns_bio.bioassay = a.value %}
+            {% set _ = ns_bio.bioassays.append({'value': a.value, 'url': ba.url, 'bao_url': ba.bao_url, 'ontology': ba.ontology}) %}
 
           {% elif a.name == 'AOP event' %}
             {% set aop_url = namespace(url=None) %}
@@ -694,29 +696,19 @@
             {% endif %}
           {% endfor %}
 
-          {% if ns_bio.bioassay %}
-          <div class="card mt-3">
-            <div class="card-header py-2"><h5 class="m-0">Bioassay</h5></div>
-            <div class="card-body py-2 px-3">
-              {% if ns_bio.bioassay_url %}
-                <a href="{{ ns_bio.bioassay_url }}" target="_blank" rel="noopener">{{ ns_bio.bioassay }}</a>
-              {% else %}
-                {{ ns_bio.bioassay }}
-              {% endif %}
-              {% if ns_bio.bioassay_ontology %}
-                <span class="badge bg-vhpblue rounded-pill ms-1" style="font-size:0.7em;">{{ ns_bio.bioassay_ontology }}</span>
-              {% endif %}
-            </div>
-          </div>
-          {% endif %}
+          {% set ns_used = namespace(names=[]) %}
 
           {% if endpoint_subs %}
             <div class="mt-3">
               {% for ep in endpoint_subs %}
 
-                {% set ns_ep = namespace(instrument=None, manufacturer=None, measured_entity=None, readout=None, readout_unit=None, time_point=None, time_point_unit=None, replicates=None, extra=[]) %}
+                {% set ns_ep = namespace(bioassay_name=None, aop_event=None, aop_event_url=None, instrument=None, manufacturer=None, measured_entity=None, readout=None, readout_unit=None, time_point=None, time_point_unit=None, replicates=None, extra=[]) %}
                 {% for a in ep.attributes or [] %}
-                  {% if a.name == 'Detection instrument' %}{% set ns_ep.instrument = a.value %}
+                  {% if a.name == 'Bioassay' %}{% set ns_ep.bioassay_name = a.value %}
+                  {% elif a.name == 'AOP event' %}
+                    {% set ns_ep.aop_event = a.value %}
+                    {% for q in a.valqual or [] %}{% if q.name == 'URL' %}{% set ns_ep.aop_event_url = q.value %}{% endif %}{% endfor %}
+                  {% elif a.name == 'Detection instrument' %}{% set ns_ep.instrument = a.value %}
                   {% elif a.name == 'Instrument manufacturer' %}{% set ns_ep.manufacturer = a.value %}
                   {% elif a.name == 'Measured entity' %}{% set ns_ep.measured_entity = a.value %}
                   {% elif a.name == 'Endpoint readout' %}{% set ns_ep.readout = a.value %}
@@ -728,6 +720,26 @@
                   {% endif %}
                 {% endfor %}
 
+                {# Resolve which bioassay this readout block describes #}
+                {% set ns_ba = namespace(value=None, url=None, bao_url=None, ontology=None) %}
+                {% if ns_ep.bioassay_name %}
+                  {% for b in ns_bio.bioassays %}
+                    {% if b.value and b.value|lower|trim == ns_ep.bioassay_name|lower|trim %}
+                      {% set ns_ba.value = b.value %}
+                      {% set ns_ba.url = b.url %}
+                      {% set ns_ba.bao_url = b.bao_url %}
+                      {% set ns_ba.ontology = b.ontology %}
+                    {% endif %}
+                  {% endfor %}
+                  {% if not ns_ba.value %}{% set ns_ba.value = ns_ep.bioassay_name %}{% endif %}
+                {% elif ns_bio.bioassays|length == 1 %}
+                  {% set ns_ba.value = ns_bio.bioassays[0].value %}
+                  {% set ns_ba.url = ns_bio.bioassays[0].url %}
+                  {% set ns_ba.bao_url = ns_bio.bioassays[0].bao_url %}
+                  {% set ns_ba.ontology = ns_bio.bioassays[0].ontology %}
+                {% endif %}
+                {% if ns_ba.value %}{% set _ = ns_used.names.append(ns_ba.value|lower|trim) %}{% endif %}
+
                 <div class="card mb-3">
                   <div class="card-body p-3">
                     <div class="d-flex align-items-start gap-3">
@@ -737,7 +749,38 @@
                       </div>
 
                       <div class="w-100">
-                        <div class="fw-semibold">{{ ns_ep.instrument or '—' }}</div>
+                        <div class="fw-semibold">
+                          {% if ns_ba.value %}
+                            {% set ba_link = ns_ba.url or ns_ba.bao_url %}
+                            {% if ba_link %}
+                              <a href="{{ ba_link }}" target="_blank" rel="noopener">{{ ns_ba.value }}</a>
+                            {% else %}
+                              {{ ns_ba.value }}
+                            {% endif %}
+                            {% if ns_ba.ontology %}
+                              <span class="badge bg-vhpblue rounded-pill ms-1" style="font-size:0.7em;">{{ ns_ba.ontology }}</span>
+                            {% endif %}
+                          {% else %}
+                            {{ ns_ep.instrument or '—' }}
+                          {% endif %}
+                        </div>
+
+                        {% if ns_ep.aop_event %}
+                          <div class="small mt-1">
+                            <span class="text-muted">AOP event:</span>
+                            {% if ns_ep.aop_event_url %}
+                              <a href="{{ ns_ep.aop_event_url }}" target="_blank" rel="noopener">{{ ns_ep.aop_event }}</a>
+                            {% else %}
+                              {{ ns_ep.aop_event }}
+                            {% endif %}
+                          </div>
+                        {% endif %}
+
+                        {% if ns_ba.value and ns_ep.instrument %}
+                          <div class="small mt-1">
+                            <span class="text-muted">Instrument:</span> {{ ns_ep.instrument }}
+                          </div>
+                        {% endif %}
 
                         {% if ns_ep.manufacturer %}
                           <div class="small mt-1">
@@ -782,6 +825,38 @@
 
               {% endfor %}
             </div>
+          {% endif %}
+
+          {# Bioassays declared at study level but not linked to any readout block #}
+          {% set ns_left = namespace(items=[]) %}
+          {% for b in ns_bio.bioassays %}
+            {% if b.value and (b.value|lower|trim) not in ns_used.names %}
+              {% set _ = ns_left.items.append(b) %}
+            {% endif %}
+          {% endfor %}
+          {% if ns_left.items %}
+          <div class="card mt-3">
+            <div class="card-header py-2"><h5 class="m-0">Bioassay{{ 's' if ns_left.items|length > 1 else '' }}</h5></div>
+            <div class="card-body py-2 px-3">
+              {% for b in ns_left.items %}
+                <div{% if not loop.first %} class="mt-1"{% endif %}>
+                  {% set b_link = b.url or b.bao_url %}
+                  {% if b_link %}
+                    <a href="{{ b_link }}" target="_blank" rel="noopener">{{ b.value }}</a>
+                  {% else %}
+                    {{ b.value }}
+                  {% endif %}
+                  {% if b.ontology %}
+                    <span class="badge bg-vhpblue rounded-pill ms-1" style="font-size:0.7em;">{{ b.ontology }}</span>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if not endpoint_subs and not ns_bio.bioassays %}
+            <p class="text-muted mt-3">No endpoint readout information available.</p>
           {% endif %}
 
           {% if ns_bio.aop_events %}
