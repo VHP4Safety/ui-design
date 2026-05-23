@@ -1085,12 +1085,17 @@ def tools():
             # Fetch per-tool detail JSON to check hosting status
             tool_id = tool.get("id", "")
             vhp_hosted = False
-            if inst_url != "no_url" and tool_id:
+            vhp_deved = False
+            if tool_id:
                 detail = get_service_detail(tool_id)
-                vhp_platform = (
-                    detail.get("instance", {}).get("vhp-platform", "").lower()
-                )
-                vhp_hosted = vhp_platform not in ("external", "independent", "")
+                if detail.get("developed-by-VHP"):
+                    vhp_deved = detail.get("developed-by-VHP") not in ("false")
+                if inst_url != "no_url":
+                    vhp_platform = (
+                        detail.get("instance", {}).get("vhp-platform", "").lower()
+                    )
+                    vhp_hosted = vhp_platform not in ("external", "independent", "")
+            tool["vhp_deved"] = vhp_deved
             tool["vhp_hosted"] = vhp_hosted
 
         return render_template(
