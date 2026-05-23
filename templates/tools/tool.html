@@ -26,13 +26,13 @@
 <section class="container py-md-5 py-3 d-flex flex-column min-vh-100">
     <div class="pb-2">
         <h1><span class="text-vhpblue" id="collection-name">{{ tool_json.service }}
-        {% if tool_details.instance.url != "no_url" %}
+        {% if tool_details.get("developed-by-VHP") != "false" %}
             <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_HexaHead_300.png" alt="Developed by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Developed by VHP">
-            {% if tool_details.instance.get("vhp-platform") == "Development" %}
-                <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Hosted by VHP">
-            {% elif tool_details.instance.get("vhp-platform") == "development" %}
-                <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Hosted by VHP">
-            {% endif %}
+        {% endif %}
+        {% if tool_details.instance.get("vhp-platform") == "Development" %}
+            <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Hosted by VHP">
+        {% elif tool_details.instance.get("vhp-platform") == "development" %}
+            <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Hosted by VHP">
         {% endif %}
         </span></h1>
     </div>

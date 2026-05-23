@@ -118,8 +118,10 @@
                     </div>
                     <div class="card-body">
                         <h2 class="card-title mb-0">{{ item.service }}
-                            {% if item.inst_url != "no_url" %}
+                            {% if item.vhp_deved %}
                                 <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_HexaHead_300.png" alt="Developed by VHP" class="vhp-badge ms-1" data-bs-toggle="tooltip" data-bs-title="Developed by VHP">
+                            {% endif %}
+                            {% if item.inst_url != "no_url" %}
                                 {% if item.vhp_hosted %}
                                     <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" class="vhp-badge ms-1" data-bs-toggle="tooltip" data-bs-title="Hosted by VHP">
                                 {% endif %}
