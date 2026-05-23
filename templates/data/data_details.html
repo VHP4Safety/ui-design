@@ -516,116 +516,120 @@
 
           {% if chemicals|length > 0 %}
             <div class="mt-3">
+              <div class="row">
+                {% for chem in chemicals %}
 
-              {% for chem in chemicals %}
+                  
+                  {# ---- Extract chemical fields from subsection attributes ---- #}
+                  {% set ns = namespace(
+                    name=None,
+                    cas=None,
+                    cid=None,
+                    cc_id=None,
+                    cc_url=None
+                  ) %}
 
-                
-                {# ---- Extract chemical fields from subsection attributes ---- #}
-                {% set ns = namespace(
-                  name=None,
-                  cas=None,
-                  cid=None,
-                  cc_id=None,
-                  cc_url=None
-                ) %}
+                  {% for a in chem.attributes or [] %}
+                    {% if a.name == 'Chemical' %}
+                      {% set ns.name = a.value %}
+                    {% elif a.name == 'CAS' %}
+                      {% set ns.cas = a.value %}
+                    {% elif a.name in ['CID', 'PubChemCID', 'PubChem CID'] %}
+                      {% set ns.cid = a.value %}
+                    {% elif a.name == 'CompoundCloudID' %}
+                      {% set ns.cc_id = a.value %}
+                      {% for q in a.valqual or [] %}
+                        {% if q.name == 'URL' %}
+                          {% set ns.cc_url = q.value %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                  {% endfor %}
 
-                {% for a in chem.attributes or [] %}
-                  {% if a.name == 'Chemical' %}
-                    {% set ns.name = a.value %}
-                  {% elif a.name == 'CAS' %}
-                    {% set ns.cas = a.value %}
-                  {% elif a.name in ['CID', 'PubChemCID', 'PubChem CID'] %}
-                    {% set ns.cid = a.value %}
-                  {% elif a.name == 'CompoundCloudID' %}
-                    {% set ns.cc_id = a.value %}
-                    {% for q in a.valqual or [] %}
-                      {% if q.name == 'URL' %}
-                        {% set ns.cc_url = q.value %}
-                      {% endif %}
-                    {% endfor %}
-                  {% endif %}
-                {% endfor %}
+                  {# ---- Render card in col-md-6 ---- #}
+                  <div class="col-md-6">
+                    <div class="card mb-3">
+                      <div class="card-body p-3">
 
-                {# ---- Render card ---- #}
-                <div class="card mb-3">
-                  <div class="card-body p-3">
-
-                    <div class="d-flex align-items-start gap-3">
-                      {# Optional: PubChem structure image (only if CID present) #}
-                      {% if ns.cid %}
-                        <div class="flex-shrink-0">
-                          <img
-                            src="https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{{ ns.cid|urlencode }}/PNG"
-                            alt="Structure for CID {{ ns.cid }}"
-                            class="border rounded bg-white"
-                            style="width:120px; height:auto;"
-                            loading="lazy"
-                          >
-                        </div>
-                      {% else %}
-                        <div class="flex-shrink-0 pt-1">
-                          <i class="bi bi-droplet-fill text-vhpblue fs-4"></i>
-                        </div>
-                      {% endif %}
-
-                      <div class="w-100">
-                        {# Chemical name (optionally link to CompoundCloud) #}
-                        <div class="fw-semibold">
-                          {% if ns.cc_url %}
-                            <a href="{{ ns.cc_url }}" target="_blank" rel="noopener" class="text-decoration-none">
-                              {{ ns.name or '—' }}
-                            </a>
-                            <i class="bi bi-box-arrow-up-right ms-1 small text-muted"></i>
-                          {% else %}
-                            {{ ns.name or '—' }}
-                          {% endif %}
-                        </div>
-
-                        {# Identifiers row #}
-                        <div class="small mt-1">
-
-                          {# CAS -> Common Chemistry search #}
-                          {% if ns.cas %}
-                            <span class="text-muted">CAS:</span>
-                            <a href="https://commonchemistry.cas.org/results?q={{ ns.cas|urlencode }}"
-                              target="_blank" rel="noopener" class="text-decoration-none">
-                              <i class="bi bi-link-45deg text-vhpblue"></i> {{ ns.cas }}
-                            </a>
-                          {% endif %}
-
-                          {# PubChem CID link #}
+                        <div class="d-flex align-items-start gap-3">
+                          {# Optional: PubChem structure image (only if CID present) #}
                           {% if ns.cid %}
-                            {% if ns.cas %}<br>{% endif %}
-                            <span class="text-muted">PubChem:</span>
-                            <a href="https://pubchem.ncbi.nlm.nih.gov/compound/{{ ns.cid|urlencode }}"
-                              target="_blank" rel="noopener" class="text-decoration-none">
-                              <i class="bi bi-link-45deg text-vhpblue"></i> CID {{ ns.cid }}
-                            </a>
+                            <div class="flex-shrink-0">
+                              <img
+                                src="https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{{ ns.cid|urlencode }}/PNG"
+                                alt="Structure for CID {{ ns.cid }}"
+                                class="border rounded bg-white"
+                                style="width:120px; height:auto;"
+                                loading="lazy"
+                                onerror="this.onerror=null; this.src='https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid={{ ns.cid }}&t=l';"
+                              >
+                            </div>
+                          {% else %}
+                            <div class="flex-shrink-0 pt-1">
+                              <i class="bi bi-droplet-fill text-vhpblue fs-4"></i>
+                            </div>
                           {% endif %}
 
-                          {# CompoundCloud ID link (if you want it explicitly as well) #}
-                          {% if ns.cc_id %}
-                            <br>
-                            <span class="text-muted">CompoundCloud:</span>
-                            {% if ns.cc_url %}
-                              <a href="{{ ns.cc_url }}" target="_blank" rel="noopener" class="text-decoration-none">
-                                <i class="bi bi-link-45deg text-vhpblue"></i> {{ ns.cc_id }}
-                              </a>
-                            {% else %}
-                              {{ ns.cc_id }}
-                            {% endif %}
-                          {% endif %}
+                          <div class="w-100">
+                            {# Chemical name (optionally link to CompoundCloud) #}
+                            <div class="fw-semibold">
+                              {% if ns.cc_url %}
+                                <a href="{{ ns.cc_url }}" target="_blank" rel="noopener" class="text-decoration-none">
+                                  {{ ns.name or '—' }}
+                                </a>
+                                <i class="bi bi-box-arrow-up-right ms-1 small text-muted"></i>
+                              {% else %}
+                                {{ ns.name or '—' }}
+                              {% endif %}
+                            </div>
 
+                            {# Identifiers row #}
+                            <div class="small mt-1">
+
+                              {# CAS -> Common Chemistry search #}
+                              {% if ns.cas %}
+                                <span class="text-muted">CAS:</span>
+                                <a href="https://commonchemistry.cas.org/results?q={{ ns.cas|urlencode }}"
+                                  target="_blank" rel="noopener" class="text-decoration-none">
+                                  <i class="bi bi-link-45deg text-vhpblue"></i> {{ ns.cas }}
+                                </a>
+                              {% endif %}
+
+                              {# PubChem CID link #}
+                              {% if ns.cid %}
+                                {% if ns.cas %}<br>{% endif %}
+                                <span class="text-muted">PubChem:</span>
+                                <a href="https://pubchem.ncbi.nlm.nih.gov/compound/{{ ns.cid|urlencode }}"
+                                  target="_blank" rel="noopener" class="text-decoration-none">
+                                  <i class="bi bi-link-45deg text-vhpblue"></i> CID {{ ns.cid }}
+                                </a>
+                              {% endif %}
+
+                              {# CompoundCloud ID link (if you want it explicitly as well) #}
+                              {% if ns.cc_id %}
+                                <br>
+                                <span class="text-muted">CompoundCloud:</span>
+                                {% if ns.cc_url %}
+                                  <a href="{{ ns.cc_url }}" target="_blank" rel="noopener" class="text-decoration-none">
+                                    <i class="bi bi-link-45deg text-vhpblue"></i> {{ ns.cc_id }}
+                                  </a>
+                                {% else %}
+                                  {{ ns.cc_id }}
+                                {% endif %}
+                              {% endif %}
+
+                            </div>
+
+                          </div>
                         </div>
 
                       </div>
                     </div>
-
                   </div>
-                </div>
 
 
-              {% endfor %}
+                {% endfor %}
+              </div>
             </div>
           {% else %}
             <p class="text-muted">No chemical information available.</p>
