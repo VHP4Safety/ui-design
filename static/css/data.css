@@ -102,6 +102,17 @@
 }
 
 
+/* Hide scrollbar while keeping scroll/swipe (e.g. one-line pill strips) */
+.scrollbar-none {
+  -ms-overflow-style: none;   /* IE / old Edge */
+  scrollbar-width: none;      /* Firefox */
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;              /* Chrome, Safari, Edge */
+}
+
+
 /* Mobile phone screens ≤ 375px */
 @media (max-width: 408px) {
 

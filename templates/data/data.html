@@ -105,19 +105,26 @@
                         <span class="result-accession">{{ study.accession or study.accno }}</span>
                         <span class="badge bg-vhplight-blue text-secondary rounded-pill align-content-center">{{ study.type or 'unknown' }}</span>
                     </div>
-                    <div class = "card-header bg-white align-items-center">
-                            {% set cs0 = study.metadata.case_study[0] if study.metadata.case_study else '' %}
-                            {% set rq0 = reg_q_labels.get(study.metadata.regulatory_question[0], study.metadata.regulatory_question[0]) if study.metadata.regulatory_question else '' %}
-                            {% for cs in study.metadata.case_study %}<a role="button" href="{{url_for('casestudy', case=cs|lower)}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">{{cs|capitalize }}</a> {% endfor %}
-                            {% for rq in study.metadata.regulatory_question %}<a role="button" href="{{url_for('casestudy', case=cs0|lower, question=reg_q_labels.get(rq, rq) )}}" style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-wrap">{{ reg_q_labels.get(rq, rq) }}</a> {% endfor %}
-                            {% for fs in study.metadata.flow_step %}<a role="button" href="{{url_for('casestudy', case=cs0|lower, question=rq0, step=fs )}}"  style="font-size:0.75em;" class="lh-1 p-1 btn btn-outline-vhppurple rounded-pill border border-vhppurple d-inline-flex align-items-center text-wrap">{{fs}}</a> {% endfor %}
+                    <div class="card-header bg-white">
+                        <div class="position-relative">
+                            <div class="d-flex flex-nowrap overflow-x-auto gap-1 scrollbar-none pill-scroll">
+                                {% set cs0 = study.metadata.case_study[0] if study.metadata.case_study else '' %}
+                                {% set rq0 = reg_q_labels.get(study.metadata.regulatory_question[0], study.metadata.regulatory_question[0]) if study.metadata.regulatory_question else '' %}
+                                {% for cs in study.metadata.case_study %}<a role="button" href="{{url_for('casestudy', case=cs|lower)}}" style="font-size:0.75em;" class="flex-shrink-0 lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-nowrap">{{cs|capitalize }}</a>{% endfor %}
+                                {% for rq in study.metadata.regulatory_question %}<a role="button" href="{{url_for('casestudy', case=cs0|lower, question=reg_q_labels.get(rq, rq) )}}" style="font-size:0.75em;" class="flex-shrink-0 lh-1 p-1 btn btn-outline-vhppink-distinct rounded-pill border border-vhppink-distinct d-inline-flex align-items-center text-nowrap">{{ reg_q_labels.get(rq, rq) }}</a>{% endfor %}
+                                {% for fs in study.metadata.flow_step %}<a role="button" href="{{url_for('casestudy', case=cs0|lower, question=rq0, step=fs )}}" style="font-size:0.75em;" class="flex-shrink-0 lh-1 p-1 btn btn-outline-vhppurple rounded-pill border border-vhppurple d-inline-flex align-items-center text-nowrap">{{fs}}</a>{% endfor %}
+                            </div>
+                            <button type="button" class="scroll-caret d-none position-absolute end-0 top-50 translate-middle-y btn btn-light btn-sm rounded-circle shadow-sm p-1 lh-1 d-flex align-items-center justify-content-center" aria-label="Scroll for more">
+                                <i class="bi bi-caret-right-fill text-secondary" style="font-size:0.7em;"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <h5 class="card-title" style="word-break: break-word;">
                             {{ study.title or 'Untitled Study' }}
                         </h5>
                         <div class="card-text">
-                            <span class="text-secondary">Released: {{ study.release_date or study.rdate or 'N/A' }}</span><br>
+                            <span class="small text-muted fst-italic">Released: {{ study.release_date or study.rdate or 'N/A' }}</span>
                         </div>
                     </div>
                     <div class="card-footer btn-group bg-white border-0 py-3" role="group">
@@ -159,7 +166,7 @@
                             {{ dataset.title or 'Untitled Dataset' }}
                         </h5>
                         <div class="card-text">
-                            <span class="text-secondary">Released: {{ dataset.metadata.publication_date or study.created or 'N/A' }}</span>
+                            <span class="small text-muted fst-italic">Released: {{ dataset.metadata.publication_date or study.created or 'N/A' }}</span>
                         </div>
                     </div>
                     <div class="card-footer btn-group bg-white border-0 py-3" role="group">
@@ -231,6 +238,31 @@
             },
             showFilterPanel: {% if filter_case_study or filter_flow_step or filter_regulatory_question %}true{% else %}false{% endif %}
         });
+    });
+</script>
+<script>
+    // Show the scroll-hint caret only when a pill strip actually overflows
+    // (and hide it once scrolled to the end).
+    document.addEventListener('DOMContentLoaded', () => {
+        const strips = document.querySelectorAll('.pill-scroll');
+        const sync = (strip) => {
+            const caret = strip.parentElement.querySelector('.scroll-caret');
+            if (!caret) return;
+            const overflowing = strip.scrollWidth > strip.clientWidth + 1;
+            const atEnd = strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 1;
+            caret.classList.toggle('d-none', !overflowing || atEnd);
+        };
+        strips.forEach((strip) => {
+            const caret = strip.parentElement.querySelector('.scroll-caret');
+            if (caret) {
+                caret.addEventListener('click', () => {
+                    strip.scrollBy({ left: strip.clientWidth * 0.8, behavior: 'smooth' });
+                });
+            }
+            strip.addEventListener('scroll', () => sync(strip), { passive: true });
+            sync(strip);
+        });
+        window.addEventListener('resize', () => strips.forEach(sync));
     });
 </script>
 
