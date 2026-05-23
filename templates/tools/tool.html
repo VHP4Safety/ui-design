@@ -339,6 +339,11 @@
             {% else %}
               {% if tool_details.provider.name %}<li>{{ tool_details.provider.name }}</li>{% endif%}
             {% endif %}
+            {% if tool_details.provider.contact.get("vhp-partner") %}
+              {% if tool_details.provider.contact.get("vhp-partner") != "" %}
+                <li>Partner: {{ tool_details.provider.contact.get("vhp-partner") }}</li>
+              {% endif %}
+            {% endif %}
           {% endif %}{% endif %}
         </ul>
       </div>
