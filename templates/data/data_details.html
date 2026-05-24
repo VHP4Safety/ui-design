@@ -831,7 +831,7 @@
               <ul class="list-group list-group-flush">
               {% for ep in endpoint_subs %}
 
-                {% set ns_ep = namespace(bioassay_name=None, aop_events=[], instrument=None, manufacturer=None, measured_entity=None, readout=None, readout_unit=None, time_point=None, time_point_unit=None, replicates=None, description=None, extra=[]) %}
+                {% set ns_ep = namespace(bioassay_name=None, aop_events=[], instrument=None, manufacturer=None, measured_entity=None, readout=None, readout_unit=None, time_point=None, time_point_unit=None, replicates=None, tech_replicates=None, pos_controls=[], description=None, extra=[]) %}
                 {% for a in ep.attributes or [] %}
                   {% if a.name == 'Bioassay' %}{% set ns_ep.bioassay_name = a.value %}
                   {% elif a.name == 'AOP event' %}
@@ -848,6 +848,19 @@
                     {% set tu = (a.valqual | selectattr('name','equalto','Unit') | map(attribute='value') | list) if a.valqual else [] %}
                     {% set ns_ep.time_point_unit = tu[0] if tu else None %}
                   {% elif a.name == 'Replicates' %}{% set ns_ep.replicates = a.value %}
+                  {% elif a.name == 'Technical replicates' %}{% set ns_ep.tech_replicates = a.value %}
+                  {% elif a.name == 'Positive control' %}
+                    {% set pc = namespace(name=a.value, url=None, conc=None, conc_unit=None, dur=None, dur_unit=None) %}
+                    {% for q in a.valqual or [] %}
+                      {% if q.name == 'URL' %}{% set pc.url = q.value %}
+                      {% elif q.name == 'CID' and not pc.url %}{% set pc.url = 'https://pubchem.ncbi.nlm.nih.gov/compound/' ~ q.value %}
+                      {% elif q.name|lower == 'concentration' %}{% set pc.conc = q.value %}
+                        {% set cu = (q.valqual | selectattr('name','equalto','Unit') | map(attribute='value') | list) if q.valqual else [] %}{% set pc.conc_unit = cu[0] if cu else None %}
+                      {% elif q.name == 'Exposure duration' %}{% set pc.dur = q.value %}
+                        {% set du = (q.valqual | selectattr('name','equalto','Unit') | map(attribute='value') | list) if q.valqual else [] %}{% set pc.dur_unit = du[0] if du else None %}
+                      {% endif %}
+                    {% endfor %}
+                    {% set _ = ns_ep.pos_controls.append(pc) %}
                   {% elif a.name and a.name|lower == 'description' %}{% set ns_ep.description = a.value %}
                   {% else %}{% if a.value %}{% set _ = ns_ep.extra.append(a) %}{% endif %}
                   {% endif %}
@@ -901,10 +914,12 @@
                         </div>
 
                         {% if ns_ep.aop_events %}
-                          <div class="small mt-1">
-                            <span class="text-muted">AOP event{{ 's' if ns_ep.aop_events|length > 1 else '' }}:</span>
-                            {% for ev in ns_ep.aop_events %}{% if not loop.first %} &middot; {% endif %}{% if ev.url %}<a href="{{ ev.url }}" target="_blank" rel="noopener">{{ ev.value }}</a>{% else %}{{ ev.value }}{% endif %}{% endfor %}
+                          {% for ev in ns_ep.aop_events %}
+                          <div class="small mt-1 d-flex align-items-start gap-2">
+                            <i class="bi bi-arrow-right-circle text-vhpblue"></i>
+                            <span>{% if ev.url %}<a href="{{ ev.url }}" target="_blank" rel="noopener">{{ ev.value }}</a>{% else %}{{ ev.value }}{% endif %}</span>
                           </div>
+                          {% endfor %}
                         {% endif %}
 
                         {% if ns_ba.value and ns_ep.instrument %}
@@ -942,7 +957,20 @@
                           {% if ns_ep.replicates %}
                             {% if sep.needed %} &middot; {% endif %}
                             Replicates: {{ ns_ep.replicates }}
+                            {% set sep.needed = true %}
                           {% endif %}
+
+                          {% if ns_ep.tech_replicates %}
+                            {% if sep.needed %} &middot; {% endif %}
+                            Technical replicates: {{ ns_ep.tech_replicates }}
+                            {% set sep.needed = true %}
+                          {% endif %}
+
+                          {% for pc in ns_ep.pos_controls %}
+                            {% if sep.needed %} &middot; {% endif %}
+                            Positive control: {% if pc.url %}<a href="{{ pc.url }}" target="_blank" rel="noopener">{{ pc.name }}</a>{% else %}{{ pc.name }}{% endif %}{% if pc.conc %} ({{ pc.conc }}{% if pc.conc_unit %} {{ pc.conc_unit }}{% endif %}{% if pc.dur %}, {{ pc.dur }}{% if pc.dur_unit %} {{ pc.dur_unit }}{% endif %}{% endif %}){% endif %}
+                            {% set sep.needed = true %}
+                          {% endfor %}
 
                           {% for a in ns_ep.extra %}
                             <br>{{ a.name }}: {{ a.value }}{% set eu = (a.valqual | selectattr('name','equalto','Unit') | map(attribute='value') | list) if a.valqual else [] %}{% if eu %} {{ eu[0] }}{% endif %}
