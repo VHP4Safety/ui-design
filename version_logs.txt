@@ -1,3 +1,17 @@
+Versuib 0.9-6 (2026-05-24)
+--------------------------------------------------------------------------------
+- Match SAW step badge labels and color to the home page
+- Collapse Documentation tab sections into Bootstrap accordion
+- Reduce navbar padding for smallest layouts (like iphone) to show more of the page
+- Set max height for brand icon to enhance first impression on mobile
+- Update navbar selector for improved mobile styling
+- Add responsive rounded corners for selected filters on mobile and larger screens
+- Remove unnecessary margin from regulatory question input for improved alignment
+- On mobile devices add responsive white-space utilities for dropdown items to improve layout
+- Update selected filters display to improve responsiveness and prevent overflow
+- Developed-by-VHP info from the JSON is now used
+- Add VHP partner name under contact
+
 Version 0.9-5 (2026-05-20)
 --------------------------------------------------------------------------------
 - Harmonized styling and pagination across the tools, methods, and data catalogs.
