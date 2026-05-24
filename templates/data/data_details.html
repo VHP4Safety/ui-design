@@ -623,13 +623,13 @@
                           {% endif %}
 
                           <div class="w-100">
-                            {# Chemical name (optionally link to CompoundCloud) #}
+                            {# Chemical name -> VHP4Safety platform compound page (derived from the CompoundCloud/Wiki ID) #}
                             <div class="fw-semibold">
-                              {% if ns.cc_url %}
-                                <a href="{{ ns.cc_url }}" target="_blank" rel="noopener" class="text-decoration-none">
+                              {% if ns.cc_id and '[DRAFT]' not in ns.cc_id %}
+                                <a href="https://platform.vhp4safety.nl/compound/{{ ns.cc_id|trim|urlencode }}"
+                                   rel="noopener" class="text-decoration-none">
                                   {{ ns.name or '—' }}
                                 </a>
-                                <i class="bi bi-box-arrow-up-right ms-1 small text-muted"></i>
                               {% else %}
                                 {{ ns.name or '—' }}
                               {% endif %}
