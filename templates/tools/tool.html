@@ -29,9 +29,9 @@
         {% if tool_details.get("developed-by-VHP") != "false" %}
             <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_HexaHead_300.png" alt="Developed by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Developed by VHP">
         {% endif %}
-        {% if tool_details.instance.get("vhp-platform") == "Development" %}
+        {% if tool_details.instance and tool_details.instance.get("vhp-platform") == "Development" %}
             <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Hosted by VHP">
-        {% elif tool_details.instance.get("vhp-platform") == "development" %}
+        {% elif tool_details.instance and tool_details.instance.get("vhp-platform") == "development" %}
             <img src="/static/images/logos/icon/PNG/300ppi/VHP_Icon_Head_300.png" alt="Hosted by VHP" class="vhp-badge" data-bs-toggle="tooltip" data-bs-title="Hosted by VHP">
         {% endif %}
         </span></h1>
