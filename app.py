@@ -1343,7 +1343,10 @@ def tool_page(toolname):
 
     # Pass the json filename to the template (for JS to pick up)
     return render_template(
-        "tools/tool.html", tool_json=tools[toolname], tool_details=tool_details
+        "tools/tool.html",
+        tool_json=tools[toolname],
+        tool_details=tool_details,
+        process_flow_steps=get_process_flow_steps(),
     )
 
 
