@@ -341,7 +341,7 @@
             {% endif %}
             {% if tool_details.provider.contact.get("vhp-partner") %}
               {% if tool_details.provider.contact.get("vhp-partner") != "" %}
-                <li>Partner: {{ tool_details.provider.contact.get("vhp-partner") }}</li>
+                <li>Partner: {{ tool_details.provider.contact.get("vhp-partner") | replace(";", " and ") }}</li>
               {% endif %}
             {% endif %}
           {% endif %}{% endif %}
