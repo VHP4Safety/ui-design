@@ -434,7 +434,7 @@
             <div class="mt-3">
               {% for bm in bio_models %}
 
-                {% set ns_bm = namespace(cell_line=None, rrid=None, rrid_url=None, supplier=None, cell_type=None, cell_type_url=None, description=None, extra=[]) %}
+                {% set ns_bm = namespace(cell_line=None, rrid=None, rrid_url=None, supplier=None, cell_type=None, cell_type_url=None, organ=None, organ_url=None, tissue=None, tissue_url=None, description=None, extra=[]) %}
                 {% for a in bm.attributes or [] %}
                   {% if a.name == 'Cell line' %}
                     {% set ns_bm.cell_line = a.value %}
@@ -451,6 +451,18 @@
                       {% elif q.name == 'TermId' %}{% set ns_bm.cell_type_url = 'https://purl.obolibrary.org/obo/' ~ q.value | replace(':','_') %}{% endif %}
                     {% endfor %}
                     {% set ns_bm.cell_type = a.value %}
+                  {% elif a.name == 'Organ' %}
+                    {% for q in a.valqual or [] %}
+                      {% if q.name == 'URL' %}{% set ns_bm.organ_url = q.value %}
+                      {% elif q.name == 'TermId' %}{% set ns_bm.organ_url = 'https://purl.obolibrary.org/obo/' ~ q.value | replace(':','_') %}{% endif %}
+                    {% endfor %}
+                    {% set ns_bm.organ = a.value %}
+                  {% elif a.name == 'Tissue' %}
+                    {% for q in a.valqual or [] %}
+                      {% if q.name == 'URL' %}{% set ns_bm.tissue_url = q.value %}
+                      {% elif q.name == 'TermId' %}{% set ns_bm.tissue_url = 'https://purl.obolibrary.org/obo/' ~ q.value | replace(':','_') %}{% endif %}
+                    {% endfor %}
+                    {% set ns_bm.tissue = a.value %}
                   {% elif a.name and a.name|lower == 'description' %}
                     {% set ns_bm.description = a.value %}
                   {% else %}
@@ -503,21 +515,26 @@
                             {% endfor %}
                           {% endif %}
 
-                          {% if ns_bio.organ %}
+                          {# Organ/Tissue: prefer per-cell-line (e.g. multi-model studies), fall back to section-level #}
+                          {% set _organ = ns_bm.organ or ns_bio.organ %}
+                          {% set _organ_url = ns_bm.organ_url or ns_bio.organ_url %}
+                          {% if _organ %}
                             &middot;
-                            {% if ns_bio.organ_url %}
-                              <a href="{{ ns_bio.organ_url }}" target="_blank" rel="noopener" class="text-muted"><i class="bi bi-link-45deg text-vhpblue"></i> {{ ns_bio.organ }}</a>
+                            {% if _organ_url %}
+                              <a href="{{ _organ_url }}" target="_blank" rel="noopener" class="text-muted"><i class="bi bi-link-45deg text-vhpblue"></i> {{ _organ }}</a>
                             {% else %}
-                              {{ ns_bio.organ }}
+                              {{ _organ }}
                             {% endif %}
                           {% endif %}
 
-                          {% if ns_bio.tissue %}
+                          {% set _tissue = ns_bm.tissue or ns_bio.tissue %}
+                          {% set _tissue_url = ns_bm.tissue_url or ns_bio.tissue_url %}
+                          {% if _tissue %}
                             &middot;
-                            {% if ns_bio.tissue_url %}
-                              <a href="{{ ns_bio.tissue_url }}" target="_blank" rel="noopener" class="text-muted"><i class="bi bi-link-45deg text-vhpblue"></i> {{ ns_bio.tissue }}</a>
+                            {% if _tissue_url %}
+                              <a href="{{ _tissue_url }}" target="_blank" rel="noopener" class="text-muted"><i class="bi bi-link-45deg text-vhpblue"></i> {{ _tissue }}</a>
                             {% else %}
-                              {{ ns_bio.tissue }}
+                              {{ _tissue }}
                             {% endif %}
                           {% endif %}
 
@@ -946,7 +963,32 @@
             <p class="text-muted mt-3">No endpoint readout information available.</p>
           {% endif %}
 
-          {% if ns_bio.aop_name or ns_bio.aop_events %}
+          {# AOP Linkage: key events aggregated from the per-bioassay endpoint readouts (single source of truth),
+             each annotated with the bioassay(s) that measure it. #}
+          {% set ns_aop = namespace(events=[], names=[]) %}
+          {% for ep in endpoint_subs %}
+            {% set epx = namespace(ba=None, evs=[]) %}
+            {% for a in ep.attributes or [] %}
+              {% if a.name == 'Bioassay' %}{% set epx.ba = a.value %}
+              {% elif a.name == 'AOP event' %}
+                {% set ev = namespace(url=None) %}
+                {% for q in a.valqual or [] %}{% if q.name == 'URL' %}{% set ev.url = q.value %}{% endif %}{% endfor %}
+                {% set _ = epx.evs.append({'value': a.value, 'url': ev.url}) %}
+              {% endif %}
+            {% endfor %}
+            {% for ev in epx.evs %}
+              {% set key = ev.value|lower|trim %}
+              {% if key in ns_aop.names %}
+                {% set idx = ns_aop.names.index(key) %}
+                {% if epx.ba and epx.ba not in ns_aop.events[idx].bioassays %}{% set _ = ns_aop.events[idx].bioassays.append(epx.ba) %}{% endif %}
+              {% else %}
+                {% set _ = ns_aop.names.append(key) %}
+                {% set _ = ns_aop.events.append({'value': ev.value, 'url': ev.url, 'bioassays': ([epx.ba] if epx.ba else [])}) %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+
+          {% if ns_bio.aop_name or ns_aop.events %}
           <div class="card overflow-hidden mt-3">
             <div class="card-header py-2"><h5 class="m-0">AOP Linkage</h5></div>
             <div class="card-body p-0">
@@ -963,7 +1005,7 @@
                   </span>
                 </li>
                 {% endif %}
-                {% for ev in ns_bio.aop_events %}
+                {% for ev in ns_aop.events %}
                 <li class="list-group-item d-flex align-items-start gap-2">
                   <i class="bi bi-arrow-right-circle text-vhpblue"></i>
                   <span class="small">
