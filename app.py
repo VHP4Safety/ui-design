@@ -1089,7 +1089,7 @@ def tools():
             if tool_id:
                 detail = get_service_detail(tool_id)
                 if detail.get("developed-by-VHP"):
-                    vhp_deved = detail.get("developed-by-VHP") not in ("false")
+                    vhp_deved = detail.get("developed-by-VHP") == "true"
                 if inst_url != "no_url":
                     vhp_platform = (
                         detail.get("instance", {}).get("vhp-platform", "").lower()
