@@ -1,4 +1,4 @@
-Versuib 0.9-6 (2026-05-24)
+Versuib 0.9-7 (2026-05-25)
 --------------------------------------------------------------------------------
 - Match SAW step badge labels and color to the home page
 - Collapse Documentation tab sections into Bootstrap accordion
@@ -11,6 +11,20 @@ Versuib 0.9-6 (2026-05-24)
 - Update selected filters display to improve responsiveness and prevent overflow
 - Developed-by-VHP info from the JSON is now used
 - Add VHP partner name under contact
+- Enhance bioassay details by adding technical replicates and positive control attributes
+- Add support for organ and tissue attributes in bio models and enhance AOP linkage
+- Update chemical name link to point to VHP4Safety platform compound page
+- Enhance publication display and add scroll functionality for pill strips
+- Make chemicals two column on big screen
+- Enhance exposure handling by adding bioassay support and improving regimen display
+- Improve exposure and endpoint unit handling in metadata
+- Enhance AOP event handling to support multiple events and descriptions
+- Align query parameter names with tools/methods
+- Align regulatory-question filtering with display labels
+- Enhance handling of case studies, regulatory questions, and flow steps in metadata
+- Show KEs together with AOp under aop linkage
+- Update AOP event handling and improve bioassay display structure
+- Update bioassay handling and improve readout block linking
 
 Version 0.9-5 (2026-05-20)
 --------------------------------------------------------------------------------
