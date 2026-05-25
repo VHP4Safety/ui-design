@@ -1488,9 +1488,10 @@ def show_compounds_properties_as_json(cwid):
             "inchikey": compound_dat["inchiKey"]["value"],
             "SMILES": compound_dat["SMILES"]["value"],
             "formula": compound_dat["formula"]["value"],
-            "mass": compound_dat["mass"]["value"],
         }
     ]
+    if "mass" in compound_dat:
+        compound_list[0]["mass"] = compound_dat["mass"]["value"]
     return jsonify(compound_list), 200
 
 
