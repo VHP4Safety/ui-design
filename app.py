@@ -1642,7 +1642,7 @@ def show_compounds_expdata_as_json(cwid):
     # return sparqlquery
     try:
         sparqlqueryURL = (
-            "https://qlever.cs.uni-freiburg.de/api/wikidata?format=json&query="
+            "https://qlever.dev/api/wikidata?format=json&query="
             + urllib.parse.quote_plus(sparqlquery)
         )
         # return sparqlqueryURL
