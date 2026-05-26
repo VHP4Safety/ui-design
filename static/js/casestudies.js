@@ -44,7 +44,17 @@ function stepAction(step, onClickFn) {
       const route = step.route || "tools"; // updated so that assays in methods can be linked too
       const url = "/" + route + "/" + step.id;
       return "onclick=\"location.href='" + url + "';\""
-    } else { 
+    } else {
+      return ""
+    }
+  }
+
+  if (step.type && step.type == "data") {
+    if (step.id) {
+      const route = step.route || "data";
+      const url = "/" + route + "/" + step.id;
+      return "onclick=\"location.href='" + url + "';\""
+    } else {
       return ""
     }
   }
