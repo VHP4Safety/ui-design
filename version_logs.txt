@@ -1,4 +1,4 @@
-Versuib 0.9-7 (2026-05-25)
+Versuib 0.9-8 (2026-05-26)
 --------------------------------------------------------------------------------
 - Match SAW step badge labels and color to the home page
 - Collapse Documentation tab sections into Bootstrap accordion
@@ -25,6 +25,9 @@ Versuib 0.9-7 (2026-05-25)
 - Show KEs together with AOp under aop linkage
 - Update AOP event handling and improve bioassay display structure
 - Update bioassay handling and improve readout block linking
+- Match step headline color to its process-flow icon
+- Failsafe for compounds entries without mass info
+- Add stepAction function to support data type routing
 
 Version 0.9-5 (2026-05-20)
 --------------------------------------------------------------------------------
