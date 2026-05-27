@@ -1416,8 +1416,14 @@ def workflows():
 @app.route("/casestudies/<case>", defaults={"step": ""})
 @app.route("/casestudies/<case>/<question>")
 @app.route("/casestudies/<case>/<question>/<step>")
+@app.route("/casestudies/<case>/<question>/<step>/<step2>")
+@app.route("/casestudies/<case>/<question>/<step>/<step2>/<step3>")
+@app.route("/casestudies/<case>/<question>/<step>/<step2>/<step3>/<step4>")
+@app.route("/casestudies/<case>/<question>/<step>/<step2>/<step3>/<step4>/<step5>")
 # additional routes are parsed client side via js to allow smooth animation
-def casestudy(case: str = "", question: str = "", step: str = ""):
+def casestudy(case: str = "", question: str = "", step: str = "",
+              step1: str = "", step2: str = "", step3: str = "",
+              step4: str = "", step5: str = ""):
     if case not in get_casestudies():
         abort(404)
     # JS will handle steps via the URL
