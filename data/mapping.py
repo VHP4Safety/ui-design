@@ -582,3 +582,38 @@ def normalize_all(
             b["norm_metadata"] = normalize_biostudies(b)
 
     return bs_entries, zenodo_entries
+
+
+def scrub_draft(obj: Any) -> Any:
+    """Strip in-progress '[DRAFT]' values from records so the templates'
+    existing `{% if ... %}` checks skip them. String values containing
+    '[DRAFT]' become None; list entries that are DRAFT strings are dropped.
+    Mutates dicts/lists in place and returns the root object. Iterative +
+    cycle-safe (tracks visited container ids), so deeply-nested or
+    self-referencing structures won't blow the stack.
+    Idempotent — safe to run against cached data.
+    """
+    def is_draft_str(x: Any) -> bool:
+        return isinstance(x, str) and "[DRAFT]" in x
+
+    seen: set[int] = set()
+    stack: list = [obj]
+    while stack:
+        cur = stack.pop()
+        cid = id(cur)
+        if cid in seen:
+            continue
+        if isinstance(cur, dict):
+            seen.add(cid)
+            for k, v in cur.items():
+                if is_draft_str(v):
+                    cur[k] = None
+                elif isinstance(v, (dict, list)):
+                    stack.append(v)
+        elif isinstance(cur, list):
+            seen.add(cid)
+            cur[:] = [x for x in cur if not is_draft_str(x)]
+            for x in cur:
+                if isinstance(x, (dict, list)):
+                    stack.append(x)
+    return obj
