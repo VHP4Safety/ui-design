@@ -33,7 +33,7 @@ KWR.png | KWR Water Research Institute | https://www.kwrwater.nl/en/
 NBS.jpg | Dutch Burns Foundation | https://brandwondenstichting.nl/
 CE.svg | Cosmetics Europe | https://cosmeticseurope.eu
 PDV.png | Stichting Proefdiervrij | https://proefdiervrij.nl/
-Galapagos.svg | Galapagos | https://lakefrontbio.com/
+Lakefront.svg | Lakefront Biotherapeutics | https://lakefrontbio.com/
 
 # Funder
 NWO.png | Dutch Research Council | https://nwo.nl/en
