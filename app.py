@@ -17,7 +17,7 @@ from wikibaseintegrator import wbi_helpers
 # Import BioStudies extractor
 from data.biostudies.search import BioStudiesExtractor
 from data.zenodo.search import ZenodoExtractor
-from data.mapping import normalize_all
+from data.mapping import normalize_all, scrub_draft
 
 ################################################################################
 CACHE_TIMEOUT = 60 * 60 * 24 * 5  # 5 days
@@ -775,6 +775,12 @@ def data():
 
     # studies, datasets = normalize_all([studies],[datasets])
 
+    # Hide '[DRAFT]'-tagged values so the template's `{% if %}` checks skip them.
+    for s in studies:
+        scrub_draft(s)
+    for d in datasets:
+        scrub_draft(d)
+
     # combine totals for pagination
     total = bs_total + zen_total
 
@@ -858,6 +864,10 @@ def data_detail(dataid):
     zen_error: str | None = zen_results.get("error", None)
 
     studies, datasets = normalize_all(studies, datasets)
+    for s in studies:
+        scrub_draft(s)
+    for d in datasets:
+        scrub_draft(d)
 
     if bs_error and not zen_error:
         if zen_total != 1:
