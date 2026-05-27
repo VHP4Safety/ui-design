@@ -1,4 +1,4 @@
-Versuib 0.9-8 (2026-05-26)
+Versuib 0.9-9 (2026-05-27)
 --------------------------------------------------------------------------------
 - Match SAW step badge labels and color to the home page
 - Collapse Documentation tab sections into Bootstrap accordion
@@ -28,6 +28,7 @@ Versuib 0.9-8 (2026-05-26)
 - Match step headline color to its process-flow icon
 - Failsafe for compounds entries without mass info
 - Add stepAction function to support data type routing
+- Fixed case study step URLs reloading
 
 Version 0.9-5 (2026-05-20)
 --------------------------------------------------------------------------------
