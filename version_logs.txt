@@ -1,4 +1,5 @@
-Versuib 0.9-9 (2026-05-27)
+Version 0.9-9 (2026-05-27)
+* The last version before the VHP Launch on May 28.
 --------------------------------------------------------------------------------
 - Match SAW step badge labels and color to the home page
 - Collapse Documentation tab sections into Bootstrap accordion
