@@ -2,8 +2,9 @@
 #
 # Partner registry for the home-page logo grid: display order, names and links.
 # Format:  filename | Organization name | https://link   (name and link optional)
-# Images in static/images/partners/ not listed here are shown afterwards in
-# alphabetical order. Blank lines and lines starting with '#' are ignored.
+# Only entries listed below are displayed. Images present in
+# static/images/partners/ but not listed here (or commented out with '#') are
+# ignored. Blank lines and lines starting with '#' are ignored.
 # See get_partner_logos() in app.py.
 
 # Coordination
@@ -17,6 +18,7 @@ VU.svg | Vrije Universiteit Amsterdam | https://vu.nl/en
 UL.png | Leiden University | https://universiteitleiden.nl/en
 WUR.png | Wageningen University & Research | https://wur.nl/en
 AUMC.png | Amsterdam University Medical Center | https://www.amsterdamumc.org/en
+UMC.svg | Utrecht Medical Center | https://www.umcutrecht.nl/en
 TNO.svg | TNO | https://tno.nl/en
 EMC.svg | Erasmus MC | https://erasmusmc.nl/en
 
@@ -36,4 +38,4 @@ PDV.png | Stichting Proefdiervrij | https://proefdiervrij.nl/
 Lakefront.svg | Lakefront Biotherapeutics | https://lakefrontbio.com/
 
 # Funder
-NWO.png | Dutch Research Council | https://nwo.nl/en
+# NWO.png | Dutch Research Council | https://nwo.nl/en
