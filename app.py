@@ -366,10 +366,9 @@ def get_partner_logos() -> list:
     Each item is a dict {"file": ..., "name": ..., "url": ...}. Order, names
     and links come from partners.txt, whose entries are
     "filename | Organization name | https://link" (name and link optional);
-    blank lines and '#' comments are ignored. Any image in the directory not
-    listed there is appended afterwards, alphabetically, with its filename
-    stem as the name and no link. Returns an empty list if the directory
-    cannot be read.
+    blank lines and '#' comments are ignored. Only files explicitly listed in
+    partners.txt are returned — images present in the directory but not
+    registered (or commented out) are not displayed.
     """
     try:
         images = {
@@ -406,9 +405,6 @@ def get_partner_logos() -> list:
     except OSError:
         pass
 
-    # Any images not listed in partners.txt are shown last, alphabetically.
-    for fname in sorted(images - used):
-        logos.append({"file": fname, "name": os.path.splitext(fname)[0], "url": ""})
     return logos
 
 
