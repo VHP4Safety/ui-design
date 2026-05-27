@@ -352,5 +352,15 @@
     </script>
 
     {% block scripts %}{% endblock %}
+
+    <!-- Global Bootstrap tooltip init. Skips glossary spans (those are
+         initialized with custom click-trigger options by glossary_highlighter.js).
+         getOrCreateInstance is idempotent, so per-page init code is harmless. -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[data-bs-toggle="tooltip"]:not([data-vhp-glossary])')
+          .forEach(el => bootstrap.Tooltip.getOrCreateInstance(el));
+      });
+    </script>
   </body>
 </html>

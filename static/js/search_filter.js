@@ -216,7 +216,7 @@
         // Validate title attribute
         const title = el.getAttribute('data-bs-title') || el.getAttribute('title');
         if (title && title.trim() !== '' && title !== 'None' && title !== 'null') {
-          new bootstrap.Tooltip(el);
+          bootstrap.Tooltip.getOrCreateInstance(el);
         }
       });
     },
