@@ -1,4 +1,5 @@
 Version 0.9-10 (2026-05-28)
+* The really last version before the VHP Launch on May 28.
 --------------------------------------------------------------------------------
 - Removed template content on the About -> Training, Impact pages
 
