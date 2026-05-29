@@ -1,3 +1,5 @@
+# Ownership, copyright of logos, names, and trademarks belong to the respective organisations.
+#
 # Partner registry for the home-page logo grid: display order, names and links.
 # Format:  filename | Organization name | https://link   (name and link optional)
 # Images in static/images/partners/ not listed here are shown afterwards in
