@@ -1,9 +1,12 @@
-Version 1.0-1 (2026-05-29)
+Version 1.0-2 (2026-06-01)
 --------------------------------------------------------------------------------
 - Update card components to use button styles for better interactivity
 - Add scrub_draft function to remove '[DRAFT]' values from records
 - Statement of ownership and copyright of names and logos
 - Company renamed; new website
+- Update tooltip initialization to use getOrCreateInstance for idempotency
+- Update partner logo display logic and add Utrecht Medical Center
+- Swap rebranded galapagos logo with lakefront
 
 Version 1.0-0 (2026-05-28)
 * The really last version before the VHP Launch on May 28.
