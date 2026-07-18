@@ -62,6 +62,22 @@ CASESTUDIES_URL = (
     "refs/heads/main/ro-crate-metadata.json"
 )
 
+# SEO defaults. Every page renders a <title>/<meta description> (see base.html);
+# routes override page_title / meta_description with page-specific values, and
+# inject_seo_defaults() falls back to these for anything that does not.
+DEFAULT_PAGE_TITLE = "VHP4Safety — Virtual Human Platform for safety assessment"
+DEFAULT_META_DESCRIPTION = (
+    "The Virtual Human Platform (VHP4Safety) brings together tools, methods, "
+    "data and case studies for animal-free, human-based safety assessment of "
+    "chemicals and pharmaceuticals."
+)
+
+
+def clip(text, limit=160):
+    """Trim a description to a search-snippet-friendly length (~160 chars)."""
+    text = " ".join((text or "").split())
+    return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
+
 ################################################################################
 class RegexConverter(BaseConverter):
     """Converter for regular expression routes.
@@ -85,6 +101,9 @@ cache_config = {
 }
 app = Flask(__name__)
 app.config.from_mapping(cache_config)
+# Google Search Console verification token (rendered as a <meta> tag in
+# base.html when set). Kept out of the repo -- set it in the service env.
+app.config["GOOGLE_SITE_VERIFICATION"] = os.environ.get("GOOGLE_SITE_VERIFICATION", "")
 cache = Cache(app)
 
 
@@ -652,6 +671,21 @@ def inject_data_menu():
         return {"data_menu": []}
 
 
+@app.context_processor
+def inject_seo_defaults():
+    """Provide SEO defaults so every page has a title/description/canonical.
+
+    Routes override page_title / meta_description via render_template kwargs
+    (explicit context wins over context processors). canonical_url defaults to
+    the current URL without its query string (request.base_url).
+    """
+    return {
+        "page_title": DEFAULT_PAGE_TITLE,
+        "meta_description": DEFAULT_META_DESCRIPTION,
+        "canonical_url": request.base_url,
+    }
+
+
 ################################################################################
 ### The landing page
 @app.route("/")
@@ -680,6 +714,8 @@ def home():
         num_datasets=num_datasets,
         process_flow_steps=get_process_flow_steps(),
         partner_logos=get_partner_logos(),
+        page_title=DEFAULT_PAGE_TITLE,
+        meta_description=DEFAULT_META_DESCRIPTION,
     )
 
 
@@ -701,8 +737,8 @@ def data_hit_id(hit: dict) -> str:
 
 ################################################################################
 ### The sitemap.xml for search engines
-@cache.memoize(timeout=CACHE_TIMEOUT)
 @app.route("/sitemap.xml")
+@cache.memoize(timeout=CACHE_TIMEOUT)
 def sitemap():
     BASE = "https://platform.vhp4safety.nl"
 
@@ -865,6 +901,11 @@ def data():
     # Pass data to template
     return render_template(
         "data/data.html",
+        page_title="Data — VHP4Safety",
+        meta_description=(
+            "Browse datasets and studies in the VHP4Safety data collection, "
+            "aggregated from BioStudies and Zenodo for animal-free safety assessment."
+        ),
         studies=studies,
         datasets=datasets,
         total=total,
@@ -945,15 +986,19 @@ def data_detail(dataid):
     # reg-question records store the canonical reg_q_Xy key; map key -> label so
     # the badges show the human-readable question.
     reg_q_labels = {k: v["label"] for k, v in get_reg_questions().items()}
-    if studies:
-        return render_template(
-            "data/data_details.html", data=studies[0], reg_q_labels=reg_q_labels
-        )
-    elif datasets:
-        return render_template(
-            "data/data_details.html", data=datasets[0], reg_q_labels=reg_q_labels
-        )
-    return abort(404)
+    record = studies[0] if studies else (datasets[0] if datasets else None)
+    if record is None:
+        return abort(404)
+    rec_title = record.get("title") or "Dataset"
+    rec_desc = record.get("description") or record.get("abstract") or ""
+    return render_template(
+        "data/data_details.html",
+        data=record,
+        reg_q_labels=reg_q_labels,
+        page_title=f"{rec_title} — VHP4Safety data",
+        meta_description=clip(rec_desc)
+        or f"{rec_title}: a dataset in the VHP4Safety data collection.",
+    )
 
 
 ################################################################################
@@ -1012,6 +1057,11 @@ def models():
     # Pass model data to template
     return render_template(
         "models_page.html",
+        page_title="Models — VHP4Safety",
+        meta_description=(
+            "Explore computational models in the VHP4Safety Virtual Human Platform "
+            "for animal-free safety assessment of chemicals and pharmaceuticals."
+        ),
         studies=studies,
         total=total,
         page=page,
@@ -1190,6 +1240,12 @@ def tools():
 
         return render_template(
             "tools/tools.html",
+            page_title="Tools — VHP4Safety",
+            meta_description=(
+                "Browse the catalogue of tools in the VHP4Safety Virtual Human "
+                "Platform for animal-free safety assessment of chemicals and "
+                "pharmaceuticals."
+            ),
             tools=tools,
             stages=stages,
             selected_stages=selected_stages,
@@ -1342,6 +1398,11 @@ def methods():
         # Pass everything the template expects
         return render_template(
             "methods/methods.html",
+            page_title="Methods — VHP4Safety",
+            meta_description=(
+                "Browse the catalogue of experimental and computational methods in "
+                "the VHP4Safety Virtual Human Platform for animal-free safety assessment."
+            ),
             methods=methods_page,
             stages=stages,
             selected_stages=selected_stages,
@@ -1397,12 +1458,29 @@ def method_page(methodid):
         # on any error, fall back to index entry
         method_json = method_details
 
+    # Mirror the template's title/description resolution (methods/method.html)
+    src = method_json if isinstance(method_json, dict) else method_details
+    method_name = (
+        src.get("method")
+        or src.get("method_name_content")
+        or src.get("service")
+        or methodid
+    )
+    method_desc = (
+        src.get("method_description_content")
+        or src.get("method_description")
+        or src.get("description")
+        or ""
+    )
     # Pass both to the template: some templates expect method_json, others method_details
     return render_template(
         "methods/method.html",
         method=method_details,
         method_details=method_details,
         method_json=method_json,
+        page_title=f"{method_name} — VHP4Safety",
+        meta_description=clip(method_desc)
+        or f"{method_name}, a method in the VHP4Safety Virtual Human Platform.",
     )
 
 
@@ -1436,12 +1514,16 @@ def tool_page(toolname):
     except Exception as e:
         return f"Error processing service data: {e}", 500
 
-    # Pass the json filename to the template (for JS to pick up)
+    tool_meta = tools[toolname]
+    tool_name = tool_meta.get("service") or tool_meta.get("title") or toolname
     return render_template(
         "tools/tool.html",
-        tool_json=tools[toolname],
+        tool_json=tool_meta,
         tool_details=tool_details,
         process_flow_steps=get_process_flow_steps(),
+        page_title=f"{tool_name} — VHP4Safety",
+        meta_description=clip(tool_meta.get("description"))
+        or f"{tool_name}, a tool in the VHP4Safety Virtual Human Platform.",
     )
 
 
@@ -1483,19 +1565,40 @@ def model_page(modelid):
 # General Explore our work
 @app.route("/explore_our_work")
 def explore_our_work():
-    return render_template("implementation/explore_our_work.html")
+    return render_template(
+        "implementation/explore_our_work.html",
+        page_title="Our work — VHP4Safety",
+        meta_description=(
+            "How the VHP4Safety consortium builds the Virtual Human Platform to "
+            "advance animal-free safety assessment of chemicals and pharmaceuticals."
+        ),
+    )
 
 
 # General Training
 @app.route("/training")
 def training():
-    return render_template("implementation/training.html")
+    return render_template(
+        "implementation/training.html",
+        page_title="Training — VHP4Safety",
+        meta_description=(
+            "Training materials and courses on the VHP4Safety Virtual Human Platform "
+            "and animal-free, human-based safety assessment."
+        ),
+    )
 
 
 # General Impact
 @app.route("/impact")
 def impact():
-    return render_template("implementation/impact.html")
+    return render_template(
+        "implementation/impact.html",
+        page_title="Impact — VHP4Safety",
+        meta_description=(
+            "The scientific and societal impact of VHP4Safety in the transition to "
+            "animal-free safety assessment of chemicals and pharmaceuticals."
+        ),
+    )
 
 
 ################################################################################
@@ -1517,7 +1620,14 @@ def SafetyAssessmentWorkflow():
 # General case studies page
 @app.route("/casestudies")
 def workflows():
-    return render_template("case_studies/casestudies.html")
+    return render_template(
+        "case_studies/casestudies.html",
+        page_title="Case studies — VHP4Safety",
+        meta_description=(
+            "Explore the VHP4Safety case studies (kidney, Parkinson's disease and "
+            "thyroid) that connect tools, methods and data to real regulatory questions."
+        ),
+    )
 
 
 # Individual case study page, dynamically filled based on URL
@@ -1534,8 +1644,25 @@ def casestudy(case: str = "", question: str = "", step: str = "",
               step4: str = "", step5: str = ""):
     if case not in get_casestudies():
         abort(404)
+    # The <question>/<step> sub-routes are JS-driven states of the same page, so
+    # canonicalise them all to the base case URL to avoid duplicate indexing.
+    case_labels = {
+        "kidney": "Kidney",
+        "parkinson": "Parkinson's disease",
+        "thyroid": "Thyroid",
+    }
+    case_name = case_labels.get(case, case.capitalize())
     # JS will handle steps via the URL
-    return render_template("case_studies/casestudy.html", case=case)
+    return render_template(
+        "case_studies/casestudy.html",
+        case=case,
+        page_title=f"{case_name} case study — VHP4Safety",
+        meta_description=(
+            f"The VHP4Safety {case_name} case study: a Virtual Human Platform "
+            "workflow connecting tools, methods and data to a regulatory question."
+        ),
+        canonical_url=request.url_root.rstrip("/") + "/casestudies/" + case,
+    )
 
 
 @app.route("/workflow/<workflow>")
@@ -1793,12 +1920,20 @@ def show_compounds_expdata_as_json(cwid):
 ### Pages under 'Legal'
 @app.route("/legal/terms_of_service")
 def terms_of_service():
-    return render_template("legal/terms_of_service.html")
+    return render_template(
+        "legal/terms_of_service.html",
+        page_title="Terms of Service — VHP4Safety",
+        meta_description="Terms of Service for the VHP4Safety Virtual Human Platform.",
+    )
 
 
 @app.route("/legal/privacypolicy")
 def privacy_policy():
-    return render_template("legal/privacypolicy.html")
+    return render_template(
+        "legal/privacypolicy.html",
+        page_title="Privacy Policy — VHP4Safety",
+        meta_description="Privacy Policy for the VHP4Safety Virtual Human Platform.",
+    )
 
 
 if __name__ == "__main__":

@@ -4,7 +4,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VHP4Safety</title>
+
+    <!-- SEO: title, description and canonical are per-page. Routes pass
+         page_title / meta_description / canonical_url; inject_seo_defaults()
+         supplies sensible defaults for any page that does not. -->
+    <title>{{ page_title }}</title>
+    <meta name="description" content="{{ meta_description }}" />
+    <link rel="canonical" href="{{ canonical_url }}" />
+
+    <!-- Open Graph / Twitter Card for link previews (and minor search signal) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="VHP4Safety" />
+    <meta property="og:title" content="{{ page_title }}" />
+    <meta property="og:description" content="{{ meta_description }}" />
+    <meta property="og:url" content="{{ canonical_url }}" />
+    <meta property="og:image" content="{{ request.url_root }}static/images/logos/logo/PNG/300ppi/VHP_Logo_Long_02_300.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Search Console verification (set GOOGLE_SITE_VERIFICATION env var) -->
+    {% if config.GOOGLE_SITE_VERIFICATION %}
+    <meta name="google-site-verification" content="{{ config.GOOGLE_SITE_VERIFICATION }}" />
+    {% endif %}
 
     {% if config.DEBUG %}
     <!-- we are running in DEBUG mode -->
