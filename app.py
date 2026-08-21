@@ -27,6 +27,7 @@ BIOSTUDIES_COLLECTION = "VHP4Safety"  # Replace with "EU-ToxRisk" to test
 BIOSTUDIES_COLLECTION_NAME = "VHP4Safety"  # Display name for the page
 ZENODO_COMMUNITY = "vhp4safety"  # zenodo community
 ZENODO_RECORD_TYPE = "dataset"  # only show datasets
+ZENODO_RECORD_TYPE_MODEL = "model"  # only show datasets
 
 # Non-glossary "stage" labels. The five Process Flow Step stages are resolved
 # from the VHP glossary at runtime (see get_process_flow_steps); these legacy
@@ -491,6 +492,76 @@ def get_repository_data(
     """
     try:
         return _get_repository_data_cached(
+            search_query,
+            page=page,
+            page_size=page_size,
+            filters=filters,
+            load_metadata=load_metadata,
+        )
+    except _RepositoryFetchAllFailed as exc:
+        return exc.args[0]
+
+
+@cache.memoize(timeout=CACHE_TIMEOUT)
+def _get_repository_model_cached(
+    search_query: str,
+    page: int = 1,
+    page_size: int = 18,
+    filters: list | None = None,
+    load_metadata: bool = True,
+) -> tuple[dict, dict]:
+    """Fetch from Zenodo. The extractors swallow network failures
+    and return {"error": "..."} dicts rather than raising, so we check the
+    result here and raise if BOTH halves errored -- otherwise cache.memoize
+    would store the dual-error tuple for CACHE_TIMEOUT and every subsequent
+    request would see the same stale failure. Partial success is cacheable
+    (the errored half stays until the timeout, but the working half remains
+    usable).
+    """
+    zen_extractor = ZenodoExtractor(
+        community=ZENODO_COMMUNITY, record_type=ZENODO_RECORD_TYPE_MODEL
+    )
+    if not filters:
+        # We currently do no filter Zenodo datasets.
+        if search_query:
+            zen_result = zen_extractor.search_records(
+                search_query, page=page, size=page_size, load_metadata=load_metadata
+            )
+        else:
+            # load metadata needed for is_rocrate filtering in template
+            zen_result = zen_extractor.list_records(
+                page=page,
+                size=page_size,
+                include_urls=True,
+                load_metadata=load_metadata,
+            )
+    else:
+        zen_result = {"hits": [], "total": 0, "error": None}
+
+    # Both extractors errored -> bypass the cache by raising. The wrapper
+    # catches and returns the same tuple to the caller (contract preserved),
+    # but the next request will retry instead of getting the cached failure.
+    if zen_result.get("error"):
+        raise _RepositoryFetchAllFailed((bs_results, zen_result))
+
+    return zen_result
+
+
+def get_repository_model(
+    search_query: str,
+    page: int = 1,
+    page_size: int = 18,
+    filters: list | None = None,
+    load_metadata: bool = True,
+) -> tuple[dict, dict]:
+    """Return (bs_results, zen_result) from the two repositories.
+
+    Each half is the extractor's raw response: a {"hits", "total"} dict on
+    success or a {"error": "..."} dict on failure. A dual-failure result is
+    NOT cached so the next request retries; partial success is cached as-is.
+    """
+    try:
+        return _get_repository_model_cached(
             search_query,
             page=page,
             page_size=page_size,
@@ -1372,6 +1443,37 @@ def tool_page(toolname):
         tool_details=tool_details,
         process_flow_steps=get_process_flow_steps(),
     )
+
+
+@app.route("/model/<modelid>")
+def model_page(modelid):
+    zen_results = get_repository_model(modelid)
+
+    # Extract datasets and metadata from Zenodo
+    datasets = zen_results.get("hits", [])
+    zen_total = zen_results.get("total", 0)
+    zen_error: str | None = zen_results.get("error", None)
+
+    studies, datasets = normalize_all([], datasets)
+    for s in studies:
+        scrub_draft(s)
+    for d in datasets:
+        scrub_draft(d)
+
+    if zen_total != 1:
+        return abort(404)
+    # reg-question records store the canonical reg_q_Xy key; map key -> label so
+    # the badges show the human-readable question.
+    reg_q_labels = {k: v["label"] for k, v in get_reg_questions().items()}
+    if studies:
+        return render_template(
+            "models/model.html", data=studies[0], reg_q_labels=reg_q_labels
+        )
+    elif datasets:
+        return render_template(
+            "models/model.html", data=datasets[0], reg_q_labels=reg_q_labels
+        )
+    return abort(404)
 
 
 ################################################################################
