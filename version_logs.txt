@@ -1,4 +1,4 @@
-Version 1.0-2 (2026-06-01)
+Version 1.0-3 (2026-08-30)
 --------------------------------------------------------------------------------
 - Update card components to use button styles for better interactivity
 - Add scrub_draft function to remove '[DRAFT]' values from records
@@ -7,6 +7,9 @@ Version 1.0-2 (2026-06-01)
 - Update tooltip initialization to use getOrCreateInstance for idempotency
 - Update partner logo display logic and add Utrecht Medical Center
 - Swap rebranded galapagos logo with lakefront
+- Model info page
+- Cleaner description by unescaping the HTML instructions from Zenodo
+- Added a PeerTube section in the UI
 
 Version 1.0-0 (2026-05-28)
 * The really last version before the VHP Launch on May 28.
