@@ -1,3 +1,8 @@
+Version 1.0-4 (2026-08-31)
+--------------------------------------------------------------------------------
+- Add sitewide Organization JSON-LD
+- Add per-page SEO metadata and sitemap fix
+
 Version 1.0-3 (2026-08-30)
 --------------------------------------------------------------------------------
 - Update card components to use button styles for better interactivity
