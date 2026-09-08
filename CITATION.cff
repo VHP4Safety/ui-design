@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+message: Please cite the following works when using this software.
+type: software
+authors:
+  - family-names: Kienhuis
+    given-names: Anne
+  - family-names: Krul
+    given-names: Cyrille
+  - family-names: Engelen
+    given-names: Jacqueline
+    name-particle: van
+  - family-names: Evelo
+    given-names: Chris T.
+  - family-names: Hessel
+    given-names: Ellen
+  - family-names: Hoekman
+    given-names: Jarno
+  - family-names: Kramer
+    given-names: Nynke
+  - family-names: Krop
+    given-names: Esmeralda
+  - family-names: Masereeuw
+    given-names: Rosalinde
+  - family-names: Moors
+    given-names: Ellen
+  - family-names: O. Negro
+    given-names: Simona
+  - family-names: Piersma
+    given-names: Aldert H.
+  - family-names: Pieters
+    given-names: Raymond
+  - family-names: Teunis
+    given-names: Marc
+  - family-names: Willighagen
+    given-names: Egon L.
+  - family-names: Legler
+    given-names: Juliette
+doi: 10.14573/ALTEX.2407211
+identifiers:
+  - type: doi
+    value: 10.14573/ALTEX.2407211
+  - type: other
+    value: urn:issn:0946-7785
+  - type: other
+    value: pmid:39396389
+keywords:
+  - VHP4Safety
+  - chemical safety
+title: >-
+  The Virtual Human Platform for Safety Assessment (VHP4Safety) project: Next
+  generation chemical safety assessment based on human data
